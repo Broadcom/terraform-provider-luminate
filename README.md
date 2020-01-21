@@ -1,1 +1,1024 @@
-# terraform-provider-luminate
+# **Terraform provider luminate**
+
+[Basic configuration and usage](#basic-configuration-and-usage)
+- [Provider configuration](#provider-configuration)
+- [API Endpoint](#api-endpoint)
+- [Authentication](#authentication)
+- [Usage Example](#provider-usage-example)
+
+[Core resources](#core-resources)
+- [Resource: luminate_site](#resource-luminate_site)
+- [Resource: luminate_connector](#resource-luminate_connector)
+
+[Application Resources](#application-resources)
+- [Resource: luminate_web_application](#resource-luminate_web_application)
+- [Resource: luminate_ssh_application](#resource-luminate_ssh_application)
+- [Resource: luminate_tcp_application](#resource-luminate_tcp_application)
+- [Resource: luminate_ssh_gw_application](#resource-luminate_ssh_gw_application)
+
+[Policy resources](#policy-resources)
+- [Resource: luminate_rdp_access_policy](#resource-luminate_rdp_access_policy)
+- [Resource: luminate_ssh_access_policy](#resource-luminate_ssh_access_policy)
+- [Resource: luminate_web_access_policy](#resource-luminate_web_access_policy)
+- [Resource: luminate_tcp_access_policy](#resource-luminate_tcp_access_policy)
+
+[Data sources](#data-sources)
+- [Data Source: luminate_identity_provider](#data-source-luminate_identity_provider)
+- [Data Source: luminate_user](#data-source-luminate_user)
+- [Data Source: luminate_group](#data-source-luminate_group)
+- [Data Source: luminate_aws_integration](#data-source-luminate_aws_integration)
+
+
+Basic configuration and usage
+==========
+
+Broadcom secure access cloud terraform provider is used to create and
+manage resources supported by Secure access cloud platform.
+
+Provider configuration
+-----------
+
+To use the provider it must first be configured to access Secure access
+cloud management API.
+
+#### Example Usage
+
+```
+provider "luminate" {         
+    api_endpoint = "api.example.luminatesec.com"
+}
+```                            
+
+API Endpoint
+------
+
+The API endpoint address is based on the tenant name in Secure access
+cloud
+
+The format is as follows:
+```
+api.<tenant_name>.luminatesec.com
+```
+For example:  
+If the tenant name is "mycompany" the API endpoint address would be
+"api.mycompany.luminatesec.com"
+
+Authentication
+-------
+
+Authentication is done using an API Client credentials
+
+#### Authenticate using environment variables 
+
+**shell**
+```
+$ export LUMINATE_API_CLIENT_ID=123456789  
+$ export LUMINATE_API_CLIENT_SECRET=abcdefghijk
+```
+
+**main.<span></span>tf**
+```
+provider "luminate" {|
+    api_endpoint = "api.example.luminatesec.com"
+}
+```
+#### Authenticate using the provider block
+
+```
+provider "luminate" {
+  api_endpoint = "api.example.luminatesec.com"
+  api_client_id = "123456789"
+  api_client_secret = "abcdefghijk"
+}
+```
+  **Warning:** storing credentials in terraform files is not recommended and may lead to a secret leak in case the file is committed to a public repository
+
+------
+
+Provider usage example
+-----------
+
+This will create a site with one connector, web application and access
+policy
+
+```
+#Configure the provider
+provider "luminate" {
+  api_endpoint = "api.example.luminatesec.com"
+}
+
+#Create site
+resource "luminate_site" "site" {
+  name = "my-new-site"
+}
+
+#Create connector and bind to site "my-new-site"
+resource "luminate_connector" "connector" {
+  name = "connector-${luminate_site.site.name}"
+  site_id = "${luminate_site.site.id}"
+  type = "linux"
+}
+
+#Create web application
+resource "luminate_web_application" "nginx-app" {
+  name = "nginx"
+  site_id = "${luminate_site.site.id}"
+  internal_address = "http://127.0.0.1:8080"
+}
+
+#Retrieve the id of local IDP
+data "luminate_identity_provider" "idp" {
+  identity_provider_name = "local"
+}
+
+#Retrieve users from IDP
+data "luminate_user" "users" {
+  identity_provider_id = "${data.luminate_identity_provider.idp.identity_provider_id}"
+  users = ["local-user"]
+}
+
+#Create access policy and attach to application
+resource "luminate_web_access_policy" "nginx-access-policy" {
+  name = "nginx-access-policy"
+  identity_provider_id = "${data.luminate_identity_provider.idp.identity_provider_id}"
+  user_ids = [${data.luminate_user.users.user_ids}]
+  applications = [${luminate_web_application.nginx-app.id}]
+}
+
+#One time command to start the created connector
+output "run-command" {
+  value = "${luminate_connector.connector.command}"
+}
+```
+
+
+Migrating existing code to terraform 0.12
+---------------------
+
+Due to changes to HCL terraform code written for previous versions has
+to be converted to new language version.
+
+Terraform provides a built-in command to make the required changes.
+
+For more information and detailed instructions refer to:
+<https://www.terraform.io/upgrade-guides/0-12.html>
+
+Usage
+---
+```
+cd /terraform-repo
+terraform 0.12upgrade
+```
+
+**NOTE:** 0.12upgrade sub command will change code in-place overwriting existing files.
+
+# Core resources
+
+Re­­­source: luminate_site
+----------
+
+Provides secure access cloud site resource
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_site" "new-site" {
+  name = "my-new-site"
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the site
+
+-   **mute_health_notification** (Optional) Don't send notification
+    if the site is down
+
+-   **kubernetes_persistent_volume_name** (Optional) Kubernetes
+    persistent volume name - only relevant if running on top kubernetes
+
+-   **kerberos** - (Optional)
+
+    -   **domain** (Required) - Active Directory domain name you want
+        to SSO with.
+
+    -   **kdc_address** - (Required) - The hostname of the primary
+        domain controller.
+
+    -   **keytab_pair** - (Required) - The absolute path of the keytab
+        file
+
+  
+  **NOTE:** kerberos block is optional, but if specified all nested fields are required
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the site
+
+#### Import
+---
+```
+$ terraform import luminate_site.new-site site-id
+```
+
+Re­­­source: luminate_connector
+------------
+
+Provides secure access cloud connector resource
+
+­­­
+
+#### Example Usage
+```
+resource "luminate_connector" "connector" {
+  name = "connector-name"
+  site_id = "site-id"
+  type = "linux"
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the connector
+
+-   **site_id -** (Required) site id to attach the connector
+
+-   **type -** (Required) type of the connector. Valid types: **linux**
+    \| **kubernetes** \| **windows** \| **docker-compose**
+
+**NOTE:** Connector resource is immutable. Changing any of the arguments will trigger recreation
+
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the connector
+
+-   **command** - command for deploying Luminate connector
+
+-   **otp -** one time password for running Luminate connector
+
+Application Resources
+==========
+
+Re­­­source: luminate_web_application
+----------
+
+Provides Secure access cloud web application
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_web_application" "new-web-application" {
+  name = "web-application"
+  site_id = "site_id"
+  internal_address = "http://127.0.0.1:8080"
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the applications
+
+-   **site_id** - (Required) Site ID to which the application will be
+    bound
+
+-   **icon** - (Optional) Base64 representation of 40x40 icon
+
+-   **visible** - (Optional) Indicates whether to show this application
+    in the applications portal.
+
+-   **notification_enabled** - (Optional) Indicates whether
+    notifications are enabled for this application.
+
+-   **subdomain** - (Optional) The application DNS subdomain.
+
+-   **custom_external_address** - (Optional) The application custom
+    DNS address that exposes the application.
+
+-   **internal_address** - (Required) Internal address of the
+    application, accessable by connector
+
+-   **custom_root_path** - (Optional) Requests coming into the
+    external address root path \'/\', will be redirected to this custom
+    path instead.
+
+-   **health_url** - (Optional) Health check path. The URI is relative
+    to the external address.
+
+-   **health_method** - (Optional) HTTP method to validate application
+    health. Valid methods: GET \| HEAD
+
+-   **default_content_rewrite_rules_enabled** - (Optional)
+    Indicates whether to enable automatic translation of all occurrences
+    of the application internal address to its external address on most
+    prominent content types and relevant headers.
+
+-   **default_header_rewrite_rules_enabled** - (Optional) Indicates
+    whether to enable automatic translation of all occurrences of the
+    application internal address to its external address on relevant
+    headers.
+
+-   **use_external_address_for_host_and_sni** - (Optional)
+    Indicates whether to use external address for host header and SNI.
+
+-   **linked_applications** - (Optional) This property should be set
+    in a scenario where the defined application contains resources that
+    reference additional web applications by their internal domain name.
+
+-   **header_customization** - (Optional) Custom headers key:value
+    pairs to be added to all requests.
+
+#### Attribute Reference
+
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the application
+
+-   **external_address**
+
+-   **luminate_address**
+
+Re­­­source: luminate_ssh_application
+-------
+
+Provides Secure access cloud SSH application
+
+­­­
+
+#### Example Usage
+
+
+```
+resource "luminate_ssh_application" "new-ssh-application" {  
+    site_id = "site_id"
+    name = "ssh-applications"
+    internal_address = "tcp://127.0.0.1:22"
+}                                                   
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the applications
+
+-   **site_id** - (Required) Site ID to which the application will be
+    bound
+
+-   **icon** - (Optional) Base64 representation of 40x40 icon
+
+-   **visible** - (Optional) Indicates whether to show this application
+    in the applications portal.
+
+-   **notification_enabled** - (Optional) Indicates whether
+    notifications are enabled for this application.
+
+-   **subdomain** - (Optional) The application DNS subdomain.
+
+-   **custom_external_address** - (Optional) The application custom
+    DNS address that exposes the application.
+
+-   **internal_address** - (Required) Internal address of the
+    application, accessible by connector
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the application
+
+-   **external_address**
+
+-   **luminate_address**
+
+Re­­­source: luminate_rdp_application
+------
+
+Provides Secure access cloud RDP application
+
+­­
+#### Example Usage
+
+```
+resource "luminate_rdp_application" "new-rdp-application" {
+  site_id = "site_id"
+  name = "rdp-application"
+  internal_address = "tcp://127.0.0.1"
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the applications
+
+-   **site_id** - (Required) Site ID to which the application will be
+    bound
+
+-   **icon** - (Optional) Base64 representation of 40x40 icon
+
+-   **visible** - (Optional) Indicates whether to show this application
+    in the applications portal.
+
+-   **notification_enabled** - (Optional) Indicates whether
+    notifications are enabled for this application.
+
+-   **subdomain** - (Optional) The application DNS subdomain.
+
+-   **custom_external_address** - (Optional) The application custom
+    DNS address that exposes the application.
+
+-   **internal_address** - (Required) Internal address of the
+    application, accessible by connector
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the application
+
+-   **external_address**
+
+-   **luminate_address**
+
+Re­­­source: luminate_tcp_application
+-----------
+
+Provides Secure access cloud TCP application
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_tcp_application" "new-tcp-application" {
+  name = "tcp-application"
+  site_id = "site-id"
+  target {
+    address = "127.0.0.1"
+    ports = ["8080"]
+  }
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the applications
+
+-   **site_id** - (Required) Site ID to which the application will be
+    bound
+
+-   **icon** - (Optional) Base64 representation of 40x40 icon
+
+-   **visible** - (Optional) Indicates whether to show this application
+    in the applications portal.
+
+-   **notification_enabled** - (Optional) Indicates whether
+    notifications are enabled for this application.
+
+-   **subdomain** - (Optional) The application DNS subdomain.
+
+-   **custom_external_address** - (Optional) The application custom
+    DNS address that exposes the application.
+
+-   **target** - (Required) - list of TCP application targets
+
+    -   **address** - (Required) application target address.
+
+    -   **ports** - (Required) list of forwarded ports.
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the application
+
+-   external_address
+
+-   luminate_address
+
+Re­­­source: luminate_ssh_gw_application
+------------
+
+Provides Secure access cloud SSH GW application
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_ssh_gw_application" "new-sshgw-access" {  
+  site_id = "site_id"
+  name = "sshgw-application"
+
+  integration_id = "integration_id",
+
+  tags {
+    Type = "ssh-gw-demo"
+  }
+
+  vpc {
+    region = "eu-west-1"
+    cidr_block = "172.31.0.0/16"
+    vpc_id = "vpc-123456789"
+  }
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the applications
+
+-   **site_id** - (Required) Site ID to which the application will be
+    bound
+
+-   **icon** - (Optional) Base64 representation of 40x40 icon
+
+-   **visible** - (Optional) Indicates whether to show this application
+    in the applications portal.
+
+-   **notification_enabled** - (Optional) Indicates whether
+    notifications are enabled for this application.
+
+-   **subdomain** - (Optional) The application DNS subdomain.
+
+-   **custom_external_address** - (Optional) The application custom
+    DNS address that exposes the application.
+
+-   **internal_address** - (Required) Internal address of the
+    application, accessible by connector
+
+-   **integration_id** - (Required) integration id used to setup the
+    ssh gw application
+
+-   **tags** - (Required) a map of tags used to determine which
+    machines is included as part of this ssh gw
+
+-   **vpc** - (Required) A list of vpc definitions used to determine
+    the target group to include as part of the ssh gw application
+
+    -   **vpc_id** - (Required) - the vpc id of the vpc containing
+        target machines
+
+    -   **region** - (Required) - the region containing the target
+        machines
+
+    -   **cidr_block** - (Required) - the cidr block of the machines
+        to include
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the application
+
+-   **segment_id**
+
+-   **external_address**
+
+-   **luminate_address**
+
+Policy resources
+============
+
+Re­­­source: luminate_rdp_access_policy
+---------------
+
+Provides Secure access cloud RDP access policy
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
+  name =  "my-rdp-access-policy"
+
+  identity_provider_id = "identity_provider_id"
+  user_ids = ["user1_id", "user2_id"]
+  group_ids = ["group1_id", "group2_id"]
+
+  applications = ["application1_id","application2_id"]
+
+  validators = {
+    web_verification = true
+  }
+
+  conditions = {
+    source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
+    location = ["Wallis and Futuna"]
+  }
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the policy
+
+-   **enabled -** (Optional) Indicates whether this policy is enabled.
+
+-   **identity_provider_id -** (Optional) The identity provider id
+
+-   **user_ids -** (Optional) The user entities to which this policy
+    applies.
+
+-   **group_ids -** (Optional) The group entities to which this policy
+    applies.
+
+-   **applications** - (Required) The applications to which this policy
+    applies.
+
+-   **validators** - (Optional)
+
+    -   **web_verification** - (Optional) Indicate whatever to perform
+        web verification validation. not compatible for HTTP
+        applications
+
+-   **conditions** - (Optional)
+
+    -   **location** - (Optional) - location based condition, specify
+        the list of accepted locations.
+
+    -   **source_ip** - (Optional) - source ip based condition, specify
+        the allowed CIDR for this policy.
+
+-   **allow_long_term_password** - (Optional) Indicates whether to
+    allow long term password.
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the policy
+
+Re­­­source: luminate_ssh_access_policy
+------------
+
+Provides Secure access cloud SSH access policy
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
+  name =  "my-ssh-access-policy"
+
+  identity_provider_id = "identity_provider_id"
+  user_ids = ["user1_id", "user2_id"]
+  group_ids = ["group1_id", "group2_id"]
+
+  applications = ["application1_id","application2_id"]
+  accounts = ["ubuntu", "ec2-user"]
+  allow_temporary_token = true
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the policy
+
+-   **enabled -** (Optional) Indicates whether this policy is enabled.
+
+-   **identity_provider_id -** (Optional) The identity provider id
+
+-   **user_ids -** (Optional) The user entities to which this policy
+    applies.
+
+-   **group_ids -** (Optional) The group entities to which this policy
+    applies.
+
+-   **applications** - (Required) The applications to which this policy
+    applies.
+
+-   **accounts** - (Required) SSH/Unix accounts with which IDP entities
+    and/or Luminate local users can access the SSH Server
+
+-   **use_auto_mapping** - (Optional) Determine the strategy for
+    mapping IDP entities to SSH/Unix accounts, and specifically indicate
+    whether automatic mapping based on the logged-in IDP entity username
+    is allowed. In case this property is set to TRUE, manually entered
+    SSH accounts are ignored. This property is relevant for SSH
+    applications only
+
+-   **allow_agent_forwarding** - (Optional) Indicates whether SSH
+    agent forwarding is allowed for a transparent secure access to all
+    corporate SSH Servers via this SSH application that acts a Bastion.
+    This property is relevant for SSH applications only.
+
+-   **allow_temporary_token** - (Optional) Indication whether
+    authentication using a temporary token is allowed.
+
+-   **allow_public_key** - (Optional) Indication whether
+    authentication using long term secret is allowed.
+
+-   **validators** - (Optional)
+
+    -   **web_verification** - (Optional) Indicate whatever to perform
+        web verification validation. not compatible for HTTP
+        applications
+
+-   **conditions** - (Optional)
+
+    -   **location** - (Optional) - location based condition, specify
+        the list of accepted locations.
+
+    -   **source_ip** - (Optional) - source ip based condition, specify
+        the allowed CIDR for this policy.
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the policy
+
+Re­­­source: luminate_web_access_policy
+---------
+
+Provides Secure access cloud SSH access policy
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_web_access_policy" "new-web-access-policy" {
+  name =  "my-web-access-policy"
+
+  identity_provider_id = "identity_provider_id"
+  user_ids = ["user1_id", "user2_id"]
+  group_ids = ["group1_id", "group2_id"]
+
+  applications = ["application1_id","application2_id"]
+  
+  conditions = {
+    source_ip = ["127.0.0.1/24", "1.1.1.1/16", "8.8.8.8/24"]
+    location = ["Wallis and Futuna"]
+
+    managed_device = {
+      symantec_cloudsoc = true
+      symantec_web_security_service = false
+    }
+  }
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the policy
+
+-   **enabled -** (Optional) Indicates whether this policy is enabled.
+
+-   **identity_provider_id -** (Optional) The identity provider id
+
+-   **user_ids -** (Optional) The user entities to which this policy
+    applies.
+
+-   **group_ids -** (Optional) The group entities to which this policy
+    applies.
+
+-   **applications** - (Required) The applications to which this policy
+    applies.
+
+-   **accounts** - (Required) SSH/Unix accounts with which IDP entities
+    and/or Luminate local users can access the SSH Server
+
+-   **validators** - (Optional)
+
+    -   **web_verification** - (Optional) Indicate whatever to perform
+        web verification validation. not compatible for HTTP
+        applications
+
+-   **conditions** - (Optional)
+
+    -   **location** - (Optional) - location based condition, specify
+        the list of accepted locations.
+
+    -   **source_ip** - (Optional) - source ip based condition, specify
+        the allowed CIDR for this policy.
+
+    -   **managed_device** - (Optional) Indicate whatever to restrict
+        access to managed devices only
+
+        -   **opswat** - (Optional) Indicate whatever to restrict
+            access to Opswat MetaAccess
+
+        -   **symantec_cloudsoc** - (Optional) Indicate whatever to
+            restrict access to symantec cloudsoc
+
+        -   **symantec_web_security_service** - (Optional) Indicate
+            whatever to restrict access to symantec web security service
+
+    -   **unmanaged_device** - (Optional) Indicate whatever to
+        restrict access to unmanaged devices only
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the policy
+
+Re­­­source: luminate_tcp_access_policy
+---------
+
+Provides Secure access cloud TCP access policy
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
+  name =  "my-tcp-access-policy"
+
+  identity_provider_id = "identity_provider_id"
+  user_ids = ["user1_id", "user2_id"]
+  group_ids = ["group1_id", "group2_id"]
+
+  applications = ["application1_id","application2_id"]
+  accounts = ["ubuntu", "ec2-user"]
+  allow_temporary_token = true
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the policy
+
+-   **enabled -** (Optional) Indicates whether this policy is enabled.
+
+-   **identity_provider_id -** (Optional) The identity provider id
+
+-   **user_ids -** (Optional) The user entities to which this policy
+    applies.
+
+-   **group_ids -** (Optional) The group entities to which this policy
+    applies.
+
+-   **applications** - (Required) The applications to which this policy
+    applies.
+
+-   **allow_temporary_token** - (Optional) Indication whether
+    authentication using a temporary token is allowed.
+
+-   **allow_public_key** - (Optional) Indication whether
+    authentication using long term secret is allowed.
+
+-   **validators** - (Optional)
+
+    -   **web_verification** - (Optional) Indicate whatever to perform
+        web verification validation. not compatible for HTTP
+        applications
+
+-   **conditions** - (Optional)
+
+    -   **location** - (Optional) - location based condition, specify
+        the list of accepted locations.
+
+    -   **source_ip** - (Optional) - source ip based condition, specify
+        the allowed CIDR for this policy.
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the policy
+
+Data sources
+==========
+
+Data source: luminate_identity_provider
+-----------
+
+Use this resource to get an existing identity provider
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_identity_provider" "my-identity-provider" {
+  identity_provider_name = "local"
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **identity_provider_name -** (Required) name of the identity
+    provider
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **identity_provider_id** - id of the identity provider
+
+Data Source: luminate_user
+-------------
+
+Use this resource to get one or more existing users
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_user" "my-users" {
+  identity_provider_id = "identity_provider_id"
+  users = ["user1@example.com", "user2@example.com"]
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **identity_provider_id -** (Required) id of the identity provider
+
+-   **users -** (Required) List of user names to retrieve
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **user_ids** - list of retrieved users ids
+
+Data source: luminate_group
+-----------
+
+Use this resource to get one or more existing groups
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_group" "my-groups" {
+  identity_provider_id = "identity_provider_id"
+  users = ["group1", "group2"]
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **identity_provider_id -** (Required) id of the identity provider
+
+-   **groups -** (Required) List of group names to retrieve
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **group_ids** - list of retrieved groups ids
+
+Data source: luminate_aws_integration
+------------
+
+Use this resource to retrieve an existing AWS integration
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_aws_integration" "my-integration" {
+  integration_name = "integration_name"
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **integration_name -** (Required) name of an existing AWS
+    integration
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **integration_id** - id of retrieved AWS integration
