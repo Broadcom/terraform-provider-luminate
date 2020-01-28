@@ -1,0 +1,150 @@
+package dto
+
+import "time"
+
+type Site struct {
+	ID         string
+	Name       string
+	MuteHealth bool
+	K8SVolume  string
+	Kerberos   *SiteKerberosConfig
+	Connectors []Connector
+}
+
+type SiteKerberosConfig struct {
+	Domain     string
+	KDCAddress string
+	KeytabPair string
+}
+
+type Connector struct {
+	ID        string
+	Name      string
+	Type      string
+	Enabled   bool
+	Command   string
+	K8SVolume string
+	SiteID    string
+	OTP       string
+}
+type Vpc struct {
+	IntegrationId string
+	Region        string
+	Vpc           string
+	CidrBlock     string
+}
+
+type CloudIntegrationData struct {
+	Tags      map[string]string
+	SegmentId string
+	Vpcs      []Vpc
+}
+
+type Application struct {
+	ID                    string
+	Name                  string
+	SiteID                string
+	Type                  string
+	Icon                  string
+	Visible               bool
+	NotificationsEnabled  bool
+	InternalAddress       string
+	ExternalAddress       string
+	LuminateAddress       string
+	Subdomain             string
+	CustomExternalAddress string
+	//HTTP
+	CustomRootPath                    string
+	HealthURL                         string
+	HealthMethod                      string
+	DefaultContentRewriteRulesEnabled bool
+	DefaultHeaderRewriteRulesEnabled  bool
+	UseExternalAddressForHostAndSni   bool
+	LinkedApplications                []*string
+	HeaderCustomization               map[string]interface{}
+	// SSH-GW
+	CloudIntegrationData *CloudIntegrationData
+	//TCP
+	Targets []TCPTarget
+}
+
+type TCPTarget struct {
+	Address string
+	Ports   []int32
+}
+
+type Validators struct {
+	ComplianceCheck bool
+	WebVerification bool
+}
+
+type ManagedDevice struct {
+	OpswatMetaAccess           bool
+	SymantecCloudSoc           bool
+	SymantecWebSecurityService bool
+}
+type Conditions struct {
+	SourceIp        []string
+	Location        []string
+	ManagedDevice   ManagedDevice
+	UnmanagedDevice bool
+}
+
+const (
+	IpUuid            = "IP_LIST"
+	CountriesUuid     = "COUNTRIES"
+	ManagedDeviceUuid = "AUTHENTICATION"
+)
+
+const (
+	ValidatorComplianceCheck = "VALIDATOR_COMPLIANCE_CHECK"
+	ValidatorWebVerification = "VALIDATOR_WEB_VERIFICATION"
+)
+
+const (
+	IpCondition                            = "IP_CONDITION"
+	LocationRestrictionCondition           = "LOCATION_RESTRICTION"
+	ManagedDeviceCondition                 = "IS_DEVICE_COMPLIANCE"
+	ManagedDeviceCloudSocConditionArgument = "CloudSOC"
+	ManagedDeviceOpswatConditionArgument   = "OPSWAT"
+	ManagedDeviceWssConditionArgument      = "IsWSSIp"
+	UnmanagedDeviceCondition               = "IS_NOT_WSS_IP"
+)
+
+type AccessPolicy struct {
+	TargetProtocol    string
+	Id                string
+	Enabled           bool
+	CreatedAt         time.Time
+	Name              string
+	DirectoryEntities []DirectoryEntity
+	Applications      []string
+	Conditions        *Conditions
+	Validators        *Validators
+	RdpSettings       *PolicyRdpSettings
+	SshSettings       *PolicySshSettings
+	TcpSettings       *PolicyTcpSettings
+}
+
+type DirectoryEntity struct {
+	IdentifierInProvider string
+	IdentityProviderId   string
+	EntityType           string
+}
+
+type PolicyRdpSettings struct {
+	LongTermPassword bool
+}
+
+type PolicySshSettings struct {
+	Accounts             []string
+	AutoMapping          bool
+	AgentForward         bool
+	AcceptTemporaryToken bool
+	AcceptCertificate    bool
+}
+
+type PolicyTcpSettings struct {
+	AcceptTemporaryToken bool
+	AcceptCertificate    bool
+}

@@ -1,0 +1,44 @@
+version: 2
+jobs:
+  validate-release:
+    docker:
+      - image: circleci/golang:1.13.6
+    steps:
+      - checkout
+      - run: .circleci/validate-release.sh
+  test:
+    docker:
+      - image: circleci/golang:1.13.6
+    steps:
+      - checkout
+      - run: make testacc
+  release:
+    docker:
+      - image: circleci/golang:1.13.6
+    steps:
+      - checkout
+      - run: make
+      - run: bash .circleci/github-release.sh
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - validate-release:
+          context: terraform-release
+          filters:
+            branches:
+              only: master
+      - test:
+          context: terraform-acceptance
+          filters:
+            branches:
+              only: master
+          requires:
+            - validate-release
+      - release:
+          context: terraform-release
+          filters:
+            branches:
+              only: master
+          requires:
+            - test
