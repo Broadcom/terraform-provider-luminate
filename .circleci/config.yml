@@ -1,29 +1,67 @@
-version: 2
-jobs:
+version: 2.1
+commands:
+  persist-env:
+    steps:
+      - run: cat ${BASH_ENV} >> /tmp/.env
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - .env
+  attach-env:
+    steps:
+      - attach_workspace:
+          at: /tmp
+      - run: cat /tmp/.env >> ${BASH_ENV}
+
+  check-skip:
+    steps:
+      - run: if [[ $SKIP == true ]]; then circleci step halt;fi
+
   validate-release:
+    steps:
+      - run:
+          command: |
+            set +o errexit
+            git diff --name-only HEAD~ HEAD | grep go$
+            if [[ $? == 0 ]]
+            then
+              echo 'export SKIP=false' >> ${BASH_ENV}
+              .circleci/validate-version.sh
+            else
+              echo 'export SKIP=true' >> ${BASH_ENV}
+            fi
+
+jobs:
+  validate:
     docker:
       - image: circleci/golang:1.13.6
     steps:
       - checkout
-      - run: .circleci/validate-release.sh
+      - validate-release
+      - persist-env
   test:
     docker:
       - image: circleci/golang:1.13.6
     steps:
+      - attach-env
+      - check-skip
       - checkout
       - run: make testacc
   release:
     docker:
       - image: circleci/golang:1.13.6
     steps:
+      - attach-env
+      - check-skip
       - checkout
       - run: make
       - run: bash .circleci/github-release.sh
+
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - validate-release:
+      - validate:
           context: terraform-release
           filters:
             branches:
@@ -34,7 +72,7 @@ workflows:
             branches:
               only: master
           requires:
-            - validate-release
+            - validate
       - release:
           context: terraform-release
           filters:
