@@ -27,6 +27,7 @@
 [Application Resources](#application-resources)
 - [Resource: luminate_web_application](#resource-luminate_web_application)
 - [Resource: luminate_ssh_application](#resource-luminate_ssh_application)
+- [Resource: luminate_rdp_application](#resource-luminate_rdp_application)
 - [Resource: luminate_tcp_application](#resource-luminate_tcp_application)
 - [Resource: luminate_ssh_gw_application](#resource-luminate_ssh_gw_application)
 
@@ -235,7 +236,6 @@ In addition to arguments above, the following attributes are exported:
 -   **id** - id of the site
 
 #### Import
----
 ```
 $ terraform import luminate_site.new-site site-id
 ```
@@ -280,6 +280,12 @@ In addition to arguments above, the following attributes are exported:
 
 -   **otp -** one time password for running Luminate connector
 
+#### Import
+
+```
+$ terraform import luminate_connector.connector connector_id
+```
+
 Application Resources
 ==========
 
@@ -288,8 +294,7 @@ Re­­­source: luminate_web_application
 
 Provides Secure access cloud web application
 
-­­­
-
+­
 #### Example Usage
 
 ```
@@ -366,6 +371,12 @@ In addition to arguments above, the following attributes are exported:
 
 -   **luminate_address**
 
+#### Import
+
+```
+$ terraform import luminate_web_application.new-web-application application_id
+```
+
 Re­­­source: luminate_ssh_application
 -------
 
@@ -419,6 +430,13 @@ In addition to arguments above, the following attributes are exported:
 
 -   **luminate_address**
 
+#### Import
+
+```
+$ terraform import luminate_ssh_application.new-ssh-application  application_id
+```
+
+
 Re­­­source: luminate_rdp_application
 ------
 
@@ -469,6 +487,12 @@ In addition to arguments above, the following attributes are exported:
 -   **external_address**
 
 -   **luminate_address**
+
+#### Import
+
+```
+$ terraform import luminate_rdp_application.new-rdp-application application_id
+```
 
 Re­­­source: luminate_tcp_application
 -----------
@@ -527,6 +551,13 @@ In addition to arguments above, the following attributes are exported:
 -   external_address
 
 -   luminate_address
+
+
+#### Import
+
+```
+$ terraform import luminate_tcp_application.new-tcp-application  application_id
+```
 
 Re­­­source: luminate_ssh_gw_application
 ------------
@@ -610,6 +641,12 @@ In addition to arguments above, the following attributes are exported:
 
 -   **luminate_address**
 
+#### Import
+
+```
+$ terraform import luminate_ssh_gw_application.new-sshgw-access  application_id
+```
+
 Policy resources
 ============
 
@@ -684,6 +721,12 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **id** - id of the policy
+
+#### Import
+
+```
+$ terraform import luminate_rdp_access_policy.new-rdp-access-policy  policy_id
+```
 
 Re­­­source: luminate_ssh_access_policy
 ------------
@@ -766,6 +809,12 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **id** - id of the policy
+
+#### Import
+
+```
+$ terraform import luminate_ssh_access_policy.new-ssh-access-policy  policy_id
+```
 
 Re­­­source: luminate_web_access_policy
 ---------
@@ -854,6 +903,12 @@ In addition to arguments above, the following attributes are exported:
 
 -   **id** - id of the policy
 
+#### Import
+
+```
+$ terraform import luminate_web_access_policy.new-web-access-policy  policy_id
+```
+
 Re­­­source: luminate_tcp_access_policy
 ---------
 
@@ -921,6 +976,12 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **id** - id of the policy
+
+#### Import
+
+```
+$ terraform import luminate_tcp_access_policy.new-tcp-access-policy  policy_id
+```
 
 Data sources
 ==========
