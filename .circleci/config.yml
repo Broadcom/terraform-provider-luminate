@@ -26,7 +26,7 @@ commands:
             if [[ $? == 0 ]]
             then
               echo 'export SKIP=false' >> ${BASH_ENV}
-              .circleci/validate-version.sh
+              .circleci/validate-release.sh
             else
               echo 'export SKIP=true' >> ${BASH_ENV}
             fi
