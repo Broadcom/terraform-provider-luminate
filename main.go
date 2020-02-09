@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"bitbucket.org/accezz-io/terraform-provider-symcsc/provider"
 	"github.com/hashicorp/terraform/plugin"
