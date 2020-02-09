@@ -37,7 +37,7 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Elem: &schema.Schema{
 				Type:         schema.TypeString,
-				ValidateFunc: utils.ValidateUuid,
+				ValidateFunc: utils.ValidateString,
 			},
 		},
 		"group_ids": {
@@ -46,7 +46,7 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Elem: &schema.Schema{
 				Type:         schema.TypeString,
-				ValidateFunc: utils.ValidateUuid,
+				ValidateFunc: utils.ValidateString,
 			},
 		},
 		"applications": {
