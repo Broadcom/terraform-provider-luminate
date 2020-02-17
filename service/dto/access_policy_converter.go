@@ -60,8 +60,6 @@ func FromModelType(modelType sdk.ModelType) string {
 		return "User"
 	case sdk.GROUP_ModelType:
 		return "Group"
-	case sdk.OU_ModelType:
-		return "OU"
 	case sdk.API_CLIENT_ModelType:
 		return "ApiClient"
 	}
@@ -77,8 +75,6 @@ func ToModelType(entityType string) *sdk.ModelType {
 		modelType = sdk.USER_ModelType
 	case "Group":
 		modelType = sdk.GROUP_ModelType
-	case "OU":
-		modelType = sdk.OU_ModelType
 	case "ApiClient":
 		modelType = sdk.API_CLIENT_ModelType
 	}

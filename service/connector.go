@@ -20,11 +20,7 @@ func NewConnectorsAPI(client *sdk.APIClient) *ConnectorsAPI {
 }
 
 func (api *ConnectorsAPI) GetConnectorByID(connectorID string) (*dto.Connector, error) {
-	con, resp, err := api.cli.ConnectorsApi.ConnectorsByConnectorIdGet(context.Background(), connectorID)
-
-	if con.DeploymentType == nil {
-		return nil, nil
-	}
+	con, resp, err := api.cli.ConnectorsApi.GetConnector(context.Background(), connectorID)
 
 	if resp != nil && resp.StatusCode == 404 {
 		return nil, nil
@@ -32,6 +28,10 @@ func (api *ConnectorsAPI) GetConnectorByID(connectorID string) (*dto.Connector, 
 
 	if err != nil {
 		return nil, err
+	}
+
+	if con.DeploymentType == nil {
+		return nil, nil
 	}
 
 	return &dto.Connector{
@@ -54,11 +54,11 @@ func (api *ConnectorsAPI) CreateConnector(connector *dto.Connector, siteID strin
 		KubernetesPersistentVolumeName: connector.K8SVolume,
 	}
 
-	conOpt := sdk.ConnectorsPostOpts{
+	conOpt := sdk.CreateConnectorOpts{
 		Body: optional.NewInterface(conOptBody),
 	}
 
-	nCon, resp, err := api.cli.ConnectorsApi.ConnectorsPost(context.Background(), siteID, &conOpt)
+	nCon, resp, err := api.cli.ConnectorsApi.CreateConnector(context.Background(), siteID, &conOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func (api *ConnectorsAPI) CreateConnector(connector *dto.Connector, siteID strin
 }
 
 func (api *ConnectorsAPI) DeleteConnector(connectorID string) error {
-	resp, err := api.cli.ConnectorsApi.ConnectorsByConnectorIdDelete(context.Background(), connectorID)
+	resp, err := api.cli.ConnectorsApi.DeleteConnector(context.Background(), connectorID)
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func (api *ConnectorsAPI) DeleteConnector(connectorID string) error {
 }
 
 func (api *ConnectorsAPI) GetConnectorCommand(connectorID string) (string, error) {
-	cmd, resp, err := api.cli.ConnectorsApi.ConnectorsCommandByConnectorIdGet(context.Background(), connectorID)
+	cmd, resp, err := api.cli.ConnectorsApi.GetConnectorCommand(context.Background(), connectorID)
 	if err != nil {
 		return "", err
 	}

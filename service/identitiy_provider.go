@@ -18,7 +18,7 @@ func NewIdentityProviderAPI(client *sdk.APIClient) *IdentityProviderAPI {
 }
 
 func (u *IdentityProviderAPI) GetIdentityProviderId(identityProviderName string) (string, error) {
-	directoryProviders, _, err := u.cli.IdentityProvidersApi.IdentitiesSettingsIdentityProvidersGet(context.Background(), &sdk.IdentitiesSettingsIdentityProvidersGetOpts{IncludeLocal: optional.NewBool(true)})
+	directoryProviders, _, err := u.cli.IdentityProvidersApi.ListIdentityProviders(context.Background(), &sdk.ListIdentityProvidersOpts{IncludeLocal: optional.NewBool(true)})
 	if err != nil {
 		return "", err
 	}

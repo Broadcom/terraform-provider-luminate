@@ -19,27 +19,27 @@ func NewAccessPolicyAPI(client *sdk.APIClient) *AccessPolicyAPI {
 func (api *AccessPolicyAPI) CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
 	accessPolicyDto := dto.ConvertToDto(accessPolicy)
 
-	accessPolicyInterface, _, err := api.cli.PoliciesApi.V2PoliciesPost(context.Background(), accessPolicyDto)
+	accessPolicyInterface, _, err := api.cli.AccessAndActivityPoliciesPreviewApi.CreatePolicy(context.Background(), accessPolicyDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return dto.ConvertFromDto(accessPolicyInterface), nil
+	return dto.ConvertFromDto(accessPolicyInterface.(sdk.PolicyAccess)), nil
 }
 
 func (api *AccessPolicyAPI) UpdateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
 	accessPolicyDto := dto.ConvertToDto(accessPolicy)
 
-	accessPolicyInterface, _, err := api.cli.PoliciesApi.V2PoliciesByPolicyIdPut(context.Background(), accessPolicy.Id, accessPolicyDto)
+	accessPolicyInterface, _, err := api.cli.AccessAndActivityPoliciesPreviewApi.UpdatePolicy(context.Background(), accessPolicy.Id, accessPolicyDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return dto.ConvertFromDto(accessPolicyInterface), nil
+	return dto.ConvertFromDto(accessPolicyInterface.(sdk.PolicyAccess)), nil
 }
 
 func (api *AccessPolicyAPI) GetAccessPolicy(policyId string) (*dto.AccessPolicy, error) {
-	accessPolicyInterface, resp, err := api.cli.PoliciesApi.V2PoliciesByPolicyIdGet(context.Background(), policyId)
+	accessPolicyInterface, resp, err := api.cli.AccessAndActivityPoliciesPreviewApi.GetPolicy(context.Background(), policyId)
 	if err != nil {
 		if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 500) {
 			return nil, nil
@@ -48,11 +48,11 @@ func (api *AccessPolicyAPI) GetAccessPolicy(policyId string) (*dto.AccessPolicy,
 		return nil, err
 	}
 
-	return dto.ConvertFromDto(accessPolicyInterface), nil
+	return dto.ConvertFromDto(accessPolicyInterface.(sdk.PolicyAccess)), nil
 }
 
 func (api *AccessPolicyAPI) DeleteAccessPolicy(policyId string) error {
-	_, err := api.cli.PoliciesApi.V2PoliciesByPolicyIdDelete(context.Background(), policyId)
+	_, err := api.cli.AccessAndActivityPoliciesPreviewApi.DeletePolicy(context.Background(), policyId)
 	if err != nil {
 		return err
 	}

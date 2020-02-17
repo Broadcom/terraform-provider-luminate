@@ -18,7 +18,7 @@ func NewUserAPI(client *sdk.APIClient) *UserAPI {
 }
 
 func (u *UserAPI) GetUserId(identityProviderId string, email string) (string, error) {
-	userPage, _, err := u.cli.UsersApi.IdentitiesUsersByIdentityProviderIdGet(context.Background(), identityProviderId, &sdk.IdentitiesUsersByIdentityProviderIdGetOpts{Email: optional.NewString(email)})
+	userPage, _, err := u.cli.UsersApi.SearchUsersbyIdp(context.Background(), identityProviderId, &sdk.SearchUsersbyIdpOpts{Email: optional.NewString(email)})
 	if err != nil {
 		return "", err
 	}
