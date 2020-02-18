@@ -10,7 +10,6 @@ import (
 	"log"
 )
 
-
 type ApplicationAPI struct {
 	cli *sdk.APIClient
 }
