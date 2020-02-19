@@ -4,6 +4,7 @@ import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/dto"
 	"context"
+	"encoding/json"
 )
 
 type AccessPolicyAPI struct {
@@ -19,27 +20,37 @@ func NewAccessPolicyAPI(client *sdk.APIClient) *AccessPolicyAPI {
 func (api *AccessPolicyAPI) CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
 	accessPolicyDto := dto.ConvertToDto(accessPolicy)
 
-	accessPolicyInterface, _, err := api.cli.AccessAndActivityPoliciesPreviewApi.CreatePolicy(context.Background(), accessPolicyDto)
+	createdAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesPreviewApi.CreatePolicy(context.Background(), accessPolicyDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return dto.ConvertFromDto(accessPolicyInterface.(sdk.PolicyAccess)), nil
+	createdAccessPolicyDto, err := api.convertAccessPolicyAsMapToAccessPolicyDto(createdAccessPolicyDtoAsMap)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.ConvertFromDto(createdAccessPolicyDto), nil
 }
 
 func (api *AccessPolicyAPI) UpdateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
 	accessPolicyDto := dto.ConvertToDto(accessPolicy)
 
-	accessPolicyInterface, _, err := api.cli.AccessAndActivityPoliciesPreviewApi.UpdatePolicy(context.Background(), accessPolicy.Id, accessPolicyDto)
+	updatedAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesPreviewApi.UpdatePolicy(context.Background(), accessPolicy.Id, accessPolicyDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return dto.ConvertFromDto(accessPolicyInterface.(sdk.PolicyAccess)), nil
+	updatedAccessPolicyDto, err := api.convertAccessPolicyAsMapToAccessPolicyDto(updatedAccessPolicyDtoAsMap)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.ConvertFromDto(updatedAccessPolicyDto), nil
 }
 
 func (api *AccessPolicyAPI) GetAccessPolicy(policyId string) (*dto.AccessPolicy, error) {
-	accessPolicyInterface, resp, err := api.cli.AccessAndActivityPoliciesPreviewApi.GetPolicy(context.Background(), policyId)
+	retrievedAccessPolicyDtoAsMap, resp, err := api.cli.AccessAndActivityPoliciesPreviewApi.GetPolicy(context.Background(), policyId)
 	if err != nil {
 		if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 500) {
 			return nil, nil
@@ -48,7 +59,12 @@ func (api *AccessPolicyAPI) GetAccessPolicy(policyId string) (*dto.AccessPolicy,
 		return nil, err
 	}
 
-	return dto.ConvertFromDto(accessPolicyInterface.(sdk.PolicyAccess)), nil
+	retrievedAccessPolicyDto, err := api.convertAccessPolicyAsMapToAccessPolicyDto(retrievedAccessPolicyDtoAsMap)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.ConvertFromDto(retrievedAccessPolicyDto), nil
 }
 
 func (api *AccessPolicyAPI) DeleteAccessPolicy(policyId string) error {
@@ -58,4 +74,22 @@ func (api *AccessPolicyAPI) DeleteAccessPolicy(policyId string) error {
 	}
 
 	return nil
+}
+
+func (api *AccessPolicyAPI) convertAccessPolicyAsMapToAccessPolicyDto(accessPolicyDtoAsMap interface{}) (sdk.PolicyAccess, error) {
+
+	// Convert the map of interfaces to string
+	jsonString, err := json.Marshal(accessPolicyDtoAsMap)
+	if err != nil {
+		return sdk.PolicyAccess{}, err
+	}
+
+	// Use json unmarshal to convert the string  the struct
+	accessPolicyDto := sdk.PolicyAccess{}
+	err = json.Unmarshal(jsonString, &accessPolicyDto)
+	if err != nil {
+		return sdk.PolicyAccess{}, err
+	}
+
+	return accessPolicyDto, nil
 }

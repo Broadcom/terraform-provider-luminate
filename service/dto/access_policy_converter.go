@@ -152,6 +152,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 				ConditionDefinitionId: IpCondition,
 				Arguments: map[string]interface{}{
 					IpUuid: accessPolicy.Conditions.SourceIp,
+					SharedIpListUuid: accessPolicy.Conditions.SharedIpList,
 				},
 			})
 		}
@@ -272,6 +273,12 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 			if filterCondition.ConditionDefinitionId == IpCondition {
 				for _, ipCondition := range filterCondition.Arguments[IpUuid].([]interface{}) {
 					conditions.SourceIp = append(conditions.SourceIp, ipCondition.(string))
+				}
+
+				if _, ok := filterCondition.Arguments[SharedIpListUuid]; ok {
+					for _, sharedIpListCondition := range filterCondition.Arguments[SharedIpListUuid].([]interface{}) {
+						conditions.SharedIpList = append(conditions.SharedIpList, sharedIpListCondition.(string))
+					}
 				}
 			}
 

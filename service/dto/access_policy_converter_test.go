@@ -70,7 +70,6 @@ func TestFromModalType(t *testing.T) {
 	}{
 		{"ApiClient", sdk.API_CLIENT_ModelType, "ApiClient"},
 		{"Group", sdk.GROUP_ModelType, "Group"},
-		{"OU", sdk.OU_ModelType, "OU"},
 		{"User", sdk.USER_ModelType, "User"},
 	}
 	for _, test := range tests {
@@ -88,7 +87,6 @@ func TestToModalType(t *testing.T) {
 	}{
 		{"ApiClient", sdk.API_CLIENT_ModelType, "ApiClient"},
 		{"Group", sdk.GROUP_ModelType, "Group"},
-		{"OU", sdk.OU_ModelType, "OU"},
 		{"User", sdk.USER_ModelType, "User"},
 		{"Unknown", "", "Unknown"},
 	}

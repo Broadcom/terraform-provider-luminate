@@ -21,14 +21,14 @@ All URIs are relative to *https://api.acme.luminatesec.com/v2*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*AccessAndActivityPoliciesPreviewApi* | [**CreatePolicy**](docs/AccessAndActivityPoliciesPreviewApi.md#createpolicy) | **Post** /v2/policies | createPolicy
-*AccessAndActivityPoliciesPreviewApi* | [**DeletePolicy**](docs/AccessAndActivityPoliciesPreviewApi.md#deletepolicy) | **Delete** /v2/policies/{policy-id} | Delete Policy
-*AccessAndActivityPoliciesPreviewApi* | [**GetAllPolicies**](docs/AccessAndActivityPoliciesPreviewApi.md#getallpolicies) | **Get** /v2/policies | getAllPolicies
-*AccessAndActivityPoliciesPreviewApi* | [**GetPolicy**](docs/AccessAndActivityPoliciesPreviewApi.md#getpolicy) | **Get** /v2/policies/{policy-id} | Get Policy
-*AccessAndActivityPoliciesPreviewApi* | [**GetSupportedActions**](docs/AccessAndActivityPoliciesPreviewApi.md#getsupportedactions) | **Get** /v2/policies/config/action-types | getSupportedActions
-*AccessAndActivityPoliciesPreviewApi* | [**GetSupportedConditions**](docs/AccessAndActivityPoliciesPreviewApi.md#getsupportedconditions) | **Get** /v2/policies/config/condition-definitions | getSupportedConditions
-*AccessAndActivityPoliciesPreviewApi* | [**GetSupportedValidators**](docs/AccessAndActivityPoliciesPreviewApi.md#getsupportedvalidators) | **Get** /v2/policies/config/validator-types | getSupportedValidators
-*AccessAndActivityPoliciesPreviewApi* | [**UpdatePolicy**](docs/AccessAndActivityPoliciesPreviewApi.md#updatepolicy) | **Put** /v2/policies/{policy-id} | Update Policy
+*AccessAndActivityPoliciesPreviewApi* | [**CreatePolicy**](docs/AccessAndActivityPoliciesPreviewApi.md#createpolicy) | **Post** /policies | createPolicy
+*AccessAndActivityPoliciesPreviewApi* | [**DeletePolicy**](docs/AccessAndActivityPoliciesPreviewApi.md#deletepolicy) | **Delete** /policies/{policy-id} | Delete Policy
+*AccessAndActivityPoliciesPreviewApi* | [**GetAllPolicies**](docs/AccessAndActivityPoliciesPreviewApi.md#getallpolicies) | **Get** /policies | getAllPolicies
+*AccessAndActivityPoliciesPreviewApi* | [**GetPolicy**](docs/AccessAndActivityPoliciesPreviewApi.md#getpolicy) | **Get** /policies/{policy-id} | Get Policy
+*AccessAndActivityPoliciesPreviewApi* | [**GetSupportedActions**](docs/AccessAndActivityPoliciesPreviewApi.md#getsupportedactions) | **Get** /policies/config/action-types | getSupportedActions
+*AccessAndActivityPoliciesPreviewApi* | [**GetSupportedConditions**](docs/AccessAndActivityPoliciesPreviewApi.md#getsupportedconditions) | **Get** /policies/config/condition-definitions | getSupportedConditions
+*AccessAndActivityPoliciesPreviewApi* | [**GetSupportedValidators**](docs/AccessAndActivityPoliciesPreviewApi.md#getsupportedvalidators) | **Get** /policies/config/validator-types | getSupportedValidators
+*AccessAndActivityPoliciesPreviewApi* | [**UpdatePolicy**](docs/AccessAndActivityPoliciesPreviewApi.md#updatepolicy) | **Put** /policies/{policy-id} | Update Policy
 *ApplicationsApi* | [**BindApplicationToSite**](docs/ApplicationsApi.md#bindapplicationtosite) | **Put** /applications/{application-id}/site-binding/{site-id} | BindApplicationToSite
 *ApplicationsApi* | [**CreateApplication**](docs/ApplicationsApi.md#createapplication) | **Post** /applications | createApplication
 *ApplicationsApi* | [**DeleteApplication**](docs/ApplicationsApi.md#deleteapplication) | **Delete** /applications/{application-id} | Delete Application

@@ -44,7 +44,7 @@ func (a *AccessAndActivityPoliciesPreviewApiService) CreatePolicy(ctx context.Co
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/policies"
+	localVarPath := a.client.cfg.BasePath + "/policies"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -189,7 +189,7 @@ func (a *AccessAndActivityPoliciesPreviewApiService) DeletePolicy(ctx context.Co
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/policies/{policy-id}"
+	localVarPath := a.client.cfg.BasePath + "/policies/{policy-id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"policy-id"+"}", fmt.Sprintf("%v", policyId), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -316,7 +316,7 @@ func (a *AccessAndActivityPoliciesPreviewApiService) GetAllPolicies(ctx context.
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/policies"
+	localVarPath := a.client.cfg.BasePath + "/policies"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -471,7 +471,7 @@ func (a *AccessAndActivityPoliciesPreviewApiService) GetPolicy(ctx context.Conte
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/policies/{policy-id}"
+	localVarPath := a.client.cfg.BasePath + "/policies/{policy-id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"policy-id"+"}", fmt.Sprintf("%v", policyId), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -614,7 +614,7 @@ func (a *AccessAndActivityPoliciesPreviewApiService) GetSupportedActions(ctx con
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/policies/config/action-types"
+	localVarPath := a.client.cfg.BasePath + "/policies/config/action-types"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -756,7 +756,7 @@ func (a *AccessAndActivityPoliciesPreviewApiService) GetSupportedConditions(ctx 
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/policies/config/condition-definitions"
+	localVarPath := a.client.cfg.BasePath + "/policies/config/condition-definitions"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -898,7 +898,7 @@ func (a *AccessAndActivityPoliciesPreviewApiService) GetSupportedValidators(ctx 
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/policies/config/validator-types"
+	localVarPath := a.client.cfg.BasePath + "/policies/config/validator-types"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1042,7 +1042,7 @@ func (a *AccessAndActivityPoliciesPreviewApiService) UpdatePolicy(ctx context.Co
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/policies/{policy-id}"
+	localVarPath := a.client.cfg.BasePath + "/policies/{policy-id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"policy-id"+"}", fmt.Sprintf("%v", policyId), -1)
 
 	localVarHeaderParams := make(map[string]string)
