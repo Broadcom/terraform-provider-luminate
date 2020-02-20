@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"math"
 	"net/http"
 	"time"
@@ -23,7 +22,7 @@ func NewCustomRateLimitTransport(requestsPerSecond float64, roundTripper http.Ro
 }
 
 func (t *CustomRateLimitTransport) RoundTrip(r *http.Request) (*http.Response, error) {
-	fmt.Println("Send request on: " + time.Now().String())
+	//fmt.Println("Send request on: " + time.Now().String())
 	time.Sleep(t.sleepBetweenRequest *  time.Millisecond)
 	return t.roundTripper.RoundTrip(r)
 }
