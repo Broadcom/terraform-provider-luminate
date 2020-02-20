@@ -21,7 +21,7 @@ type LuminateService struct {
 }
 
 const (
-	MaxRequestsPerSecond float64 = 4
+	MaxRequestsPerSecond float64 = 2
 	MaxBurst             int     = 0
 )
 
