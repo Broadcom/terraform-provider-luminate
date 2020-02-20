@@ -21,7 +21,7 @@ type LuminateService struct {
 }
 
 const (
-	MaxRequestsPerSecond float64 = 1
+	MaxRequestsPerSecond float64 = 4
 	MaxBurst             int     = 0
 )
 
@@ -37,7 +37,7 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	}
 	httpClient := cfg.Client(context.Background())
 
-	httpClient.Transport = NewRateLimitTransport(MaxRequestsPerSecond, MaxBurst, httpClient.Transport)
+	httpClient.Transport = NewCustomRateLimitTransport(MaxRequestsPerSecond, httpClient.Transport)
 
 	var lumSvc LuminateService
 
