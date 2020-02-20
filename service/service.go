@@ -22,7 +22,7 @@ type LuminateService struct {
 
 const (
 	MaxRequestsPerSecond float64 = 1
-	MaxBurst             int     = 1
+	MaxBurst             int     = 0
 )
 
 func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateService {
