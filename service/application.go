@@ -3,8 +3,9 @@ package service
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/dto"
+	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/utils"
 	"context"
-	"errors"
+	"github.com/pkg/errors"
 	"fmt"
 	"github.com/antihax/optional"
 	"log"
@@ -31,6 +32,11 @@ func (api *ApplicationAPI) CreateApplication(application *dto.Application) (*dto
 	log.Printf("[DEBUG APP DATA %v", app)
 	newApp, resp, err := api.cli.ApplicationsApi.CreateApplication(context.Background(), &appOpts)
 	if err != nil {
+		if resp != nil  {
+			body, _ := utils.ConvertReaderToString(resp.Body)
+			return nil, errors.Wrap(err, fmt.Sprintf("received status code: %d ('%s')", resp.StatusCode, body))
+		}
+
 		return nil, err
 	}
 	log.Printf("[DEBUG] - Done Creating App")
