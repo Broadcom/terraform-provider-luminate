@@ -11,7 +11,7 @@ package swagger
 
 type ApplicationTcpTarget struct {
 	// DNS or IP Address of the service in the datacenter (could point to a load balancer).
-	Target string `json:"Target,omitempty"`
+	Target string `json:"target,omitempty"`
 	// TCP Ports that will be available for access.
-	Ports []int32 `json:"Ports,omitempty"`
+	Ports []int32 `json:"ports,omitempty"`
 }
