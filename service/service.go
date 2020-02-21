@@ -24,7 +24,7 @@ type LuminateService struct {
 const (
 	MaxRequestsPerSecond float64 = 2
 	MaxBurst             int     = 0
-	MillsBetweenRetries	 int 	 = 1000
+	MillsBetweenRetries	 int 	 = 2000
 )
 
 func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateService {
