@@ -3,6 +3,7 @@ package roundtripper
 import (
 	"fmt"
 	"golang.org/x/oauth2"
+	"log"
 	"net/http"
 	"time"
 )
@@ -30,6 +31,7 @@ func (t *RetryableRateLimitTransport) RoundTrip(r *http.Request) (*http.Response
 			// in case of rate-limit error, retry after sleepBetweenRetries duration
 			if err.(*oauth2.RetrieveError).Response.StatusCode == 429 {
 				fmt.Println("Retry request due to rate limit error.")
+				log.Printf("[DEBUG] - Retry request due to rate limit error.")
 				time.Sleep(t.sleepBetweenRetries)
 				return t.roundTripper.RoundTrip(r)
 			}
