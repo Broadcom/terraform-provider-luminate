@@ -22,7 +22,7 @@ type LuminateService struct {
 }
 
 const (
-	MaxRequestsPerSecond float64 = 1
+	MaxRequestsPerSecond float64 = 2
 	MaxBurst             int     = 0
 	MillsBetweenRetries	 int 	 = 1000
 )
@@ -39,8 +39,8 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	}
 	httpClient := cfg.Client(context.Background())
 
-	transport := roundtripper.NewSimpleRateLimitTransport(MaxRequestsPerSecond, httpClient.Transport)
-	transport = roundtripper.NewRetryableRateLimitTransport(MillsBetweenRetries, transport)
+	transport := roundtripper.NewRetryableRateLimitTransport(MillsBetweenRetries, httpClient.Transport)
+	transport = roundtripper.NewSimpleRateLimitTransport(MaxRequestsPerSecond, transport)
 
 	httpClient.Transport = transport
 

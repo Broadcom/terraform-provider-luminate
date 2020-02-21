@@ -1,7 +1,6 @@
 package roundtripper
 
 import (
-	"fmt"
 	"math"
 	"net/http"
 	"time"
@@ -23,7 +22,6 @@ func NewSimpleRateLimitTransport(requestsPerSecond float64, roundTripper http.Ro
 }
 
 func (t *SimpleRateLimitTransport) RoundTrip(r *http.Request) (*http.Response, error) {
-	fmt.Println("Send request on: " + time.Now().String())
 	time.Sleep(t.sleepBetweenRequest *  time.Millisecond)
 	return t.roundTripper.RoundTrip(r)
 }
