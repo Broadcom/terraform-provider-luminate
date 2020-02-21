@@ -1,4 +1,4 @@
-package service
+package roundtripper
 
 import (
 	"fmt"
@@ -7,22 +7,22 @@ import (
 	"time"
 )
 
-type CustomRateLimitTransport struct {
+type SimpleRateLimitTransport struct {
 	roundTripper http.RoundTripper
 	sleepBetweenRequest time.Duration
 }
 
-func NewCustomRateLimitTransport(requestsPerSecond float64, roundTripper http.RoundTripper) http.RoundTripper {
+func NewSimpleRateLimitTransport(requestsPerSecond float64, roundTripper http.RoundTripper) http.RoundTripper {
 
 	sleepBetweenRequest:= math.Round(1000 / requestsPerSecond)
 
-	return &CustomRateLimitTransport{
+	return &SimpleRateLimitTransport{
 		roundTripper: roundTripper,
 		sleepBetweenRequest: time.Duration(sleepBetweenRequest),
 	}
 }
 
-func (t *CustomRateLimitTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+func (t *SimpleRateLimitTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	fmt.Println("Send request on: " + time.Now().String())
 	time.Sleep(t.sleepBetweenRequest *  time.Millisecond)
 	return t.roundTripper.RoundTrip(r)

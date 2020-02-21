@@ -2,6 +2,7 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/roundtripper"
 	"context"
 	"fmt"
 	"golang.org/x/oauth2/clientcredentials"
@@ -23,6 +24,7 @@ type LuminateService struct {
 const (
 	MaxRequestsPerSecond float64 = 1
 	MaxBurst             int     = 0
+	MillsBetweenRetries	 int 	 = 1000
 )
 
 func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateService {
@@ -37,7 +39,10 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	}
 	httpClient := cfg.Client(context.Background())
 
-	httpClient.Transport = NewCustomRateLimitTransport(MaxRequestsPerSecond, httpClient.Transport)
+	transport := roundtripper.NewSimpleRateLimitTransport(MaxRequestsPerSecond, httpClient.Transport)
+	transport = roundtripper.NewRetryableRateLimitTransport(MillsBetweenRetries, transport)
+
+	httpClient.Transport = transport
 
 	var lumSvc LuminateService
 
