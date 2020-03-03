@@ -9,7 +9,9 @@
 
 package swagger
 
-type ApplicationRdpSettingsProperties struct {
-	// Indication whether authentication using long term secret is allowed.
-	IsLongTermPasswordEnabled bool `json:"isLongTermPasswordEnabled,omitempty"`
+type CloudIntegrationBase struct {
+	// A descriptive name of the Cloud Integration.
+	Name string `json:"name"`
+	// Cloud Provider name.
+	Provider string `json:"provider"`
 }

@@ -8,8 +8,10 @@
  */
 
 package swagger
+// CloudIntegrationProvider : Cloud Provider name.
+type CloudIntegrationProvider string
 
-type ApplicationRdpSettingsProperties struct {
-	// Indication whether authentication using long term secret is allowed.
-	IsLongTermPasswordEnabled bool `json:"isLongTermPasswordEnabled,omitempty"`
-}
+// List of CloudIntegrationProvider
+const (
+	AMAZON_CloudIntegrationProvider CloudIntegrationProvider = "amazon"
+)
