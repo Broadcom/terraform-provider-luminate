@@ -85,6 +85,7 @@ type ManagedDevice struct {
 }
 type Conditions struct {
 	SourceIp        []string
+	SharedIpList	[]string
 	Location        []string
 	ManagedDevice   ManagedDevice
 	UnmanagedDevice bool
@@ -92,6 +93,7 @@ type Conditions struct {
 
 const (
 	IpUuid            = "IP_LIST"
+	SharedIpListUuid  = "SHARED_IP_LIST"
 	CountriesUuid     = "COUNTRIES"
 	ManagedDeviceUuid = "AUTHENTICATION"
 )

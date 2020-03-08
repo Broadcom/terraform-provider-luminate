@@ -3,8 +3,9 @@ package service
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/dto"
+	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/utils"
 	"context"
-	"errors"
+	"github.com/pkg/errors"
 	"fmt"
 	"github.com/antihax/optional"
 	"log"
@@ -24,13 +25,18 @@ func (api *ApplicationAPI) CreateApplication(application *dto.Application) (*dto
 
 	app := dto.ConvertFromApplicationDTO(*application)
 
-	appOpts := sdk.ApplicationsPostOpts{
+	appOpts := sdk.CreateApplicationOpts{
 		Body: optional.NewInterface(app),
 	}
 	log.Printf("[DEBUG] - Creating App")
 	log.Printf("[DEBUG APP DATA %v", app)
-	newApp, resp, err := api.cli.ApplicationsApi.ApplicationsPost(context.Background(), &appOpts)
+	newApp, resp, err := api.cli.ApplicationsApi.CreateApplication(context.Background(), &appOpts)
 	if err != nil {
+		if resp != nil  {
+			body, _ := utils.ConvertReaderToString(resp.Body)
+			return nil, errors.Wrap(err, fmt.Sprintf("received status code: %d ('%s')", resp.StatusCode, body))
+		}
+
 		return nil, err
 	}
 	log.Printf("[DEBUG] - Done Creating App")
@@ -51,7 +57,7 @@ func (api *ApplicationAPI) CreateApplication(application *dto.Application) (*dto
 }
 
 func (api *ApplicationAPI) DeleteApplication(applicationID string) error {
-	resp, err := api.cli.ApplicationsApi.ApplicationsByApplicationIdDelete(context.Background(), applicationID)
+	resp, err := api.cli.ApplicationsApi.DeleteApplication(context.Background(), applicationID)
 	if err != nil {
 		return err
 	}
@@ -68,7 +74,7 @@ func (api *ApplicationAPI) DeleteApplication(applicationID string) error {
 }
 
 func (api *ApplicationAPI) GetApplicationById(applicationID string) (*dto.Application, error) {
-	app, resp, err := api.cli.ApplicationsApi.ApplicationsByApplicationIdGet(context.Background(), applicationID)
+	app, resp, err := api.cli.ApplicationsApi.GetApplication(context.Background(), applicationID)
 
 	if resp != nil && resp.StatusCode == 404 {
 		return nil, nil
@@ -85,12 +91,12 @@ func (api *ApplicationAPI) GetApplicationById(applicationID string) (*dto.Applic
 func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto.Application, error) {
 	app := dto.ConvertFromApplicationDTO(*application)
 
-	appOpts := sdk.ApplicationsByApplicationIdPutOpts{
+	appOpts := sdk.UpdateApplicationOpts{
 		Body: optional.NewInterface(app),
 	}
 
 	log.Printf("[DEBUG] - Updating App")
-	updatedApp, resp, err := api.cli.ApplicationsApi.ApplicationsByApplicationIdPut(context.Background(), application.ID, &appOpts)
+	updatedApp, resp, err := api.cli.ApplicationsApi.UpdateApplication(context.Background(), application.ID, &appOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +116,7 @@ func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto
 
 func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, siteID string) error {
 	log.Printf("[DEBUG] - Update Binding App")
-	resp, err := api.cli.ApplicationsApi.ApplicationsSiteBindingByApplicationIdAndSiteIdPut(context.Background(), application.ID, siteID)
+	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID)
 	if err != nil {
 		return err
 	}

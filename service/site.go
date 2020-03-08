@@ -20,7 +20,7 @@ func NewSiteAPI(client *sdk.APIClient) *SiteAPI {
 }
 
 func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
-	s, resp, err := api.cli.SitesApi.SitesBySiteIdGet(context.Background(), SiteID)
+	s, resp, err := api.cli.SitesApi.GetSite(context.Background(), SiteID)
 	if resp != nil && resp.StatusCode == 404 {
 		return nil, nil
 	}
@@ -73,11 +73,11 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 		}
 	}
 
-	siteOpt := sdk.SitesPostOpts{
+	siteOpt := sdk.CreateSiteOpts{
 		Body: optional.NewInterface(newSite),
 	}
 
-	newSite, resp, err := api.cli.SitesApi.SitesPost(context.Background(), &siteOpt)
+	newSite, resp, err := api.cli.SitesApi.CreateSite(context.Background(), &siteOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -111,11 +111,11 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 		}
 	}
 
-	siteOpt := sdk.SitesBySiteIdPutOpts{
+	siteOpt := sdk.UpdateSiteOpts{
 		Body: optional.NewInterface(updateSite),
 	}
 
-	_, resp, err := api.cli.SitesApi.SitesBySiteIdPut(context.Background(), siteID, &siteOpt)
+	_, resp, err := api.cli.SitesApi.UpdateSite(context.Background(), siteID, &siteOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 }
 
 func (api *SiteAPI) DeleteSite(siteID string) error {
-	resp, err := api.cli.SitesApi.SitesBySiteIdDelete(context.Background(), siteID)
+	resp, err := api.cli.SitesApi.DeleteSite(context.Background(), siteID)
 	if err != nil {
 		return err
 	}

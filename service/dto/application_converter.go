@@ -138,9 +138,9 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			})
 		}
 
-		var tagsSdk []sdk.Tag
+		var tagsSdk []sdk.ApplicationCloudIntegrationTag
 		for key, value := range applicationServiceDTO.CloudIntegrationData.Tags {
-			tagsSdk = append(tagsSdk, sdk.Tag{
+			tagsSdk = append(tagsSdk, sdk.ApplicationCloudIntegrationTag{
 				Key:   key,
 				Value: value,
 			})

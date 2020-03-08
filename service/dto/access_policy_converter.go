@@ -60,8 +60,6 @@ func FromModelType(modelType sdk.ModelType) string {
 		return "User"
 	case sdk.GROUP_ModelType:
 		return "Group"
-	case sdk.OU_ModelType:
-		return "OU"
 	case sdk.API_CLIENT_ModelType:
 		return "ApiClient"
 	}
@@ -77,8 +75,6 @@ func ToModelType(entityType string) *sdk.ModelType {
 		modelType = sdk.USER_ModelType
 	case "Group":
 		modelType = sdk.GROUP_ModelType
-	case "OU":
-		modelType = sdk.OU_ModelType
 	case "ApiClient":
 		modelType = sdk.API_CLIENT_ModelType
 	}
@@ -156,6 +152,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 				ConditionDefinitionId: IpCondition,
 				Arguments: map[string]interface{}{
 					IpUuid: accessPolicy.Conditions.SourceIp,
+					SharedIpListUuid: accessPolicy.Conditions.SharedIpList,
 				},
 			})
 		}
@@ -276,6 +273,12 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 			if filterCondition.ConditionDefinitionId == IpCondition {
 				for _, ipCondition := range filterCondition.Arguments[IpUuid].([]interface{}) {
 					conditions.SourceIp = append(conditions.SourceIp, ipCondition.(string))
+				}
+
+				if _, ok := filterCondition.Arguments[SharedIpListUuid]; ok {
+					for _, sharedIpListCondition := range filterCondition.Arguments[SharedIpListUuid].([]interface{}) {
+						conditions.SharedIpList = append(conditions.SharedIpList, sharedIpListCondition.(string))
+					}
 				}
 			}
 
