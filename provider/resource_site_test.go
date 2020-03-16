@@ -33,7 +33,6 @@ func TestAccLuminateSite(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccResourceSite_minimal,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSite"),
@@ -43,7 +42,6 @@ func TestAccLuminateSite(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccResourceSite_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSiteOpt"),

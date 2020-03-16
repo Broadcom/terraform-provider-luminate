@@ -107,7 +107,6 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceSshAccessPolicy_enabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_enabled"),
@@ -121,7 +120,6 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceSshAccessPolicy_disabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_disabled"),

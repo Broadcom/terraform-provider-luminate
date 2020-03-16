@@ -82,7 +82,6 @@ func TestAccLuminateSshGwApplication(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccSshGwApplication,
 				Destroy:   false,
 				Check: resource.ComposeTestCheckFunc(
@@ -102,7 +101,6 @@ func TestAccLuminateSshGwApplication(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccSshGwApplicationUpdate,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tf-ssh-gw"),

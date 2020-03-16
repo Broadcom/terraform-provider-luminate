@@ -25,7 +25,6 @@ func TestAccLuminateConnector(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccResourceConnector,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "connector"),

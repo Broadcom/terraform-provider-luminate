@@ -37,7 +37,6 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccSSHApplication_minimal,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSSH"),
@@ -49,7 +48,6 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccSSHApplication_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSSHUpd"),

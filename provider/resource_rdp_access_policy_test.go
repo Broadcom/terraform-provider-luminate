@@ -91,7 +91,6 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceRdpAccessPolicy_enabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_enabled"),
@@ -100,7 +99,6 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceRdpAccessPolicy_disabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_disabled"),
@@ -109,7 +107,6 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceRdpAccessPolicy_enabled_not_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_enabled_not_specified"),
@@ -117,7 +114,6 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceRdpAccessPolicy_no_long_term_password_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_no_long_term_password_specified"),
@@ -126,7 +122,6 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceRdpAccessPolicy_conditions_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_conditions_specified"),
@@ -137,7 +132,6 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceRdpAccessPolicy_validators_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_validators_specified"),

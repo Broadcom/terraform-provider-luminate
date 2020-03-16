@@ -99,7 +99,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceWebAccessPolicy_enabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled"),
@@ -107,7 +106,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceWebAccessPolicy_disabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_disabled"),
@@ -115,7 +113,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceWebAccessPolicy_enabled_not_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled_not_specified"),
@@ -123,7 +120,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceWebAccessPolicy_conditions_specified,
 				Destroy:   false,
 				Check: resource.ComposeTestCheckFunc(
@@ -138,7 +134,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceWebAccessPolicy_conditions_specified_update,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
@@ -152,7 +147,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    resourceWebAccessPolicy_validators_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_validators_specified"),

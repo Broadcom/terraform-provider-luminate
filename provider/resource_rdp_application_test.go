@@ -37,7 +37,6 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccRDPApplication_minimal,
 				Destroy:   false,
 				Check: resource.ComposeTestCheckFunc(
@@ -50,7 +49,6 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccRDPApplication_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccRDPUpd"),

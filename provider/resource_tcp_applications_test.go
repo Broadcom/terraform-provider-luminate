@@ -1,9 +1,9 @@
 package provider
 
 import (
-	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"testing"
+"fmt"
+"github.com/hashicorp/terraform/helper/resource"
+"testing"
 )
 
 const testAccTCPApplication_minimal = `
@@ -28,7 +28,6 @@ func TestAccLuminateTCPApplication(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccTCPApplication_minimal,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccTCP"),

@@ -9,14 +9,10 @@
 
 package swagger
 
-import (
-	"time"
-)
-
 type ModelApiResponse struct {
 	// A unique identifier of your API call for tracing/support purposes.
 	RequestIdentifier string `json:"requestIdentifier,omitempty"`
-	Timestamp time.Time `json:"timestamp,omitempty"`
+	Timestamp int64 `json:"timestamp,omitempty"`
 	// Error status code.
 	Status int32 `json:"status,omitempty"`
 	// Error category.

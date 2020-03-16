@@ -37,7 +37,6 @@ func TestAccLuminateApplication(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccWebApplication_minimal,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccApplication"),
@@ -49,7 +48,6 @@ func TestAccLuminateApplication(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccWebApplication_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccApplicationUpd"),

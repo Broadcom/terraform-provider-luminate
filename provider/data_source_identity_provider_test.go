@@ -19,7 +19,6 @@ func TestAccLuminateDataSourceIdentityProvider(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
 				Config:    testAccResourceIdentityProvider,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identity_provider_id", "local"),
