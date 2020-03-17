@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const resourceRdpAccessPolicy_enabled = `
@@ -91,7 +92,7 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:    resourceRdpAccessPolicy_enabled,
+				Config: resourceRdpAccessPolicy_enabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -99,7 +100,7 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config:    resourceRdpAccessPolicy_disabled,
+				Config: resourceRdpAccessPolicy_disabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
@@ -107,14 +108,14 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config:    resourceRdpAccessPolicy_enabled_not_specified,
+				Config: resourceRdpAccessPolicy_enabled_not_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_enabled_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config:    resourceRdpAccessPolicy_no_long_term_password_specified,
+				Config: resourceRdpAccessPolicy_no_long_term_password_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_no_long_term_password_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -122,7 +123,7 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config:    resourceRdpAccessPolicy_conditions_specified,
+				Config: resourceRdpAccessPolicy_conditions_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_conditions_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -132,7 +133,7 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config:    resourceRdpAccessPolicy_validators_specified,
+				Config: resourceRdpAccessPolicy_validators_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),

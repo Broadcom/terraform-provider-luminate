@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const resourceSshAccessPolicy_enabled = `
@@ -107,7 +108,7 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:    resourceSshAccessPolicy_enabled,
+				Config: resourceSshAccessPolicy_enabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -120,7 +121,7 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config:    resourceSshAccessPolicy_disabled,
+				Config: resourceSshAccessPolicy_disabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),

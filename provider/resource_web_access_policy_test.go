@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const resourceWebAccessPolicy_enabled = `
@@ -99,29 +100,29 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:    resourceWebAccessPolicy_enabled,
+				Config: resourceWebAccessPolicy_enabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config:    resourceWebAccessPolicy_disabled,
+				Config: resourceWebAccessPolicy_disabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
 			},
 			{
-				Config:    resourceWebAccessPolicy_enabled_not_specified,
+				Config: resourceWebAccessPolicy_enabled_not_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config:    resourceWebAccessPolicy_conditions_specified,
-				Destroy:   false,
+				Config:  resourceWebAccessPolicy_conditions_specified,
+				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -134,7 +135,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config:    resourceWebAccessPolicy_conditions_specified_update,
+				Config: resourceWebAccessPolicy_conditions_specified_update,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -147,7 +148,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config:    resourceWebAccessPolicy_validators_specified,
+				Config: resourceWebAccessPolicy_validators_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),

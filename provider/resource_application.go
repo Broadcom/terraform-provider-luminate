@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/utils"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -44,12 +44,6 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Computed:    true,
 			Description: "The application DNS subdomain.",
-		},
-		"custom_external_address": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			ValidateFunc: utils.ValidateString,
-			Description:  "The application custom DNS address that exposes the application.",
 		},
 		"external_address": {
 			Type:     schema.TypeString,

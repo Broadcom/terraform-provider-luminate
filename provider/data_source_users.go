@@ -1,9 +1,10 @@
 package provider
 
 import (
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/utils"
 	"errors"
+
+	"github.com/Broadcom/terraform-provider-luminate/service"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )

@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const testAccResourceGroup = `
@@ -20,7 +21,7 @@ func TestAccLuminateDataSourceGroup(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:    testAccResourceGroup,
+				Config: testAccResourceGroup,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "group_ids.0", "f879c404-6f6d-427e-b483-faa2c9d5017d"),
 				),

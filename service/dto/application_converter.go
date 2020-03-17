@@ -16,6 +16,10 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 		Type:                 GetApplicationTypeString(*applicationSDKDTO.Type_),
 	}
 
+	if applicationSDKDTO.SubType != nil {
+		applicationServiceDTO.SubType = string(*applicationSDKDTO.SubType)
+	}
+
 	if applicationSDKDTO.ConnectionSettings != nil {
 		applicationServiceDTO.Subdomain = applicationSDKDTO.ConnectionSettings.Subdomain
 		applicationServiceDTO.InternalAddress = applicationSDKDTO.ConnectionSettings.InternalAddress
@@ -23,6 +27,8 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 		applicationServiceDTO.LuminateAddress = applicationSDKDTO.ConnectionSettings.LuminateAddress
 		applicationServiceDTO.CustomRootPath = applicationSDKDTO.ConnectionSettings.CustomRootPath
 		applicationServiceDTO.CustomExternalAddress = applicationSDKDTO.ConnectionSettings.CustomExternalAddress
+		applicationServiceDTO.WildcardCertificate = applicationSDKDTO.ConnectionSettings.CustomSSLCertificate
+		applicationServiceDTO.WildcardPrivateKey = applicationSDKDTO.ConnectionSettings.WildcardPrivateKey
 	}
 
 	if applicationSDKDTO.LinkTranslationSettings != nil {
@@ -81,10 +87,11 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 
 func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Application {
 	aType := GetApplicationType(applicationServiceDTO.Type)
-
+	aSubType := GetApplicationSubType(applicationServiceDTO.SubType)
 	applicationSDKDTO := sdk.Application{
 		Name:                  applicationServiceDTO.Name,
 		Type_:                 &aType,
+		SubType:               &aSubType,
 		Icon:                  applicationServiceDTO.Icon,
 		IsVisible:             applicationServiceDTO.Visible,
 		IsNotificationEnabled: applicationServiceDTO.NotificationsEnabled,
@@ -95,6 +102,8 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			CustomRootPath:        applicationServiceDTO.CustomRootPath,
 			Subdomain:             applicationServiceDTO.Subdomain,
 			LuminateAddress:       applicationServiceDTO.LuminateAddress,
+			CustomSSLCertificate:  applicationServiceDTO.WildcardCertificate,
+			WildcardPrivateKey:    applicationServiceDTO.WildcardPrivateKey,
 		},
 	}
 
@@ -205,6 +214,18 @@ func GetApplicationTypeString(appType sdk.ApplicationType) string {
 		return "tcp"
 	case sdk.RDP_ApplicationType:
 		return "rdp"
+	}
+	return ""
+}
+
+func GetApplicationSubType(appSubType string) sdk.ApplicationSubType {
+	switch appSubType {
+	case string(sdk.LUMINATE_DOMAIN_ApplicationSubType):
+		return sdk.LUMINATE_DOMAIN_ApplicationSubType
+	case string(sdk.CUSTOM_DOMAIN_ApplicationSubType):
+		return sdk.CUSTOM_DOMAIN_ApplicationSubType
+	case string(sdk.WILDCARD_DOMAIN_ApplicationSubType):
+		return sdk.WILDCARD_DOMAIN_ApplicationSubType
 	}
 	return ""
 }

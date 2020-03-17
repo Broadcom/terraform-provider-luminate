@@ -2,8 +2,9 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const testAccWebApplication_minimal = `
@@ -37,7 +38,7 @@ func TestAccLuminateApplication(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:    testAccWebApplication_minimal,
+				Config: testAccWebApplication_minimal,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccApplication"),
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
@@ -48,7 +49,7 @@ func TestAccLuminateApplication(t *testing.T) {
 				),
 			},
 			{
-				Config:    testAccWebApplication_options,
+				Config: testAccWebApplication_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccApplicationUpd"),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "http://127.0.0.1:80"),

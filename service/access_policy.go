@@ -2,7 +2,7 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/dto"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"context"
 	"encoding/json"
 )

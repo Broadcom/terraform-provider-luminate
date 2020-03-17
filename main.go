@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/provider"
+	"github.com/Broadcom/terraform-provider-luminate/provider"
 	"github.com/hashicorp/terraform/plugin"
 )
 

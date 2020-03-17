@@ -2,8 +2,9 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const testAccSSHApplication_minimal = `
@@ -37,7 +38,7 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:    testAccSSHApplication_minimal,
+				Config: testAccSSHApplication_minimal,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSSH"),
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
@@ -48,7 +49,7 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 				),
 			},
 			{
-				Config:    testAccSSHApplication_options,
+				Config: testAccSSHApplication_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSSHUpd"),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.5"),
