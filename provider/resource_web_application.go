@@ -258,7 +258,7 @@ func validateSubType(v interface{}, k string) (ws []string, es []error) {
 	validTypes := []string{
 		string(sdk.LUMINATE_DOMAIN_ApplicationSubType),
 		string(sdk.CUSTOM_DOMAIN_ApplicationSubType),
-		string(sdk.WILDCARD_DOMAIN_ApplicationSubType),
+		//string(sdk.WILDCARD_DOMAIN_ApplicationSubType),
 	}
 
 	if !utils.StringInSlice(validTypes, cType) {

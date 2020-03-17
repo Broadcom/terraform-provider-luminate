@@ -139,7 +139,6 @@ func setRDPApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 	d.Set("internal_address", application.InternalAddress)
 	d.Set("external_address", application.ExternalAddress)
 	d.Set("subdomain", application.Subdomain)
-	d.Set("custom_external_address", application.CustomExternalAddress)
 	d.Set("luminate_address", application.LuminateAddress)
 }
 
@@ -155,6 +154,5 @@ func extractRDPApplicationFields(d *schema.ResourceData) *dto.Application {
 		InternalAddress:       d.Get("internal_address").(string),
 		ExternalAddress:       d.Get("external_address").(string),
 		Subdomain:             d.Get("subdomain").(string),
-		CustomExternalAddress: d.Get("custom_external_address").(string),
 	}
 }
