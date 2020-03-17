@@ -87,18 +87,16 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 
 func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Application {
 	aType := GetApplicationType(applicationServiceDTO.Type)
-	aSubType := GetApplicationSubType(applicationServiceDTO.SubType)
+
 	applicationSDKDTO := sdk.Application{
 		Name:                  applicationServiceDTO.Name,
 		Type_:                 &aType,
-		SubType:               &aSubType,
 		Icon:                  applicationServiceDTO.Icon,
 		IsVisible:             applicationServiceDTO.Visible,
 		IsNotificationEnabled: applicationServiceDTO.NotificationsEnabled,
 		ConnectionSettings: &sdk.ApplicationConnectionSettings{
 			InternalAddress:       applicationServiceDTO.InternalAddress,
 			ExternalAddress:       applicationServiceDTO.ExternalAddress,
-			CustomExternalAddress: applicationServiceDTO.CustomExternalAddress,
 			CustomRootPath:        applicationServiceDTO.CustomRootPath,
 			Subdomain:             applicationServiceDTO.Subdomain,
 			LuminateAddress:       applicationServiceDTO.LuminateAddress,
@@ -112,6 +110,13 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 		var linkedApps []string
 		for _, v := range applicationServiceDTO.LinkedApplications {
 			linkedApps = append(linkedApps, *v)
+		}
+
+		aSubType := GetApplicationSubType(applicationServiceDTO.SubType)
+	  applicationSDKDTO.SubType = &aSubType
+
+		if applicationServiceDTO.CustomExternalAddress != "" {
+			applicationSDKDTO.ConnectionSettings.CustomExternalAddress = applicationServiceDTO.CustomExternalAddress
 		}
 
 		applicationSDKDTO.LinkTranslationSettings = &sdk.ApplicationLinkTranslationSettings{
