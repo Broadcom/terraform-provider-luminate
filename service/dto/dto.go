@@ -144,6 +144,7 @@ type PolicyRdpSettings struct {
 type PolicySshSettings struct {
 	Accounts             []string
 	AutoMapping          bool
+	FullUPNAutoMapping   bool
 	AgentForward         bool
 	AcceptTemporaryToken bool
 	AcceptCertificate    bool

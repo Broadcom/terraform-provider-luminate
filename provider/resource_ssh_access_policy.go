@@ -34,6 +34,17 @@ func LuminateSshAccessPolicy() *schema.Resource {
 		ValidateFunc: utils.ValidateBool,
 	}
 
+	sshSchema["full_upn_auto_mapping"] = &schema.Schema{
+		Type: schema.TypeBool,
+		Description: "Determine the strategy for mapping IDP entities to SSH/Unix accounts. In case this " +
+			"property is set to true, full UPN is used, otherwise username(the username is the " +
+			"part before the @ of the user’s UPN)is used. This property applies only in case " +
+			"autoMapping is set to true.",
+		Optional:     true,
+		Default:      false,
+		ValidateFunc: utils.ValidateBool,
+	}
+
 	sshSchema["allow_agent_forwarding"] = &schema.Schema{
 		Type: schema.TypeBool,
 		Description: "Indicates whether SSH agent forwarding is allowed for a transparent secure access to all " +
@@ -134,6 +145,7 @@ func setSshAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPo
 	setAccessPolicyBaseFields(d, accessPolicy)
 	d.Set("accounts", accessPolicy.SshSettings.Accounts)
 	d.Set("use_auto_mapping", accessPolicy.SshSettings.AutoMapping)
+	d.Set("full_upn_auto_mapping", accessPolicy.SshSettings.FullUPNAutoMapping)
 	d.Set("allow_agent_forwarding", accessPolicy.SshSettings.AgentForward)
 	d.Set("allow_temporary_token", accessPolicy.SshSettings.AcceptTemporaryToken)
 	d.Set("allow_public_key", accessPolicy.SshSettings.AcceptCertificate)
@@ -149,6 +161,7 @@ func extractSshAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
 	accessPolicy.SshSettings = &dto.PolicySshSettings{
 		Accounts:             unixAccounts,
 		AutoMapping:          d.Get("use_auto_mapping").(bool),
+		FullUPNAutoMapping:   d.Get("full_upn_auto_mapping").(bool),
 		AgentForward:         d.Get("allow_agent_forwarding").(bool),
 		AcceptTemporaryToken: d.Get("allow_temporary_token").(bool),
 		AcceptCertificate:    d.Get("allow_public_key").(bool),
