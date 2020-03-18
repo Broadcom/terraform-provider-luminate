@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const testAccResourceConnector = `
@@ -25,8 +26,7 @@ func TestAccLuminateConnector(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccResourceConnector,
+				Config: testAccResourceConnector,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "connector"),
 					resource.TestCheckResourceAttr(resourceName, "type", "linux"),

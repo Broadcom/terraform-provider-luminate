@@ -16,6 +16,10 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 		Type:                 GetApplicationTypeString(*applicationSDKDTO.Type_),
 	}
 
+	if applicationSDKDTO.SubType != nil {
+		applicationServiceDTO.SubType = string(*applicationSDKDTO.SubType)
+	}
+
 	if applicationSDKDTO.ConnectionSettings != nil {
 		applicationServiceDTO.Subdomain = applicationSDKDTO.ConnectionSettings.Subdomain
 		applicationServiceDTO.InternalAddress = applicationSDKDTO.ConnectionSettings.InternalAddress
@@ -23,6 +27,8 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 		applicationServiceDTO.LuminateAddress = applicationSDKDTO.ConnectionSettings.LuminateAddress
 		applicationServiceDTO.CustomRootPath = applicationSDKDTO.ConnectionSettings.CustomRootPath
 		applicationServiceDTO.CustomExternalAddress = applicationSDKDTO.ConnectionSettings.CustomExternalAddress
+		applicationServiceDTO.WildcardCertificate = applicationSDKDTO.ConnectionSettings.CustomSSLCertificate
+		applicationServiceDTO.WildcardPrivateKey = applicationSDKDTO.ConnectionSettings.WildcardPrivateKey
 	}
 
 	if applicationSDKDTO.LinkTranslationSettings != nil {
@@ -91,10 +97,11 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 		ConnectionSettings: &sdk.ApplicationConnectionSettings{
 			InternalAddress:       applicationServiceDTO.InternalAddress,
 			ExternalAddress:       applicationServiceDTO.ExternalAddress,
-			CustomExternalAddress: applicationServiceDTO.CustomExternalAddress,
 			CustomRootPath:        applicationServiceDTO.CustomRootPath,
 			Subdomain:             applicationServiceDTO.Subdomain,
 			LuminateAddress:       applicationServiceDTO.LuminateAddress,
+			CustomSSLCertificate:  applicationServiceDTO.WildcardCertificate,
+			WildcardPrivateKey:    applicationServiceDTO.WildcardPrivateKey,
 		},
 	}
 
@@ -103,6 +110,13 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 		var linkedApps []string
 		for _, v := range applicationServiceDTO.LinkedApplications {
 			linkedApps = append(linkedApps, *v)
+		}
+
+		aSubType := GetApplicationSubType(applicationServiceDTO.SubType)
+	  applicationSDKDTO.SubType = &aSubType
+
+		if applicationServiceDTO.CustomExternalAddress != "" {
+			applicationSDKDTO.ConnectionSettings.CustomExternalAddress = applicationServiceDTO.CustomExternalAddress
 		}
 
 		applicationSDKDTO.LinkTranslationSettings = &sdk.ApplicationLinkTranslationSettings{
@@ -205,6 +219,18 @@ func GetApplicationTypeString(appType sdk.ApplicationType) string {
 		return "tcp"
 	case sdk.RDP_ApplicationType:
 		return "rdp"
+	}
+	return ""
+}
+
+func GetApplicationSubType(appSubType string) sdk.ApplicationSubType {
+	switch appSubType {
+	case string(sdk.LUMINATE_DOMAIN_ApplicationSubType):
+		return sdk.LUMINATE_DOMAIN_ApplicationSubType
+	case string(sdk.CUSTOM_DOMAIN_ApplicationSubType):
+		return sdk.CUSTOM_DOMAIN_ApplicationSubType
+	case string(sdk.WILDCARD_DOMAIN_ApplicationSubType):
+		return sdk.WILDCARD_DOMAIN_ApplicationSubType
 	}
 	return ""
 }

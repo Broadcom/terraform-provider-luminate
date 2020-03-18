@@ -2,14 +2,17 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/roundtripper"
+	"github.com/Broadcom/terraform-provider-luminate/service/roundtripper"
 	"context"
 	"fmt"
+	"strings"
+
 	"golang.org/x/oauth2/clientcredentials"
 )
 
 type LuminateService struct {
 	cli *sdk.APIClient
+	TenantBaseDomain  string
 
 	Sites             *SiteAPI
 	Connectors        *ConnectorsAPI
@@ -36,6 +39,7 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 		ClientSecret: ClientSecret,
 		TokenURL:     tokenURL,
 		Scopes:       []string{},
+
 	}
 	httpClient := cfg.Client(context.Background())
 
@@ -46,10 +50,12 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 
 	var lumSvc LuminateService
 
+	lumSvc.TenantBaseDomain = strings.ReplaceAll(Endpoint, "api.", "")
 	lumSvc.cli = sdk.NewAPIClient(&sdk.Configuration{
 		UserAgent:  "luminate-terraform-provider",
 		HTTPClient: httpClient,
 		BasePath:   basePath,
+
 	})
 
 	lumSvc.Sites = NewSiteAPI(lumSvc.cli)

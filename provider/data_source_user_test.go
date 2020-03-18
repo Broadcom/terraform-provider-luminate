@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const testAccResourceUser = `
@@ -20,8 +21,7 @@ func TestAccLuminateDataSourceUser(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccResourceUser,
+				Config: testAccResourceUser,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "user_ids.0", "f04d9234-3482-48b0-b56b-d562a5d90f26"),
 				),

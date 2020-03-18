@@ -3,6 +3,8 @@ package utils
 import (
 	"fmt"
 	"github.com/asaskevich/govalidator"
+	"crypto/md5"
+	"io"
 )
 
 const (
@@ -10,6 +12,13 @@ const (
 	MAX_APP_NAME_LENGTH    = 40
 	MAX_POLICY_NAME_LENGTH = 255
 )
+
+
+func StringMD5(in string) string {
+	h := md5.New()
+	io.WriteString(h, in)
+	return fmt.Sprintf("%x", h.Sum(nil))
+}
 
 func StringInSlice(slice []string, value string) bool {
 	for _, v := range slice {

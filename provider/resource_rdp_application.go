@@ -1,12 +1,13 @@
 package provider
 
 import (
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/dto"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/utils"
 	"errors"
-	"github.com/hashicorp/terraform/helper/schema"
 	"log"
+
+	"github.com/Broadcom/terraform-provider-luminate/service"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func LuminateRDPApplication() *schema.Resource {
@@ -138,7 +139,6 @@ func setRDPApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 	d.Set("internal_address", application.InternalAddress)
 	d.Set("external_address", application.ExternalAddress)
 	d.Set("subdomain", application.Subdomain)
-	d.Set("custom_external_address", application.CustomExternalAddress)
 	d.Set("luminate_address", application.LuminateAddress)
 }
 
@@ -154,6 +154,5 @@ func extractRDPApplicationFields(d *schema.ResourceData) *dto.Application {
 		InternalAddress:       d.Get("internal_address").(string),
 		ExternalAddress:       d.Get("external_address").(string),
 		Subdomain:             d.Get("subdomain").(string),
-		CustomExternalAddress: d.Get("custom_external_address").(string),
 	}
 }

@@ -2,8 +2,8 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/dto"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/utils"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/Broadcom/terraform-provider-luminate/service/utils"
 	"context"
 	"github.com/pkg/errors"
 	"fmt"

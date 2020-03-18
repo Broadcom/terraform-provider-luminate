@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const resourceTcpAccessPolicy_enabled = `
@@ -89,8 +90,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
-				Config:    resourceTcpAccessPolicy_enabled,
+				Config: resourceTcpAccessPolicy_enabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -99,24 +99,21 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
-				Config:    resourceTcpAccessPolicy_disabled,
+				Config: resourceTcpAccessPolicy_disabled,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
 			},
 			{
-				PreConfig: testAccSleep,
-				Config:    resourceTcpAccessPolicy_enabled_not_specified,
+				Config: resourceTcpAccessPolicy_enabled_not_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_enabled_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				PreConfig: testAccSleep,
-				Config:    resourceTcpAccessPolicy_optional_not_specified,
+				Config: resourceTcpAccessPolicy_optional_not_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_optional_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -125,8 +122,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
-				Config:    resourceTcpAccessPolicy_conditions_specified,
+				Config: resourceTcpAccessPolicy_conditions_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_conditions_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -136,8 +132,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
-				Config:    resourceTcpAccessPolicy_validators_specified,
+				Config: resourceTcpAccessPolicy_validators_specified,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),

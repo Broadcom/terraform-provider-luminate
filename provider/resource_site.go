@@ -1,12 +1,13 @@
 package provider
 
 import (
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/dto"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/utils"
 	"errors"
-	"github.com/hashicorp/terraform/helper/schema"
 	"log"
+
+	"github.com/Broadcom/terraform-provider-luminate/service"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func LuminateSite() *schema.Resource {

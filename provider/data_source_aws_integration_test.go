@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const testAccResourceAwsIntegration = `
@@ -19,8 +20,7 @@ func TestAccLuminateDataSourceAwsIntegration(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccResourceAwsIntegration,
+				Config: testAccResourceAwsIntegration,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 				),

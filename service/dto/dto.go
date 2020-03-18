@@ -45,6 +45,7 @@ type Application struct {
 	Name                  string
 	SiteID                string
 	Type                  string
+	SubType               string
 	Icon                  string
 	Visible               bool
 	NotificationsEnabled  bool
@@ -65,7 +66,9 @@ type Application struct {
 	// SSH-GW
 	CloudIntegrationData *CloudIntegrationData
 	//TCP
-	Targets []TCPTarget
+	Targets             []TCPTarget
+	WildcardCertificate string
+	WildcardPrivateKey  string
 }
 
 type TCPTarget struct {
@@ -85,7 +88,7 @@ type ManagedDevice struct {
 }
 type Conditions struct {
 	SourceIp        []string
-	SharedIpList	[]string
+	SharedIpList	  []string
 	Location        []string
 	ManagedDevice   ManagedDevice
 	UnmanagedDevice bool
@@ -141,6 +144,7 @@ type PolicyRdpSettings struct {
 type PolicySshSettings struct {
 	Accounts             []string
 	AutoMapping          bool
+	FullUPNAutoMapping   bool
 	AgentForward         bool
 	AcceptTemporaryToken bool
 	AcceptCertificate    bool

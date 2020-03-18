@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const testAccResourceIdentityProvider = `
@@ -19,8 +20,7 @@ func TestAccLuminateDataSourceIdentityProvider(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccResourceIdentityProvider,
+				Config: testAccResourceIdentityProvider,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identity_provider_id", "local"),
 				),

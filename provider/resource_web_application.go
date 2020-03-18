@@ -1,30 +1,75 @@
 package provider
 
 import (
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/dto"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/utils"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
 	"log"
+	"strings"
+
+	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/Broadcom/terraform-provider-luminate/service"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
 )
 
 func LuminateWebApplication() *schema.Resource {
 	webAppSchema := CommonApplicationSchema()
 
+	webAppSchema["sub_type"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		Default:      string(sdk.LUMINATE_DOMAIN_ApplicationSubType),
+		ValidateFunc: validateSubType,
+		Description:  "Web application sub type",
+	}
 	webAppSchema["internal_address"] = &schema.Schema{
 		Type:         schema.TypeString,
 		Required:     true,
 		ValidateFunc: utils.ValidateString,
-		Description:  "Internal address of the application, accessable by connector",
+		Description:  "Internal address of the application, accessible by connector",
 	}
-
 	webAppSchema["custom_root_path"] = &schema.Schema{
 		Type:         schema.TypeString,
 		Optional:     true,
 		ValidateFunc: utils.ValidateString,
 		Description:  "Requests coming into the external address root path '/', will be redirected to this custom path instead.",
+	}
+	webAppSchema["custom_external_address"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		ValidateFunc: utils.ValidateString,
+		Description:  "The application custom DNS address that exposes the application.",
+	}
+
+	webAppSchema["custom_domain_record_name"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Computed:     true,
+		Optional:     true,
+		ValidateFunc: utils.ValidateString,
+		Description:  "Value of custom domain record",
+	}
+
+	webAppSchema["custom_domain_record_type"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Computed:     true,
+		Optional:     true,
+		ValidateFunc: utils.ValidateString,
+		Description:  "Type of custom domain record",
+	}
+
+	webAppSchema["wildcard_certificate"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		ValidateFunc: utils.ValidateString,
+		Description:  "The certificate for the custom domain of the wildcard application.",
+	}
+	webAppSchema["wildcard_private_key"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		ValidateFunc: utils.ValidateString,
+		Description:  "The private key of the certificate for the custom domain of the wildcard application.",
 	}
 	webAppSchema["health_url"] = &schema.Schema{
 		Type:         schema.TypeString,
@@ -108,7 +153,7 @@ func resourceCreateWebApplication(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.SetId(app.ID)
-	setWebApplicationFields(d, app)
+	setWebApplicationFields(d, app, client.TenantBaseDomain)
 
 	return resourceReadWebApplication(d, m)
 }
@@ -133,7 +178,7 @@ func resourceReadWebApplication(d *schema.ResourceData, m interface{}) error {
 	}
 
 	app.SiteID = d.Get("site_id").(string)
-	setWebApplicationFields(d, app)
+	setWebApplicationFields(d, app, client.TenantBaseDomain)
 
 	return nil
 }
@@ -159,7 +204,7 @@ func resourceUpdateWebApplication(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	setWebApplicationFields(d, updApp)
+	setWebApplicationFields(d, updApp,client.TenantBaseDomain)
 
 	return resourceReadWebApplication(d, m)
 }
@@ -201,12 +246,35 @@ func validateHealthMethod(v interface{}, k string) (ws []string, es []error) {
 	return warns, errs
 }
 
+func validateSubType(v interface{}, k string) (ws []string, es []error) {
+	var errs []error
+	var warns []string
+	cType, ok := v.(string)
+	if !ok {
+		errs = append(errs, fmt.Errorf("expected type to be string"))
+		return warns, errs
+	}
+
+	validTypes := []string{
+		string(sdk.LUMINATE_DOMAIN_ApplicationSubType),
+		string(sdk.CUSTOM_DOMAIN_ApplicationSubType),
+		string(sdk.WILDCARD_DOMAIN_ApplicationSubType),
+	}
+
+	if !utils.StringInSlice(validTypes, cType) {
+		errs = append(errs, fmt.Errorf("sub_type must be one of %v", validTypes))
+	}
+	return warns, errs
+}
+
+
 func extractWebApplication(d *schema.ResourceData) *dto.Application {
 	return &dto.Application{
 		Name:                              d.Get("name").(string),
 		Icon:                              d.Get("icon").(string),
 		SiteID:                            d.Get("site_id").(string),
 		Type:                              "web",
+		SubType:                           d.Get("sub_type").(string),
 		Visible:                           d.Get("visible").(bool),
 		NotificationsEnabled:              d.Get("notification_enabled").(bool),
 		InternalAddress:                   d.Get("internal_address").(string),
@@ -221,22 +289,34 @@ func extractWebApplication(d *schema.ResourceData) *dto.Application {
 		UseExternalAddressForHostAndSni:   d.Get("use_external_address_for_host_and_sni").(bool),
 		LinkedApplications:                expandStringList(d.Get("linked_applications").([]interface{})),
 		HeaderCustomization:               d.Get("header_customization").(map[string]interface{}),
+		WildcardCertificate:               d.Get("wildcard_certificate").(string),
+		WildcardPrivateKey:                d.Get("wildcard_private_key").(string),
 	}
 }
 
-func setWebApplicationFields(d *schema.ResourceData, application *dto.Application) {
+func setWebApplicationFields(d *schema.ResourceData, application *dto.Application, tenantBaseDomain string) {
 	d.Set("name", application.Name)
 	d.Set("icon", application.Icon)
 	d.Set("type", application.Type)
+	d.Set("sub_type", application.SubType)
 	d.Set("visible", application.Visible)
 	d.Set("notification_enabled", application.NotificationsEnabled)
 	d.Set("internal_address", application.InternalAddress)
 	d.Set("external_address", application.ExternalAddress)
 	d.Set("subdomain", application.Subdomain)
 	d.Set("custom_external_address", application.CustomExternalAddress)
+
+	if application.CustomExternalAddress != "" {
+		trimmedAddress := strings.ReplaceAll(application.CustomExternalAddress,"https://","")
+		recordName := fmt.Sprintf("%s.%s", utils.StringMD5(trimmedAddress),tenantBaseDomain)
+		d.Set("custom_domain_record_name", recordName)
+		d.Set("custom_domain_record_type", "CNAME")
+	}
+
 	d.Set("custom_root_path", application.CustomRootPath)
 	d.Set("luminate_address", application.LuminateAddress)
-
+	d.Set("wildcard_certificate",application.WildcardCertificate)
+	d.Set("wildcard_private_key",application.WildcardPrivateKey)
 	d.Set("health_url", application.HealthURL)
 	d.Set("health_method", application.HealthMethod)
 	d.Set("default_content_rewrite_rules_enabled", application.DefaultContentRewriteRulesEnabled)
@@ -244,4 +324,6 @@ func setWebApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 	d.Set("use_external_address_for_host_and_sni", application.UseExternalAddressForHostAndSni)
 	d.Set("linked_applications", application.LinkedApplications)
 	d.Set("header_customization", application.HeaderCustomization)
+
 }
+

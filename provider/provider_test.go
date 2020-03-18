@@ -1,11 +1,11 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
 	"os"
 	"testing"
-	"time"
+
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/terraform"
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
@@ -36,8 +36,4 @@ func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("LUMINATE_API_CLIENT_SECRET"); v == "" {
 		t.Fatal("LUMINATE_API_CLIENT_SECRET must be set for acceptance tests")
 	}
-}
-
-func testAccSleep() {
-	time.Sleep(10)
 }

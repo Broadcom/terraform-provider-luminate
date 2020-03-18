@@ -486,7 +486,11 @@ type GenericSwaggerError struct {
 
 // Error returns non-empty string if there was an error.
 func (e GenericSwaggerError) Error() string {
-	return e.error
+	m,ok := e.model.(ModelApiResponse)
+	if !ok {
+		return string(e.body)
+	}
+	return m.Message
 }
 
 // Body returns the raw bytes of the response

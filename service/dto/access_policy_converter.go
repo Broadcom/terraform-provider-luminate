@@ -121,6 +121,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 		sshSettingsDto = &sdk.PolicySshSettings{
 			Accounts:             accessPolicy.SshSettings.Accounts,
 			AutoMapping:          accessPolicy.SshSettings.AutoMapping,
+			FullUpnAutoMapping:   accessPolicy.SshSettings.FullUPNAutoMapping,
 			AgentForward:         accessPolicy.SshSettings.AgentForward,
 			AcceptTemporaryToken: accessPolicy.SshSettings.AcceptTemporaryToken,
 			AcceptCertificate:    accessPolicy.SshSettings.AcceptCertificate,
@@ -246,6 +247,7 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 		sshSetting = &PolicySshSettings{
 			Accounts:             accessPolicyDto.SshSettings.Accounts,
 			AutoMapping:          accessPolicyDto.SshSettings.AutoMapping,
+			FullUPNAutoMapping:   accessPolicyDto.SshSettings.FullUpnAutoMapping,
 			AgentForward:         accessPolicyDto.SshSettings.AgentForward,
 			AcceptTemporaryToken: accessPolicyDto.SshSettings.AcceptTemporaryToken,
 			AcceptCertificate:    accessPolicyDto.SshSettings.AcceptCertificate,

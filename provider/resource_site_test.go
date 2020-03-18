@@ -33,8 +33,7 @@ func TestAccLuminateSite(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccResourceSite_minimal,
+				Config: testAccResourceSite_minimal,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSite"),
 					resource.TestCheckResourceAttr(resourceName, "mute_health_notification", "false"),
@@ -43,8 +42,7 @@ func TestAccLuminateSite(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccResourceSite_options,
+				Config: testAccResourceSite_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSiteOpt"),
 					resource.TestCheckResourceAttr(resourceName, "mute_health_notification", "true"),

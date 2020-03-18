@@ -2,8 +2,9 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const testAccSshGwApplication = `
@@ -82,9 +83,8 @@ func TestAccLuminateSshGwApplication(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccSshGwApplication,
-				Destroy:   false,
+				Config:  testAccSshGwApplication,
+				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tf-ssh-gw"),
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
@@ -102,8 +102,7 @@ func TestAccLuminateSshGwApplication(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccSshGwApplicationUpdate,
+				Config: testAccSshGwApplicationUpdate,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tf-ssh-gw"),
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),

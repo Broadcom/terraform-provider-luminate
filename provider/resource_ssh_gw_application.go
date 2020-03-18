@@ -1,12 +1,13 @@
 package provider
 
 import (
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/service/dto"
-	"bitbucket.org/accezz-io/terraform-provider-symcsc/utils"
 	"errors"
-	"github.com/hashicorp/terraform/helper/schema"
 	"log"
+
+	"github.com/Broadcom/terraform-provider-luminate/service"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func LuminateSshGwApplication() *schema.Resource {
@@ -179,7 +180,6 @@ func setSshGwApplicationFields(d *schema.ResourceData, application *dto.Applicat
 	d.Set("internal_address", application.InternalAddress)
 	d.Set("external_address", application.ExternalAddress)
 	d.Set("subdomain", application.Subdomain)
-	d.Set("custom_external_address", application.CustomExternalAddress)
 	d.Set("luminate_address", application.LuminateAddress)
 	d.Set("segment_id", application.CloudIntegrationData.SegmentId)
 	d.Set("tags", application.CloudIntegrationData.Tags)
@@ -229,7 +229,6 @@ func extractSshGwApplicationFields(d *schema.ResourceData) *dto.Application {
 		NotificationsEnabled:  d.Get("notification_enabled").(bool),
 		ExternalAddress:       d.Get("external_address").(string),
 		Subdomain:             d.Get("subdomain").(string),
-		CustomExternalAddress: d.Get("custom_external_address").(string),
 		CloudIntegrationData:  cloudIntegrationData,
 	}
 }

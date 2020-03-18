@@ -2,8 +2,9 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 const testAccRDPApplication_minimal = `
@@ -37,9 +38,8 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccRDPApplication_minimal,
-				Destroy:   false,
+				Config:  testAccRDPApplication_minimal,
+				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccRDP"),
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
@@ -50,8 +50,7 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 				),
 			},
 			{
-				PreConfig: testAccSleep,
-				Config:    testAccRDPApplication_options,
+				Config: testAccRDPApplication_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccRDPUpd"),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.5"),

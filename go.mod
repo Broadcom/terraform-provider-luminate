@@ -1,4 +1,4 @@
-module bitbucket.org/accezz-io/terraform-provider-symcsc
+module github.com/Broadcom/terraform-provider-luminate
 
 // At the moment of writing git.apache.org is down. Using github repo to make build work
 replace git.apache.org/thrift.git => github.com/apache/thrift v0.0.0-20180902110319-2566ecd5d999
