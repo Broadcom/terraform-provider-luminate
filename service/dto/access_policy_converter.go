@@ -82,6 +82,24 @@ func ToModelType(entityType string) *sdk.ModelType {
 	return &modelType
 }
 
+func GetIdentityProviderType(idpType string) sdk.IdentityProviderType {
+	switch idpType {
+	case "local":
+		return sdk.LOCAL_IdentityProviderType
+	case "ad", "azuread": //PLT-117 - ad and azuread are synonyms - referring to Azure AD.
+		return sdk.AD_IdentityProviderType
+	case "okta":
+		return sdk.OKTA_IdentityProviderType
+	case "adfs":
+		return sdk.ADFS_IdentityProviderType
+	case "gapps":
+		return sdk.GAPPS_IdentityProviderType
+	case "onelogin":
+		return sdk.ONELOGIN_IdentityProviderType
+	}
+	return ""
+}
+
 func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	accessPolicyType := sdk.ACCESS_PolicyType
 
@@ -93,9 +111,8 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	var validatorsDto map[string]bool
 	var conditionsDto []sdk.PolicyCondition
 
-	identityProviderType := sdk.LOCAL_IdentityProviderType
-
 	for _, directoryEntity := range accessPolicy.DirectoryEntities {
+		identityProviderType := GetIdentityProviderType(directoryEntity.IdentityProviderType)
 		directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
 			IdentifierInProvider: directoryEntity.IdentifierInProvider,
 			IdentityProviderId:   directoryEntity.IdentityProviderId,

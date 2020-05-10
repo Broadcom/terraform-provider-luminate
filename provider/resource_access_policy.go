@@ -32,6 +32,13 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 			ValidateFunc: utils.ValidateString,
 			ForceNew:     true,
 		},
+		"identity_provider_type": {
+			Type:         schema.TypeString,
+			Description:  "The identity provider type",
+			Required:     true,
+			ValidateFunc: utils.ValidateString,
+			ForceNew:     true,
+		},
 		"user_ids": {
 			Type:        schema.TypeList,
 			Description: "The user entities to which this policy applies.",
@@ -175,12 +182,14 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 	enabled := d.Get("enabled").(bool)
 	name := d.Get("name").(string)
 	identityProviderId := d.Get("identity_provider_id").(string)
+	identityProviderType := d.Get("identity_provider_type").(string)
 
 	userIdsInterface := d.Get("user_ids").([]interface{})
 
 	for _, userId := range userIdsInterface {
 		directoryEntity = append(directoryEntity, dto.DirectoryEntity{
 			IdentityProviderId:   identityProviderId,
+			IdentityProviderType:   identityProviderType,
 			IdentifierInProvider: userId.(string),
 			EntityType:           "User",
 		})
@@ -191,6 +200,7 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 	for _, groupId := range groupIdsInterface {
 		directoryEntity = append(directoryEntity, dto.DirectoryEntity{
 			IdentityProviderId:   identityProviderId,
+			IdentityProviderType:   identityProviderType,
 			IdentifierInProvider: groupId.(string),
 			EntityType:           "Group",
 		})

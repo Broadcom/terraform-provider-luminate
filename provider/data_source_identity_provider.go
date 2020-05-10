@@ -21,6 +21,10 @@ func LuminateDataSourceIdentityProvider() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"identity_provider_type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 		Read: resourceReadIdentityProvider,
 	}
@@ -40,8 +44,14 @@ func resourceReadIdentityProvider(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
+	identityProviderType, err := client.IdentityProviders.GetIdentityProviderType(identityProviderId)
+	if err != nil {
+		return err
+	}
+
 	d.SetId(identityProviderName)
 	d.Set("identity_provider_id", identityProviderId)
+	d.Set("identity_provider_type", identityProviderType)
 
 	return nil
 }
