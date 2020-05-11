@@ -156,7 +156,6 @@ data "luminate_user" "users" {
 resource "luminate_web_access_policy" "nginx-access-policy" {
   name = "nginx-access-policy"
   identity_provider_id = "${data.luminate_identity_provider.idp.identity_provider_id}"
-  identity_provider_type = "${data.luminate_identity_provider.idp.identity_provider_type}"
   user_ids = [${data.luminate_user.users.user_ids}]
   applications = [${luminate_web_application.nginx-app.id}]
 }
@@ -665,7 +664,6 @@ resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
   name =  "my-rdp-access-policy"
 
   identity_provider_id = "identity_provider_id"
-  identity_provider_type = "identity_provider_type"
   user_ids = ["user1_id", "user2_id"]
   group_ids = ["group1_id", "group2_id"]
 
@@ -691,8 +689,6 @@ The following arguments are supported:
 -   **enabled -** (Optional) Indicates whether this policy is enabled.
 
 -   **identity_provider_id -** (Optional) The identity provider id
-
--   **identity_provider_type -** (Optional) The identity provider type
 
 -   **user_ids -** (Optional) The user entities to which this policy
     applies.
@@ -746,7 +742,6 @@ resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
   name =  "my-ssh-access-policy"
 
   identity_provider_id = "identity_provider_id"
-  identity_provider_type = "identity_provider_type"
   user_ids = ["user1_id", "user2_id"]
   group_ids = ["group1_id", "group2_id"]
 
@@ -764,8 +759,6 @@ The following arguments are supported:
 -   **enabled -** (Optional) Indicates whether this policy is enabled.
 
 -   **identity_provider_id -** (Optional) The identity provider id
-
--   **identity_provider_type -** (Optional) The identity provider type
 
 -   **user_ids -** (Optional) The user entities to which this policy
     applies.
@@ -837,7 +830,6 @@ resource "luminate_web_access_policy" "new-web-access-policy" {
   name =  "my-web-access-policy"
 
   identity_provider_id = "identity_provider_id"
-  identity_provider_type = "identity_provider_type"
   user_ids = ["user1_id", "user2_id"]
   group_ids = ["group1_id", "group2_id"]
 
@@ -863,8 +855,6 @@ The following arguments are supported:
 -   **enabled -** (Optional) Indicates whether this policy is enabled.
 
 -   **identity_provider_id -** (Optional) The identity provider id
-
--   **identity_provider_type -** (Optional) The identity provider type
 
 -   **user_ids -** (Optional) The user entities to which this policy
     applies.
@@ -933,7 +923,6 @@ resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
   name =  "my-tcp-access-policy"
 
   identity_provider_id = "identity_provider_id"
-  identity_provider_type = "identity_provider_type"
   user_ids = ["user1_id", "user2_id"]
   group_ids = ["group1_id", "group2_id"]
 
@@ -952,8 +941,6 @@ The following arguments are supported:
 -   **enabled -** (Optional) Indicates whether this policy is enabled.
 
 -   **identity_provider_id -** (Optional) The identity provider id
-
--   **identity_provider_type -** (Optional) The identity provider type
 
 -   **user_ids -** (Optional) The user entities to which this policy
     applies.
@@ -1025,7 +1012,6 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **identity_provider_id** - id of the identity provider
--   **identity_provider_type** - type of the identity provider
 
 Data Source: luminate_user
 -------------
