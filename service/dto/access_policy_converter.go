@@ -248,7 +248,7 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 	}
 
 	for _, directoryEntityDto := range accessPolicyDto.DirectoryEntities {
-		    directoryEntity =     append(directoryEntity, DirectoryEntity{
+		directoryEntity =     append(directoryEntity, DirectoryEntity{
 			IdentifierInProvider: directoryEntityDto.IdentifierInProvider,
 			IdentityProviderId:   directoryEntityDto.IdentityProviderId,
 			IdentityProviderType: fmt.Sprintf("%s", directoryEntityDto.IdentityProviderType),
