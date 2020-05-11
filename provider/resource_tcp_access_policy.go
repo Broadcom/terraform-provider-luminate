@@ -46,7 +46,7 @@ func resourceCreateTcpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractTcpAccessPolicy(d)
+	accessPolicy := extractTcpAccessPolicy(d, client)
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
 	if err != nil {
@@ -85,7 +85,7 @@ func resourceUpdateTcpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractTcpAccessPolicy(d)
+	accessPolicy := extractTcpAccessPolicy(d, client)
 	accessPolicy.Id = d.Id()
 
 	accessPolicy, err := client.AccessPolicies.UpdateAccessPolicy(accessPolicy)
@@ -105,8 +105,8 @@ func setTcpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPo
 	d.Set("allow_public_key", accessPolicy.TcpSettings.AcceptCertificate)
 }
 
-func extractTcpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
-	accessPolicy := extractAccessPolicyBaseFields(d)
+func extractTcpAccessPolicy(d *schema.ResourceData, client *service.LuminateService) *dto.AccessPolicy {
+	accessPolicy := extractAccessPolicyBaseFields(d, client)
 
 	accessPolicy.TargetProtocol = "TCP"
 	accessPolicy.TcpSettings = &dto.PolicyTcpSettings{

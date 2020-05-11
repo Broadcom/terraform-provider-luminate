@@ -89,7 +89,7 @@ func resourceCreateSshAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractSshAccessPolicy(d)
+	accessPolicy := extractSshAccessPolicy(d, client)
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
 	if err != nil {
@@ -128,7 +128,7 @@ func resourceUpdateSshAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractSshAccessPolicy(d)
+	accessPolicy := extractSshAccessPolicy(d, client)
 	accessPolicy.Id = d.Id()
 
 	accessPolicy, err := client.AccessPolicies.UpdateAccessPolicy(accessPolicy)
@@ -151,8 +151,8 @@ func setSshAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPo
 	d.Set("allow_public_key", accessPolicy.SshSettings.AcceptCertificate)
 }
 
-func extractSshAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
-	accessPolicy := extractAccessPolicyBaseFields(d)
+func extractSshAccessPolicy(d *schema.ResourceData, client *service.LuminateService) *dto.AccessPolicy {
+	accessPolicy := extractAccessPolicyBaseFields(d, client)
 
 	unixAccountsInterface := d.Get("accounts").([]interface{})
 	unixAccounts := utils.ParseStringList(unixAccountsInterface)

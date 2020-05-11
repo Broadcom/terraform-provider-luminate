@@ -2,6 +2,7 @@ package dto
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	"fmt"
 )
 
 func FromTargetProtocol(targetProtocol sdk.PolicyTargetProtocol) string {
@@ -82,7 +83,7 @@ func ToModelType(entityType string) *sdk.ModelType {
 	return &modelType
 }
 
-func GetIdentityProviderType(idpType string) sdk.IdentityProviderType {
+func ConvertIdentityProviderTypeToEnum(idpType string) sdk.IdentityProviderType {
 	switch idpType {
 	case "local":
 		return sdk.LOCAL_IdentityProviderType
@@ -112,7 +113,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	var conditionsDto []sdk.PolicyCondition
 
 	for _, directoryEntity := range accessPolicy.DirectoryEntities {
-		identityProviderType := GetIdentityProviderType(directoryEntity.IdentityProviderType)
+		identityProviderType := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
 		directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
 			IdentifierInProvider: directoryEntity.IdentifierInProvider,
 			IdentityProviderId:   directoryEntity.IdentityProviderId,
@@ -247,9 +248,10 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 	}
 
 	for _, directoryEntityDto := range accessPolicyDto.DirectoryEntities {
-		directoryEntity = append(directoryEntity, DirectoryEntity{
+		    directoryEntity =     append(directoryEntity, DirectoryEntity{
 			IdentifierInProvider: directoryEntityDto.IdentifierInProvider,
 			IdentityProviderId:   directoryEntityDto.IdentityProviderId,
+			IdentityProviderType: fmt.Sprintf("%s", directoryEntityDto.IdentityProviderType),
 			EntityType:           FromModelType(*directoryEntityDto.Type_),
 		})
 	}

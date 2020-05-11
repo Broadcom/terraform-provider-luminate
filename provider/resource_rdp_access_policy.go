@@ -38,7 +38,7 @@ func resourceCreateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractRdpAccessPolicy(d)
+	accessPolicy := extractRdpAccessPolicy(d, client)
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
 	if err != nil {
@@ -77,7 +77,7 @@ func resourceUpdateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractRdpAccessPolicy(d)
+	accessPolicy := extractRdpAccessPolicy(d, client)
 	accessPolicy.Id = d.Id()
 
 	updatedAccessPolicy, err := client.AccessPolicies.UpdateAccessPolicy(accessPolicy)
@@ -95,8 +95,8 @@ func setRdpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPo
 	d.Set("allow_long_term_password", accessPolicy.RdpSettings.LongTermPassword)
 }
 
-func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
-	accessPolicy := extractAccessPolicyBaseFields(d)
+func extractRdpAccessPolicy(d *schema.ResourceData, client *service.LuminateService) *dto.AccessPolicy {
+	accessPolicy := extractAccessPolicyBaseFields(d, client)
 
 	longTermPassword := d.Get("allow_long_term_password").(bool)
 

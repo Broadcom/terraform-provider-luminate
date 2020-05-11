@@ -32,7 +32,7 @@ func (u *IdentityProviderAPI) GetIdentityProviderId(identityProviderName string)
 	return "", errors.Errorf("can't find identity provider with name '%s'", identityProviderName)
 }
 
-func (u *IdentityProviderAPI) GetIdentityProviderType(identityProviderId string) (string, error) {
+func (u *IdentityProviderAPI) GetIdentityProviderTypeById(identityProviderId string) (string, error) {
 	directoryProviders, _, err := u.cli.IdentityProvidersApi.ListIdentityProviders(context.Background(), &sdk.ListIdentityProvidersOpts{IncludeLocal: optional.NewBool(true)})
 	if err != nil {
 		return "", err

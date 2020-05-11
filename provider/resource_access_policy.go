@@ -32,13 +32,6 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 			ValidateFunc: utils.ValidateString,
 			ForceNew:     true,
 		},
-		"identity_provider_type": {
-			Type:         schema.TypeString,
-			Description:  "The identity provider type",
-			Required:     true,
-			ValidateFunc: utils.ValidateString,
-			ForceNew:     true,
-		},
 		"user_ids": {
 			Type:        schema.TypeList,
 			Description: "The user entities to which this policy applies.",
@@ -173,7 +166,7 @@ func flattenConditions(conditions *dto.Conditions) []interface{} {
 	return []interface{}{k}
 }
 
-func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
+func extractAccessPolicyBaseFields(d *schema.ResourceData, client *service.LuminateService) *dto.AccessPolicy {
 	var applicationIds []string
 	var directoryEntity []dto.DirectoryEntity
 	var validators *dto.Validators
@@ -182,11 +175,11 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 	enabled := d.Get("enabled").(bool)
 	name := d.Get("name").(string)
 	identityProviderId := d.Get("identity_provider_id").(string)
-	identityProviderType := d.Get("identity_provider_type").(string)
 
 	userIdsInterface := d.Get("user_ids").([]interface{})
 
 	for _, userId := range userIdsInterface {
+		identityProviderType, _ := client.IdentityProviders.GetIdentityProviderTypeById(identityProviderId)
 		directoryEntity = append(directoryEntity, dto.DirectoryEntity{
 			IdentityProviderId:   identityProviderId,
 			IdentityProviderType:   identityProviderType,
@@ -198,6 +191,7 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 	groupIdsInterface := d.Get("group_ids").([]interface{})
 
 	for _, groupId := range groupIdsInterface {
+		identityProviderType, _ := client.IdentityProviders.GetIdentityProviderTypeById(identityProviderId)
 		directoryEntity = append(directoryEntity, dto.DirectoryEntity{
 			IdentityProviderId:   identityProviderId,
 			IdentityProviderType:   identityProviderType,

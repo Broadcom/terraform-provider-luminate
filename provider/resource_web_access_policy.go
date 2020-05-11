@@ -71,7 +71,7 @@ func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractWebAccessPolicy(d)
+	accessPolicy := extractWebAccessPolicy(d, client)
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
 	if err != nil {
@@ -110,7 +110,7 @@ func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractWebAccessPolicy(d)
+	accessPolicy := extractWebAccessPolicy(d, client)
 	accessPolicy.Id = d.Id()
 
 	accessPolicy, err := client.AccessPolicies.UpdateAccessPolicy(accessPolicy)
@@ -123,8 +123,8 @@ func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 	return resourceReadWebAccessPolicy(d, m)
 }
 
-func extractWebAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
-	accessPolicy := extractAccessPolicyBaseFields(d)
+func extractWebAccessPolicy(d *schema.ResourceData, client *service.LuminateService) *dto.AccessPolicy {
+	accessPolicy := extractAccessPolicyBaseFields(d, client)
 	accessPolicy.TargetProtocol = "HTTP"
 
 	return accessPolicy
