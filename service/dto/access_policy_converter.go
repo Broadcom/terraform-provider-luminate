@@ -2,6 +2,7 @@ package dto
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	"errors"
 	"fmt"
 )
 
@@ -83,22 +84,22 @@ func ToModelType(entityType string) *sdk.ModelType {
 	return &modelType
 }
 
-func ConvertIdentityProviderTypeToEnum(idpType string) sdk.IdentityProviderType {
+func ConvertIdentityProviderTypeToEnum(idpType string) (sdk.IdentityProviderType, error) {
 	switch idpType {
 	case "local":
-		return sdk.LOCAL_IdentityProviderType
+		return sdk.LOCAL_IdentityProviderType, nil
 	case "ad", "azuread": //PLT-117 - ad and azuread are synonyms - referring to Azure AD.
-		return sdk.AD_IdentityProviderType
+		return sdk.AD_IdentityProviderType, nil
 	case "okta":
-		return sdk.OKTA_IdentityProviderType
+		return sdk.OKTA_IdentityProviderType, nil
 	case "adfs":
-		return sdk.ADFS_IdentityProviderType
+		return sdk.ADFS_IdentityProviderType, nil
 	case "gapps":
-		return sdk.GAPPS_IdentityProviderType
+		return sdk.GAPPS_IdentityProviderType, nil
 	case "onelogin":
-		return sdk.ONELOGIN_IdentityProviderType
+		return sdk.ONELOGIN_IdentityProviderType, nil
 	}
-	return ""
+	return "", errors.New("Failed to locate matching provider type")
 }
 
 func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
@@ -113,7 +114,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	var conditionsDto []sdk.PolicyCondition
 
 	for _, directoryEntity := range accessPolicy.DirectoryEntities {
-		identityProviderType := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
+		identityProviderType, _ := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
 		directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
 			IdentifierInProvider: directoryEntity.IdentifierInProvider,
 			IdentityProviderId:   directoryEntity.IdentityProviderId,

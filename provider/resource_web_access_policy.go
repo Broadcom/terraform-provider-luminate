@@ -2,7 +2,7 @@ package provider
 
 import (
 	"errors"
-
+	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
@@ -71,7 +71,16 @@ func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractWebAccessPolicy(d, client)
+	accessPolicy := extractWebAccessPolicy(d)
+
+	for i, _ := range accessPolicy.DirectoryEntities {
+		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
+		if err != nil {
+			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
+			return errors.New(error)
+		}
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+	}
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
 	if err != nil {
@@ -110,7 +119,15 @@ func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractWebAccessPolicy(d, client)
+	accessPolicy := extractWebAccessPolicy(d)
+	for i, _ := range accessPolicy.DirectoryEntities {
+		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
+		if err != nil {
+			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
+			return errors.New(error)
+		}
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+	}
 	accessPolicy.Id = d.Id()
 
 	accessPolicy, err := client.AccessPolicies.UpdateAccessPolicy(accessPolicy)
@@ -123,8 +140,8 @@ func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 	return resourceReadWebAccessPolicy(d, m)
 }
 
-func extractWebAccessPolicy(d *schema.ResourceData, client *service.LuminateService) *dto.AccessPolicy {
-	accessPolicy := extractAccessPolicyBaseFields(d, client)
+func extractWebAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
+	accessPolicy := extractAccessPolicyBaseFields(d)
 	accessPolicy.TargetProtocol = "HTTP"
 
 	return accessPolicy

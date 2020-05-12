@@ -166,7 +166,7 @@ func flattenConditions(conditions *dto.Conditions) []interface{} {
 	return []interface{}{k}
 }
 
-func extractAccessPolicyBaseFields(d *schema.ResourceData, client *service.LuminateService) *dto.AccessPolicy {
+func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 	var applicationIds []string
 	var directoryEntity []dto.DirectoryEntity
 	var validators *dto.Validators
@@ -179,10 +179,8 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData, client *service.Lumin
 	userIdsInterface := d.Get("user_ids").([]interface{})
 
 	for _, userId := range userIdsInterface {
-		identityProviderType, _ := client.IdentityProviders.GetIdentityProviderTypeById(identityProviderId)
 		directoryEntity = append(directoryEntity, dto.DirectoryEntity{
 			IdentityProviderId:   identityProviderId,
-			IdentityProviderType:   identityProviderType,
 			IdentifierInProvider: userId.(string),
 			EntityType:           "User",
 		})
@@ -191,10 +189,8 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData, client *service.Lumin
 	groupIdsInterface := d.Get("group_ids").([]interface{})
 
 	for _, groupId := range groupIdsInterface {
-		identityProviderType, _ := client.IdentityProviders.GetIdentityProviderTypeById(identityProviderId)
 		directoryEntity = append(directoryEntity, dto.DirectoryEntity{
 			IdentityProviderId:   identityProviderId,
-			IdentityProviderType:   identityProviderType,
 			IdentifierInProvider: groupId.(string),
 			EntityType:           "Group",
 		})

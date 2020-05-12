@@ -2,6 +2,7 @@ package provider
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
@@ -38,7 +39,15 @@ func resourceCreateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractRdpAccessPolicy(d, client)
+	accessPolicy := extractRdpAccessPolicy(d)
+	for i, _ := range accessPolicy.DirectoryEntities {
+		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
+		if err != nil {
+			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
+			return errors.New(error)
+		}
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+	}
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
 	if err != nil {
@@ -77,7 +86,15 @@ func resourceUpdateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return errors.New("unable to cast Luminate service")
 	}
 
-	accessPolicy := extractRdpAccessPolicy(d, client)
+	accessPolicy := extractRdpAccessPolicy(d)
+	for i, _ := range accessPolicy.DirectoryEntities {
+		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
+		if err != nil {
+			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
+			return errors.New(error)
+		}
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+	}
 	accessPolicy.Id = d.Id()
 
 	updatedAccessPolicy, err := client.AccessPolicies.UpdateAccessPolicy(accessPolicy)
@@ -95,8 +112,8 @@ func setRdpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPo
 	d.Set("allow_long_term_password", accessPolicy.RdpSettings.LongTermPassword)
 }
 
-func extractRdpAccessPolicy(d *schema.ResourceData, client *service.LuminateService) *dto.AccessPolicy {
-	accessPolicy := extractAccessPolicyBaseFields(d, client)
+func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
+	accessPolicy := extractAccessPolicyBaseFields(d)
 
 	longTermPassword := d.Get("allow_long_term_password").(bool)
 
