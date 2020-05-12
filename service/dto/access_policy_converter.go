@@ -114,13 +114,15 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	var conditionsDto []sdk.PolicyCondition
 
 	for _, directoryEntity := range accessPolicy.DirectoryEntities {
-		identityProviderType, _ := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
-		directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
-			IdentifierInProvider: directoryEntity.IdentifierInProvider,
-			IdentityProviderId:   directoryEntity.IdentityProviderId,
-			IdentityProviderType: &identityProviderType,
-			Type_:                ToModelType(directoryEntity.EntityType),
-		})
+		identityProviderType, err := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
+		if err != nil {
+			directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
+				IdentifierInProvider: directoryEntity.IdentifierInProvider,
+				IdentityProviderId:   directoryEntity.IdentityProviderId,
+				IdentityProviderType: &identityProviderType,
+				Type_:                ToModelType(directoryEntity.EntityType),
+			})
+		}
 	}
 
 	for _, applicationId := range accessPolicy.Applications {

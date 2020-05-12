@@ -17,7 +17,7 @@ func NewAccessPolicyAPI(client *sdk.APIClient) *AccessPolicyAPI {
 	}
 }
 
-func (api *AccessPolicyAPI)  CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
+func (api *AccessPolicyAPI) CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
 	accessPolicyDto := dto.ConvertToDto(accessPolicy)
 
 	createdAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesPreviewApi.CreatePolicy(context.Background(), accessPolicyDto)
