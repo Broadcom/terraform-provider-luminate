@@ -4,7 +4,7 @@ VERSION=$(cat VERSION)
 
 GITHUB_BASE_URL="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
 
-AUTH="access_token=${GITHUB_ACCESS_TOKEN}"
+AUTH="${GITHUB_ACCESS_TOKEN}"
 
 
 read -r -d '' PAYLOAD << EOF
@@ -14,7 +14,7 @@ read -r -d '' PAYLOAD << EOF
 }
 EOF
 
-RESP=$(curl -X POST ${GITHUB_BASE_URL}/releases?${AUTH} -d "${PAYLOAD}")
+RESP=$(curl -X POST -H "Authorization: token ${AUTH}" ${GITHUB_BASE_URL}/releases -d "${PAYLOAD}")
 
 UPLOAD_URL=$(echo ${RESP} | jq -r .upload_url | cut -f1 -d{ )
 
