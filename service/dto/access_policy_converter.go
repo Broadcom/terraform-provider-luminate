@@ -2,6 +2,8 @@ package dto
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	"errors"
+	"fmt"
 )
 
 func FromTargetProtocol(targetProtocol sdk.PolicyTargetProtocol) string {
@@ -82,6 +84,24 @@ func ToModelType(entityType string) *sdk.ModelType {
 	return &modelType
 }
 
+func ConvertIdentityProviderTypeToEnum(idpType string) (sdk.IdentityProviderType, error) {
+	switch idpType {
+	case "local":
+		return sdk.LOCAL_IdentityProviderType, nil
+	case "ad", "azuread": //PLT-117 - ad and azuread are synonyms - referring to Azure AD.
+		return sdk.AD_IdentityProviderType, nil
+	case "okta":
+		return sdk.OKTA_IdentityProviderType, nil
+	case "adfs":
+		return sdk.ADFS_IdentityProviderType, nil
+	case "gapps":
+		return sdk.GAPPS_IdentityProviderType, nil
+	case "onelogin":
+		return sdk.ONELOGIN_IdentityProviderType, nil
+	}
+	return "", errors.New("Failed to locate matching provider type")
+}
+
 func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	accessPolicyType := sdk.ACCESS_PolicyType
 
@@ -93,15 +113,16 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	var validatorsDto map[string]bool
 	var conditionsDto []sdk.PolicyCondition
 
-	identityProviderType := sdk.LOCAL_IdentityProviderType
-
 	for _, directoryEntity := range accessPolicy.DirectoryEntities {
-		directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
-			IdentifierInProvider: directoryEntity.IdentifierInProvider,
-			IdentityProviderId:   directoryEntity.IdentityProviderId,
-			IdentityProviderType: &identityProviderType,
-			Type_:                ToModelType(directoryEntity.EntityType),
-		})
+		identityProviderType, err := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
+		if err != nil {
+			directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
+				IdentifierInProvider: directoryEntity.IdentifierInProvider,
+				IdentityProviderId:   directoryEntity.IdentityProviderId,
+				IdentityProviderType: &identityProviderType,
+				Type_:                ToModelType(directoryEntity.EntityType),
+			})
+		}
 	}
 
 	for _, applicationId := range accessPolicy.Applications {
@@ -233,6 +254,7 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 		directoryEntity = append(directoryEntity, DirectoryEntity{
 			IdentifierInProvider: directoryEntityDto.IdentifierInProvider,
 			IdentityProviderId:   directoryEntityDto.IdentityProviderId,
+			IdentityProviderType: fmt.Sprintf("%s", directoryEntityDto.IdentityProviderType),
 			EntityType:           FromModelType(*directoryEntityDto.Type_),
 		})
 	}

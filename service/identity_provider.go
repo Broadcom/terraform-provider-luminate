@@ -31,3 +31,18 @@ func (u *IdentityProviderAPI) GetIdentityProviderId(identityProviderName string)
 
 	return "", errors.Errorf("can't find identity provider with name '%s'", identityProviderName)
 }
+
+func (u *IdentityProviderAPI) GetIdentityProviderTypeById(identityProviderId string) (string, error) {
+	directoryProviders, _, err := u.cli.IdentityProvidersApi.ListIdentityProviders(context.Background(), &sdk.ListIdentityProvidersOpts{IncludeLocal: optional.NewBool(true)})
+	if err != nil {
+		return "", err
+	}
+
+	for _, directoryProvider := range directoryProviders {
+		if directoryProvider.Id == identityProviderId {
+			return directoryProvider.Provider, nil
+		}
+	}
+
+	return "", errors.Errorf("can't find identity provider with id '%s'", identityProviderId)
+}
