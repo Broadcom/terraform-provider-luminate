@@ -102,7 +102,7 @@ func TestConvertToDto(t *testing.T) {
 	accessPolicy := &AccessPolicy{
 		Enabled: true,
 		DirectoryEntities: []DirectoryEntity{
-			{IdentifierInProvider: "id1", IdentityProviderId: "id2", EntityType: "User", IdentityProviderType: "%!s(*swagger.IdentityProviderType=0xc0000659c0)"},
+			{IdentifierInProvider: "id1", IdentityProviderId: "id2", EntityType: "User"},
 		},
 
 		Name: "my policy",
@@ -137,8 +137,8 @@ func TestConvertToDto(t *testing.T) {
 
 	// then
 	generatedAccessPolicy := ConvertFromDto(accessPolicyDto)
-	for _, directoryEntityDto := range generatedAccessPolicy.DirectoryEntities {
-		directoryEntityDto.IdentityProviderType = "test"
+	for i, _ := range generatedAccessPolicy.DirectoryEntities {
+		generatedAccessPolicy.DirectoryEntities[i].IdentityProviderType = ""
 	}
 
 	assert.Equal(t, accessPolicy, generatedAccessPolicy)
