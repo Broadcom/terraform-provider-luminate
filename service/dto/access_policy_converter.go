@@ -84,9 +84,16 @@ func ToModelType(entityType string) *sdk.ModelType {
 	return &modelType
 }
 
+func ConvertIdentityProviderTypeToString(idpType interface{}) (string) {
+	if idpType == "" || idpType == nil {
+		return ""
+	}
+	return fmt.Sprintf("%s", idpType)
+}
+
 func ConvertIdentityProviderTypeToEnum(idpType string) (sdk.IdentityProviderType, error) {
 	switch idpType {
-	case "local":
+	case "local", "keycloak":
 		return sdk.LOCAL_IdentityProviderType, nil
 	case "ad", "azuread": //PLT-117 - ad and azuread are synonyms - referring to Azure AD.
 		return sdk.AD_IdentityProviderType, nil
@@ -254,7 +261,7 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 		directoryEntity = append(directoryEntity, DirectoryEntity{
 			IdentifierInProvider: directoryEntityDto.IdentifierInProvider,
 			IdentityProviderId:   directoryEntityDto.IdentityProviderId,
-			IdentityProviderType: fmt.Sprintf("%s", directoryEntityDto.IdentityProviderType),
+			IdentityProviderType: ConvertIdentityProviderTypeToString(directoryEntityDto.IdentityProviderType),
 			EntityType:           FromModelType(*directoryEntityDto.Type_),
 		})
 	}

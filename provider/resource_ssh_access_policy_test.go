@@ -12,7 +12,7 @@ const resourceSshAccessPolicy_enabled = `
 		name =  "resourceSshAccessPolicy_enabled"
 		identity_provider_id = "local"
 
-		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 
 		accounts = ["ubuntu", "ec2-user"]
@@ -29,7 +29,7 @@ const resourceSshAccessPolicy_disabled = `
   		name =  "resourceSshAccessPolicy_disabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 
 		accounts = ["ubuntu", "ec2-user"]
@@ -43,7 +43,7 @@ const resourceSshAccessPolicy_enabled_not_specified = `
   		name =  "resourceSshAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 
 		accounts = ["ubuntu", "ec2-user"]
@@ -58,7 +58,7 @@ const resourceSshAccessPolicy_optional_not_specified = `
   		name =  "resourceSshAccessPolicy_optional_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 
 		accounts = ["ubuntu", "ec2-user"]
@@ -70,7 +70,7 @@ const resourceSshAccessPolicy_conditions_specified = `
   		name =  "resourceSshAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 
 		conditions {
@@ -88,7 +88,7 @@ const resourceSshAccessPolicy_validators_specified = `
   		name =  "resourceSshAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 
 		validators {
