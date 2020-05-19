@@ -67,9 +67,6 @@ workflows:
           context: terraform-acceptance
           requires:
             - validate
-          filters:
-            branches:
-              only: master
       - release:
           context: terraform-release
           filters:

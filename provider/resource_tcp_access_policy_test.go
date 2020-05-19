@@ -12,7 +12,7 @@ const resourceTcpAccessPolicy_enabled = `
 		name =  "resourceTcpAccessPolicy_enabled"
 		identity_provider_id = "local"
 
-		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 
 		allow_temporary_token = "true"
@@ -26,7 +26,7 @@ const resourceTcpAccessPolicy_disabled = `
   		name =  "resourceTcpAccessPolicy_disabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 	}
 `
@@ -36,7 +36,7 @@ const resourceTcpAccessPolicy_enabled_not_specified = `
   		name =  "resourceTcpAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 	}
 `
@@ -47,7 +47,7 @@ const resourceTcpAccessPolicy_optional_not_specified = `
   		name =  "resourceTcpAccessPolicy_optional_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 	}
 `
@@ -57,7 +57,7 @@ const resourceTcpAccessPolicy_conditions_specified = `
   		name =  "resourceTcpAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 
 		conditions {
@@ -73,7 +73,7 @@ const resourceTcpAccessPolicy_validators_specified = `
   		name =  "resourceTcpAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["c352709b-29e9-430c-a861-481944d4a3ae"]
+  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
   		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
 
 		validators {
