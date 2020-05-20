@@ -46,21 +46,3 @@ func (u *IdentityProviderAPI) GetIdentityProviderTypeById(identityProviderId str
 
 	return "", errors.Errorf("can't find identity provider with id '%s'", identityProviderId)
 }
-
-func (u *IdentityProviderAPI) GetUserDisplayNameTypeById(identityProviderId string, IdentifierInProvider string) (string, error) {
-	user, _, err := u.cli.UsersApi.GetUser(context.Background(), identityProviderId, IdentifierInProvider)
-	if err != nil {
-		return "", err
-	}
-
-	return user.FirstName + " " + user.LastName, nil
-}
-
-func (u *IdentityProviderAPI) GetGroupDisplayNameTypeById(identityProviderId string, IdentifierInProvider string) (string, error) {
-	group, _, err := u.cli.GroupsApi.GetGroup(context.Background(), identityProviderId, IdentifierInProvider)
-	if err != nil {
-		return "", err
-	}
-
-	return group.Name, nil
-}
