@@ -136,6 +136,7 @@ type DirectoryEntity struct {
 	IdentityProviderId   string
 	EntityType           string
 	IdentityProviderType string
+	DisplayName			 string
 }
 
 type PolicyRdpSettings struct {
