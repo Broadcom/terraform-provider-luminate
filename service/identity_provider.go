@@ -3,6 +3,7 @@ package service
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
+	"fmt"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
 )
@@ -53,7 +54,7 @@ func (u *IdentityProviderAPI) GetUserDisplayNameTypeById(identityProviderId stri
 		return "", err
 	}
 
-	return user.FirstName + " " + user.LastName, nil
+	return fmt.Sprintf("%s %s", user.FirstName, user.LastName), nil
 }
 
 func (u *IdentityProviderAPI) GetGroupDisplayNameTypeById(identityProviderId string, IdentifierInProvider string) (string, error) {
