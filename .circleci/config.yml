@@ -17,7 +17,7 @@ commands:
     steps:
       - run: if [[ $SKIP == true ]]; then circleci step halt;fi
 
-  validate-release:
+  validate-release-version-was-incremented:
     steps:
       - run:
           command: |
@@ -37,7 +37,7 @@ jobs:
       - image: circleci/golang:1.13.6
     steps:
       - checkout
-      - validate-release
+      - validate-release-version-was-incremented
       - persist-env
   test:
     docker:

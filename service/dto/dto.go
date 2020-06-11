@@ -88,7 +88,7 @@ type ManagedDevice struct {
 }
 type Conditions struct {
 	SourceIp        []string
-	SharedIpList	  []string
+	SharedIpList    []string
 	Location        []string
 	ManagedDevice   ManagedDevice
 	UnmanagedDevice bool
@@ -136,6 +136,7 @@ type DirectoryEntity struct {
 	IdentityProviderId   string
 	EntityType           string
 	IdentityProviderType string
+	DisplayName          string
 }
 
 type PolicyRdpSettings struct {

@@ -7,6 +7,7 @@ import (
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"strings"
 )
 
 func LuminateWebAccessPolicy() *schema.Resource {
@@ -80,6 +81,24 @@ func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 			return errors.New(error)
 		}
 		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+
+		// Get Display Name for User/Group by ID
+		var resolvedDisplayName string
+		switch strings.ToLower(accessPolicy.DirectoryEntities[i].EntityType) {
+		case "user":
+			resolvedDisplayName, err = client.IdentityProviders.GetUserDisplayNameTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId, accessPolicy.DirectoryEntities[i].IdentifierInProvider)
+		case "group":
+			resolvedDisplayName, err = client.IdentityProviders.GetGroupDisplayNameTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId, accessPolicy.DirectoryEntities[i].IdentifierInProvider)
+		default:
+			error := fmt.Sprintf("Failed to lookup displayName - unknown entity type \"%s\"", accessPolicy.DirectoryEntities[i].EntityType)
+			return errors.New(error)
+		}
+
+		if err != nil {
+			error := fmt.Sprintf("Failed to lookup displayName for entity type %s with identifier id %s on Identity Provider ID %s: %v", accessPolicy.DirectoryEntities[i].EntityType, accessPolicy.DirectoryEntities[i].IdentifierInProvider, accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
+			return errors.New(error)
+		}
+		accessPolicy.DirectoryEntities[i].DisplayName = resolvedDisplayName
 	}
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)

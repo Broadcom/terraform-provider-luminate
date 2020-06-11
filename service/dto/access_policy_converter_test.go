@@ -101,9 +101,6 @@ func TestConvertToDto(t *testing.T) {
 	// given
 	accessPolicy := &AccessPolicy{
 		Enabled: true,
-		DirectoryEntities: []DirectoryEntity{
-			{IdentifierInProvider: "id1", IdentityProviderId: "id2", EntityType: "User"},
-		},
 
 		Name: "my policy",
 

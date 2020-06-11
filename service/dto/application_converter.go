@@ -95,13 +95,13 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 		IsVisible:             applicationServiceDTO.Visible,
 		IsNotificationEnabled: applicationServiceDTO.NotificationsEnabled,
 		ConnectionSettings: &sdk.ApplicationConnectionSettings{
-			InternalAddress:       applicationServiceDTO.InternalAddress,
-			ExternalAddress:       applicationServiceDTO.ExternalAddress,
-			CustomRootPath:        applicationServiceDTO.CustomRootPath,
-			Subdomain:             applicationServiceDTO.Subdomain,
-			LuminateAddress:       applicationServiceDTO.LuminateAddress,
-			CustomSSLCertificate:  applicationServiceDTO.WildcardCertificate,
-			WildcardPrivateKey:    applicationServiceDTO.WildcardPrivateKey,
+			InternalAddress:      applicationServiceDTO.InternalAddress,
+			ExternalAddress:      applicationServiceDTO.ExternalAddress,
+			CustomRootPath:       applicationServiceDTO.CustomRootPath,
+			Subdomain:            applicationServiceDTO.Subdomain,
+			LuminateAddress:      applicationServiceDTO.LuminateAddress,
+			CustomSSLCertificate: applicationServiceDTO.WildcardCertificate,
+			WildcardPrivateKey:   applicationServiceDTO.WildcardPrivateKey,
 		},
 	}
 
@@ -113,7 +113,7 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 		}
 
 		aSubType := GetApplicationSubType(applicationServiceDTO.SubType)
-	  applicationSDKDTO.SubType = &aSubType
+		applicationSDKDTO.SubType = &aSubType
 
 		if applicationServiceDTO.CustomExternalAddress != "" {
 			applicationSDKDTO.ConnectionSettings.CustomExternalAddress = applicationServiceDTO.CustomExternalAddress
