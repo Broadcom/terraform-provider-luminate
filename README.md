@@ -1054,7 +1054,7 @@ Use this resource to get one or more existing groups
 ```
 data "luminate_group" "my-groups" {
   identity_provider_id = "identity_provider_id"
-  users = ["group1", "group2"]
+  groups = ["group1", "group2"]
 }
 ```
 #### Argument Reference
