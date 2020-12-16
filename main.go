@@ -5,8 +5,6 @@ import (
 	"github.com/hashicorp/terraform/plugin"
 )
 
-var RateLimitSleepDuration = 5
-
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
 		ProviderFunc: provider.Provider,
