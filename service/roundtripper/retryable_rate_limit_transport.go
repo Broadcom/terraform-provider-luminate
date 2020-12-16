@@ -28,7 +28,7 @@ func NewRetryableRateLimitTransport(millsBetweenRetries int, retrySleepJitter in
 
 func (t *RetryableRateLimitTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 
-	// Duplicate the request
+	// To be able to retry a request it needs to be duplicated since the body can only be read once.
 	var body bytes.Buffer
 	if r.ContentLength > 0 {
 		body.ReadFrom(r.Body)
@@ -44,11 +44,12 @@ func (t *RetryableRateLimitTransport) RoundTrip(r *http.Request) (*http.Response
 		return nil, err
 	}
 
-	if response.StatusCode == 429 {
+	if response.StatusCode == http.StatusTooManyRequests {
 		log.Printf("[DEBUG] Retry request due to rate limit error.")
 
 		// Jitter sleep time to spread the retries more evenly
-		sleep := t.sleepBetweenRetries + (time.Duration(rand.Intn(t.retrySleepJitter)) * time.Millisecond) - (time.Duration(t.retrySleepJitter / 2) * time.Millisecond)
+		jitter := rand.Intn(t.retrySleepJitter) - t.retrySleepJitter / 2
+		sleep := t.sleepBetweenRetries + time.Duration(jitter) * time.Millisecond
 		time.Sleep(sleep)
 
 		return t.RoundTrip(r2)
