@@ -32,7 +32,6 @@ const (
 func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateService {
 	tokenURL := fmt.Sprintf("https://%s/v1/oauth/token", Endpoint)
 	basePath := fmt.Sprintf("https://%s/v2", Endpoint)
-	fmt.Printf("[DEBUG] ======= New client")
 	cfg := clientcredentials.Config{
 		ClientID:     ClientID,
 		ClientSecret: ClientSecret,
