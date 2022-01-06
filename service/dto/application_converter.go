@@ -225,12 +225,16 @@ func GetApplicationTypeString(appType sdk.ApplicationType) string {
 
 func GetApplicationSubType(appSubType string) sdk.ApplicationSubType {
 	switch appSubType {
-	case string(sdk.LUMINATE_DOMAIN_ApplicationSubType):
-		return sdk.LUMINATE_DOMAIN_ApplicationSubType
-	case string(sdk.CUSTOM_DOMAIN_ApplicationSubType):
-		return sdk.CUSTOM_DOMAIN_ApplicationSubType
-	case string(sdk.WILDCARD_DOMAIN_ApplicationSubType):
-		return sdk.WILDCARD_DOMAIN_ApplicationSubType
+	case string(sdk.HTTP_LUMINATE_DOMAIN_ApplicationSubType):
+		return sdk.HTTP_LUMINATE_DOMAIN_ApplicationSubType
+	case string(sdk.HTTP_CUSTOM_DOMAIN_ApplicationSubType):
+		return sdk.HTTP_CUSTOM_DOMAIN_ApplicationSubType
+	case string(sdk.HTTP_WILDCARD_DOMAIN_ApplicationSubType):
+		return sdk.HTTP_WILDCARD_DOMAIN_ApplicationSubType
+	case string(sdk.SINGLE_MACHINE_ApplicationSubType):
+		return sdk.SINGLE_MACHINE_ApplicationSubType
+	case string(sdk.MULTIPLE_MACHINES_ApplicationSubType):
+		return sdk.MULTIPLE_MACHINES_ApplicationSubType
 	}
 	return ""
 }

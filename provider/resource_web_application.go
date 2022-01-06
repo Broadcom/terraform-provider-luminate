@@ -20,7 +20,7 @@ func LuminateWebApplication() *schema.Resource {
 	webAppSchema["sub_type"] = &schema.Schema{
 		Type:         schema.TypeString,
 		Optional:     true,
-		Default:      string(sdk.LUMINATE_DOMAIN_ApplicationSubType),
+		Default:      string(sdk.HTTP_LUMINATE_DOMAIN_ApplicationSubType),
 		ValidateFunc: validateSubType,
 		Description:  "Web application sub type",
 	}
@@ -256,9 +256,11 @@ func validateSubType(v interface{}, k string) (ws []string, es []error) {
 	}
 
 	validTypes := []string{
-		string(sdk.LUMINATE_DOMAIN_ApplicationSubType),
-		string(sdk.CUSTOM_DOMAIN_ApplicationSubType),
-		string(sdk.WILDCARD_DOMAIN_ApplicationSubType),
+		string(sdk.HTTP_LUMINATE_DOMAIN_ApplicationSubType),
+		string(sdk.HTTP_CUSTOM_DOMAIN_ApplicationSubType),
+		string(sdk.HTTP_WILDCARD_DOMAIN_ApplicationSubType),
+		string(sdk.SINGLE_MACHINE_ApplicationSubType),
+		string(sdk.MULTIPLE_MACHINES_ApplicationSubType),
 	}
 
 	if !utils.StringInSlice(validTypes, cType) {
