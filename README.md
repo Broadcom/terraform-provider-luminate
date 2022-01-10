@@ -42,6 +42,7 @@
 - [Data Source: luminate_user](#data-source-luminate_user)
 - [Data Source: luminate_group](#data-source-luminate_group)
 - [Data Source: luminate_aws_integration](#data-source-luminate_aws_integration)
+- [Data Source: luminate_ssh_client](#data-source-luminate_ssh_client)
 
 
 Basic configuration and usage
@@ -1097,3 +1098,33 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **integration_id** - id of retrieved AWS integration
+
+
+Data source: luminate_ssh_client
+------------
+
+Use this resource to retrieve an existing ssh-client
+
+#### Example Usage
+
+```
+data "luminate_ssh_client" "my-ssh-client" {
+  name = "test"
+}
+```
+
+#### Argument Reference
+
+- **name** (String) ssh-client to retrieve
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+- **id** (String)
+- **description** (String)
+- **key_size** (Number)
+- **expires** (String)
+- **last_accessed** (String)
+- **created_on** (String)
+- **modified_on** (String)

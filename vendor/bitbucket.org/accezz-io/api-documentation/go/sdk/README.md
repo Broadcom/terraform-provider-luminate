@@ -52,7 +52,10 @@ Class | Method | HTTP request | Description
 *ConnectorsApi* | [**GetConnector**](docs/ConnectorsApi.md#getconnector) | **Get** /connectors/{connector-id} | Get Connector
 *ConnectorsApi* | [**GetConnectorCommand**](docs/ConnectorsApi.md#getconnectorcommand) | **Get** /connectors/{connector-id}/command | getConnectorCommand
 *ForensicsLogsApi* | [**SearchForensicslogs**](docs/ForensicsLogsApi.md#searchforensicslogs) | **Post** /logs/forensics | Search Forensics logs
+*GroupsApi* | [**AssignUserToGroup**](docs/GroupsApi.md#assignusertogroup) | **Put** /identities/local/groups/{group-id}/users/{user-id} | Assign User To Group
 *GroupsApi* | [**GetGroup**](docs/GroupsApi.md#getgroup) | **Get** /identities/{identity-provider-id}/groups/{entity-id} | Get Group
+*GroupsApi* | [**ListAssignedUsers**](docs/GroupsApi.md#listassignedusers) | **Get** /identities/{identity-provider-id}/groups/{entity-id}/users | List Assigned Users
+*GroupsApi* | [**RemoveUserFromGroup**](docs/GroupsApi.md#removeuserfromgroup) | **Delete** /identities/local/groups/{group-id}/users/{user-id} | Remove User From Group
 *GroupsApi* | [**SearchGroupsbyIdp**](docs/GroupsApi.md#searchgroupsbyidp) | **Get** /identities/{identity-provider-id}/groups | SearchGroupsbyIdp
 *IdentityProvidersApi* | [**ListIdentityProviders**](docs/IdentityProvidersApi.md#listidentityproviders) | **Get** /identities/settings/identity-providers | ListIdentityProviders
 *RDPLogsApi* | [**SearchRDPLogs**](docs/RDPLogsApi.md#searchrdplogs) | **Post** /logs/rdp | Search RDP Logs
