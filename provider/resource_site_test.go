@@ -7,8 +7,8 @@ import (
 )
 
 const testAccResourceSite_minimal = `
-	resource "luminate_site" "new-site" {
-   name = "tfAccSite"
+resource "luminate_site" "new-site" {
+	name = "tfAccSite"
 }
 `
 
@@ -18,9 +18,9 @@ resource "luminate_site" "new-site" {
 	mute_health_notification = "true"
 	kubernetes_persistent_volume_name = "K8SVolume"
 	kerberos {
-  domain = "domain.com"
-  kdc_address = "kdc_address"
-  keytab_pair = "keytab_pair"
+		domain = "domain.com"
+		kdc_address = "kdc_address"
+		keytab_pair = "keytab_pair"
 	}
 }
 `

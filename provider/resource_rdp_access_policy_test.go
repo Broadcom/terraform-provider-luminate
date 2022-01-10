@@ -12,8 +12,8 @@ const resourceRdpAccessPolicy_enabled = `
   		name =  "resourceRdpAccessPolicy_enabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
   		allow_long_term_password = "true"
 	}
@@ -25,8 +25,8 @@ const resourceRdpAccessPolicy_disabled = `
   		name =  "resourceRdpAccessPolicy_disabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
   		allow_long_term_password = "true"
 	}
@@ -37,8 +37,8 @@ const resourceRdpAccessPolicy_enabled_not_specified = `
   		name =  "resourceRdpAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 	}
 `
@@ -49,8 +49,8 @@ const resourceRdpAccessPolicy_no_long_term_password_specified = `
   		name =  "resourceRdpAccessPolicy_no_long_term_password_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 	}
 `
 
@@ -59,8 +59,8 @@ const resourceRdpAccessPolicy_conditions_specified = `
   		name =  "resourceRdpAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		conditions {
     		source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
@@ -75,8 +75,8 @@ const resourceRdpAccessPolicy_validators_specified = `
   		name =  "resourceRdpAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		validators {
 			web_verification = true

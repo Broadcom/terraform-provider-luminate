@@ -9,24 +9,24 @@ import (
 
 const testAccRDPApplication_minimal = `
 resource "luminate_site" "new-site" {
-   name = "tfAccSite"
+	name = "tfAccSite"
 }
 resource "luminate_rdp_application" "new-rdp-application" {
-site_id = "${luminate_site.new-site.id}"
-name = "tfAccRDP"
-internal_address = "tcp://127.0.0.2"
+	site_id = "${luminate_site.new-site.id}"
+	name = "tfAccRDP"
+	internal_address = "tcp://127.0.0.2"
 }
 `
 
 const testAccRDPApplication_options = `
 resource "luminate_site" "new-site" {
-  name = "tfAccSite"
+	name = "tfAccSite"
 }
 
 resource "luminate_rdp_application" "new-rdp-application" {
-site_id = "${luminate_site.new-site.id}"
-name = "tfAccRDPUpd"
-internal_address = "tcp://127.0.0.5"
+	site_id = "${luminate_site.new-site.id}"
+	name = "tfAccRDPUpd"
+	internal_address = "tcp://127.0.0.5"
 }
 `
 

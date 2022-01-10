@@ -12,8 +12,8 @@ const resourceSshAccessPolicy_enabled = `
 		name =  "resourceSshAccessPolicy_enabled"
 		identity_provider_id = "local"
 
-		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		accounts = ["ubuntu", "ec2-user"]
 		use_auto_mapping = "true"
@@ -29,8 +29,8 @@ const resourceSshAccessPolicy_disabled = `
   		name =  "resourceSshAccessPolicy_disabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		accounts = ["ubuntu", "ec2-user"]
 		allow_temporary_token = "true"
@@ -43,8 +43,8 @@ const resourceSshAccessPolicy_enabled_not_specified = `
   		name =  "resourceSshAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		accounts = ["ubuntu", "ec2-user"]
 		allow_temporary_token = "true"
@@ -58,8 +58,8 @@ const resourceSshAccessPolicy_optional_not_specified = `
   		name =  "resourceSshAccessPolicy_optional_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		accounts = ["ubuntu", "ec2-user"]
 	}
@@ -70,8 +70,8 @@ const resourceSshAccessPolicy_conditions_specified = `
   		name =  "resourceSshAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		conditions {
     		source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
@@ -88,8 +88,8 @@ const resourceSshAccessPolicy_validators_specified = `
   		name =  "resourceSshAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		validators {
 			web_verification = true
