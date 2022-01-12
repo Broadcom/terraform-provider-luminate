@@ -27,6 +27,134 @@ var (
 type GroupsApiService service
 
 /* 
+GroupsApiService Assign User To Group
+Add user to group.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param groupId Group ID
+ * @param userId User ID
+
+
+*/
+func (a *GroupsApiService) AssignUserToGroup(ctx context.Context, groupId string, userId string) (*http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Put")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/identities/local/groups/{group-id}/users/{user-id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"group-id"+"}", fmt.Sprintf("%v", groupId), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"user-id"+"}", fmt.Sprintf("%v", userId), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarHttpResponse, err
+	}
+
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body: localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		
+		if localVarHttpResponse.StatusCode == 400 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 401 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 403 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 404 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		return localVarHttpResponse, newErr
+	}
+
+	return localVarHttpResponse, nil
+}
+
+/* 
 GroupsApiService Get Group
 Return group by ID from the specified identity provider. For the local users repository in your Secure Access Cloud tenant, set identity-provider-id to &#39;local&#39;. 
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -170,6 +298,295 @@ func (a *GroupsApiService) GetGroup(ctx context.Context, identityProviderId stri
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/* 
+GroupsApiService List Assigned Users
+Returns a group&#39;s user list by ID from the specified identity provider For the local users repository in your Secure Access Cloud tenant, set identity-provider-id to &#39;local&#39;. 
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+ * @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
+ * @param optional nil or *ListAssignedUsersOpts - Optional Parameters:
+     * @param "PageOffset" (optional.String) -  Page number. Depending on the Identity Provider, this field can either be a  number or a string. It can&#39;t be assumed and a valid value must be used from the response returned for the previous page. If not specified, first page is returned.
+     * @param "PerPage" (optional.Int32) -  The number of items returned in a single page.
+
+@return UsersPage
+*/
+
+type ListAssignedUsersOpts struct { 
+	PageOffset optional.String
+	PerPage optional.Int32
+}
+
+func (a *GroupsApiService) ListAssignedUsers(ctx context.Context, identityProviderId string, entityId string, localVarOptionals *ListAssignedUsersOpts) (UsersPage, *http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		localVarReturnValue UsersPage
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/identities/{identity-provider-id}/groups/{entity-id}/users"
+	localVarPath = strings.Replace(localVarPath, "{"+"identity-provider-id"+"}", fmt.Sprintf("%v", identityProviderId), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"entity-id"+"}", fmt.Sprintf("%v", entityId), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.PageOffset.IsSet() {
+		localVarQueryParams.Add("pageOffset", parameterToString(localVarOptionals.PageOffset.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.PerPage.IsSet() {
+		localVarQueryParams.Add("perPage", parameterToString(localVarOptionals.PerPage.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+		if err == nil { 
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body: localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		
+		if localVarHttpResponse.StatusCode == 200 {
+			var v UsersPage
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 400 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 401 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 403 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 404 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/* 
+GroupsApiService Remove User From Group
+Remove user from group.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param groupId Group ID
+ * @param userId User ID
+
+
+*/
+func (a *GroupsApiService) RemoveUserFromGroup(ctx context.Context, groupId string, userId string) (*http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Delete")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/identities/local/groups/{group-id}/users/{user-id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"group-id"+"}", fmt.Sprintf("%v", groupId), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"user-id"+"}", fmt.Sprintf("%v", userId), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarHttpResponse, err
+	}
+
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body: localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		
+		if localVarHttpResponse.StatusCode == 400 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 401 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 403 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 404 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelApiResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarHttpResponse, newErr
+				}
+				newErr.model = v
+				return localVarHttpResponse, newErr
+		}
+		
+		return localVarHttpResponse, newErr
+	}
+
+	return localVarHttpResponse, nil
 }
 
 /* 

@@ -11,6 +11,7 @@ const (
 	MAX_SITE_NAME_LENGTH   = 700
 	MAX_APP_NAME_LENGTH    = 40
 	MAX_POLICY_NAME_LENGTH = 255
+	LocalIdpId			   = "local"
 )
 
 
