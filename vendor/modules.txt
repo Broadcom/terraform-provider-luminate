@@ -1,4 +1,4 @@
-# bitbucket.org/accezz-io/api-documentation v0.0.0-20190802212651-07ca3a5aa7f4
+# bitbucket.org/accezz-io/api-documentation v0.0.0-20220109133746-812f77274116
 bitbucket.org/accezz-io/api-documentation/go/sdk
 # cloud.google.com/go v0.36.0
 cloud.google.com/go/compute/metadata

@@ -76,6 +76,10 @@ resource "luminate_ssh_gw_application" "new-ssh-gw-application" {
 `
 
 func TestAccLuminateSshGwApplication(t *testing.T) {
+	// FIXME: https://jira.luminate.io/browse/AC-27711
+	t.Skip("Skipping testing see: https://jira.luminate.io/browse/AC-27711")
+	return
+
 	resourceName := "luminate_ssh_gw_application.new-ssh-gw-application"
 
 	resource.Test(t, resource.TestCase{

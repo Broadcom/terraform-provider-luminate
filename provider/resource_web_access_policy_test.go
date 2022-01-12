@@ -12,8 +12,8 @@ const resourceWebAccessPolicy_enabled = `
 		name =  "resourceWebAccessPolicy_enabled"
 		identity_provider_id = "local"
 
-		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 	}
 `
 
@@ -23,8 +23,8 @@ const resourceWebAccessPolicy_disabled = `
   		name =  "resourceWebAccessPolicy_disabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 	}
 `
 
@@ -33,8 +33,8 @@ const resourceWebAccessPolicy_enabled_not_specified = `
   		name =  "resourceWebAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 	}
 `
 
@@ -43,8 +43,8 @@ const resourceWebAccessPolicy_conditions_specified = `
   		name =  "resourceWebAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		conditions {
     		source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
@@ -65,8 +65,8 @@ const resourceWebAccessPolicy_conditions_specified_update = `
 		name =  "resourceWebAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 	
-		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 	
 		conditions {
 			source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
@@ -87,8 +87,8 @@ const resourceWebAccessPolicy_validators_specified = `
   		name =  "resourceWebAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f04d9234-3482-48b0-b56b-d562a5d90f26"]
-  		applications = ["aeb7d51e-0934-459d-bc35-4d06e9b9f6a1"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 	}
 `
 
