@@ -1018,7 +1018,7 @@ resource "luminate_group_user" "new_group_membership" {
 The following arguments are supported:
 
 -   **group_id -** (Required) Group id
--   **user_id** (Optional) User id to be assigned to group
+-   **user_id -** (Required) User id to be assigned to group
 
 
 

@@ -28,16 +28,16 @@ func LuminateGroupUser() *schema.Resource {
 				ForceNew: true,
 			},
 		},
-		Create: resourceCreateGroupsUser,
-		Read:   resourceReadGroupsUser,
-		Delete: resourceDeleteGroupsUser,
+		Create: resourceCreateGroupUser,
+		Read:   resourceReadGroupUser,
+		Delete: resourceDeleteGroupUser,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 	}
 }
 
-func resourceCreateGroupsUser(d *schema.ResourceData, m interface{}) error {
+func resourceCreateGroupUser(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[DEBUG] LUMINATE GROUP_USER CREATE")
 
 	client, ok := m.(*service.LuminateService)
@@ -56,7 +56,7 @@ func resourceCreateGroupsUser(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceReadGroupsUser(d *schema.ResourceData, m interface{}) error {
+func resourceReadGroupUser(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[DEBUG] LUMINATE GROUP_USER READ")
 
 	client, ok := m.(*service.LuminateService)
@@ -79,7 +79,7 @@ func resourceReadGroupsUser(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceDeleteGroupsUser(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteGroupUser(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[DEBUG] LUMINATE GROUP_USER DELETE")
 
 	client, ok := m.(*service.LuminateService)
