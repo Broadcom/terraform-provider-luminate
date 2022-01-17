@@ -37,6 +37,7 @@ func Provider() terraform.ResourceProvider {
 			"luminate_tcp_access_policy":  LuminateTcpAccessPolicy(),
 			"luminate_ssh_access_policy":  LuminateSshAccessPolicy(),
 			"luminate_rdp_access_policy":  LuminateRdpAccessPolicy(),
+			"luminate_group_user":         LuminateGroupUser(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"luminate_group":             LuminateDataSourceGroups(),

@@ -37,6 +37,9 @@
 - [Resource: luminate_web_access_policy](#resource-luminate_web_access_policy)
 - [Resource: luminate_tcp_access_policy](#resource-luminate_tcp_access_policy)
 
+[Identities resources](#identities-resources)
+- [Resource: luminate_group_user](#resource-luminate_group_user)
+
 [Data sources](#data-sources)
 - [Data Source: luminate_identity_provider](#data-source-luminate_identity_provider)
 - [Data Source: luminate_user](#data-source-luminate_user)
@@ -983,6 +986,42 @@ In addition to arguments above, the following attributes are exported:
 ```
 $ terraform import luminate_tcp_access_policy.new-tcp-access-policy  policy_id
 ```
+
+# Identities resources
+
+Resource: luminate_group_user
+----------
+
+Provides secure access cloud group_user resource
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_group" "my-groups" {
+	identity_provider_id = "local"
+	groups = ["group1"]
+}
+
+data "luminate_user" "my-users" {
+	identity_provider_id = "local"
+	users = ["user1"]
+}
+
+resource "luminate_group_user" "new_group_membership" {
+	group_id = "${data.luminate_group.my-groups.group_ids.0}"
+	user_id = "${data.luminate_user.my-users.user_ids.0}"
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **group_id -** (Required) Group id
+-   **user_id -** (Required) User id to be assigned to group
+
+
 
 Data sources
 ==========

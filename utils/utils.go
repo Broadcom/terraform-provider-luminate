@@ -1,9 +1,9 @@
 package utils
 
 import (
+	"crypto/md5"
 	"fmt"
 	"github.com/asaskevich/govalidator"
-	"crypto/md5"
 	"io"
 )
 
@@ -11,8 +11,8 @@ const (
 	MAX_SITE_NAME_LENGTH   = 700
 	MAX_APP_NAME_LENGTH    = 40
 	MAX_POLICY_NAME_LENGTH = 255
+	LocalIdpId             = "local"
 )
-
 
 func StringMD5(in string) string {
 	h := md5.New()
