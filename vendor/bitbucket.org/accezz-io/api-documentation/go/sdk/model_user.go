@@ -25,8 +25,8 @@ type User struct {
 	// The email address to which outgoing mails are sent.
 	Email string `json:"email"`
 	// The date when the user was created.
-	//CreatedAt time.Time `json:"created_at,omitempty"`
-	//// The date when the user was last updated (modified).
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// The date when the user was last updated (modified).
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Date when the user last logged in.
 	LastLogin time.Time `json:"last_login,omitempty"`
