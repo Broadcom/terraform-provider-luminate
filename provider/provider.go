@@ -43,6 +43,7 @@ func Provider() terraform.ResourceProvider {
 			"luminate_user":              LuminateDataSourceUsers(),
 			"luminate_identity_provider": LuminateDataSourceIdentityProvider(),
 			"luminate_aws_integration":   LuminateDataSourceAwsIntegration(),
+			"luminate_ssh_client":        LuminateDataSourceSshClient(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
