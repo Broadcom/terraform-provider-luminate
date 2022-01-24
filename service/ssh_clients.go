@@ -30,16 +30,15 @@ func (g *SshClientAPI) GetSshClientByName(sshClientName string) (*sdk.SshClient,
 			return nil, err
 		}
 
-		if len(sshClientPage.Content) == 0 || sshClientPage.Last {
-			return nil, errors.Errorf("can't find ssh client: '%s'", sshClientName)
-		}
-
 		for _, sshClient := range sshClientPage.Content {
 			if sshClientName == sshClient.Name {
 				return &sshClient, nil
 			}
 		}
 
-		page = page + 1
+		if len(sshClientPage.Content) == 0 || sshClientPage.Last {
+			return nil, errors.Errorf("can't find ssh client: '%s'", sshClientName)
+		}
+		page++
 	}
 }
