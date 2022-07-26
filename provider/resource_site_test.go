@@ -9,6 +9,7 @@ import (
 const testAccResourceSite_minimal = `
 resource "luminate_site" "new-site" {
 	name = "tfAccSite"
+	region = "us-east4"
 }
 `
 
@@ -37,6 +38,7 @@ func TestAccLuminateSite(t *testing.T) {
 				Config: testAccResourceSite_minimal,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSite"),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east4"),
 					resource.TestCheckResourceAttr(resourceName, "mute_health_notification", "false"),
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_persistent_volume_name", ""),
 					resource.TestCheckResourceAttr(resourceName, "kerberos.#", "0"),
