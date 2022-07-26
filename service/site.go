@@ -2,10 +2,10 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
 )
 
@@ -32,6 +32,7 @@ func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 	site := dto.Site{
 		ID:         s.Id,
 		Name:       s.Name,
+		Region:     s.Region,
 		MuteHealth: s.MuteHealthNotification,
 		K8SVolume:  s.KubernetesPersistentVolumeName,
 	}
@@ -61,6 +62,7 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 
 	newSite := sdk.Site{
 		Name:                           site.Name,
+		Region:                         site.Region,
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
 	}
@@ -99,6 +101,7 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 
 	updateSite := sdk.Site{
 		Name:                           site.Name,
+		Region:                         site.Region,
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
 	}

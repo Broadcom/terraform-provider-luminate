@@ -9,6 +9,7 @@ type Site struct {
 	K8SVolume  string
 	Kerberos   *SiteKerberosConfig
 	Connectors []Connector
+	Region     string
 }
 
 type SiteKerberosConfig struct {

@@ -15,6 +15,7 @@ resource "luminate_site" "new-site" {
 const testAccResourceSite_options = `
 resource "luminate_site" "new-site" {
 	name = "tfAccSiteOpt"
+	region = "us-east4"
 	mute_health_notification = "true"
 	kubernetes_persistent_volume_name = "K8SVolume"
 	kerberos {
@@ -45,6 +46,7 @@ func TestAccLuminateSite(t *testing.T) {
 				Config: testAccResourceSite_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSiteOpt"),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east4"),
 					resource.TestCheckResourceAttr(resourceName, "mute_health_notification", "true"),
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_persistent_volume_name", "K8SVolume"),
 					resource.TestCheckResourceAttr(resourceName, "kerberos.#", "1"),
