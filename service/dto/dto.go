@@ -40,6 +40,21 @@ type CloudIntegrationData struct {
 	Vpcs      []Vpc
 }
 
+type AwsIntegration struct {
+	Name                 string
+	Id                   string
+	LuminateAwsAccountId string `json:"luminate_aws_account_id"`
+	AwsExternalId        string `json:"aws_external_id"`
+}
+
+type AwsIntegrationBind struct {
+	Name                 string
+	Id                   string
+	AwsRoleArn           string `json:"aws_role_arn"`
+	LuminateAwsAccountId string `json:"luminate_aws_account_id"`
+	AwsExternalId        string `json:"aws_external_id"`
+}
+
 type Application struct {
 	ID                    string
 	Name                  string
