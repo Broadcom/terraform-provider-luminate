@@ -1,9 +1,0 @@
-diff a/provider/resource_access_policy.go b/provider/resource_access_policy.go	(rejected hunks)
-@@ -195,6 +195,7 @@
- 		directoryEntity = append(directoryEntity, dto.DirectoryEntity{
- 			IdentityProviderId:   identityProviderId,
- 			IdentifierInProvider: groupId.(string),
-+			IdentityProviderType: identityProviderType,
- 			EntityType:           "Group",
- 		})
- 	}
