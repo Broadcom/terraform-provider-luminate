@@ -22,12 +22,15 @@ commands:
       - run:
           command: |
             set +o errexit
-            git diff --name-only HEAD~ HEAD | grep go$
+            git diff --name-only HEAD~ HEAD
+            git diff --name-only HEAD~ HEAD | grep -q go$
             if [[ $? == 0 ]]
             then
+              echo 'export SKIP=false'
               echo 'export SKIP=false' >> ${BASH_ENV}
               .circleci/validate-release.sh
             else
+              echo 'export SKIP=true'
               echo 'export SKIP=true' >> ${BASH_ENV}
             fi
 
