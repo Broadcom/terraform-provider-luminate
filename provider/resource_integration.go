@@ -43,7 +43,7 @@ func LuminateAWSIntegration() *schema.Resource {
 }
 
 func resourceCreateAwsIntegration(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[DEBUG] LUMINATE INTEGRATION CREATE")
+	log.Printf("[DEBUG] LUMINATE INTEGRATION - CREATE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
@@ -63,7 +63,7 @@ func resourceCreateAwsIntegration(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAwsReadIntegration(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[DEBUG] LUMINATE INTEGRATION READ")
+	log.Printf("[DEBUG] LUMINATE INTEGRATION - READ")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
@@ -83,13 +83,13 @@ func resourceAwsReadIntegration(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUpdateAwsIntegration(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[DEBUG] LUMINATE INTEGRATION UPDATE")
+	log.Printf("[DEBUG] LUMINATE INTEGRATION - UPDATE")
 
 	return resourceAwsReadIntegration(d, m)
 }
 
 func resourceDeleteAwsIntegration(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[DEBUG] LUMINATE INTEGRATION DELETE")
+	log.Printf("[DEBUG] LUMINATE INTEGRATION - DELETE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
