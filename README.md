@@ -1022,6 +1022,128 @@ The following arguments are supported:
 -   **user_id -** (Required) User id to be assigned to group
 
 
+# Integration resource
+
+Resource: luminate_aws_integration
+----------
+
+Provides secure access cloud aws_integration resource
+
+­
+#### Example Usage
+
+```
+resource "luminate_aws_integration" "new-integration" {
+	integration_name = "exampleIntegration"
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **integration_name -** (Required) name for the AWS integration
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **integration_id -** new integration id
+-   **luminate_aws_account_id -** luminate AWS account ID
+-   **aws_external_id -** the integration AWS external ID
+
+
+# Integration Bind resource
+
+Resource: luminate_aws_integration
+----------
+
+Provides secure access cloud aws_integration resource
+
+­
+#### Example Usage
+
+```
+resource "luminate_aws_integration" "new-integration" {
+	integration_name = "exampleIntegrationBind"
+}
+
+//create and bind IAMrole and policy with new integration external ID and luminate account ID
+resource "aws_iam_role" "test_role" {
+  name = "exampleIntegrationBind"
+  assume_role_policy = jsonencode({
+	 Version= "2012-10-17"
+        Statement = [
+            {
+                Effect = "Allow"
+                Action = "sts:AssumeRole"
+                Condition = {
+                    StringEquals = {
+                        "sts:ExternalId": [
+                            "${luminate_aws_integration.new-integration.aws_external_id}"
+                        ]
+                    }
+                },
+                Principal = {
+                    "AWS" = [
+                        "${luminate_aws_integration.new-integration.luminate_aws_account_id}"
+                    ]
+                }
+            }
+        ]
+	})
+}
+
+resource "aws_iam_policy" "policy" {
+  name        = "test_policy"
+  path        = "/"
+  description = "My test policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+	  Sid = "VisualEditor0"
+        Effect   = "Allow"
+        Action = [
+           "ec2:DescribeInstances",
+           "ec2:DescribeVpcs",
+           "ec2:DescribeRegions",
+           "ec2:DescribeTags"
+        ]
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "test-attach" {
+  role       = aws_iam_role. test_role.name
+  policy_arn = aws_iam_policy.policy.arn
+}
+
+resource "luminate_aws_integration_bind" "new-integration-bind" {
+	integration_name = "${luminate_aws_integration.new-integration.integration_name}"
+	integration_id= "${luminate_aws_integration.new-integration.integration_id}"
+	aws_role_arn= "aws_iam_role_policy_attachment.test-attach.arn"
+	luminate_aws_account_id= "${luminate_aws_integration.new-integration.luminate_aws_account_id}"	
+	aws_external_id= "${luminate_aws_integration.new-integration.aws_external_id}"
+	regions = ["us-west-1"]
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **integration_name -** (Required) name of the AWS integration
+-   **integration_id -** (Required) ID of the AWS integration
+-   **aws_role_arn -** (Required) AWS arn 
+-   **luminate_aws_account_id -** (Required) luminate AWS account ID
+-   **aws_external_id -** (Required) integration AWS external ID 
+-   **regions -** (Required) regions to add
+
+
 
 Data sources
 ==========
