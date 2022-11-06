@@ -1,5 +1,4 @@
-# bitbucket.org/accezz-io/api-documentation v0.0.0-20220804152256-2a6311eef917
-## explicit
+# bitbucket.org/accezz-io/api-documentation v0.0.0-20220726135522-9aff9cdfbef0
 bitbucket.org/accezz-io/api-documentation/go/sdk
 # cloud.google.com/go v0.36.0
 cloud.google.com/go/compute/metadata
@@ -12,7 +11,6 @@ cloud.google.com/go/storage
 # github.com/agext/levenshtein v1.2.2
 github.com/agext/levenshtein
 # github.com/antihax/optional v0.0.0-20180407024304-ca021399b1a6
-## explicit
 github.com/antihax/optional
 # github.com/apparentlymart/go-cidr v1.0.0
 github.com/apparentlymart/go-cidr/cidr
@@ -21,7 +19,6 @@ github.com/apparentlymart/go-textseg/textseg
 # github.com/armon/go-radix v1.0.0
 github.com/armon/go-radix
 # github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
-## explicit
 github.com/asaskevich/govalidator
 # github.com/aws/aws-sdk-go v1.19.18
 github.com/aws/aws-sdk-go/aws
@@ -132,7 +129,6 @@ github.com/hashicorp/hil/scanner
 # github.com/hashicorp/logutils v1.0.0
 github.com/hashicorp/logutils
 # github.com/hashicorp/terraform v0.12.2
-## explicit
 github.com/hashicorp/terraform/addrs
 github.com/hashicorp/terraform/command/format
 github.com/hashicorp/terraform/config
@@ -211,7 +207,6 @@ github.com/mitchellh/reflectwalk
 # github.com/oklog/run v1.0.0
 github.com/oklog/run
 # github.com/pkg/errors v0.0.0-20170505043639-c605e284fe17
-## explicit
 github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
@@ -221,13 +216,11 @@ github.com/posener/complete/cmd
 github.com/posener/complete/cmd/install
 github.com/posener/complete/match
 # github.com/satori/go.uuid v1.2.0
-## explicit
 github.com/satori/go.uuid
 # github.com/spf13/afero v1.2.1
 github.com/spf13/afero
 github.com/spf13/afero/mem
 # github.com/stretchr/testify v1.3.0
-## explicit
 github.com/stretchr/testify/assert
 # github.com/ulikunitz/xz v0.5.5
 github.com/ulikunitz/xz
@@ -283,7 +276,6 @@ golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
 # golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-## explicit
 golang.org/x/oauth2
 golang.org/x/oauth2/clientcredentials
 golang.org/x/oauth2/google
@@ -298,7 +290,6 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 # golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
-## explicit
 golang.org/x/time/rate
 # google.golang.org/api v0.1.0
 google.golang.org/api/gensupport

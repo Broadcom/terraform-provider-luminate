@@ -1,7 +1,7 @@
 module github.com/Broadcom/terraform-provider-luminate
 
 require (
-	bitbucket.org/accezz-io/api-documentation v0.0.0-20220804152256-2a6311eef917
+	bitbucket.org/accezz-io/api-documentation v0.0.0-20220726135522-9aff9cdfbef0
 	github.com/antihax/optional v0.0.0-20180407024304-ca021399b1a6
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
 	github.com/hashicorp/terraform v0.12.2
@@ -12,4 +12,4 @@ require (
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
 )
 
-go 1.16
+go 1.13

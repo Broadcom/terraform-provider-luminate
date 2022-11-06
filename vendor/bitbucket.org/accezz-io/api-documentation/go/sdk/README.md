@@ -59,7 +59,6 @@ Class | Method | HTTP request | Description
 *GroupsApi* | [**ListAssignedUsers**](docs/GroupsApi.md#listassignedusers) | **Get** /identities/{identity-provider-id}/groups/{entity-id}/users | List Assigned Users
 *GroupsApi* | [**RemoveUserFromGroup**](docs/GroupsApi.md#removeuserfromgroup) | **Delete** /identities/local/groups/{group-id}/users/{user-id} | Remove User From Group
 *GroupsApi* | [**SearchGroupsbyIdp**](docs/GroupsApi.md#searchgroupsbyidp) | **Get** /identities/{identity-provider-id}/groups | SearchGroupsbyIdp
-*IdentityProvidersApi* | [**GetIdentityProviderById**](docs/IdentityProvidersApi.md#getidentityproviderbyid) | **Get** /identities/settings/identity-providers/{identity-provider-id} | GetIdentityProviderById
 *IdentityProvidersApi* | [**ListIdentityProviders**](docs/IdentityProvidersApi.md#listidentityproviders) | **Get** /identities/settings/identity-providers | ListIdentityProviders
 *SCIMApi* | [**CreateSCIMUser**](docs/SCIMApi.md#createscimuser) | **Post** /identities/{identity-provider-id}/scim/users | Create SCIM User
 *SCIMApi* | [**CreateaSCIMGroup**](docs/SCIMApi.md#createascimgroup) | **Post** /identities/{identity-provider-id}/scim/groups | Create a SCIM Group

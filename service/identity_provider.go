@@ -6,10 +6,7 @@ import (
 	"fmt"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
-	"strings"
 )
-
-const LocalIdentityProviderIdAndName = "local"
 
 type IdentityProviderAPI struct {
 	cli *sdk.APIClient
@@ -22,10 +19,6 @@ func NewIdentityProviderAPI(client *sdk.APIClient) *IdentityProviderAPI {
 }
 
 func (u *IdentityProviderAPI) GetIdentityProviderId(identityProviderName string) (string, error) {
-	if strings.EqualFold(identityProviderName, LocalIdentityProviderIdAndName) {
-		// The local IDP provider is created by default and wil always have the same identifier
-		return LocalIdentityProviderIdAndName, nil
-	}
 	directoryProviders, _, err := u.cli.IdentityProvidersApi.ListIdentityProviders(context.Background(), &sdk.ListIdentityProvidersOpts{IncludeLocal: optional.NewBool(true)})
 	if err != nil {
 		return "", err
@@ -41,11 +34,16 @@ func (u *IdentityProviderAPI) GetIdentityProviderId(identityProviderName string)
 }
 
 func (u *IdentityProviderAPI) GetIdentityProviderTypeById(identityProviderId string) (string, error) {
-	directoryProvider, _, err := u.cli.IdentityProvidersApi.GetIdentityProviderById(context.Background(), identityProviderId)
+	directoryProviders, _, err := u.cli.IdentityProvidersApi.ListIdentityProviders(context.Background(), &sdk.ListIdentityProvidersOpts{IncludeLocal: optional.NewBool(true)})
 	if err != nil {
 		return "", err
 	}
-	return directoryProvider.Provider, nil
+
+	for _, directoryProvider := range directoryProviders {
+		if directoryProvider.Id == identityProviderId {
+			return directoryProvider.Provider, nil
+		}
+	}
 
 	return "", errors.Errorf("can't find identity provider with id '%s'", identityProviderId)
 }
