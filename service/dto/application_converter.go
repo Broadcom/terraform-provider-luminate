@@ -165,6 +165,11 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			Vpcs:      sdkVpcs,
 			SegmentId: applicationServiceDTO.CloudIntegrationData.SegmentId,
 		}
+	case "Segment":
+		applicationSDKDTO.SegmentSettings = &sdk.ApplicationConnectionSettingsSegment{
+			OriginalIp: applicationServiceDTO.SegmentSettings.OriginalIP,
+			IpMasks:    applicationServiceDTO.SegmentSettings.IPMasks,
+		}
 	}
 
 	return applicationSDKDTO
@@ -203,6 +208,8 @@ func GetApplicationType(appType string) sdk.ApplicationType {
 		return sdk.TCP_ApplicationType
 	case "rdp":
 		return sdk.RDP_ApplicationType
+	case "Segment":
+		return sdk.SEGMENT_ApplicationType
 	}
 	return ""
 }
@@ -219,6 +226,8 @@ func GetApplicationTypeString(appType sdk.ApplicationType) string {
 		return "tcp"
 	case sdk.RDP_ApplicationType:
 		return "rdp"
+	case sdk.SEGMENT_ApplicationType:
+		return "Segment"
 	}
 	return ""
 }

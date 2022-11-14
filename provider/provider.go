@@ -33,6 +33,7 @@ func Provider() terraform.ResourceProvider {
 			"luminate_ssh_gw_application":   LuminateSshGwApplication(),
 			"luminate_tcp_application":      LuminateTCPApplication(),
 			"luminate_rdp_application":      LuminateRDPApplication(),
+			"luminate_segment_application":  LuminateSegmentApplication(),
 			"luminate_web_access_policy":    LuminateWebAccessPolicy(),
 			"luminate_tcp_access_policy":    LuminateTcpAccessPolicy(),
 			"luminate_ssh_access_policy":    LuminateSshAccessPolicy(),

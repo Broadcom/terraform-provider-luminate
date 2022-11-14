@@ -84,6 +84,13 @@ type Application struct {
 	Targets             []TCPTarget
 	WildcardCertificate string
 	WildcardPrivateKey  string
+	//SEGMENT
+	SegmentSettings *SegmentSettings
+}
+
+type SegmentSettings struct {
+	OriginalIP string   `json:"original_ip"`
+	IPMasks    []string `json:"ip_masks"`
 }
 
 type TCPTarget struct {
