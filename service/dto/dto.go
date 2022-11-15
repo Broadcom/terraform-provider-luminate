@@ -89,8 +89,7 @@ type Application struct {
 }
 
 type SegmentSettings struct {
-	OriginalIP string   `json:"original_ip"`
-	IPMasks    []string `json:"ip_masks"`
+	OriginalIP string `json:"original_ip"`
 }
 
 type TCPTarget struct {

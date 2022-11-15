@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
@@ -27,15 +26,6 @@ func LuminateSegmentApplication() *schema.Resource {
 					Elem: &schema.Schema{
 						Type:         schema.TypeString,
 						ValidateFunc: utils.ValidateString,
-					},
-				},
-				"ip_masks": {
-					Type:        schema.TypeList,
-					Optional:    true,
-					Description: "",
-					Elem: &schema.Schema{
-						Type:         schema.TypeString,
-						ValidateFunc: validation.NoZeroValues,
 					},
 				},
 			},
@@ -63,8 +53,6 @@ func resourceCreateSegmentApplication(d *schema.ResourceData, m interface{}) err
 		return errors.New("unable to cast Luminate service")
 	}
 	newApp := extractSegmentApplication(d)
-
-	log.Printf("new app fields %+v", newApp)
 
 	app, err := client.Applications.CreateApplication(newApp)
 
@@ -157,7 +145,7 @@ func extractSegmentApplication(d *schema.ResourceData) *dto.Application {
 		Name:                 d.Get("name").(string),
 		Icon:                 d.Get("icon").(string),
 		SiteID:               d.Get("site_id").(string),
-		Type:                 "Segment",
+		Type:                 "segment",
 		Visible:              d.Get("visible").(bool),
 		NotificationsEnabled: d.Get("notification_enabled").(bool),
 		Subdomain:            d.Get("subdomain").(string),
@@ -186,7 +174,6 @@ func flattenSegmentSettings(settings *dto.SegmentSettings) []interface{} {
 
 	k := map[string]interface{}{
 		"original_ip": settings.OriginalIP,
-		"ip_masks":    settings.IPMasks,
 	}
 
 	return []interface{}{k}
@@ -200,19 +187,11 @@ func extractSegmentSettings(d *schema.ResourceData) *dto.SegmentSettings {
 			elem := element.(map[string]interface{})
 
 			var originalIp string
-			var IPMasks []string
 
 			originalIp = elem["original_ip"].(string)
 
-			if ipMasks, ok := elem["ip_masks"].([]interface{}); ok {
-				for _, ip := range ipMasks {
-					IPMasks = append(IPMasks, ip.(string))
-				}
-			}
-
 			segmentSettings = &dto.SegmentSettings{
 				OriginalIP: originalIp,
-				IPMasks:    IPMasks,
 			}
 		}
 	}
