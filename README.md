@@ -30,6 +30,7 @@
 - [Resource: luminate_rdp_application](#resource-luminate_rdp_application)
 - [Resource: luminate_tcp_application](#resource-luminate_tcp_application)
 - [Resource: luminate_ssh_gw_application](#resource-luminate_ssh_gw_application)
+- [Resource: luminate_segment_application](#resource-luminate_segment_application)
 
 [Policy resources](#policy-resources)
 - [Resource: luminate_rdp_access_policy](#resource-luminate_rdp_access_policy)
@@ -650,6 +651,37 @@ In addition to arguments above, the following attributes are exported:
 ```
 $ terraform import luminate_ssh_gw_application.new-sshgw-access  application_id
 ```
+
+Resource: luminate_segment_application
+------------
+
+Provides Secure access cloud Segment application
+
+
+#### Example Usage
+
+```
+resource "luminate_segment_application" "nginx-app" {
+  name = "nginx"
+  site_id = "${luminate_site.site.id}"
+  segment_settings {
+	original_ip = "10.60.30.0/24"
+	}
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the applications
+
+-   **site_id** - (Required) Site ID to which the application will be
+    bound
+
+-   **segment settings** - (Required) The segment application settings
+
+    -   **original_ip** - (Required) The internal resource IP address which is used by the connector for access to the application.
 
 Policy resources
 ============
