@@ -169,6 +169,10 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 		applicationSDKDTO.SegmentSettings = &sdk.ApplicationConnectionSettingsSegment{
 			OriginalIp: applicationServiceDTO.SegmentSettings.OriginalIP,
 		}
+	case "dns":
+		applicationSDKDTO.DnsSettings = &sdk.DnsServerData{
+			DomainSuffixes: applicationServiceDTO.DnsSettings.DomainSuffixes,
+		}
 	}
 
 	return applicationSDKDTO
@@ -209,6 +213,8 @@ func GetApplicationType(appType string) sdk.ApplicationType {
 		return sdk.RDP_ApplicationType
 	case "segment":
 		return sdk.SEGMENT_ApplicationType
+	case "dns":
+		return sdk.DNS_Type
 	}
 	return ""
 }
@@ -227,6 +233,8 @@ func GetApplicationTypeString(appType sdk.ApplicationType) string {
 		return "rdp"
 	case sdk.SEGMENT_ApplicationType:
 		return "segment"
+	case sdk.DNS_Type:
+		return "dns"
 	}
 	return ""
 }

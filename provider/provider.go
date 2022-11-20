@@ -38,6 +38,7 @@ func Provider() terraform.ResourceProvider {
 			"luminate_tcp_access_policy":    LuminateTcpAccessPolicy(),
 			"luminate_ssh_access_policy":    LuminateSshAccessPolicy(),
 			"luminate_rdp_access_policy":    LuminateRdpAccessPolicy(),
+			"luminate_dns_server":           LuminateDNSserver(),
 			"luminate_group_user":           LuminateGroupUser(),
 			"luminate_aws_integration":      LuminateAWSIntegration(),
 			"luminate_aws_integration_bind": LuminateawsIntegrationBind(),
