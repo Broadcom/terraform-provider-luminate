@@ -74,7 +74,7 @@ func resourceCreateDNSServer(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.SetId(app.ID)
-	setSHHApplicationFields(d, app)
+	setDNSServerFields(d, app)
 
 	return resourceReadDNSServer(d, m)
 }
@@ -101,7 +101,7 @@ func resourceReadDNSServer(d *schema.ResourceData, m interface{}) error {
 	d.SetId(app.ID)
 
 	app.SiteID = d.Get("site_id").(string)
-	setSHHApplicationFields(d, app)
+	setDNSServerFields(d, app)
 
 	return nil
 }
@@ -199,8 +199,8 @@ func extractDNSSettings(d *schema.ResourceData) *dto.DnsSettings {
 			var domainSuffixes []string
 
 			if domainSuffix, ok := elem["domain_suffixes"].([]interface{}); ok {
-				for _, ip := range domainSuffix {
-					domainSuffixes = append(domainSuffixes, ip.(string))
+				for _, suffix := range domainSuffix {
+					domainSuffixes = append(domainSuffixes, suffix.(string))
 				}
 			}
 			dnsSettings = &dto.DnsSettings{
