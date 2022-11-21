@@ -86,10 +86,16 @@ type Application struct {
 	WildcardPrivateKey  string
 	//SEGMENT
 	SegmentSettings *SegmentSettings
+	//DNS
+	DnsSettings *DnsSettings
 }
 
 type SegmentSettings struct {
 	OriginalIP string `json:"original_ip"`
+}
+
+type DnsSettings struct {
+	DomainSuffixes []string `json:"domainSuffixes"`
 }
 
 type TCPTarget struct {

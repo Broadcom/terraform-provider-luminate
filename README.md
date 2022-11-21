@@ -1175,6 +1175,37 @@ The following arguments are supported:
 -   **aws_external_id -** (Required) integration AWS external ID 
 -   **regions -** (Required) regions to add
 
+Re­­­source: luminate_DNS_server
+------------
+
+Provides secure access cloud DNS server
+
+#### Example Usage
+```
+resource "luminate_site" "new-site" {
+	name = "tfAccSite"
+}
+resource "luminate_dns_server" "new-dns" {
+	site_id = "${luminate_site.new-site.id}"
+	name = "testDNS"
+	internal_address = "udp://10.0.0.1:53"
+	dns_settings {
+		domain_suffixes = ["company.com"]
+	}
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the connector
+
+-   **site_id -** (Required) site id to attach the connector
+
+-   **internal_address** - (Required) Internal address of the
+    application, accessable by connector
+-   **dns_settings** [domain_suffixes] - (Required) The domain suffix
 
 
 Data sources
