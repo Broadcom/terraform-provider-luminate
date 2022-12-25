@@ -204,7 +204,7 @@ func resourceUpdateWebApplication(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	setWebApplicationFields(d, updApp,client.TenantBaseDomain)
+	setWebApplicationFields(d, updApp, client.TenantBaseDomain)
 
 	return resourceReadWebApplication(d, m)
 }
@@ -221,7 +221,6 @@ func resourceDeleteWebApplication(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-	d.SetId("")
 
 	return resourceReadWebApplication(d, m)
 }
@@ -269,7 +268,6 @@ func validateSubType(v interface{}, k string) (ws []string, es []error) {
 	return warns, errs
 }
 
-
 func extractWebApplication(d *schema.ResourceData) *dto.Application {
 	return &dto.Application{
 		Name:                              d.Get("name").(string),
@@ -309,16 +307,16 @@ func setWebApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 	d.Set("custom_external_address", application.CustomExternalAddress)
 
 	if application.CustomExternalAddress != "" {
-		trimmedAddress := strings.ReplaceAll(application.CustomExternalAddress,"https://","")
-		recordName := fmt.Sprintf("%s.%s", utils.StringMD5(trimmedAddress),tenantBaseDomain)
+		trimmedAddress := strings.ReplaceAll(application.CustomExternalAddress, "https://", "")
+		recordName := fmt.Sprintf("%s.%s", utils.StringMD5(trimmedAddress), tenantBaseDomain)
 		d.Set("custom_domain_record_name", recordName)
 		d.Set("custom_domain_record_type", "CNAME")
 	}
 
 	d.Set("custom_root_path", application.CustomRootPath)
 	d.Set("luminate_address", application.LuminateAddress)
-	d.Set("wildcard_certificate",application.WildcardCertificate)
-	d.Set("wildcard_private_key",application.WildcardPrivateKey)
+	d.Set("wildcard_certificate", application.WildcardCertificate)
+	d.Set("wildcard_private_key", application.WildcardPrivateKey)
 	d.Set("health_url", application.HealthURL)
 	d.Set("health_method", application.HealthMethod)
 	d.Set("default_content_rewrite_rules_enabled", application.DefaultContentRewriteRulesEnabled)
@@ -328,4 +326,3 @@ func setWebApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 	d.Set("header_customization", application.HeaderCustomization)
 
 }
-

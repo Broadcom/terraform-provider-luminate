@@ -134,7 +134,6 @@ func resourceDeleteSegmentApplication(d *schema.ResourceData, m interface{}) err
 	if err != nil {
 		return err
 	}
-	d.SetId("")
 
 	return resourceReadSegmentApplication(d, m)
 }
