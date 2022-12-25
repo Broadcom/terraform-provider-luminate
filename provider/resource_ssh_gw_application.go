@@ -166,7 +166,6 @@ func resourceDeleteSshGwApplication(d *schema.ResourceData, m interface{}) error
 	if err != nil {
 		return err
 	}
-	d.SetId("")
 
 	return resourceReadSshGwApplication(d, m)
 }
@@ -220,16 +219,16 @@ func extractSshGwApplicationFields(d *schema.ResourceData) *dto.Application {
 	}
 
 	return &dto.Application{
-		ID:                    d.Id(),
-		Name:                  d.Get("name").(string),
-		Icon:                  d.Get("icon").(string),
-		SiteID:                d.Get("site_id").(string),
-		Type:                  "sshgw",
-		Visible:               d.Get("visible").(bool),
-		NotificationsEnabled:  d.Get("notification_enabled").(bool),
-		ExternalAddress:       d.Get("external_address").(string),
-		Subdomain:             d.Get("subdomain").(string),
-		CloudIntegrationData:  cloudIntegrationData,
+		ID:                   d.Id(),
+		Name:                 d.Get("name").(string),
+		Icon:                 d.Get("icon").(string),
+		SiteID:               d.Get("site_id").(string),
+		Type:                 "sshgw",
+		Visible:              d.Get("visible").(bool),
+		NotificationsEnabled: d.Get("notification_enabled").(bool),
+		ExternalAddress:      d.Get("external_address").(string),
+		Subdomain:            d.Get("subdomain").(string),
+		CloudIntegrationData: cloudIntegrationData,
 	}
 }
 

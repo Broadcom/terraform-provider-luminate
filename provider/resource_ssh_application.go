@@ -124,7 +124,6 @@ func resourceDeleteSSHApplication(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-	d.SetId("")
 
 	return resourceReadSSHApplication(d, m)
 }
@@ -144,15 +143,15 @@ func setSHHApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 
 func extractSSHApplicationFields(d *schema.ResourceData) *dto.Application {
 	return &dto.Application{
-		ID:                    d.Id(),
-		Name:                  d.Get("name").(string),
-		Icon:                  d.Get("icon").(string),
-		SiteID:                d.Get("site_id").(string),
-		Type:                  "ssh",
-		Visible:               d.Get("visible").(bool),
-		NotificationsEnabled:  d.Get("notification_enabled").(bool),
-		InternalAddress:       d.Get("internal_address").(string),
-		ExternalAddress:       d.Get("external_address").(string),
-		Subdomain:             d.Get("subdomain").(string),
+		ID:                   d.Id(),
+		Name:                 d.Get("name").(string),
+		Icon:                 d.Get("icon").(string),
+		SiteID:               d.Get("site_id").(string),
+		Type:                 "ssh",
+		Visible:              d.Get("visible").(bool),
+		NotificationsEnabled: d.Get("notification_enabled").(bool),
+		InternalAddress:      d.Get("internal_address").(string),
+		ExternalAddress:      d.Get("external_address").(string),
+		Subdomain:            d.Get("subdomain").(string),
 	}
 }
