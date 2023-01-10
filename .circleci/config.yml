@@ -78,7 +78,7 @@ workflows:
           requires:
             - validate
       - release:
-          context: terraform-release
+          context: luminate-terraform-provider
           filters:
             branches:
               only: master
