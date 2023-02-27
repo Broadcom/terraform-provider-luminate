@@ -39,7 +39,7 @@ func (g *GroupAPI) GetGroupId(identityProviderId string, groupName string) (stri
 }
 
 func (g *GroupAPI) AssignUser(groupId string, userId string) error {
-	_, err := g.cli.GroupsApi.AssignUserToGroup(context.Background(), groupId, userId)
+	_, err := g.cli.GroupsApi.IdentitiesLocalGroupsGroupIdUsersUserIdPut(context.Background(), groupId, userId)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func (g *GroupAPI) AssignUser(groupId string, userId string) error {
 }
 
 func (g *GroupAPI) RemoveUser(groupId string, userId string) error {
-	_, err := g.cli.GroupsApi.RemoveUserFromGroup(context.Background(), groupId, userId)
+	_, err := g.cli.GroupsApi.IdentitiesLocalGroupsGroupIdUsersUserIdDelete(context.Background(), groupId, userId)
 	if err != nil {
 		return err
 	}
@@ -55,13 +55,13 @@ func (g *GroupAPI) RemoveUser(groupId string, userId string) error {
 }
 
 func (g *GroupAPI) CheckAssignedUser(groupId string, userId string) (bool, error) {
-	perPage := int32(100)
-	offset := int32(0)
+	perPage := float64(100)
+	offset := float64(0)
 
 	for {
-		userPage, _,err := g.cli.GroupsApi.ListAssignedUsers(context.Background(), utils.LocalIdpId, groupId, &sdk.ListAssignedUsersOpts{
-			PerPage: optional.NewInt32(perPage),
-			PageOffset: optional.NewString(fmt.Sprintf("%d", offset)),
+		userPage, _, err := g.cli.GroupsApi.IdentitiesIdentityProviderIdGroupsEntityIdUsersGet(context.Background(), utils.LocalIdpId, groupId, &sdk.GroupsApiIdentitiesIdentityProviderIdGroupsEntityIdUsersGetOpts{
+			PerPage:    optional.NewFloat64(perPage),
+			PageOffset: optional.NewInterface(fmt.Sprintf("%d", offset)),
 		})
 		if err != nil {
 			return false, err

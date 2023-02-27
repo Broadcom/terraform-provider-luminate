@@ -43,11 +43,12 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 		applicationServiceDTO.LinkedApplications = linkedins
 	}
 	if applicationSDKDTO.RequestCustomizationSettings != nil {
-		applicationServiceDTO.HeaderCustomization = HeaderStringsToMap(applicationSDKDTO.RequestCustomizationSettings.HeaderCustomization)
+		applicationServiceDTO.HeaderCustomization = *applicationSDKDTO.RequestCustomizationSettings.HeaderCustomization
 	}
 
-	if len(applicationSDKDTO.TcpTunnelSettings) > 0 {
-		for _, t := range applicationSDKDTO.TcpTunnelSettings {
+	tcpTunnelSettings := *applicationSDKDTO.TcpTunnelSettings
+	if len(tcpTunnelSettings) > 0 {
+		for _, t := range tcpTunnelSettings {
 			target := TCPTarget{
 				Address: t.Target,
 				Ports:   t.Ports,
@@ -127,10 +128,11 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 		}
 
 		applicationSDKDTO.RequestCustomizationSettings = &sdk.ApplicationRequestCustomizationSettings{
-			HeaderCustomization: HeaderMapToStrings(applicationServiceDTO.HeaderCustomization),
+			HeaderCustomization: &applicationServiceDTO.HeaderCustomization,
 		}
 	case "tcp":
-		applicationSDKDTO.TcpTunnelSettings = []sdk.ApplicationTcpTarget{}
+		applicationSDKDTO.TcpTunnelSettings = &[]sdk.ApplicationTcpTarget{}
+		ApplicationTcpTargetSlice := make([]sdk.ApplicationTcpTarget, 0)
 		for _, v := range applicationServiceDTO.Targets {
 			t := sdk.ApplicationTcpTarget{
 				Ports:  v.Ports,
@@ -138,8 +140,9 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			}
 			log.Printf("[DEBUG] TUNNEL Target %v", t)
 
-			applicationSDKDTO.TcpTunnelSettings = append(applicationSDKDTO.TcpTunnelSettings, t)
+			ApplicationTcpTargetSlice = append(ApplicationTcpTargetSlice, t)
 		}
+		applicationSDKDTO.TcpTunnelSettings = &ApplicationTcpTargetSlice
 		log.Printf("[DEBUG] TUNNEL SETTINGS %v", applicationSDKDTO.TcpTunnelSettings)
 	case "sshgw":
 		var sdkVpcs []sdk.ApplicationVpcData
@@ -214,7 +217,7 @@ func GetApplicationType(appType string) sdk.ApplicationType {
 	case "segment":
 		return sdk.SEGMENT_ApplicationType
 	case "dns":
-		return sdk.DNS_Type
+		return sdk.DNS_ApplicationType
 	}
 	return ""
 }
@@ -233,7 +236,7 @@ func GetApplicationTypeString(appType sdk.ApplicationType) string {
 		return "rdp"
 	case sdk.SEGMENT_ApplicationType:
 		return "segment"
-	case sdk.DNS_Type:
+	case sdk.DNS_ApplicationType:
 		return "dns"
 	}
 	return ""

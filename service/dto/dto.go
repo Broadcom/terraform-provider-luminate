@@ -77,7 +77,7 @@ type Application struct {
 	DefaultHeaderRewriteRulesEnabled  bool
 	UseExternalAddressForHostAndSni   bool
 	LinkedApplications                []*string
-	HeaderCustomization               map[string]interface{}
+	HeaderCustomization               []map[string]string
 	// SSH-GW
 	CloudIntegrationData *CloudIntegrationData
 	//TCP
@@ -100,7 +100,7 @@ type DnsSettings struct {
 
 type TCPTarget struct {
 	Address string
-	Ports   []int32
+	Ports   []float64
 }
 
 type Validators struct {
