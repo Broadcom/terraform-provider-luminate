@@ -65,16 +65,16 @@ func TestToApplicationType(t *testing.T) {
 func TestFromModalType(t *testing.T) {
 	tests := []struct {
 		name               string
-		modalType          sdk.ModelType
+		entityType         sdk.EntityType
 		expectedEntityType string
 	}{
-		{"ApiClient", sdk.API_CLIENT_ModelType, "ApiClient"},
-		{"Group", sdk.GROUP_ModelType, "Group"},
-		{"User", sdk.USER_ModelType, "User"},
+		{"ApiClient", sdk.API_CLIENT_EntityType, "ApiClient"},
+		{"Group", sdk.GROUP_EntityType, "Group"},
+		{"User", sdk.USER_EntityType, "User"},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.expectedEntityType, FromModelType(test.modalType))
+			assert.Equal(t, test.expectedEntityType, FromModelType(test.entityType))
 		})
 	}
 }

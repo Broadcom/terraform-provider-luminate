@@ -20,7 +20,7 @@ func NewGroupAPI(client *sdk.APIClient) *GroupAPI {
 }
 
 func (g *GroupAPI) GetGroupId(identityProviderId string, groupName string) (string, error) {
-	groupPage, _, err := g.cli.GroupsApi.SearchGroupsbyIdp(context.Background(), identityProviderId, &sdk.SearchGroupsbyIdpOpts{Filter: optional.NewString(groupName)})
+	groupPage, _, err := g.cli.GroupsApi.SearchGroupsbyIdp(context.Background(), identityProviderId, &sdk.GroupsApiSearchGroupsbyIdpOpts{Filter: optional.NewString(groupName)})
 	if err != nil {
 		return "", err
 	}

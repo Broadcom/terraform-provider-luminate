@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	"time"
+)
 
 type Site struct {
 	ID         string
@@ -162,7 +165,7 @@ type DirectoryEntity struct {
 	IdentifierInProvider string
 	IdentityProviderId   string
 	EntityType           string
-	IdentityProviderType string
+	IdentityProviderType sdk.IdentityProviderType
 	DisplayName          string
 }
 

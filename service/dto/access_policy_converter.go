@@ -121,16 +121,13 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	var conditionsDto []sdk.PolicyCondition
 
 	for _, directoryEntity := range accessPolicy.DirectoryEntities {
-		identityProviderType, err := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
-		if err == nil {
-			directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
-				IdentifierInProvider: directoryEntity.IdentifierInProvider,
-				IdentityProviderId:   directoryEntity.IdentityProviderId,
-				DisplayName:          directoryEntity.DisplayName,
-				IdentityProviderType: &identityProviderType,
-				Type_:                directoryEntity.EntityType,
-			})
-		}
+		directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
+			IdentifierInProvider: directoryEntity.IdentifierInProvider,
+			IdentityProviderId:   directoryEntity.IdentityProviderId,
+			DisplayName:          directoryEntity.DisplayName,
+			IdentityProviderType: &directoryEntity.IdentityProviderType,
+			Type_:                directoryEntity.EntityType,
+		})
 	}
 
 	for _, applicationId := range accessPolicy.Applications {
@@ -261,7 +258,7 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 			IdentifierInProvider: directoryEntityDto.IdentifierInProvider,
 			IdentityProviderId:   directoryEntityDto.IdentityProviderId,
 			DisplayName:          directoryEntityDto.DisplayName,
-			IdentityProviderType: ConvertIdentityProviderTypeToString(directoryEntityDto.IdentityProviderType),
+			IdentityProviderType: *directoryEntityDto.IdentityProviderType,
 			EntityType:           directoryEntityDto.Type_,
 		})
 	}
