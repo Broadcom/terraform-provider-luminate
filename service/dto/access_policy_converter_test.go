@@ -82,12 +82,12 @@ func TestFromModalType(t *testing.T) {
 func TestToModalType(t *testing.T) {
 	tests := []struct {
 		name              string
-		expectedModalType sdk.ModelType
+		expectedModalType sdk.EntityType
 		entityType        string
 	}{
-		{"ApiClient", sdk.API_CLIENT_ModelType, "ApiClient"},
-		{"Group", sdk.GROUP_ModelType, "Group"},
-		{"User", sdk.USER_ModelType, "User"},
+		{"ApiClient", sdk.API_CLIENT_EntityType, "ApiClient"},
+		{"Group", sdk.GROUP_EntityType, "Group"},
+		{"User", sdk.USER_EntityType, "User"},
 		{"Unknown", "", "Unknown"},
 	}
 	for _, test := range tests {

@@ -55,7 +55,7 @@ func ToApplicationType(targetProtocol string) *sdk.ApplicationType {
 	return &applicationType
 }
 
-func FromModelType(modelType string) string {
+func FromModelType(modelType sdk.EntityType) string {
 
 	switch modelType {
 	case "User":
@@ -69,16 +69,16 @@ func FromModelType(modelType string) string {
 	return ""
 }
 
-func ToModelType(entityType string) *string {
-	var modelType string
+func ToModelType(entityType string) *sdk.EntityType {
+	var modelType sdk.EntityType
 
 	switch entityType {
 	case "User":
-		modelType = "User"
+		modelType = sdk.USER_EntityType
 	case "Group":
-		modelType = "Group"
+		modelType = sdk.GROUP_EntityType
 	case "ApiClient":
-		modelType = "ApiClient"
+		modelType = sdk.API_CLIENT_EntityType
 	}
 
 	return &modelType
@@ -121,13 +121,16 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	var conditionsDto []sdk.PolicyCondition
 
 	for _, directoryEntity := range accessPolicy.DirectoryEntities {
-		directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
-			IdentifierInProvider: directoryEntity.IdentifierInProvider,
-			IdentityProviderId:   directoryEntity.IdentityProviderId,
-			DisplayName:          directoryEntity.DisplayName,
-			IdentityProviderType: &directoryEntity.IdentityProviderType,
-			Type_:                directoryEntity.EntityType,
-		})
+		identityProviderType, err := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
+		if err == nil {
+			directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
+				IdentifierInProvider: directoryEntity.IdentifierInProvider,
+				IdentityProviderId:   directoryEntity.IdentityProviderId,
+				DisplayName:          directoryEntity.DisplayName,
+				IdentityProviderType: &identityProviderType,
+				Type_:                ToModelType(directoryEntity.EntityType),
+			})
+		}
 	}
 
 	for _, applicationId := range accessPolicy.Applications {
@@ -258,8 +261,8 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 			IdentifierInProvider: directoryEntityDto.IdentifierInProvider,
 			IdentityProviderId:   directoryEntityDto.IdentityProviderId,
 			DisplayName:          directoryEntityDto.DisplayName,
-			IdentityProviderType: *directoryEntityDto.IdentityProviderType,
-			EntityType:           directoryEntityDto.Type_,
+			IdentityProviderType: ConvertIdentityProviderTypeToString(directoryEntityDto.IdentityProviderType),
+			EntityType:           FromModelType(*directoryEntityDto.Type_),
 		})
 	}
 
