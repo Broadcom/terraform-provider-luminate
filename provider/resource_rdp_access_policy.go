@@ -46,7 +46,7 @@ func resourceCreateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 			err := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
 			return errors.New(err)
 		}
-		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
@@ -101,7 +101,7 @@ func resourceUpdateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 			err := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
 			return errors.New(err)
 		}
-		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
 	accessPolicy.Id = d.Id()
 

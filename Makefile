@@ -1,5 +1,5 @@
 GOCMD=go
-GOARGS="-mod=vendor"
+#GOARGS="-mod=vendor"
 GOBUILD=$(GOCMD) build $(GOARGS)
 GOTEST=$(GOCMD) test $(GOARGS)
 
@@ -29,7 +29,7 @@ windows:
 	zip -j release/$(BINARY_NAME)-windows.zip $(OUTPUT_DIR)/windows/*
 
 testacc:
-	export LUMINATE_API_ENDPOINT="${TERRAFORM_ACCEPTANCE_TENANT}" && \
-	export LUMINATE_API_CLIENT_ID="${TERRAFORM_ACCEPTANCE_CLIENT_ID}" && \
-	export LUMINATE_API_CLIENT_SECRET="${TERRAFORM_ACCEPTANCE_CLIENT_SECRET}" && \
+	export LUMINATE_API_ENDPOINT="api.styrrbac.luminate-ci.com" && \
+	export LUMINATE_API_CLIENT_ID="ae7f194fa945e284ffe3997b21121892" && \
+	export LUMINATE_API_CLIENT_SECRET="20f5cccde80989cd1983c0f8a829c3e548be235fe5e3592979de5625c4845b40" && \
 	export TF_ACC=1 && $(GOTEST) -p 1 -v  ./...

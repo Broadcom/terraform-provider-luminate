@@ -77,10 +77,10 @@ func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 	for i, _ := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
-			return errors.New(error)
+			err := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
+			return errors.New(err)
 		}
-		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 
 		// Get Display Name for User/Group by ID
 		var resolvedDisplayName string
@@ -142,10 +142,10 @@ func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 	for i, _ := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
-			return errors.New(error)
+			err := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
+			return errors.New(err)
 		}
-		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
 	accessPolicy.Id = d.Id()
 
