@@ -157,7 +157,7 @@ func setDNSServerFields(d *schema.ResourceData, application *dto.Application) {
 	d.Set("internal_address", application.InternalAddress)
 	d.Set("external_address", application.ExternalAddress)
 	if application.DnsSettings != nil {
-		d.Set("dns_settings", flattenDNSSettings(application.DnsSettings))
+		d.Set("dnsSettings", flattenDNSSettings(application.DnsSettings))
 	}
 }
 
@@ -183,7 +183,7 @@ func flattenDNSSettings(settings *dto.DnsSettings) []interface{} {
 	}
 
 	k := map[string]interface{}{
-		"domain_suffixes": settings.DomainSuffixes,
+		"domainSuffixes": settings.DomainSuffixes,
 	}
 
 	return []interface{}{k}

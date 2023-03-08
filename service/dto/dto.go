@@ -79,7 +79,7 @@ type Application struct {
 	DefaultHeaderRewriteRulesEnabled  bool
 	UseExternalAddressForHostAndSni   bool
 	LinkedApplications                []*string
-	HeaderCustomization               []map[string]string
+	HeaderCustomization               map[string]interface{}
 	// SSH-GW
 	CloudIntegrationData *CloudIntegrationData
 	//TCP

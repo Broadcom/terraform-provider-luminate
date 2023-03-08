@@ -61,7 +61,7 @@ func (g *GroupAPI) CheckAssignedUser(groupId string, userId string) (bool, error
 	for {
 		userPage, _, err := g.cli.GroupsApi.IdentitiesIdentityProviderIdGroupsEntityIdUsersGet(context.Background(), utils.LocalIdpId, groupId, &sdk.GroupsApiIdentitiesIdentityProviderIdGroupsEntityIdUsersGetOpts{
 			PerPage:    optional.NewFloat64(perPage),
-			PageOffset: optional.NewInterface(fmt.Sprintf("%d", offset)),
+			PageOffset: optional.NewInterface(fmt.Sprintf("%.2f", offset)),
 		})
 		if err != nil {
 			return false, err

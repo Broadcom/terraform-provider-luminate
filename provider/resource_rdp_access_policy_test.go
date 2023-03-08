@@ -12,7 +12,7 @@ const resourceRdpAccessPolicy_enabled = `
   		name =  "resourceRdpAccessPolicy_enabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["e9bb7894-a6e4-44de-a2b3-ee9e5e72485a"]
   		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
   		allow_long_term_password = "true"
@@ -25,7 +25,7 @@ const resourceRdpAccessPolicy_disabled = `
   		name =  "resourceRdpAccessPolicy_disabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["e9bb7894-a6e4-44de-a2b3-ee9e5e72485a"]
   		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
   		allow_long_term_password = "true"
@@ -37,7 +37,7 @@ const resourceRdpAccessPolicy_enabled_not_specified = `
   		name =  "resourceRdpAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["e9bb7894-a6e4-44de-a2b3-ee9e5e72485a"]
   		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 	}
@@ -49,7 +49,7 @@ const resourceRdpAccessPolicy_no_long_term_password_specified = `
   		name =  "resourceRdpAccessPolicy_no_long_term_password_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["e9bb7894-a6e4-44de-a2b3-ee9e5e72485a"]
   		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 	}
 `
@@ -59,7 +59,7 @@ const resourceRdpAccessPolicy_conditions_specified = `
   		name =  "resourceRdpAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["e9bb7894-a6e4-44de-a2b3-ee9e5e72485a"]
   		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		conditions {
@@ -75,7 +75,7 @@ const resourceRdpAccessPolicy_validators_specified = `
   		name =  "resourceRdpAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["e9bb7894-a6e4-44de-a2b3-ee9e5e72485a"]
   		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
 
 		validators {

@@ -22,7 +22,7 @@ func TestAccLuminateDataSourceSshClients(t *testing.T) {
 			{
 				Config: testAccResourceSshClients,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", "6ddace8e-39a3-4cd3-bba7-ad26e826df5b"),
+					resource.TestCheckResourceAttr(resourceName, "id", "324bad9c-c6ea-4c3c-874f-cdbd3d734555"),
 				),
 			},
 		},

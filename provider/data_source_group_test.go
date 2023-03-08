@@ -23,7 +23,7 @@ func TestAccLuminateDataSourceGroup(t *testing.T) {
 			{
 				Config: testAccResourceGroup,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "group_ids.0", "3b61849d-f08d-42d3-a158-da1a53cd2ac6"),
+					resource.TestCheckResourceAttr(resourceName, "groups.0", "tf-acceptance"),
 				),
 			},
 		},

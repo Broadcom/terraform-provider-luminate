@@ -288,7 +288,7 @@ func extractWebApplication(d *schema.ResourceData) *dto.Application {
 		DefaultHeaderRewriteRulesEnabled:  d.Get("default_header_rewrite_rules_enabled").(bool),
 		UseExternalAddressForHostAndSni:   d.Get("use_external_address_for_host_and_sni").(bool),
 		LinkedApplications:                expandStringList(d.Get("linked_applications").([]interface{})),
-		HeaderCustomization:               d.Get("header_customization").([]map[string]string),
+		HeaderCustomization:               d.Get("header_customization").(map[string]interface{}),
 		WildcardCertificate:               d.Get("wildcard_certificate").(string),
 		WildcardPrivateKey:                d.Get("wildcard_private_key").(string),
 	}

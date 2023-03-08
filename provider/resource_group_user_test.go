@@ -14,7 +14,7 @@ data "luminate_group" "my-groups" {
 
 data "luminate_user" "my-users" {
 	identity_provider_id = "local"
-	users = ["tf-user@terraformat.luminatesec.com"]
+	users = ["support.admin@babookenv.luminate-ci.com"]
 }
 
 resource "luminate_group_user" "new_group_membership" {

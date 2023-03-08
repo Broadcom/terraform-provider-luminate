@@ -17,7 +17,7 @@ func init() {
 	testAccProviders = map[string]terraform.ResourceProvider{
 		"luminate": testAccProvider,
 	}
-	testAccDomain = "terraformat.luminatesec.com"
+	testAccDomain = "babookenv.luminate-ci.com"
 }
 
 func TestProvider(t *testing.T) {

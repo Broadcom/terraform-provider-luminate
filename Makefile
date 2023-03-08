@@ -29,7 +29,7 @@ windows:
 	zip -j release/$(BINARY_NAME)-windows.zip $(OUTPUT_DIR)/windows/*
 
 testacc:
-	export LUMINATE_API_ENDPOINT="api.styrrbac.luminate-ci.com" && \
-	export LUMINATE_API_CLIENT_ID="ae7f194fa945e284ffe3997b21121892" && \
-	export LUMINATE_API_CLIENT_SECRET="20f5cccde80989cd1983c0f8a829c3e548be235fe5e3592979de5625c4845b40" && \
+	export LUMINATE_API_ENDPOINT="api.babookenv.luminate-ci.com" && \
+	export LUMINATE_API_CLIENT_ID="20810a69a650b3562987576cc3bbb45f" && \
+	export LUMINATE_API_CLIENT_SECRET="e9927434300e0dc51259492f638901e22db1a20bebb71bba8075cc5fe49f962a" && \
 	export TF_ACC=1 && $(GOTEST) -p 1 -v  ./...
