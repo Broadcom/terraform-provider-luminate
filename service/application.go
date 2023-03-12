@@ -34,7 +34,7 @@ func (api *ApplicationAPI) CreateApplication(application *dto.Application) (*dto
 	if err != nil {
 		if resp != nil {
 			body, _ := utils.ConvertReaderToString(resp.Body)
-			return nil, errors.Wrap(err, fmt.Sprintf("received status code: %d ('%s')", resp.StatusCode, body))
+			return nil, errors.Wrapf(err, "received status code: %d ('%s')", resp.StatusCode, body)
 		}
 
 		return nil, err

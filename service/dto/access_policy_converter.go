@@ -58,11 +58,11 @@ func ToApplicationType(targetProtocol string) *sdk.ApplicationType {
 func FromModelType(modelType sdk.EntityType) string {
 
 	switch modelType {
-	case "User":
+	case sdk.USER_EntityType:
 		return "User"
-	case "Group":
+	case sdk.GROUP_EntityType:
 		return "Group"
-	case "ApiClient":
+	case sdk.API_CLIENT_EntityType:
 		return "ApiClient"
 	}
 
