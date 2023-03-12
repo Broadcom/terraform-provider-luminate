@@ -116,7 +116,7 @@ func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto
 
 func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, siteID string) error {
 	log.Printf("[DEBUG] - Update Binding App")
-	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID)
+	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID, nil)
 	if err != nil {
 		return err
 	}

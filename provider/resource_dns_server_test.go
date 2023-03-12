@@ -8,7 +8,7 @@ import (
 
 const testDNSServer = `
 resource "luminate_site" "new-site" {
-	name = "tfAccDNSSite"
+	name = "tfAccSite"
 }
 resource "luminate_dns_server" "new-dns" {
 	site_id = "${luminate_site.new-site.id}"
@@ -17,7 +17,6 @@ resource "luminate_dns_server" "new-dns" {
 	dns_settings {
 		domain_suffixes = ["company.com"]
 	}
-	visible = "false"
 }
 `
 

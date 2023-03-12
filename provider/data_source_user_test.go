@@ -9,7 +9,7 @@ import (
 const testAccResourceUser = `
 	data "luminate_user"  "my-users" {
 		identity_provider_id = "local"
-		users = ["support.admin@babookenv.luminate-ci.com"]
+		users = ["tf-user@terraformat.luminatesec.com"]
 	}
 `
 
@@ -23,7 +23,7 @@ func TestAccLuminateDataSourceUser(t *testing.T) {
 			{
 				Config: testAccResourceUser,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "user_ids.0", "e9bb7894-a6e4-44de-a2b3-ee9e5e72485a"),
+					resource.TestCheckResourceAttr(resourceName, "user_ids.0", "f75f45b8-d10d-4aa6-9200-5c6d60110430"),
 				),
 			},
 		},

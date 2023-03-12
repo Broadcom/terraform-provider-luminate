@@ -26,7 +26,7 @@ resource "luminate_web_application" "new-application" {
  site_id = "${luminate_site.new-site.id}"
  name = "tfAccApplicationUpd"
  internal_address = "http://127.0.0.1:80"
- custom_root_path = "/testAcc"
+	custom_root_path = "/testAcc"
 }
 `
 
