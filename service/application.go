@@ -91,12 +91,12 @@ func (api *ApplicationAPI) GetApplicationById(applicationID string) (*dto.Applic
 func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto.Application, error) {
 	app := dto.ConvertFromApplicationDTO(*application)
 
-	appOpts := sdk.ApplicationsApiApplicationsApplicationIdPutOpts{
+	appOpts := sdk.ApplicationsApiUpdateApplicationOpts{
 		Body: optional.NewInterface(app),
 	}
 
 	log.Printf("[DEBUG] - Updating App")
-	updatedApp, resp, err := api.cli.ApplicationsApi.ApplicationsApplicationIdPut(context.Background(), application.ID, &appOpts)
+	updatedApp, resp, err := api.cli.ApplicationsApi.UpdateApplication(context.Background(), application.ID, &appOpts)
 	if err != nil {
 		return nil, err
 	}
