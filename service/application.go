@@ -57,7 +57,7 @@ func (api *ApplicationAPI) CreateApplication(application *dto.Application) (*dto
 }
 
 func (api *ApplicationAPI) DeleteApplication(applicationID string) error {
-	resp, err := api.cli.ApplicationsApi.ApplicationsApplicationIdDelete(context.Background(), applicationID)
+	resp, err := api.cli.ApplicationsApi.DeleteApplication(context.Background(), applicationID)
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func (api *ApplicationAPI) DeleteApplication(applicationID string) error {
 }
 
 func (api *ApplicationAPI) GetApplicationById(applicationID string) (*dto.Application, error) {
-	app, resp, err := api.cli.ApplicationsApi.ApplicationsApplicationIdGet(context.Background(), applicationID)
+	app, resp, err := api.cli.ApplicationsApi.GetApplication(context.Background(), applicationID)
 
 	if resp != nil && resp.StatusCode == 404 {
 		return nil, nil

@@ -3,7 +3,6 @@ package service
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
-	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
@@ -39,7 +38,7 @@ func (g *GroupAPI) GetGroupId(identityProviderId string, groupName string) (stri
 }
 
 func (g *GroupAPI) AssignUser(groupId string, userId string) error {
-	_, err := g.cli.GroupsApi.IdentitiesLocalGroupsGroupIdUsersUserIdPut(context.Background(), groupId, userId)
+	_, err := g.cli.GroupsApi.AssignUserToGroup(context.Background(), groupId, userId)
 	if err != nil {
 		return err
 	}
@@ -47,7 +46,7 @@ func (g *GroupAPI) AssignUser(groupId string, userId string) error {
 }
 
 func (g *GroupAPI) RemoveUser(groupId string, userId string) error {
-	_, err := g.cli.GroupsApi.IdentitiesLocalGroupsGroupIdUsersUserIdDelete(context.Background(), groupId, userId)
+	_, err := g.cli.GroupsApi.RemoveUserFromGroup(context.Background(), groupId, userId)
 	if err != nil {
 		return err
 	}
@@ -55,13 +54,13 @@ func (g *GroupAPI) RemoveUser(groupId string, userId string) error {
 }
 
 func (g *GroupAPI) CheckAssignedUser(groupId string, userId string) (bool, error) {
-	perPage := float64(100)
-	offset := float64(0)
+	perPage := int32(100)
+	offset := int32(0)
 
 	for {
-		userPage, _, err := g.cli.GroupsApi.IdentitiesIdentityProviderIdGroupsEntityIdUsersGet(context.Background(), utils.LocalIdpId, groupId, &sdk.GroupsApiIdentitiesIdentityProviderIdGroupsEntityIdUsersGetOpts{
-			PerPage:    optional.NewFloat64(perPage),
-			PageOffset: optional.NewInterface(fmt.Sprintf("%.2f", offset)),
+		userPage, _, err := g.cli.GroupsApi.ListAssignedUsers(context.Background(), utils.LocalIdpId, groupId, &sdk.GroupsApiListAssignedUsersOpts{
+			PerPage:    optional.NewFloat64(float64(perPage)),
+			PageOffset: optional.NewInterface(offset),
 		})
 		if err != nil {
 			return false, err

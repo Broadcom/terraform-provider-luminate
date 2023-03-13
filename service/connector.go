@@ -20,7 +20,7 @@ func NewConnectorsAPI(client *sdk.APIClient) *ConnectorsAPI {
 }
 
 func (api *ConnectorsAPI) GetConnectorByID(connectorID string) (*dto.Connector, error) {
-	con, resp, err := api.cli.ConnectorsApi.ConnectorsConnectorIdGet(context.Background(), connectorID)
+	con, resp, err := api.cli.ConnectorsApi.GetConnector(context.Background(), connectorID)
 
 	if resp != nil && resp.StatusCode == 404 {
 		return nil, nil
@@ -78,7 +78,7 @@ func (api *ConnectorsAPI) CreateConnector(connector *dto.Connector, siteID strin
 }
 
 func (api *ConnectorsAPI) DeleteConnector(connectorID string) error {
-	resp, err := api.cli.ConnectorsApi.ConnectorsConnectorIdDelete(context.Background(), connectorID)
+	resp, err := api.cli.ConnectorsApi.DeleteConnector(context.Background(), connectorID)
 	if err != nil {
 		return err
 	}

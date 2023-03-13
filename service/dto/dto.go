@@ -102,7 +102,7 @@ type DnsSettings struct {
 
 type TCPTarget struct {
 	Address string
-	Ports   []float64
+	Ports   []int32
 }
 
 type Validators struct {
@@ -141,6 +141,7 @@ const (
 	ManagedDeviceCondition                 = "IS_DEVICE_COMPLIANCE"
 	ManagedDeviceCloudSocConditionArgument = "CloudSOC"
 	ManagedDeviceOpswatConditionArgument   = "OPSWAT"
+	ManagedDeviceOpswatGroupsArgument      = "OPSWAT_GROUPS"
 	ManagedDeviceWssConditionArgument      = "IsWSSIp"
 	UnmanagedDeviceCondition               = "IS_NOT_WSS_IP"
 )

@@ -174,10 +174,10 @@ func extractTCPTargets(d *schema.ResourceData) []dto.TCPTarget {
 		vt := v.(map[string]interface{})
 
 		p := vt["ports"].([]interface{})
-		var ports []float64
+		var ports []int32
 
 		for _, port := range p {
-			ports = append(ports, float64(port.(int)))
+			ports = append(ports, int32(port.(int)))
 		}
 
 		target := dto.TCPTarget{

@@ -115,7 +115,7 @@ func TestConvertApplicationDTO_SshGw(t *testing.T) {
 
 func TestConvertApplicationDTO_TCP(t *testing.T) {
 
-	targets := []TCPTarget{{Address: "address", Ports: []float64{80}}}
+	targets := []TCPTarget{{Address: "address", Ports: []int32{80}}}
 
 	expected := Application{
 		Name:                 "dummy name",

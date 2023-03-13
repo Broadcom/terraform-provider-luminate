@@ -49,7 +49,7 @@ func (u *IdentityProviderAPI) GetIdentityProviderTypeById(identityProviderId str
 }
 
 func (u *IdentityProviderAPI) GetUserDisplayNameTypeById(identityProviderId string, IdentifierInProvider string) (string, error) {
-	user, _, err := u.cli.UsersApi.IdentitiesIdentityProviderIdUsersEntityIdGet(context.Background(), identityProviderId, IdentifierInProvider)
+	user, _, err := u.cli.UsersApi.GetUser(context.Background(), identityProviderId, IdentifierInProvider)
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +58,7 @@ func (u *IdentityProviderAPI) GetUserDisplayNameTypeById(identityProviderId stri
 }
 
 func (u *IdentityProviderAPI) GetGroupDisplayNameTypeById(identityProviderId string, IdentifierInProvider string) (string, error) {
-	group, _, err := u.cli.GroupsApi.IdentitiesIdentityProviderIdGroupsEntityIdGet(context.Background(), identityProviderId, IdentifierInProvider)
+	group, _, err := u.cli.GroupsApi.GetGroup(context.Background(), identityProviderId, IdentifierInProvider)
 	if err != nil {
 		return "", err
 	}

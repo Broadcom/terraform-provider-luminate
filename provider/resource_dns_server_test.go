@@ -17,6 +17,7 @@ resource "luminate_dns_server" "new-dns" {
 	dns_settings {
 		domain_suffixes = ["company.com"]
 	}
+	visible = false
 }
 `
 

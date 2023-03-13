@@ -198,6 +198,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 
 		if accessPolicy.Conditions.ManagedDevice.SymantecCloudSoc || accessPolicy.Conditions.ManagedDevice.SymantecWebSecurityService {
 			var managedDeviceArguments []string
+			argumentsMap := map[string][]string{}
 
 			if accessPolicy.Conditions.ManagedDevice.SymantecWebSecurityService {
 				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceWssConditionArgument)
@@ -210,10 +211,11 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 			if accessPolicy.Conditions.ManagedDevice.OpswatMetaAccess {
 				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceOpswatConditionArgument)
 			}
-
+			argumentsMap[ManagedDeviceOpswatGroupsArgument] = []string{}
+			argumentsMap[ManagedDeviceUuid] = managedDeviceArguments
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: ManagedDeviceCondition,
-				Arguments:             map[string][]string{ManagedDeviceUuid: managedDeviceArguments},
+				Arguments:             argumentsMap,
 			})
 		}
 

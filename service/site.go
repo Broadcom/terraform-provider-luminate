@@ -20,7 +20,7 @@ func NewSiteAPI(client *sdk.APIClient) *SiteAPI {
 }
 
 func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
-	s, resp, err := api.cli.SitesApi.SitesSiteIdGet(context.Background(), SiteID)
+	s, resp, err := api.cli.SitesApi.GetSite(context.Background(), SiteID)
 	if resp != nil && resp.StatusCode == 404 {
 		return nil, nil
 	}
@@ -111,11 +111,11 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 		}
 	}
 
-	siteOpt := sdk.SitesApiSitesSiteIdPutOpts{
+	siteOpt := sdk.SitesApiUpdateSiteOpts{
 		Body: optional.NewInterface(updateSite),
 	}
 
-	_, resp, err := api.cli.SitesApi.SitesSiteIdPut(context.Background(), siteID, &siteOpt)
+	_, resp, err := api.cli.SitesApi.UpdateSite(context.Background(), siteID, &siteOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 }
 
 func (api *SiteAPI) DeleteSite(siteID string) error {
-	resp, err := api.cli.SitesApi.SitesSiteIdDelete(context.Background(), siteID)
+	resp, err := api.cli.SitesApi.DeleteSite(context.Background(), siteID)
 	if err != nil {
 		return err
 	}
