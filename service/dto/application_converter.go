@@ -2,9 +2,7 @@ package dto
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"fmt"
 	"log"
-	"strings"
 )
 
 func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
@@ -43,11 +41,12 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 		applicationServiceDTO.LinkedApplications = linkedins
 	}
 	if applicationSDKDTO.RequestCustomizationSettings != nil {
-		applicationServiceDTO.HeaderCustomization = HeaderStringsToMap(applicationSDKDTO.RequestCustomizationSettings.HeaderCustomization)
+		applicationServiceDTO.HeaderCustomization = HeaderStringsToMap(*applicationSDKDTO.RequestCustomizationSettings.HeaderCustomization)
 	}
 
-	if len(applicationSDKDTO.TcpTunnelSettings) > 0 {
-		for _, t := range applicationSDKDTO.TcpTunnelSettings {
+	tcpTunnelSettings := applicationSDKDTO.TcpTunnelSettings
+	if applicationSDKDTO.TcpTunnelSettings != nil && len(*tcpTunnelSettings) > 0 {
+		for _, t := range *tcpTunnelSettings {
 			target := TCPTarget{
 				Address: t.Target,
 				Ports:   t.Ports,
@@ -126,11 +125,12 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			LinkedApplications:                  linkedApps,
 		}
 
+		headers := HeaderMapToStrings(applicationServiceDTO.HeaderCustomization)
 		applicationSDKDTO.RequestCustomizationSettings = &sdk.ApplicationRequestCustomizationSettings{
-			HeaderCustomization: HeaderMapToStrings(applicationServiceDTO.HeaderCustomization),
+			HeaderCustomization: &headers,
 		}
 	case "tcp":
-		applicationSDKDTO.TcpTunnelSettings = []sdk.ApplicationTcpTarget{}
+		ApplicationTcpTargetSlice := make([]sdk.ApplicationTcpTarget, 0)
 		for _, v := range applicationServiceDTO.Targets {
 			t := sdk.ApplicationTcpTarget{
 				Ports:  v.Ports,
@@ -138,8 +138,10 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			}
 			log.Printf("[DEBUG] TUNNEL Target %v", t)
 
-			applicationSDKDTO.TcpTunnelSettings = append(applicationSDKDTO.TcpTunnelSettings, t)
+			ApplicationTcpTargetSlice = append(ApplicationTcpTargetSlice, t)
 		}
+		applicationSDKDTO.TcpTunnelSettings = &ApplicationTcpTargetSlice
+
 		log.Printf("[DEBUG] TUNNEL SETTINGS %v", applicationSDKDTO.TcpTunnelSettings)
 	case "sshgw":
 		var sdkVpcs []sdk.ApplicationVpcData
@@ -178,24 +180,29 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 	return applicationSDKDTO
 }
 
-func HeaderMapToStrings(headers map[string]interface{}) []string {
-	var result []string
+func HeaderMapToStrings(headers map[string]interface{}) []map[string]string {
+	var result []map[string]string
+
 	for k, v := range headers {
-		headerString := fmt.Sprintf("%s: %s", k, v)
-		result = append(result, headerString)
+		result = append(result, map[string]string{k: v.(string)})
 	}
+
 	return result
 }
 
-func HeaderStringsToMap(headers []string) map[string]interface{} {
+func HeaderStringsToMap(headers []map[string]string) map[string]interface{} {
 	var result map[string]interface{}
 
-	for _, v := range headers {
-		headerMap := strings.Split(v, ":")
-		if len(headerMap) == 2 {
-			result[headerMap[0]] = headerMap[1]
+	for i, header := range headers {
+		if i == 0 {
+			result = make(map[string]interface{})
 		}
+		for k, v := range header {
+			result[k] = v
+		}
+
 	}
+
 	return result
 }
 
@@ -214,7 +221,7 @@ func GetApplicationType(appType string) sdk.ApplicationType {
 	case "segment":
 		return sdk.SEGMENT_ApplicationType
 	case "dns":
-		return sdk.DNS_Type
+		return sdk.DNS_ApplicationType
 	}
 	return ""
 }
@@ -233,7 +240,7 @@ func GetApplicationTypeString(appType sdk.ApplicationType) string {
 		return "rdp"
 	case sdk.SEGMENT_ApplicationType:
 		return "segment"
-	case sdk.DNS_Type:
+	case sdk.DNS_ApplicationType:
 		return "dns"
 	}
 	return ""

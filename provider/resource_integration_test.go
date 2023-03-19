@@ -21,7 +21,7 @@ func TestAccLuminateIntegration(t *testing.T) {
 			{
 				Config: testAccResourceIntegration_minimal,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "luminate_aws_account_id", "670797135152"),
+					resource.TestCheckResourceAttr(resourceName, "luminate_aws_account_id", "957040371666"),
 				),
 			},
 		},

@@ -2,10 +2,10 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
 )
 
@@ -54,7 +54,7 @@ func (api *ConnectorsAPI) CreateConnector(connector *dto.Connector, siteID strin
 		KubernetesPersistentVolumeName: connector.K8SVolume,
 	}
 
-	conOpt := sdk.CreateConnectorOpts{
+	conOpt := sdk.ConnectorsApiCreateConnectorOpts{
 		Body: optional.NewInterface(conOptBody),
 	}
 

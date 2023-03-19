@@ -2,12 +2,12 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	"context"
+	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/service/utils"
-	"context"
-	"github.com/pkg/errors"
-	"fmt"
 	"github.com/antihax/optional"
+	"github.com/pkg/errors"
 	"log"
 )
 
@@ -25,16 +25,16 @@ func (api *ApplicationAPI) CreateApplication(application *dto.Application) (*dto
 
 	app := dto.ConvertFromApplicationDTO(*application)
 
-	appOpts := sdk.CreateApplicationOpts{
+	appOpts := sdk.ApplicationsApiCreateApplicationOpts{
 		Body: optional.NewInterface(app),
 	}
 	log.Printf("[DEBUG] - Creating App")
 	log.Printf("[DEBUG APP DATA %v", app)
 	newApp, resp, err := api.cli.ApplicationsApi.CreateApplication(context.Background(), &appOpts)
 	if err != nil {
-		if resp != nil  {
+		if resp != nil {
 			body, _ := utils.ConvertReaderToString(resp.Body)
-			return nil, errors.Wrap(err, fmt.Sprintf("received status code: %d ('%s')", resp.StatusCode, body))
+			return nil, errors.Wrapf(err, "received status code: %d ('%s')", resp.StatusCode, body)
 		}
 
 		return nil, err
@@ -91,7 +91,7 @@ func (api *ApplicationAPI) GetApplicationById(applicationID string) (*dto.Applic
 func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto.Application, error) {
 	app := dto.ConvertFromApplicationDTO(*application)
 
-	appOpts := sdk.UpdateApplicationOpts{
+	appOpts := sdk.ApplicationsApiUpdateApplicationOpts{
 		Body: optional.NewInterface(app),
 	}
 
@@ -116,7 +116,7 @@ func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto
 
 func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, siteID string) error {
 	log.Printf("[DEBUG] - Update Binding App")
-	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID)
+	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID, nil)
 	if err != nil {
 		return err
 	}

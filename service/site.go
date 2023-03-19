@@ -2,10 +2,10 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
 )
 
@@ -73,7 +73,7 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 		}
 	}
 
-	siteOpt := sdk.CreateSiteOpts{
+	siteOpt := sdk.SitesApiCreateSiteOpts{
 		Body: optional.NewInterface(newSite),
 	}
 
@@ -111,7 +111,7 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 		}
 	}
 
-	siteOpt := sdk.UpdateSiteOpts{
+	siteOpt := sdk.SitesApiUpdateSiteOpts{
 		Body: optional.NewInterface(updateSite),
 	}
 

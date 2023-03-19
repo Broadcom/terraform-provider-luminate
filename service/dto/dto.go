@@ -1,6 +1,8 @@
 package dto
 
-import "time"
+import (
+	"time"
+)
 
 type Site struct {
 	ID         string
@@ -139,6 +141,7 @@ const (
 	ManagedDeviceCondition                 = "IS_DEVICE_COMPLIANCE"
 	ManagedDeviceCloudSocConditionArgument = "CloudSOC"
 	ManagedDeviceOpswatConditionArgument   = "OPSWAT"
+	ManagedDeviceOpswatGroupsArgument      = "OPSWAT_GROUPS"
 	ManagedDeviceWssConditionArgument      = "IsWSSIp"
 	UnmanagedDeviceCondition               = "IS_NOT_WSS_IP"
 )
