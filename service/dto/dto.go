@@ -186,3 +186,8 @@ type PolicyTcpSettings struct {
 	AcceptTemporaryToken bool
 	AcceptCertificate    bool
 }
+
+type CollectionSiteLink struct {
+	CollectionID string
+	SiteID       string
+}
