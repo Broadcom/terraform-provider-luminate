@@ -12,6 +12,7 @@ const (
 	MAX_APP_NAME_LENGTH    = 40
 	MAX_POLICY_NAME_LENGTH = 255
 	LocalIdpId             = "local"
+	DefaultCollection      = "7cef2ccc-ed3e-4812-9ef2-b986c5dac2a5"
 )
 
 func StringMD5(in string) string {

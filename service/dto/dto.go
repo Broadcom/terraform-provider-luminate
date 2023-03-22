@@ -5,12 +5,13 @@ import (
 )
 
 type Site struct {
-	ID         string
-	Name       string
-	MuteHealth bool
-	K8SVolume  string
-	Kerberos   *SiteKerberosConfig
-	Connectors []Connector
+	ID               string
+	Name             string
+	MuteHealth       bool
+	K8SVolume        string
+	Kerberos         *SiteKerberosConfig
+	Connectors       []Connector
+	CountCollections int32
 }
 
 type SiteKerberosConfig struct {

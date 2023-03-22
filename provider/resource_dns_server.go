@@ -89,7 +89,12 @@ func resourceReadDNSServer(d *schema.ResourceData, m interface{}) error {
 	}
 
 	app, err := client.Applications.GetApplicationById(d.Id())
+
 	if err != nil {
+		if err.Error() == "403 Forbidden" {
+			d.SetId("")
+			return nil
+		}
 		return err
 	}
 

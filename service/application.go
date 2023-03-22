@@ -5,7 +5,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
-	"github.com/Broadcom/terraform-provider-luminate/service/utils"
+	serviceUtils "github.com/Broadcom/terraform-provider-luminate/service/utils"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
 	"log"
@@ -33,7 +34,7 @@ func (api *ApplicationAPI) CreateApplication(application *dto.Application) (*dto
 	newApp, resp, err := api.cli.ApplicationsApi.CreateApplication(context.Background(), &appOpts)
 	if err != nil {
 		if resp != nil {
-			body, _ := utils.ConvertReaderToString(resp.Body)
+			body, _ := serviceUtils.ConvertReaderToString(resp.Body)
 			return nil, errors.Wrapf(err, "received status code: %d ('%s')", resp.StatusCode, body)
 		}
 
@@ -116,6 +117,7 @@ func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto
 
 func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, siteID string) error {
 	log.Printf("[DEBUG] - Update Binding App")
+	err := api.linkSiteToDefaultCollectionIfNeeded(siteID)
 	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID, nil)
 	if err != nil {
 		return err
@@ -130,5 +132,34 @@ func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, s
 	}
 
 	application.SiteID = siteID
+	return nil
+}
+
+func (api *ApplicationAPI) linkSiteToDefaultCollectionIfNeeded(siteID string) error {
+	siteAPI := NewSiteAPI(api.cli)
+	collectionAPI := NewCollectionAPI(api.cli)
+	site, err := siteAPI.GetSiteByID(siteID)
+	if err != nil {
+		return err
+	}
+
+	if site.CountCollections != 0 {
+		return nil
+	}
+
+	collectionSiteLink := dto.CollectionSiteLink{
+		CollectionID: utils.DefaultCollection,
+		SiteID:       siteID,
+	}
+
+	links, err := collectionAPI.LinkSiteToCollection([]dto.CollectionSiteLink{collectionSiteLink})
+	if err != nil {
+		return err
+	}
+
+	if len(*links) != 1 {
+		return errors.New("unable to link site to collection")
+	}
+
 	return nil
 }
