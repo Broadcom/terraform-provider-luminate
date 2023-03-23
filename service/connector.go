@@ -22,7 +22,7 @@ func NewConnectorsAPI(client *sdk.APIClient) *ConnectorsAPI {
 func (api *ConnectorsAPI) GetConnectorByID(connectorID string) (*dto.Connector, error) {
 	con, resp, err := api.cli.ConnectorsApi.GetConnector(context.Background(), connectorID)
 
-	if resp != nil && resp.StatusCode == 404 {
+	if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 403) {
 		return nil, nil
 	}
 

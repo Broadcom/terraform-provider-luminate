@@ -7,44 +7,76 @@ import (
 )
 
 const resourceWebAccessPolicy_enabled = `
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteAccessPolicy"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationAccessPolicy"
+	 internal_address = "http://127.0.0.1:8080"
+	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
 		enabled = "true"
 		name =  "resourceWebAccessPolicy_enabled"
 		identity_provider_id = "local"
 
 		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_web_application.new-application.id}"]
 	}
 `
 
 const resourceWebAccessPolicy_disabled = `
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteAccessPolicy"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationAccessPolicy"
+	 internal_address = "http://127.0.0.1:8080"
+	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
 		enabled = "false"
   		name =  "resourceWebAccessPolicy_disabled"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_web_application.new-application.id}"]
 	}
 `
 
 const resourceWebAccessPolicy_enabled_not_specified = `
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteAccessPolicy"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationAccessPolicy"
+	 internal_address = "http://127.0.0.1:8080"
+	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
   		name =  "resourceWebAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_web_application.new-application.id}"]
 	}
 `
 
 const resourceWebAccessPolicy_conditions_specified = `
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteAccessPolicy"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationAccessPolicy"
+	 internal_address = "http://127.0.0.1:8080"
+	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
   		name =  "resourceWebAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_web_application.new-application.id}"]
 
 		conditions {
     		source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
@@ -61,12 +93,20 @@ const resourceWebAccessPolicy_conditions_specified = `
 `
 
 const resourceWebAccessPolicy_conditions_specified_update = `
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteAccessPolicy"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationAccessPolicy"
+	 internal_address = "http://127.0.0.1:8080"
+	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
 		name =  "resourceWebAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 	
 		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+		applications = ["${luminate_web_application.new-application.id}"]
 	
 		conditions {
 			source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
@@ -83,12 +123,20 @@ const resourceWebAccessPolicy_conditions_specified_update = `
 `
 
 const resourceWebAccessPolicy_validators_specified = `
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteAccessPolicy"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationAccessPolicy"
+	 internal_address = "http://127.0.0.1:8080"
+	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
   		name =  "resourceWebAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_web_application.new-application.id}"]
 	}
 `
 

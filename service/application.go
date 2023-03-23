@@ -30,7 +30,6 @@ func (api *ApplicationAPI) CreateApplication(application *dto.Application) (*dto
 		Body: optional.NewInterface(app),
 	}
 	log.Printf("[DEBUG] - Creating App")
-	log.Printf("[DEBUG APP DATA %v", app)
 	newApp, resp, err := api.cli.ApplicationsApi.CreateApplication(context.Background(), &appOpts)
 	if err != nil {
 		if resp != nil {
@@ -77,7 +76,7 @@ func (api *ApplicationAPI) DeleteApplication(applicationID string) error {
 func (api *ApplicationAPI) GetApplicationById(applicationID string) (*dto.Application, error) {
 	app, resp, err := api.cli.ApplicationsApi.GetApplication(context.Background(), applicationID)
 
-	if resp != nil && resp.StatusCode == 404 {
+	if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 403) {
 		return nil, nil
 	}
 	if err != nil {

@@ -21,7 +21,7 @@ func NewSiteAPI(client *sdk.APIClient) *SiteAPI {
 
 func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 	s, resp, err := api.cli.SitesApi.GetSite(context.Background(), SiteID)
-	if resp != nil && resp.StatusCode == 404 {
+	if resp != nil && (resp.StatusCode == 403 || resp.StatusCode == 404) {
 		return nil, nil
 	}
 
