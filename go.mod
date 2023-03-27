@@ -1,9 +1,10 @@
 module github.com/Broadcom/terraform-provider-luminate
 
 require (
-	bitbucket.org/accezz-io/api-documentation v0.0.0-20230322151743-179b8b6164ac
+	bitbucket.org/accezz-io/api-documentation v0.0.0-20230326202819-838508e90027
 	github.com/antihax/optional v0.0.0-20180407024304-ca021399b1a6
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/terraform v0.12.2
 	github.com/pkg/errors v0.0.0-20170505043639-c605e284fe17
 	github.com/satori/go.uuid v1.2.0

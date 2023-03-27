@@ -46,3 +46,54 @@ func (c *CollectionAPI) GetCollectionSiteLinks(collectionID string) (*[]dto.Coll
 	dtoLinks := dto.ConvertCollectionSiteLinkToDTO(&links.Links)
 	return &dtoLinks, nil
 }
+
+// CreateCollection create collection
+func (c *CollectionAPI) CreateCollection(name string) (*dto.Collection, error) {
+	body := sdk.MasCollectionsBody{Name: name}
+	collection, _, err := c.cli.CollectionsApi.CreateCollection(context.Background(), body)
+	if err != nil {
+		return nil, err
+	}
+	collectionDTO, err := dto.ConvertCollectionToDTO(&collection)
+	if err != nil {
+		return nil, err
+	}
+	return collectionDTO, err
+}
+
+// GetCollection get collection by id
+func (c *CollectionAPI) GetCollection(collectionID string) (*dto.Collection, error) {
+	collection, _, err := c.cli.CollectionsApi.GetCollection(context.Background(), collectionID)
+	if err != nil {
+		return nil, err
+	}
+	collectionDTO, err := dto.ConvertCollectionToDTO(&collection)
+	if err != nil {
+		return nil, err
+	}
+	return collectionDTO, err
+}
+
+// UpdateCollection update collection
+func (c *CollectionAPI) UpdateCollection(name string, collectionID string) (*dto.Collection, error) {
+	body := sdk.CollectionCollectionidBody{Name: name}
+	collection, _, err := c.cli.CollectionsApi.UpdateCollection(context.Background(), body, collectionID)
+	if err != nil {
+		return nil, err
+	}
+	collectionDTO, err := dto.ConvertCollectionToDTO(&collection)
+	if err != nil {
+		return nil, err
+	}
+	return collectionDTO, err
+}
+
+// DeleteCollection delete collection
+func (c *CollectionAPI) DeleteCollection(collectionID string) error {
+	body := sdk.CollectionsApiDeleteCollectionOpts{}
+	_, err := c.cli.CollectionsApi.DeleteCollection(context.Background(), collectionID, &body)
+	if err != nil {
+		return err
+	}
+	return nil
+}

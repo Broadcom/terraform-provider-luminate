@@ -56,6 +56,7 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 
 	lumSvc.Sites = NewSiteAPI(lumSvc.cli)
 	lumSvc.Connectors = NewConnectorsAPI(lumSvc.cli)
+	lumSvc.CollectionAPI = NewCollectionAPI(lumSvc.cli)
 	lumSvc.Applications = NewApplicationAPI(lumSvc.cli)
 	lumSvc.AccessPolicies = NewAccessPolicyAPI(lumSvc.cli)
 	lumSvc.Users = NewUserAPI(lumSvc.cli)
@@ -63,7 +64,6 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	lumSvc.IdentityProviders = NewIdentityProviderAPI(lumSvc.cli)
 	lumSvc.IntegrationAPI = NewIntegrationAPI(lumSvc.cli, httpClient, basePath)
 	lumSvc.SshClientApi = NewSshClientAPI(lumSvc.cli)
-	lumSvc.CollectionAPI = NewCollectionAPI(lumSvc.cli)
 
 	return &lumSvc
 }

@@ -1,6 +1,9 @@
 package dto
 
-import sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+import (
+	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	uuid "github.com/google/uuid"
+)
 
 func ConvertCollectionSiteLinkToModel(links *[]CollectionSiteLink) []sdk.CollectionSiteLink {
 	var linksModel []sdk.CollectionSiteLink
@@ -22,4 +25,34 @@ func ConvertCollectionSiteLinkToDTO(links *[]sdk.CollectionSiteLink) []Collectio
 		})
 	}
 	return linksDto
+}
+
+func ConvertCollectionToDTO(collection *sdk.Collection) (*Collection, error) {
+	collectionID, err := uuid.Parse(collection.Id)
+	if err != nil {
+		return nil, err
+	}
+	parentID, err := uuid.Parse(collection.ParentId)
+	if err != nil {
+		return nil, err
+	}
+	return &Collection{
+		ID:               collectionID,
+		Name:             collection.Name,
+		ParentId:         parentID,
+		CountResources:   collection.CountResources,
+		CountLinkedSites: collection.CountLinkedSites,
+		Fqdn:             collection.Fqdn,
+	}, err
+}
+
+func ConvertCollectionToModel(collection *Collection) sdk.Collection {
+	return sdk.Collection{
+		Id:               collection.ID.String(),
+		Name:             collection.Name,
+		ParentId:         collection.ParentId.String(),
+		CountResources:   collection.CountResources,
+		CountLinkedSites: collection.CountLinkedSites,
+		Fqdn:             collection.Fqdn,
+	}
 }

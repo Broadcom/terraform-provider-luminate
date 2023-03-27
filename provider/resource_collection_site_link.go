@@ -72,7 +72,6 @@ func resourceCollectionSiteLinkCreate(d *schema.ResourceData, m interface{}) err
 	if err != nil {
 		return err
 	}
-	d.SetId("site_link")
 	return nil
 }
 

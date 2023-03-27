@@ -43,6 +43,7 @@ func Provider() terraform.ResourceProvider {
 			"luminate_aws_integration":      LuminateAWSIntegration(),
 			"luminate_aws_integration_bind": LuminateawsIntegrationBind(),
 			"luminate_collection_site_link": LuminateCollectionSiteLink(),
+			"luminate_collection":           LuminateCollection(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"luminate_group":             LuminateDataSourceGroups(),

@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -191,4 +192,23 @@ type PolicyTcpSettings struct {
 type CollectionSiteLink struct {
 	CollectionID string
 	SiteID       string
+}
+
+type Collection struct {
+	ID               uuid.UUID
+	Name             string
+	ParentId         uuid.UUID
+	CountResources   int32
+	CountLinkedSites int32
+	Fqdn             string
+}
+
+type ListCollectionsRequest struct {
+	Sort          string
+	Size          float64
+	Page          float64
+	Name          string
+	ApplicationId uuid.UUID
+	SiteId        uuid.UUID
+	PolicyId      uuid.UUID
 }
