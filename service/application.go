@@ -116,10 +116,22 @@ func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto
 
 func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, siteID string) error {
 	log.Printf("[DEBUG] - Update Binding App")
-	err := api.linkSiteToDefaultCollectionIfNeeded(siteID)
+
 	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID, nil)
 	if err != nil {
-		return err
+		if resp.StatusCode == 400 {
+			err = api.linkSiteToDefaultCollectionIfNeeded(siteID)
+			if err != nil {
+				return err
+			}
+			resp, err = api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID, nil)
+			if err != nil {
+				return err
+			}
+		}
+		if err != nil {
+			return err
+		}
 	}
 	if resp != nil {
 		if resp.StatusCode != 200 {
@@ -156,7 +168,7 @@ func (api *ApplicationAPI) linkSiteToDefaultCollectionIfNeeded(siteID string) er
 		return err
 	}
 
-	if len(*links) != 1 {
+	if len(*links) == 0 {
 		return errors.New("unable to link site to collection")
 	}
 

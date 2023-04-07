@@ -6,6 +6,7 @@ import (
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
+	"log"
 	"strings"
 )
 
@@ -66,6 +67,7 @@ func LuminateWebAccessPolicy() *schema.Resource {
 }
 
 func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Creating web access policy")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("unable to cast Luminate service")
@@ -108,6 +110,7 @@ func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 }
 
 func resourceReadWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Reading web access policy")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("unable to cast Luminate service")
@@ -129,6 +132,7 @@ func resourceReadWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Updating web access policy")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("unable to cast Luminate service")

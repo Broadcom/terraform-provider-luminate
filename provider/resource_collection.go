@@ -2,29 +2,33 @@ package provider
 
 import (
 	"github.com/Broadcom/terraform-provider-luminate/service"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
+	"log"
 )
 
 func LuminateCollection() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:        schema.TypeBool,
+				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Collection Name",
-				Default:     false,
 			},
 		},
 		Create: resourceCreateCollection,
 		Read:   resourceReadCollection,
 		Update: resourceUpdateCollection,
 		Delete: resourceDeleteCollection,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 	}
 }
 
 func resourceCreateCollection(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Creating collection")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
@@ -39,12 +43,13 @@ func resourceCreateCollection(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceReadCollection(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Reading colelction")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
 	}
-	collectionName := d.Get("name").(string)
-	collection, err := client.CollectionAPI.GetCollection(collectionName)
+	collectionID := d.Id()
+	collection, err := client.CollectionAPI.GetCollection(collectionID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get collection")
 	}
@@ -53,13 +58,17 @@ func resourceReadCollection(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUpdateCollection(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Updating collection")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
 	}
 	collectionName := d.Get("name").(string)
-	collectionID := uuid.FromStringOrNil(d.Id())
-	_, err := client.CollectionAPI.UpdateCollection(collectionID.String(), collectionName)
+	collectionID, err := uuid.Parse(d.Id())
+	if err != nil {
+		return errors.Wrap(err, "failed to parse collection id")
+	}
+	_, err = client.CollectionAPI.UpdateCollection(collectionID.String(), collectionName)
 	if err != nil {
 		return errors.Wrap(err, "failed to update collection")
 	}
@@ -67,12 +76,16 @@ func resourceUpdateCollection(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceDeleteCollection(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Deleting collection")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
 	}
-	collectionID := uuid.FromStringOrNil(d.Id())
-	err := client.CollectionAPI.DeleteCollection(collectionID.String())
+	collectionID, err := uuid.Parse(d.Id())
+	if err != nil {
+		return errors.Wrap(err, "failed to parse collection id")
+	}
+	err = client.CollectionAPI.DeleteCollection(collectionID.String())
 	if err != nil {
 		return errors.Wrap(err, "failed to delete collection")
 	}

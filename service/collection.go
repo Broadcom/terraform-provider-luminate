@@ -19,7 +19,7 @@ func NewCollectionAPI(client *sdk.APIClient) *CollectionAPI {
 // LinkSiteToCollection link sites to collections
 func (c *CollectionAPI) LinkSiteToCollection(links []dto.CollectionSiteLink) (*[]dto.CollectionSiteLink, error) {
 	modelLinks := dto.ConvertCollectionSiteLinkToModel(&links)
-	body := sdk.MasCollectionsitelinksBody{Links: modelLinks}
+	body := sdk.CollectionSitelinksBody{Links: modelLinks}
 	createdLinks, _, err := c.cli.CollectionsApi.CreateCollectionSiteLink(context.Background(), body)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func (c *CollectionAPI) GetCollectionSiteLinks(collectionID string) (*[]dto.Coll
 
 // CreateCollection create collection
 func (c *CollectionAPI) CreateCollection(name string) (*dto.Collection, error) {
-	body := sdk.MasCollectionsBody{Name: name}
+	body := sdk.CollectionsBody{Name: name}
 	collection, _, err := c.cli.CollectionsApi.CreateCollection(context.Background(), body)
 	if err != nil {
 		return nil, err
@@ -96,4 +96,13 @@ func (c *CollectionAPI) DeleteCollection(collectionID string) error {
 		return err
 	}
 	return nil
+}
+
+// GetCollectionsBySite get collections by site
+func (c *CollectionAPI) GetCollectionsBySite(siteID string) (*[]string, error) {
+	collections, _, err := c.cli.CollectionsApi.GetCollectionsBySite(context.Background(), siteID)
+	if err != nil {
+		return nil, err
+	}
+	return &collections.CollectionIds, err
 }

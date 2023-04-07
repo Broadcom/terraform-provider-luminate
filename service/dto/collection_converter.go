@@ -46,6 +46,19 @@ func ConvertCollectionToDTO(collection *sdk.Collection) (*Collection, error) {
 	}, err
 }
 
+// ConvertCollectionsToDTO convert collections model to dto
+func ConvertCollectionsToDTO(collections *[]sdk.Collection) (*[]Collection, error) {
+	var collectionsDTO []Collection
+	for _, collection := range *collections {
+		collectionDTO, err := ConvertCollectionToDTO(&collection)
+		if err != nil {
+			return nil, err
+		}
+		collectionsDTO = append(collectionsDTO, *collectionDTO)
+	}
+	return &collectionsDTO, nil
+}
+
 func ConvertCollectionToModel(collection *Collection) sdk.Collection {
 	return sdk.Collection{
 		Id:               collection.ID.String(),
