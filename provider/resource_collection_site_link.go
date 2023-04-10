@@ -1,12 +1,13 @@
 package provider
 
 import (
-	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/hashicorp/terraform/helper/customdiff"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
 	"log"
+	"reflect"
 	"sort"
 )
 
@@ -21,11 +22,6 @@ func LuminateCollectionSiteLink() *schema.Resource {
 			"collection_ids": {
 				Type:     schema.TypeList,
 				Required: true,
-				StateFunc: func(v interface{}) string {
-					list := v.([]string)
-					sort.Strings(list)
-					return fmt.Sprintf("%v", list)
-				},
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -38,6 +34,31 @@ func LuminateCollectionSiteLink() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
+		CustomizeDiff: customdiff.All(
+			customdiff.ComputedIf("collection_ids", func(d *schema.ResourceDiff, meta interface{}) bool {
+				oldIdsInterface, newIDsInterface := d.GetChange("collection_ids")
+				oldIds := oldIdsInterface.([]interface{})
+				newIds := newIDsInterface.([]interface{})
+
+				oldIdsStr := make([]string, len(oldIds))
+				for _, id := range oldIds {
+					oldIdsStr = append(oldIdsStr, id.(string))
+				}
+
+				newIdsStr := make([]string, len(newIds))
+				for _, id := range newIds {
+					newIdsStr = append(newIdsStr, id.(string))
+				}
+
+				sort.Strings(oldIdsStr)
+				sort.Strings(newIdsStr)
+
+				if reflect.DeepEqual(oldIdsStr, newIdsStr) {
+					return false
+				}
+
+				return true
+			})),
 	}
 }
 
@@ -57,7 +78,7 @@ func resourceCollectionSiteLinkRead(d *schema.ResourceData, m interface{}) error
 	d.SetId(siteID)
 	ids := *res
 	sort.Strings(ids)
-	log.Println("collection_ids", ids)
+	log.Println("collection_ids_read", ids)
 	err = d.Set("collection_ids", ids)
 	if err != nil {
 		return errors.Wrapf(err, "unable to set collection_id for site %s", siteID)
@@ -86,7 +107,6 @@ func resourceCollectionSiteLinkCreate(d *schema.ResourceData, m interface{}) err
 	d.SetId(siteID)
 
 	sort.Strings(collectionIDs)
-	log.Println("collection_ids", collectionIDs)
 	err = d.Set("collection_ids", collectionIDs)
 	if err != nil {
 		return errors.Wrapf(err, "unable to set collection_id for site %s", siteID)
@@ -100,6 +120,7 @@ func resourcesCollectionSiteLinkUpdate(d *schema.ResourceData, m interface{}) er
 	if !ok {
 		return errors.New("unable to cast Luminate service")
 	}
+
 	if d.HasChange("collection_ids") {
 		siteID := d.Get("site_id").(string)
 		currentCollections, err := client.CollectionAPI.GetCollectionsBySite(siteID)
@@ -141,11 +162,8 @@ func resourcesCollectionSiteLinkUpdate(d *schema.ResourceData, m interface{}) er
 				return err
 			}
 		}
-		sort.Strings(newCollectionStateStr)
-		log.Println("collection_ids", newCollectionStateStr)
-		err = d.Set("collection_ids", newCollectionStateStr)
 	}
-	return nil
+	return resourceCollectionSiteLinkRead(d, m)
 }
 
 func resourceCollectionSiteLinkDelete(d *schema.ResourceData, m interface{}) error {
