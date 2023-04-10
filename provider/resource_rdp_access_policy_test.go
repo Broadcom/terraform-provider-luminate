@@ -107,46 +107,47 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "allow_long_term_password", "true"),
 				),
 			},
-			//{
-			//	Config: resourceRdpAccessPolicy_disabled,
-			//	Check: resource.ComposeTestCheckFunc(
-			//		resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_disabled"),
-			//		resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
-			//		resource.TestCheckResourceAttr(resourceName, "allow_long_term_password", "true"),
-			//	),
-			//},
-			//{
-			//	Config: resourceRdpAccessPolicy_enabled_not_specified,
-			//	Check: resource.ComposeTestCheckFunc(
-			//		resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_enabled_not_specified"),
-			//		resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
-			//	),
-			//},
-			//{
-			//	Config: resourceRdpAccessPolicy_no_long_term_password_specified,
-			//	Check: resource.ComposeTestCheckFunc(
-			//		resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_no_long_term_password_specified"),
-			//		resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
-			//		resource.TestCheckResourceAttr(resourceName, "allow_long_term_password", "false"),
-			//	),
-			//},
-			//{
-			//	Config: resourceRdpAccessPolicy_conditions_specified,
-			//	Check: resource.ComposeTestCheckFunc(
-			//		resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_conditions_specified"),
-			//		resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
-			//		resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.0", "127.0.0.1/24"),
-			//		resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.1", "1.1.1.1/16"),
-			//		resource.TestCheckResourceAttr(resourceName, "conditions.0.location.0", "Wallis and Futuna"),
-			//	),
-			//},
-			//{
-			//	Config: resourceRdpAccessPolicy_validators_specified,
-			//	Check: resource.ComposeTestCheckFunc(
-			//		resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_validators_specified"),
-			//		resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
-			//		resource.TestCheckResourceAttr(resourceName, "validators.0.web_verification", "true"),
-			//	),
+			{
+				Config: resourceRdpAccessPolicy_disabled,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_disabled"),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "allow_long_term_password", "true"),
+				),
+			},
+			{
+				Config: resourceRdpAccessPolicy_enabled_not_specified,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_enabled_not_specified"),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
+			},
+			{
+				Config: resourceRdpAccessPolicy_no_long_term_password_specified,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_no_long_term_password_specified"),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "allow_long_term_password", "false"),
+				),
+			},
+			{
+				Config: resourceRdpAccessPolicy_conditions_specified,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_conditions_specified"),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.0", "127.0.0.1/24"),
+					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.1", "1.1.1.1/16"),
+					resource.TestCheckResourceAttr(resourceName, "conditions.0.location.0", "Wallis and Futuna"),
+				),
+			},
+			{
+				Config: resourceRdpAccessPolicy_validators_specified,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_validators_specified"),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "validators.0.web_verification", "true"),
+				),
+			},
 		},
 	})
 }
