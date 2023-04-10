@@ -5,9 +5,15 @@ import (
 	"testing"
 )
 
-const tessAccResourceCollection = `
+const testAccResourceCollection = `
 resource "luminate_collection" "new-collection" {
   name = "tfAccCollection"
+}
+`
+
+const testAccResourceCollectionUpdate = `
+resource "luminate_collection" "new-collection" {
+  name = "tfAccCollectionUpdate"
 }
 `
 
@@ -19,9 +25,15 @@ func TestAccLuminateCollection(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: tessAccResourceCollection,
+				Config: testAccResourceCollection,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccCollection"),
+				),
+			},
+			{
+				Config: testAccResourceCollectionUpdate,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "tfAccCollectionUpdate"),
 				),
 			},
 		},

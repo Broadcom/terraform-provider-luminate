@@ -64,11 +64,8 @@ func resourceUpdateCollection(d *schema.ResourceData, m interface{}) error {
 		return errors.New("invalid client")
 	}
 	collectionName := d.Get("name").(string)
-	collectionID, err := uuid.Parse(d.Id())
-	if err != nil {
-		return errors.Wrap(err, "failed to parse collection id")
-	}
-	_, err = client.CollectionAPI.UpdateCollection(collectionID.String(), collectionName)
+	collectionID := d.Id()
+	_, err := client.CollectionAPI.UpdateCollection(collectionName, collectionID)
 	if err != nil {
 		return errors.Wrap(err, "failed to update collection")
 	}

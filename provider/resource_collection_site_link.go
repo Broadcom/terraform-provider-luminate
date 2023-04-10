@@ -3,11 +3,9 @@ package provider
 import (
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
-	"github.com/hashicorp/terraform/helper/customdiff"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
 	"log"
-	"reflect"
 	"sort"
 )
 
@@ -34,31 +32,6 @@ func LuminateCollectionSiteLink() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-		CustomizeDiff: customdiff.All(
-			customdiff.ComputedIf("collection_ids", func(d *schema.ResourceDiff, meta interface{}) bool {
-				oldIdsInterface, newIDsInterface := d.GetChange("collection_ids")
-				oldIds := oldIdsInterface.([]interface{})
-				newIds := newIDsInterface.([]interface{})
-
-				oldIdsStr := make([]string, len(oldIds))
-				for _, id := range oldIds {
-					oldIdsStr = append(oldIdsStr, id.(string))
-				}
-
-				newIdsStr := make([]string, len(newIds))
-				for _, id := range newIds {
-					newIdsStr = append(newIdsStr, id.(string))
-				}
-
-				sort.Strings(oldIdsStr)
-				sort.Strings(newIdsStr)
-
-				if reflect.DeepEqual(oldIdsStr, newIdsStr) {
-					return false
-				}
-
-				return true
-			})),
 	}
 }
 
@@ -137,7 +110,8 @@ func resourcesCollectionSiteLinkUpdate(d *schema.ResourceData, m interface{}) er
 			newCollectionStateStr[i] = c.(string)
 		}
 
-		unlink, link := getUniqueValues(newCollectionStateStr, *currentCollections)
+		// from the diff between terraform state and db site-links we get the collections to unlink and link
+		unlink, link := GetUniqueValues(newCollectionStateStr, *currentCollections)
 		if len(unlink) > 0 {
 			for _, id := range unlink {
 				err := client.CollectionAPI.UnlinkSiteFromCollection(dto.CollectionSiteLink{
@@ -202,6 +176,7 @@ func extractCollectionSiteLinkFields(d *schema.ResourceData) *[]dto.CollectionSi
 	return &links
 }
 
+// contains returns true if the string slice contains the string
 func contains(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
@@ -212,8 +187,8 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-// getUniqueValues returns the values that are in the current state but not in the new state and vice versa
-func getUniqueValues(newState []string, currentState []string) ([]string, []string) {
+// GetUniqueValues returns the values that are in the current state but not in the new state and vice versa
+func GetUniqueValues(newState []string, currentState []string) ([]string, []string) {
 	var unlink []string
 	var link []string
 	for _, v := range currentState {

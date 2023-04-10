@@ -3,6 +3,7 @@ package provider
 import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
 	"time"
@@ -105,4 +106,28 @@ func testAccResourceCollectionSiteUpdateSwitchOrder(collectionName string, rand 
 					collection_ids = sort(["${luminate_collection.new-collection.id}", "7cef2ccc-ed3e-4812-9ef2-b986c5dac2a5"])
 				}
 			`, rand, collectionName, rand)
+}
+
+func TestUniqueValues_Ok(t *testing.T) {
+	leftSlice := []string{"a", "b", "c"}
+	rightSlice := []string{"d", "e", "f"}
+	left, right := GetUniqueValues(leftSlice, rightSlice)
+	assert.Len(t, left, 3)
+	assert.Len(t, right, 3)
+
+	leftSlice = []string{"a", "b", "c"}
+	rightSlice = []string{"a", "b", "c"}
+
+	left, right = GetUniqueValues(leftSlice, rightSlice)
+
+	assert.Len(t, left, 0)
+	assert.Len(t, right, 0)
+
+	leftSlice = []string{"a", "b", "c"}
+	rightSlice = []string{"a", "b", "c", "d"}
+
+	left, right = GetUniqueValues(leftSlice, rightSlice)
+
+	assert.Len(t, left, 1)
+	assert.Len(t, right, 0)
 }

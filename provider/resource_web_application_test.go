@@ -48,15 +48,15 @@ func TestAccLuminateApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
 				),
 			},
-			//{
-			//	Config: testAccWebApplication_options,
-			//	Check: resource.ComposeTestCheckFunc(
-			//		resource.TestCheckResourceAttr(resourceName, "name", "tfAccApplicationUpd"),
-			//		resource.TestCheckResourceAttr(resourceName, "internal_address", "http://127.0.0.1:80"),
-			//		resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
-			//		resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
-			//	),
-			//},
+			{
+				Config: testAccWebApplication_options,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "tfAccApplicationUpd"),
+					resource.TestCheckResourceAttr(resourceName, "internal_address", "http://127.0.0.1:80"),
+					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
+				),
+			},
 		},
 	})
 }
