@@ -118,6 +118,8 @@ func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, s
 	log.Printf("[DEBUG] - Update Binding App")
 
 	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID, nil)
+	// if bind fail with 400, there is chance that collection FT is enabled for this tenant, for BC we will try to link default collection
+	// and bind again
 	if err != nil {
 		if resp.StatusCode == 400 {
 			err = api.linkSiteToDefaultCollectionIfNeeded(siteID)

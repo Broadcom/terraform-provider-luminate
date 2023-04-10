@@ -73,7 +73,6 @@ type Application struct {
 	LuminateAddress       string
 	Subdomain             string
 	CustomExternalAddress string
-	CollectionID          string
 	//HTTP
 	CustomRootPath                    string
 	HealthURL                         string
