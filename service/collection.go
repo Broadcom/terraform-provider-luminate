@@ -4,6 +4,8 @@ import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/antihax/optional"
+	"github.com/pkg/errors"
 )
 
 type CollectionAPI struct {
@@ -105,4 +107,52 @@ func (c *CollectionAPI) GetCollectionsBySite(siteID string) (*[]string, error) {
 		return nil, err
 	}
 	return &collections.CollectionIds, err
+}
+
+// listCollections list collections
+func (c *CollectionAPI) ListCollections(name string) (*[]dto.Collection, error) {
+	var body sdk.CollectionsApiListCollectionsOpts
+	if name != "" {
+		body.Name = optional.NewString(name)
+	}
+	collections, _, err := c.cli.CollectionsApi.ListCollections(context.Background(), &body)
+	if err != nil {
+		return nil, err
+	}
+	collectionsDTO, err := dto.ConvertCollectionsToDTO(collections.Content)
+	if err != nil {
+		return nil, err
+	}
+	return collectionsDTO, nil
+}
+
+// CreateTenantRoleBindings create tenant role bindings
+func (c *CollectionAPI) CreateTenantRoleBindings(tenantRole sdk.RoleType, entities *[]sdk.DirectoryEntity) (*[]dto.RoleBindings, error) {
+
+	// get root collection id
+	collections, err := c.ListCollections("default")
+	if err != nil {
+		return nil, err
+	}
+	if len(*collections) == 0 {
+		return nil, errors.New("no root collections found")
+	}
+	rootCollectionID := (*collections)[0].ID
+	subjectType := sdk.COLLECTION_SubjectType
+	// create role binding body
+	roleBindingBody := sdk.CollectionRolebindingsBody{
+		Entities:    *entities,
+		RoleType:    &tenantRole,
+		SubjectType: &subjectType,
+		SubjectID:   rootCollectionID.String(),
+	}
+	// create role bindings
+	roleBindings, _, err := c.cli.CollectionsApi.CreateRoleBinding(context.Background(), roleBindingBody)
+	if err != nil {
+		return nil, err
+	}
+	// convert role bindings to dto
+	roleBindingsDTO, err := dto.ConvertRoleBindingsToDTO(&roleBindings)
+
+	return roleBindingsDTO, err
 }

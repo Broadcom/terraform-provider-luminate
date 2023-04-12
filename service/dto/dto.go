@@ -212,3 +212,16 @@ type ListCollectionsRequest struct {
 	SiteId        uuid.UUID
 	PolicyId      uuid.UUID
 }
+
+type CreateRoleBindingsRequest struct {
+	SubjectId   string
+	SubjectType string
+	RoleType    string
+	Entities    []DirectoryEntity
+}
+
+type RoleBindings struct {
+	ID       string
+	RoleType string
+	Entity   DirectoryEntity
+}

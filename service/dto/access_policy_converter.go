@@ -2,8 +2,8 @@ package dto
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 )
 
 func FromTargetProtocol(targetProtocol sdk.PolicyTargetProtocol) string {
@@ -358,4 +358,23 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 		SshSettings:       sshSetting,
 		TcpSettings:       tcpSetting,
 	}
+}
+
+func ConvertDirectoryEntitiesToModel(directoryEntities []DirectoryEntity) ([]sdk.DirectoryEntity, error) {
+	var directoryEntitiesDto []sdk.DirectoryEntity
+	for _, directoryEntity := range directoryEntities {
+		identityProviderType, err := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to convert identity provider type %s to enum", directoryEntity.IdentityProviderType)
+		}
+		directoryEntitiesDto = append(directoryEntitiesDto, sdk.DirectoryEntity{
+			IdentifierInProvider: directoryEntity.IdentifierInProvider,
+			IdentityProviderId:   directoryEntity.IdentityProviderId,
+			DisplayName:          directoryEntity.DisplayName,
+			IdentityProviderType: &identityProviderType,
+			Type_:                ToModelType(directoryEntity.EntityType),
+		})
+	}
+
+	return directoryEntitiesDto, nil
 }
