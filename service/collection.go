@@ -51,7 +51,7 @@ func (c *CollectionAPI) GetCollectionSiteLinks(collectionID string) (*[]dto.Coll
 
 // CreateCollection create collection
 func (c *CollectionAPI) CreateCollection(name string) (*dto.Collection, error) {
-	body := sdk.CollectionsBody{Name: name}
+	body := sdk.CollectionBody{Name: name}
 	collection, _, err := c.cli.CollectionsApi.CreateCollection(context.Background(), body)
 	if err != nil {
 		return nil, err
@@ -109,13 +109,13 @@ func (c *CollectionAPI) GetCollectionsBySite(siteID string) (*[]string, error) {
 	return &collections.CollectionIds, err
 }
 
-// listCollections list collections
+// ListCollections list collections
 func (c *CollectionAPI) ListCollections(name string) (*[]dto.Collection, error) {
-	var body sdk.CollectionsApiListCollectionsOpts
+	var queryParams sdk.CollectionsApiListCollectionsOpts
 	if name != "" {
-		body.Name = optional.NewString(name)
+		queryParams.Name = optional.NewString(name)
 	}
-	collections, _, err := c.cli.CollectionsApi.ListCollections(context.Background(), &body)
+	collections, _, err := c.cli.CollectionsApi.ListCollections(context.Background(), &queryParams)
 	if err != nil {
 		return nil, err
 	}
@@ -126,25 +126,24 @@ func (c *CollectionAPI) ListCollections(name string) (*[]dto.Collection, error) 
 	return collectionsDTO, nil
 }
 
-// CreateTenantRoleBindings create tenant role bindings
-func (c *CollectionAPI) CreateTenantRoleBindings(tenantRole sdk.RoleType, entities *[]sdk.DirectoryEntity) (*[]dto.RoleBindings, error) {
+type DirectoryEntityTest struct {
+	// Secure Access Cloud internal directory entity identifier.
+	Id                   string                    `json:"id,omitempty"`
+	IdentifierInProvider string                    `json:"identifierInProvider"`
+	IdentityProviderId   string                    `json:"identityProviderId"`
+	IdentityProviderType *sdk.IdentityProviderType `json:"identityProviderType"`
+	Type                 *sdk.EntityType           `json:"type"`
+	// Directory entity display name.
+	DisplayName string `json:"displayName,omitempty"`
+}
 
-	// get root collection id
-	collections, err := c.ListCollections("default")
-	if err != nil {
-		return nil, err
-	}
-	if len(*collections) == 0 {
-		return nil, errors.New("no root collections found")
-	}
-	rootCollectionID := (*collections)[0].ID
-	subjectType := sdk.COLLECTION_SubjectType
+// CreateTenantRoleBindings create tenant role bindings
+func (c *CollectionAPI) CreateTenantRoleBindings(tenantRole sdk.RoleType, entity *sdk.DirectoryEntity) (*[]dto.RoleBindings, error) {
+
 	// create role binding body
 	roleBindingBody := sdk.CollectionRolebindingsBody{
-		Entities:    *entities,
-		RoleType:    &tenantRole,
-		SubjectType: &subjectType,
-		SubjectID:   rootCollectionID.String(),
+		Entities: []sdk.DirectoryEntity{*entity},
+		RoleType: &tenantRole,
 	}
 	// create role bindings
 	roleBindings, _, err := c.cli.CollectionsApi.CreateRoleBinding(context.Background(), roleBindingBody)
@@ -155,4 +154,41 @@ func (c *CollectionAPI) CreateTenantRoleBindings(tenantRole sdk.RoleType, entiti
 	roleBindingsDTO, err := dto.ConvertRoleBindingsToDTO(&roleBindings)
 
 	return roleBindingsDTO, err
+}
+
+// ListRoleBindings list role bindings
+func (c *CollectionAPI) ListRoleBindings(subjectID string, subjectType string) (*[]dto.RoleBindings, error) {
+	collections, err := c.ListCollections("default")
+	if err != nil {
+		return nil, err
+	}
+	if len(*collections) == 0 {
+		return nil, errors.New("no root collections found")
+	}
+	rootCollectionID := (*collections)[0].ParentId
+	subjectType = "Collection"
+	queryParams := sdk.CollectionsApiListRoleBindingsOpts{
+		SubjectId:   optional.NewInterface(rootCollectionID.String()),
+		SubjectType: optional.NewInterface(subjectType),
+	}
+	res, _, err := c.cli.CollectionsApi.ListRoleBindings(context.Background(), &queryParams)
+	if err != nil {
+		return nil, err
+	}
+	roleBindings := sdk.RoleBindings{RoleBindings: res.Content}
+	roleBindingsDTO, err := dto.ConvertRoleBindingsToDTO(&roleBindings)
+
+	return roleBindingsDTO, err
+}
+
+// DeleteRoleBinding delete role binding
+func (c *CollectionAPI) DeleteRoleBinding(roleBindingID string) error {
+	body := sdk.RolebindingDeleteBody{
+		RoleBindingsID: []string{roleBindingID},
+	}
+	_, err := c.cli.CollectionsApi.DeleteRoleBinding(context.Background(), body)
+	if err != nil {
+		return err
+	}
+	return nil
 }

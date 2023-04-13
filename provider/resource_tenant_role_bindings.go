@@ -9,42 +9,36 @@ import (
 	"log"
 )
 
-func LuminateTenantRoleBindings() *schema.Resource {
+func LuminateTenantRoles() *schema.Resource {
 	return &schema.Resource{
+
 		Schema: map[string]*schema.Schema{
 			"role": {
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				Description: "Role",
 			},
-			"entities": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"user_id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "User ID",
-						},
-						"identity_provider_id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Identity Provider ID",
-						},
-					},
-				},
+			"entity_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "User ID",
+			},
+			"identity_provider_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Identity Provider ID",
 			},
 		},
 		Create: resourceCreateRoleBinding,
+		Read:   resourceReadRoleBinding,
+		Delete: resourceDeleteRoleBinding,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 	}
-}
-
-func resourceReadRoleBinding(d *schema.ResourceData, m interface{}) error {
-	return nil
 }
 
 type EntityTerraform struct {
@@ -64,36 +58,56 @@ func resourceCreateRoleBinding(d *schema.ResourceData, m interface{}) error {
 		return errors.Wrap(err, "validate error:")
 	}
 
-	entitiesTF := d.Get("entity").([]EntityTerraform)
-	entities := make([]sdk.DirectoryEntity, len(entitiesTF))
-	for _, entity := range entitiesTF {
-		identityProviderID := entity.IdentityProviderID
-		identityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(identityProviderID)
-		if err != nil {
-			return errors.Wrap(err, "failed to get identity provider type")
-		}
-		entityType := sdk.USER_EntityType
-		entityID := entity.ID
-		entity := sdk.DirectoryEntity{
-			IdentifierInProvider: entityID,
-			IdentityProviderId:   identityProviderID,
-			IdentityProviderType: &identityProviderType,
-			Type_:                &entityType,
-			DisplayName:          "",
-		}
-		entities = append(entities, entity)
+	entityID := d.Get("entity_id").(string)
+	identityProviderID := d.Get("identity_provider_id").(string)
+	identityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(identityProviderID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get identity provider type")
+	}
+	entityType := sdk.USER_EntityType
+
+	entity := sdk.DirectoryEntity{
+		IdentifierInProvider: entityID,
+		IdentityProviderId:   identityProviderID,
+		IdentityProviderType: &identityProviderType,
+		Type_:                &entityType,
+		DisplayName:          "displayName",
 	}
 
-	roleBindings, err := client.CollectionAPI.CreateTenantRoleBindings(roleType, &entities)
+	roleBindings, err := client.CollectionAPI.CreateTenantRoleBindings(roleType, &entity)
 	if err != nil {
 		return errors.Wrap(err, "failed to create role bindings")
 	}
 
 	d.SetId(fmt.Sprintf("%s", (*roleBindings)[0].ID))
+	d.Set("entity_id", entityID)
+	d.Set("identity_provider_id", identityProviderID)
+
 	return nil
 }
 
-func resourceUpdateRoleBinding(d *schema.ResourceData, m interface{}) error {
+func resourceReadRoleBinding(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Creating Role Bindings")
+	client, ok := m.(*service.LuminateService)
+	if !ok {
+		return errors.New("invalid client")
+	}
+
+	roles, err := client.CollectionAPI.ListRoleBindings("asd", "dads")
+	if err != nil {
+		return errors.Wrap(err, "failed to get role bindings")
+	}
+	if len(*roles) == 0 {
+		d.SetId("")
+		return nil
+	}
+	// find the role binding that matches id
+	for _, bindings := range *roles {
+		if bindings.ID == d.Id() {
+			d.SetId(bindings.ID)
+			break
+		}
+	}
 	return nil
 }
 
@@ -120,18 +134,4 @@ func validateRoleBindingType(roleType string) (sdk.RoleType, error) {
 
 	}
 	return "", errors.New("invalid role type")
-}
-
-func subjectTypeFromRoleBindingType(roleType sdk.RoleType) (sdk.SubjectType, error) {
-	switch roleType {
-	case sdk.TENANT_ADMIN_RoleType, sdk.TENANT_VIEWER_RoleType:
-		return sdk.COLLECTION_SubjectType, nil
-	case sdk.SITE_EDITOR_RoleType, sdk.SITE_CONNECTOR_DEPLOYER_RoleType:
-		return sdk.SITE_SubjectType, nil
-	case sdk.APPLICATION_OWNER_RoleType:
-		return sdk.APP_SubjectType, nil
-	case sdk.POLICY_OWNER_RoleType, sdk.POLICY_ENTITY_ASSIGNER_RoleType:
-		return sdk.POLICY_SubjectType, nil
-	}
-	return "", errors.New("invalid subject type")
 }

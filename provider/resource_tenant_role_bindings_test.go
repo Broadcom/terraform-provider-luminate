@@ -6,23 +6,25 @@ import (
 )
 
 const testAccLuminateRoleBindings = `
-	resource "lumiante_tenant_role" "tenant-admins" {
-	  role = "TenantAdmin"
-	  entity = [{id:"24d8dcf9-b95c-4c92-a1a6-21083eb4d3a9", "identity_provider_id":"local" }]
-	}
+	resource "luminate_tenant_role" "tenant-admins" {
+		role = "TenantAdmin"
+		entity_id = "b28cef1c-ced4-441e-9ecc-5887cabcda60"
+		identity_provider_id = "local"
+}
 `
 
 func TestAccLuminateRoleBindings(t *testing.T) {
+	const resourceName = "luminate_tenant_role.tenant-admins"
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccLuminateRoleBindings,
+				Config:  testAccLuminateRoleBindings,
+				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("lumiante_tenant_role.tenant-admins", "role", "TenantAdmin"),
-					resource.TestCheckResourceAttr("lumiante_tenant_role.tenant-admins", "entity.0.id", "24d8dcf9-b95c-4c92-a1a6-21083eb4d3a9"),
-					resource.TestCheckResourceAttr("lumiante_tenant_role.tenant-admins", "entity.0.identity_provider_id", "local"),
+					resource.TestCheckResourceAttr(resourceName, "role", "TenantAdmin"),
+					resource.TestCheckResourceAttr(resourceName, "entity_id", "b28cef1c-ced4-441e-9ecc-5887cabcda60"),
 				),
 			},
 		},
