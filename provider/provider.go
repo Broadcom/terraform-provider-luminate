@@ -44,6 +44,7 @@ func Provider() terraform.ResourceProvider {
 			"luminate_aws_integration_bind": LuminateawsIntegrationBind(),
 			"luminate_collection_site_link": LuminateCollectionSiteLink(),
 			"luminate_tenant_role":          LuminateTenantRoles(),
+			"luminate_site_role":            LuminateSiteRoles(),
 			"luminate_collection":           LuminateCollection(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{

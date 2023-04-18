@@ -4,12 +4,13 @@ import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
 	"log"
 )
 
-func LuminateTenantRoles() *schema.Resource {
+func LuminateSiteRoles() *schema.Resource {
 	return &schema.Resource{
 
 		Schema: map[string]*schema.Schema{
@@ -18,6 +19,12 @@ func LuminateTenantRoles() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 				Description: "Role",
+			},
+			"site_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Site ID",
 			},
 			"entity_id": {
 				Type:        schema.TypeString,
@@ -32,8 +39,8 @@ func LuminateTenantRoles() *schema.Resource {
 				Description: "Identity Provider ID",
 			},
 		},
-		Create: resourceCreateRoleBinding,
-		Read:   resourceReadTenantRoleBinding,
+		Create: resourceCreateSiteRoleBinding,
+		Read:   resourceReadSiteRoleBinding,
 		Delete: resourceDeleteRoleBinding,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -41,14 +48,14 @@ func LuminateTenantRoles() *schema.Resource {
 	}
 }
 
-func resourceCreateRoleBinding(d *schema.ResourceData, m interface{}) error {
+func resourceCreateSiteRoleBinding(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating Role Bindings")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
 	}
 	role := d.Get("role").(string)
-	roleType, err := validateTenantRoleBindingType(role)
+	roleType, err := validateTenantSiteBindingType(role)
 	if err != nil {
 		return errors.Wrap(err, "validate error:")
 	}
@@ -59,6 +66,10 @@ func resourceCreateRoleBinding(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to get identity provider type")
 	}
+
+	siteID := d.Get("site_id").(string)
+	utils.ValidateUuid(siteID, "site_id")
+
 	entityType := sdk.USER_EntityType
 
 	entity := sdk.DirectoryEntity{
@@ -69,7 +80,7 @@ func resourceCreateRoleBinding(d *schema.ResourceData, m interface{}) error {
 		DisplayName:          "displayName",
 	}
 
-	roleBindings, err := client.CollectionAPI.CreateTenantRoleBindings(roleType, &entity)
+	roleBindings, err := client.CollectionAPI.CreateSiteRoleBinding(roleType, &entity, siteID)
 	if err != nil {
 		return errors.Wrap(err, "failed to create role bindings")
 	}
@@ -81,14 +92,14 @@ func resourceCreateRoleBinding(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceReadTenantRoleBinding(d *schema.ResourceData, m interface{}) error {
+func resourceReadSiteRoleBinding(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating Role Bindings")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
 	}
-
-	roles, err := client.CollectionAPI.ListTenantRoleBindings()
+	siteID := d.Get("site_id").(string)
+	roles, err := client.CollectionAPI.ListSiteRoleBindings(siteID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get role bindings")
 	}
@@ -106,25 +117,12 @@ func resourceReadTenantRoleBinding(d *schema.ResourceData, m interface{}) error 
 	return nil
 }
 
-func resourceDeleteRoleBinding(d *schema.ResourceData, m interface{}) error {
-	log.Printf("[INFO] Deleting Role Bindings")
-	client, ok := m.(*service.LuminateService)
-	if !ok {
-		return errors.New("invalid client")
-	}
-	err := client.CollectionAPI.DeleteRoleBinding(d.Id())
-	if err != nil {
-		return errors.Wrap(err, "failed to delete role binding")
-	}
-	return nil
-}
-
-func validateTenantRoleBindingType(roleType string) (sdk.TenantRoleType, error) {
+func validateTenantSiteBindingType(roleType string) (sdk.SiteRoleType, error) {
 	switch roleType {
-	case "TenantAdmin":
-		return sdk.TENANT_ADMIN_TenantRoleType, nil
+	case "SiteEditor":
+		return sdk.SITE_EDITOR_SiteRoleType, nil
 	case "TenantViewer":
-		return sdk.TENANT_VIEWER_TenantRoleType, nil
+		return sdk.SITE_CONNECTOR_DEPLOYER_SiteRoleType, nil
 	}
-	return "", errors.New("invalid tenant role type")
+	return "", errors.New(fmt.Sprintf("invalid site role type: %s", roleType))
 }
