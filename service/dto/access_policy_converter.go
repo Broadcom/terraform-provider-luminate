@@ -211,7 +211,6 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 			if accessPolicy.Conditions.ManagedDevice.OpswatMetaAccess {
 				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceOpswatConditionArgument)
 			}
-			argumentsMap[ManagedDeviceOpswatGroupsArgument] = []string{}
 			argumentsMap[ManagedDeviceUuid] = managedDeviceArguments
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: ManagedDeviceCondition,
