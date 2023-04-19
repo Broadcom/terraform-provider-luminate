@@ -165,6 +165,25 @@ func (c *CollectionAPI) CreateSiteRoleBinding(tenantRole sdk.SiteRoleType, entit
 	return roleBindingsDTO, err
 }
 
+// CreateCollectionRoleBinding create site role binding
+func (c *CollectionAPI) CreateCollectionRoleBinding(tenantRole sdk.CollectionRoleType, entity *sdk.DirectoryEntity, siteID string) (*[]dto.RoleBindings, error) {
+	// create role binding body
+	roleBindingBody := sdk.CollectionCollectionrolebindingsBody{
+		Entities:     []sdk.DirectoryEntity{*entity},
+		RoleType:     &tenantRole,
+		CollectionId: siteID,
+	}
+	// create role bindings
+	roleBindings, _, err := c.cli.CollectionsApi.CreateCollectionRoleBinding(context.Background(), roleBindingBody)
+	if err != nil {
+		return nil, err
+	}
+	// convert role bindings to dto
+	roleBindingsDTO, err := dto.ConvertRoleBindingsToDTO(&roleBindings)
+
+	return roleBindingsDTO, err
+}
+
 // ListRoleBindings list role bindings
 func (c *CollectionAPI) ListTenantRoleBindings() (*[]dto.RoleBindings, error) {
 	rootCollectionID, err := c.GetRootCollectionID()
@@ -191,6 +210,23 @@ func (c *CollectionAPI) ListSiteRoleBindings(siteID string) (*[]dto.RoleBindings
 	subjectType := sdk.SITE_SubjectType
 	queryParams := sdk.CollectionsApiListRoleBindingsOpts{
 		SubjectId:   optional.NewInterface(siteID),
+		SubjectType: optional.NewInterface(subjectType),
+	}
+	res, _, err := c.cli.CollectionsApi.ListRoleBindings(context.Background(), &queryParams)
+	if err != nil {
+		return nil, err
+	}
+	roleBindings := sdk.RoleBindings{RoleBindings: res.Content}
+	roleBindingsDTO, err := dto.ConvertRoleBindingsToDTO(&roleBindings)
+
+	return roleBindingsDTO, err
+}
+
+// ListCollectionRoleBindings list site role bindings
+func (c *CollectionAPI) ListCollectionRoleBindings(collectionID string) (*[]dto.RoleBindings, error) {
+	subjectType := sdk.COLLECTION_SubjectType
+	queryParams := sdk.CollectionsApiListRoleBindingsOpts{
+		SubjectId:   optional.NewInterface(collectionID),
 		SubjectType: optional.NewInterface(subjectType),
 	}
 	res, _, err := c.cli.CollectionsApi.ListRoleBindings(context.Background(), &queryParams)

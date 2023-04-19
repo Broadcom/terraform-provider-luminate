@@ -45,6 +45,7 @@ func Provider() terraform.ResourceProvider {
 			"luminate_collection_site_link": LuminateCollectionSiteLink(),
 			"luminate_tenant_role":          LuminateTenantRoles(),
 			"luminate_site_role":            LuminateSiteRoles(),
+			"luminate_collection_role":      LuminateCollectionRoles(),
 			"luminate_collection":           LuminateCollection(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{

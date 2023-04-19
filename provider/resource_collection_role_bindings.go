@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-func LuminateSiteRoles() *schema.Resource {
+func LuminateCollectionRoles() *schema.Resource {
 	return &schema.Resource{
 
 		Schema: map[string]*schema.Schema{
@@ -20,7 +20,7 @@ func LuminateSiteRoles() *schema.Resource {
 				ForceNew:    true,
 				Description: "Role",
 			},
-			"site_id": {
+			"collection_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
@@ -39,8 +39,8 @@ func LuminateSiteRoles() *schema.Resource {
 				Description: "Identity Provider ID",
 			},
 		},
-		Create: resourceCreateSiteRoleBinding,
-		Read:   resourceReadSiteRoleBinding,
+		Create: resourceCreateCollectionRoleBinding,
+		Read:   resourceReadCollectionRoleBinding,
 		Delete: resourceDeleteRoleBinding,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -48,14 +48,14 @@ func LuminateSiteRoles() *schema.Resource {
 	}
 }
 
-func resourceCreateSiteRoleBinding(d *schema.ResourceData, m interface{}) error {
+func resourceCreateCollectionRoleBinding(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating Role Bindings")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
 	}
 	role := d.Get("role").(string)
-	roleType, err := validateSiteBindingType(role)
+	roleType, err := validateCollectionBindingType(role)
 	if err != nil {
 		return errors.Wrap(err, "validate error:")
 	}
@@ -67,8 +67,8 @@ func resourceCreateSiteRoleBinding(d *schema.ResourceData, m interface{}) error 
 		return errors.Wrap(err, "failed to get identity provider type")
 	}
 
-	siteID := d.Get("site_id").(string)
-	utils.ValidateUuid(siteID, "site_id")
+	collectionID := d.Get("collection_id").(string)
+	utils.ValidateUuid(collectionID, "collection_id")
 
 	entityType := sdk.USER_EntityType
 
@@ -80,7 +80,7 @@ func resourceCreateSiteRoleBinding(d *schema.ResourceData, m interface{}) error 
 		DisplayName:          "displayName",
 	}
 
-	roleBindings, err := client.CollectionAPI.CreateSiteRoleBinding(roleType, &entity, siteID)
+	roleBindings, err := client.CollectionAPI.CreateCollectionRoleBinding(roleType, &entity, collectionID)
 	if err != nil {
 		return errors.Wrap(err, "failed to create role bindings")
 	}
@@ -88,19 +88,19 @@ func resourceCreateSiteRoleBinding(d *schema.ResourceData, m interface{}) error 
 	d.SetId(fmt.Sprintf("%s", (*roleBindings)[0].ID))
 	d.Set("entity_id", entityID)
 	d.Set("identity_provider_id", identityProviderID)
-	d.Set("site_id", siteID)
+	d.Set("collection_id", collectionID)
 
 	return nil
 }
 
-func resourceReadSiteRoleBinding(d *schema.ResourceData, m interface{}) error {
+func resourceReadCollectionRoleBinding(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating Role Bindings")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
 	}
-	siteID := d.Get("site_id").(string)
-	roles, err := client.CollectionAPI.ListSiteRoleBindings(siteID)
+	siteID := d.Get("collection_id").(string)
+	roles, err := client.CollectionAPI.ListCollectionRoleBindings(siteID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get role bindings")
 	}
@@ -118,12 +118,14 @@ func resourceReadSiteRoleBinding(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func validateSiteBindingType(roleType string) (sdk.SiteRoleType, error) {
+func validateCollectionBindingType(roleType string) (sdk.CollectionRoleType, error) {
 	switch roleType {
-	case "SiteEditor":
-		return sdk.SITE_EDITOR_SiteRoleType, nil
-	case "TenantViewer":
-		return sdk.SITE_CONNECTOR_DEPLOYER_SiteRoleType, nil
+	case "PolicyOwner":
+		return sdk.POLICY_OWNER_CollectionRoleType, nil
+	case "PolicyEntityAssigner":
+		return sdk.POLICY_ENTITY_ASSIGNER_CollectionRoleType, nil
+	case "ApplicationOwner":
+		return sdk.APPLICATION_OWNER_CollectionRoleType, nil
 	}
-	return "", errors.New(fmt.Sprintf("invalid site role type: %s", roleType))
+	return "", errors.New(fmt.Sprintf("invalid collection role type: %s", roleType))
 }
