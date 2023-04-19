@@ -21,35 +21,36 @@
 - [Usage Example](#provider-usage-example)
 
 [Core resources](#core-resources)
-- [Resource: luminate_site](#resource--luminatesite)
-- [Resource: luminate_connector](#resource--luminateconnector)
+- [Resource: luminate_site](#resource-luminatesite)
+- [Resource: luminate_connector](#resource-luminateconnector)
 
 [Application Resources](#application-resources)
-- [Resource: luminate_web_application](#resource--luminatewebapplication)
-- [Resource: luminate_ssh_application](#resource--luminatesshapplication)
-- [Resource: luminate_rdp_application](#resource--luminaterdpapplication)
-- [Resource: luminate_tcp_application](#resource--luminatetcpapplication)
-- [Resource: luminate_ssh_gw_application](#resource--luminatesshapplication)
-- [Resource: luminate_segment_application](#resource--luminatesegmentapplication)
+- [Resource: luminate_web_application](#resource-luminatewebapplication)
+- [Resource: luminate_ssh_application](#resource-luminatesshapplication)
+- [Resource: luminate_rdp_application](#resource-luminaterdpapplication)
+- [Resource: luminate_tcp_application](#resource-luminatetcpapplication)
+- [Resource: luminate_ssh_gw_application](#resource-luminatesshapplication)
+- [Resource: luminate_segment_application](#resource-luminatesegmentapplication)
 
 [Policy resources](#policy-resources)
-- [Resource: luminate_rdp_access_policy](#resource--luminaterdpaccesspolicy)
-- [Resource: luminate_ssh_access_policy](#resource--luminatesshaccesspolicy)
-- [Resource: luminate_web_access_policy](#resource--luminatewebaccesspolicy)
-- [Resource: luminate_tcp_access_policy](#resource--luminatetcpaccesspolicy)
+- [Resource: luminate_rdp_access_policy](#resource-luminaterdpaccesspolicy)
+- [Resource: luminate_ssh_access_policy](#resource-luminatesshaccesspolicy)
+- [Resource: luminate_web_access_policy](#resource-luminatewebaccesspolicy)
+- [Resource: luminate_tcp_access_policy](#resource-luminatetcpaccesspolicy)
 
 [Collection resources](#collection-resources)
-- [Resource: luminate_collection_site_link](#resource--luminatecollectionsitelink)
+- [Resource: luminate_collection](#resource-luminatecollection)
+- [Resource: luminate_collection_site_link](#resource-luminatecollectionsitelink)
 
 [Identities resources](#identities-resources)
-- [Resource: luminate_group_user](#resource--luminategroupuser)
+- [Resource: luminate_group_user](#resource-luminategroupuser)
 
 [Data sources](#data-sources)
-- [Data Source: luminate_identity_provider](#data-source--luminateidentityprovider)
-- [Data Source: luminate_user](#data-source--luminateuser)
-- [Data Source: luminate_group](#data-source--luminategroup)
-- [Data Source: luminate_aws_integration](#data-source--luminateawsintegration)
-- [Data Source: luminate_ssh_client](#data-source--luminatesshclient)
+- [Data Source: luminate_identity_provider](#data-source-luminateidentityprovider)
+- [Data Source: luminate_user](#data-source-luminateuser)
+- [Data Source: luminate_group](#data-source-luminategroup)
+- [Data Source: luminate_aws_integration](#data-source-luminateawsintegration)
+- [Data Source: luminate_ssh_client](#data-source-luminatesshclient)
 
 
 Basic configuration and usage
@@ -302,7 +303,6 @@ Resource: luminate_web_application
 
 Provides Secure access cloud web application
 
-­
 #### Example Usage
 
 ```
@@ -1025,6 +1025,25 @@ $ terraform import luminate_tcp_access_policy.new-tcp-access-policy  policy_id
 Collection resources
 ============
 
+Resource: luminate_collection
+----------
+
+Provides Secure access cloud collection resource
+
+#### Example Usage
+
+```
+resource "luminate_collection" "new-collection" {
+  name = "my-collection"
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the collection
+
 Resource: luminate_collection_site_link
 ---------------
 
@@ -1034,12 +1053,17 @@ Provides Secure access cloud link between site and collection
 
 ```
 resource "luminate_collection_site_link" "new-collection-site-link" {
-	  links {
-	    site_id = "c11e4576-53c8-4617-a408-5d31a9c9e954"
-	    collection_id = "8d945145-0d0a-4b76-b6a7-8f7af4fc8dc3"
-	  }
+      site_id = "c11e4576-53c8-4617-a408-5d31a9c9e954"
+	  collection_ids = sort(["8d945145-0d0a-4b76-b6a7-8f7af4fc8dc3"])
 	}
 ```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **site_id -** (Required) Site id
+-   **collection_ids -** (Required) Collection ids to be linked to site must be sorted
 
 
 # Identities resources
