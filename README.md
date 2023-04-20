@@ -41,6 +41,10 @@
 [Collection resources](#collection-resources)
 - [Resource: luminate_collection](#resource-luminatecollection)
 - [Resource: luminate_collection_site_link](#resource-luminatecollectionsitelink)
+- [Resource: lumiante_collection_role](#resource-luminatecollectionrole)
+- [Resource: luminate_site_role](#resource-luminatesiterole)
+- [Resource: luminate_tenant_role](#resource-luminatetenantrole)
+
 
 [Identities resources](#identities-resources)
 - [Resource: luminate_group_user](#resource-luminategroupuser)
@@ -1064,6 +1068,80 @@ The following arguments are supported:
 
 -   **site_id -** (Required) Site id
 -   **collection_ids -** (Required) Collection ids to be linked to site must be sorted
+
+Resource: luminate_collection_role
+---------------
+
+Provides Secure access cloud role bindings between entity and resource
+
+#### Example Usage
+
+```
+	resource "luminate_collection_role" "app-owner" {
+		role = "ApplicationOwner"
+		entity_id = "24d8dcf9-b95c-4c92-a1a6-21083eb4d3a9"
+		identity_provider_id = "local"
+		collection_id = "8d945145-0d0a-4b76-b6a7-8f7af4fc8dc3"
+	}
+
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **role -** (Required) Role name: ApplicationOwner, PolicyOwner, PolicyEntityAssigner
+-   **entity_id -** (Required) Entity id
+-   **identity_provider_id -** (Required) Identity provider id
+-   **collection_id -** (Required) Collection id
+
+Resource: luminate_site_role
+----------
+
+Provides Secure access cloud role bindings between entity and site
+
+#### Example Usage
+
+```
+resource "luminate_site_role" "new-site-role" {
+    role = "SiteOwner"
+    entity_id = "24d8dcf9-b95c-4c92-a1a6-21083eb4d3a9"
+    identity_provider_id = "local"
+    site_id = "c11e4576-53c8-4617-a408-5d31a9c9e954"
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-  **role -** (Required) Role name: SiteOwner, SiteEntityAssigner
+-  **entity_id -** (Required) Entity id
+-  **identity_provider_id -** (Required) Identity provider id
+
+
+Resource: luminate_tenant_role
+----------
+
+Provides Secure access cloud tenant role bindings between entity and collection
+
+#### Example Usage
+
+```
+resource "luminate_tenant_role" "new-collection-role" {
+    role = "TenantAdmin"
+    entity_id = "24d8dcf9-b95c-4c92-a1a6-21083eb4d3a9"
+    identity_provider_id = "local"
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-  **role -** (Required) Role name: TenantAdmin, TenantViewer
+-  **entity_id -** (Required) Entity id
+-  **identity_provider_id -** (Required) Identity provider id 
 
 
 # Identities resources

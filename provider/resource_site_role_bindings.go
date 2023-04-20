@@ -122,7 +122,7 @@ func validateSiteBindingType(roleType string) (sdk.SiteRoleType, error) {
 	switch roleType {
 	case "SiteEditor":
 		return sdk.SITE_EDITOR_SiteRoleType, nil
-	case "TenantViewer":
+	case "SiteConnectorDeployer":
 		return sdk.SITE_CONNECTOR_DEPLOYER_SiteRoleType, nil
 	}
 	return "", errors.New(fmt.Sprintf("invalid site role type: %s", roleType))
