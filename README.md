@@ -1104,7 +1104,7 @@ Provides Secure access cloud role bindings between entity and site
 
 ```
 resource "luminate_site_role" "new-site-role" {
-    role = "SiteOwner"
+    role = "SiteEditor"
     entity_id = "24d8dcf9-b95c-4c92-a1a6-21083eb4d3a9"
     identity_provider_id = "local"
     site_id = "c11e4576-53c8-4617-a408-5d31a9c9e954"
@@ -1115,7 +1115,7 @@ resource "luminate_site_role" "new-site-role" {
 
 The following arguments are supported:
 
--  **role -** (Required) Role name: SiteOwner, SiteEntityAssigner
+-  **role -** (Required) Role name: SiteEditor, SiteConnectorDeployer
 -  **entity_id -** (Required) Entity id
 -  **identity_provider_id -** (Required) Identity provider id
 
