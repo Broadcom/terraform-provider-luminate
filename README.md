@@ -3,11 +3,11 @@
 
 #### Latest Binaries  
 
-|Platform|  |
-|--------|----|
-|Linux   | [terraform-provider-luminate-linux.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-linux.zip)
-|MacOS   | [terraform-provider-luminate-darwin.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-darwin.zip)
-|Windows | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-windows.zip)
+| Platform |                                                                                                                                                                     |
+|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Linux    | [terraform-provider-luminate-linux.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-linux.zip)     |
+| MacOS    | [terraform-provider-luminate-darwin.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-darwin.zip)   |
+| Windows  | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-windows.zip) |
 
 [![CircleCI](https://circleci.com/gh/Broadcom/terraform-provider-luminate/tree/master.svg?style=shield)](https://circleci.com/gh/Broadcom/terraform-provider-luminate)  
 ---
@@ -21,32 +21,36 @@
 - [Usage Example](#provider-usage-example)
 
 [Core resources](#core-resources)
-- [Resource: luminate_site](#resource-luminate_site)
-- [Resource: luminate_connector](#resource-luminate_connector)
+- [Resource: luminate_site](#resource-luminatesite)
+- [Resource: luminate_connector](#resource-luminateconnector)
 
 [Application Resources](#application-resources)
-- [Resource: luminate_web_application](#resource-luminate_web_application)
-- [Resource: luminate_ssh_application](#resource-luminate_ssh_application)
-- [Resource: luminate_rdp_application](#resource-luminate_rdp_application)
-- [Resource: luminate_tcp_application](#resource-luminate_tcp_application)
-- [Resource: luminate_ssh_gw_application](#resource-luminate_ssh_gw_application)
-- [Resource: luminate_segment_application](#resource-luminate_segment_application)
+- [Resource: luminate_web_application](#resource-luminatewebapplication)
+- [Resource: luminate_ssh_application](#resource-luminatesshapplication)
+- [Resource: luminate_rdp_application](#resource-luminaterdpapplication)
+- [Resource: luminate_tcp_application](#resource-luminatetcpapplication)
+- [Resource: luminate_ssh_gw_application](#resource-luminatesshapplication)
+- [Resource: luminate_segment_application](#resource-luminatesegmentapplication)
 
 [Policy resources](#policy-resources)
-- [Resource: luminate_rdp_access_policy](#resource-luminate_rdp_access_policy)
-- [Resource: luminate_ssh_access_policy](#resource-luminate_ssh_access_policy)
-- [Resource: luminate_web_access_policy](#resource-luminate_web_access_policy)
-- [Resource: luminate_tcp_access_policy](#resource-luminate_tcp_access_policy)
+- [Resource: luminate_rdp_access_policy](#resource-luminaterdpaccesspolicy)
+- [Resource: luminate_ssh_access_policy](#resource-luminatesshaccesspolicy)
+- [Resource: luminate_web_access_policy](#resource-luminatewebaccesspolicy)
+- [Resource: luminate_tcp_access_policy](#resource-luminatetcpaccesspolicy)
+
+[Collection resources](#collection-resources)
+- [Resource: luminate_collection](#resource-luminatecollection)
+- [Resource: luminate_collection_site_link](#resource-luminatecollectionsitelink)
 
 [Identities resources](#identities-resources)
-- [Resource: luminate_group_user](#resource-luminate_group_user)
+- [Resource: luminate_group_user](#resource-luminategroupuser)
 
 [Data sources](#data-sources)
-- [Data Source: luminate_identity_provider](#data-source-luminate_identity_provider)
-- [Data Source: luminate_user](#data-source-luminate_user)
-- [Data Source: luminate_group](#data-source-luminate_group)
-- [Data Source: luminate_aws_integration](#data-source-luminate_aws_integration)
-- [Data Source: luminate_ssh_client](#data-source-luminate_ssh_client)
+- [Data Source: luminate_identity_provider](#data-source-luminateidentityprovider)
+- [Data Source: luminate_user](#data-source-luminateuser)
+- [Data Source: luminate_group](#data-source-luminategroup)
+- [Data Source: luminate_aws_integration](#data-source-luminateawsintegration)
+- [Data Source: luminate_ssh_client](#data-source-luminatesshclient)
 
 
 Basic configuration and usage
@@ -294,12 +298,11 @@ $ terraform import luminate_connector.connector connector_id
 Application Resources
 ==========
 
-Re­­­source: luminate_web_application
+Resource: luminate_web_application
 ----------
 
 Provides Secure access cloud web application
 
-­
 #### Example Usage
 
 ```
@@ -1018,6 +1021,50 @@ In addition to arguments above, the following attributes are exported:
 ```
 $ terraform import luminate_tcp_access_policy.new-tcp-access-policy  policy_id
 ```
+
+Collection resources
+============
+
+Resource: luminate_collection
+----------
+
+Provides Secure access cloud collection resource
+
+#### Example Usage
+
+```
+resource "luminate_collection" "new-collection" {
+  name = "my-collection"
+}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the collection
+
+Resource: luminate_collection_site_link
+---------------
+
+Provides Secure access cloud link between site and collection
+
+#### Example Usage
+
+```
+resource "luminate_collection_site_link" "new-collection-site-link" {
+      site_id = "c11e4576-53c8-4617-a408-5d31a9c9e954"
+	  collection_ids = sort(["8d945145-0d0a-4b76-b6a7-8f7af4fc8dc3"])
+	}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **site_id -** (Required) Site id
+-   **collection_ids -** (Required) Collection ids to be linked to site must be sorted
+
 
 # Identities resources
 

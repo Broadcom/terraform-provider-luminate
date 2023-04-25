@@ -7,13 +7,22 @@ import (
 )
 
 const resourceSshAccessPolicy_enabled = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicySSH"
+	}
+	
+	resource "luminate_ssh_application" "new-ssh-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccSSHUpd"
+		internal_address = "tcp://127.0.0.5"
+	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
 		enabled = "true"
 		name =  "resourceSshAccessPolicy_enabled"
 		identity_provider_id = "local"
 
 		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_ssh_application.new-ssh-application.id}"]
 
 		accounts = ["ubuntu", "ec2-user"]
 		use_auto_mapping = "true"
@@ -24,13 +33,22 @@ const resourceSshAccessPolicy_enabled = `
 `
 
 const resourceSshAccessPolicy_disabled = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicySSH"
+	}
+	
+	resource "luminate_ssh_application" "new-ssh-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccSSHUpd"
+		internal_address = "tcp://127.0.0.5"
+	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
 		enabled = "false"
   		name =  "resourceSshAccessPolicy_disabled"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_ssh_application.new-ssh-application.id}"]
 
 		accounts = ["ubuntu", "ec2-user"]
 		allow_temporary_token = "true"
@@ -39,12 +57,21 @@ const resourceSshAccessPolicy_disabled = `
 `
 
 const resourceSshAccessPolicy_enabled_not_specified = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicySSH"
+	}
+	
+	resource "luminate_ssh_application" "new-ssh-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccSSHUpd"
+		internal_address = "tcp://127.0.0.5"
+	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
   		name =  "resourceSshAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_ssh_application.new-ssh-application.id}"]
 
 		accounts = ["ubuntu", "ec2-user"]
 		allow_temporary_token = "true"
@@ -53,25 +80,43 @@ const resourceSshAccessPolicy_enabled_not_specified = `
 `
 
 const resourceSshAccessPolicy_optional_not_specified = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicySSH"
+	}
+	
+	resource "luminate_ssh_application" "new-ssh-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccSSHUpd"
+		internal_address = "tcp://127.0.0.5"
+	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
 		enabled = "true"
   		name =  "resourceSshAccessPolicy_optional_not_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_ssh_application.new-ssh-application.id}"]
 
 		accounts = ["ubuntu", "ec2-user"]
 	}
 `
 
 const resourceSshAccessPolicy_conditions_specified = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicySSH"
+	}
+	
+	resource "luminate_ssh_application" "new-ssh-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccSSHUpd"
+		internal_address = "tcp://127.0.0.5"
+	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
   		name =  "resourceSshAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_ssh_application.new-ssh-application.id}"]
 
 		conditions {
     		source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
@@ -84,12 +129,21 @@ const resourceSshAccessPolicy_conditions_specified = `
 `
 
 const resourceSshAccessPolicy_validators_specified = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicySSH"
+	}
+	
+	resource "luminate_ssh_application" "new-ssh-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccSSHUpd"
+		internal_address = "tcp://127.0.0.5"
+	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
   		name =  "resourceSshAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_ssh_application.new-ssh-application.id}"]
 
 		validators {
 			web_verification = true

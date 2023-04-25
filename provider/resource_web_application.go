@@ -179,7 +179,7 @@ func resourceReadWebApplication(d *schema.ResourceData, m interface{}) error {
 
 	app.SiteID = d.Get("site_id").(string)
 	setWebApplicationFields(d, app, client.TenantBaseDomain)
-
+	log.Printf("[DEBUG] LUMINATE READ APP DONE")
 	return nil
 }
 

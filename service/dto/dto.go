@@ -1,16 +1,18 @@
 package dto
 
 import (
+	"github.com/google/uuid"
 	"time"
 )
 
 type Site struct {
-	ID         string
-	Name       string
-	MuteHealth bool
-	K8SVolume  string
-	Kerberos   *SiteKerberosConfig
-	Connectors []Connector
+	ID               string
+	Name             string
+	MuteHealth       bool
+	K8SVolume        string
+	Kerberos         *SiteKerberosConfig
+	Connectors       []Connector
+	CountCollections int32
 }
 
 type SiteKerberosConfig struct {
@@ -185,4 +187,28 @@ type PolicySshSettings struct {
 type PolicyTcpSettings struct {
 	AcceptTemporaryToken bool
 	AcceptCertificate    bool
+}
+
+type CollectionSiteLink struct {
+	CollectionID string
+	SiteID       string
+}
+
+type Collection struct {
+	ID               uuid.UUID
+	Name             string
+	ParentId         uuid.UUID
+	CountResources   int32
+	CountLinkedSites int32
+	Fqdn             string
+}
+
+type ListCollectionsRequest struct {
+	Sort          string
+	Size          float64
+	Page          float64
+	Name          string
+	ApplicationId uuid.UUID
+	SiteId        uuid.UUID
+	PolicyId      uuid.UUID
 }

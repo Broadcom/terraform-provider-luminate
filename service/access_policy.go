@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
+	"log"
 )
 
 type AccessPolicyAPI struct {
@@ -21,6 +22,7 @@ func NewAccessPolicyAPI(client *sdk.APIClient) *AccessPolicyAPI {
 func (api *AccessPolicyAPI) CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
 	accessPolicyDto := dto.ConvertToDto(accessPolicy)
 	body := sdk.AccessAndActivityPoliciesApiCreatePolicyOpts{Body: optional.NewInterface(accessPolicyDto)}
+	log.Printf("[DEBUG] - Creating Policy")
 	createdAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.CreatePolicy(context.Background(), &body)
 	if err != nil {
 		return nil, err
@@ -53,7 +55,7 @@ func (api *AccessPolicyAPI) UpdateAccessPolicy(accessPolicy *dto.AccessPolicy) (
 func (api *AccessPolicyAPI) GetAccessPolicy(policyId string) (*dto.AccessPolicy, error) {
 	retrievedAccessPolicyDtoAsMap, resp, err := api.cli.AccessAndActivityPoliciesApi.GetPolicy(context.Background(), policyId)
 	if err != nil {
-		if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 500) {
+		if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 403 || resp.StatusCode == 500) {
 			return nil, nil
 		}
 

@@ -21,7 +21,7 @@ func NewSiteAPI(client *sdk.APIClient) *SiteAPI {
 
 func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 	s, resp, err := api.cli.SitesApi.GetSite(context.Background(), SiteID)
-	if resp != nil && resp.StatusCode == 404 {
+	if resp != nil && (resp.StatusCode == 403 || resp.StatusCode == 404) {
 		return nil, nil
 	}
 
@@ -30,10 +30,11 @@ func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 	}
 
 	site := dto.Site{
-		ID:         s.Id,
-		Name:       s.Name,
-		MuteHealth: s.MuteHealthNotification,
-		K8SVolume:  s.KubernetesPersistentVolumeName,
+		ID:               s.Id,
+		Name:             s.Name,
+		MuteHealth:       s.MuteHealthNotification,
+		K8SVolume:        s.KubernetesPersistentVolumeName,
+		CountCollections: s.CountCollections,
 	}
 
 	if s.KerberosConfiguration != nil {
@@ -63,6 +64,7 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 		Name:                           site.Name,
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
+		CountCollections:               site.CountCollections,
 	}
 
 	if site.Kerberos != nil {

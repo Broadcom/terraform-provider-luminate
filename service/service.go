@@ -22,6 +22,7 @@ type LuminateService struct {
 	IdentityProviders *IdentityProviderAPI
 	IntegrationAPI    *IntegrationAPI
 	SshClientApi      *SshClientAPI
+	CollectionAPI     *CollectionAPI
 }
 
 const (
@@ -55,6 +56,7 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 
 	lumSvc.Sites = NewSiteAPI(lumSvc.cli)
 	lumSvc.Connectors = NewConnectorsAPI(lumSvc.cli)
+	lumSvc.CollectionAPI = NewCollectionAPI(lumSvc.cli)
 	lumSvc.Applications = NewApplicationAPI(lumSvc.cli)
 	lumSvc.AccessPolicies = NewAccessPolicyAPI(lumSvc.cli)
 	lumSvc.Users = NewUserAPI(lumSvc.cli)
