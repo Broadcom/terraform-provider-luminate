@@ -84,7 +84,6 @@ const resourceWebAccessPolicy_conditions_specified = `
 
     		managed_device {
       			opswat = true
-      			symantec_cloudsoc = true
       			symantec_web_security_service = true
     		}
   		}
@@ -114,7 +113,6 @@ const resourceWebAccessPolicy_conditions_specified_update = `
 	
 			managed_device {
 				opswat = false
-				symantec_cloudsoc = true
 				symantec_web_security_service = true
 			}
 		}
@@ -178,7 +176,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.1", "1.1.1.1/16"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.location.0", "Wallis and Futuna"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.managed_device.0.opswat", "true"),
-					resource.TestCheckResourceAttr(resourceName, "conditions.0.managed_device.0.symantec_cloudsoc", "true"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.managed_device.0.symantec_web_security_service", "true"),
 				),
 			},
@@ -191,7 +188,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.1", "1.1.1.1/16"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.location.0", "Wallis and Futuna"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.managed_device.0.opswat", "false"),
-					resource.TestCheckResourceAttr(resourceName, "conditions.0.managed_device.0.symantec_cloudsoc", "true"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.managed_device.0.symantec_web_security_service", "true"),
 				),
 			},
