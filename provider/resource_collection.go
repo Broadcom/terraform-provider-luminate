@@ -31,7 +31,7 @@ func resourceCreateCollection(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[INFO] Creating collection")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("invalid client")
+		return errors.New("invalid client ")
 	}
 	collectionName := d.Get("name").(string)
 	collection, err := client.CollectionAPI.CreateCollection(collectionName)
