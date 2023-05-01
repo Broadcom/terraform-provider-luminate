@@ -1,15 +1,18 @@
 package dto
 
-import "time"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type Site struct {
-	ID         string
-	Name       string
-	MuteHealth bool
-	K8SVolume  string
-	Kerberos   *SiteKerberosConfig
-	Connectors []Connector
-	Region     string
+	ID               string
+	Name             string
+	MuteHealth       bool
+	K8SVolume        string
+	Kerberos         *SiteKerberosConfig
+	Connectors       []Connector
+	CountCollections int32
 }
 
 type SiteKerberosConfig struct {
@@ -41,6 +44,21 @@ type CloudIntegrationData struct {
 	Vpcs      []Vpc
 }
 
+type AwsIntegration struct {
+	Name                 string
+	Id                   string
+	LuminateAwsAccountId string `json:"luminate_aws_account_id"`
+	AwsExternalId        string `json:"aws_external_id"`
+}
+
+type AwsIntegrationBind struct {
+	Name                 string
+	Id                   string
+	AwsRoleArn           string `json:"aws_role_arn"`
+	LuminateAwsAccountId string `json:"luminate_aws_account_id"`
+	AwsExternalId        string `json:"aws_external_id"`
+}
+
 type Application struct {
 	ID                    string
 	Name                  string
@@ -70,6 +88,18 @@ type Application struct {
 	Targets             []TCPTarget
 	WildcardCertificate string
 	WildcardPrivateKey  string
+	//SEGMENT
+	SegmentSettings *SegmentSettings
+	//DNS
+	DnsSettings *DnsSettings
+}
+
+type SegmentSettings struct {
+	OriginalIP string `json:"original_ip"`
+}
+
+type DnsSettings struct {
+	DomainSuffixes []string `json:"domainSuffixes"`
 }
 
 type TCPTarget struct {
@@ -113,6 +143,7 @@ const (
 	ManagedDeviceCondition                 = "IS_DEVICE_COMPLIANCE"
 	ManagedDeviceCloudSocConditionArgument = "CloudSOC"
 	ManagedDeviceOpswatConditionArgument   = "OPSWAT"
+	ManagedDeviceOpswatGroupsArgument      = "OPSWAT_GROUPS"
 	ManagedDeviceWssConditionArgument      = "IsWSSIp"
 	UnmanagedDeviceCondition               = "IS_NOT_WSS_IP"
 )
@@ -156,4 +187,28 @@ type PolicySshSettings struct {
 type PolicyTcpSettings struct {
 	AcceptTemporaryToken bool
 	AcceptCertificate    bool
+}
+
+type CollectionSiteLink struct {
+	CollectionID string
+	SiteID       string
+}
+
+type Collection struct {
+	ID               uuid.UUID
+	Name             string
+	ParentId         uuid.UUID
+	CountResources   int32
+	CountLinkedSites int32
+	Fqdn             string
+}
+
+type ListCollectionsRequest struct {
+	Sort          string
+	Size          float64
+	Page          float64
+	Name          string
+	ApplicationId uuid.UUID
+	SiteId        uuid.UUID
+	PolicyId      uuid.UUID
 }

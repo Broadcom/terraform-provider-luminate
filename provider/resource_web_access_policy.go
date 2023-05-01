@@ -1,12 +1,12 @@
 package provider
 
 import (
-	"errors"
-	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/pkg/errors"
+	"log"
 	"strings"
 )
 
@@ -67,6 +67,7 @@ func LuminateWebAccessPolicy() *schema.Resource {
 }
 
 func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Creating web access policy")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("unable to cast Luminate service")
@@ -77,10 +78,9 @@ func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 	for i, _ := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
-			return errors.New(error)
+			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		}
-		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 
 		// Get Display Name for User/Group by ID
 		var resolvedDisplayName string
@@ -90,13 +90,11 @@ func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		case "group":
 			resolvedDisplayName, err = client.IdentityProviders.GetGroupDisplayNameTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId, accessPolicy.DirectoryEntities[i].IdentifierInProvider)
 		default:
-			error := fmt.Sprintf("Failed to lookup displayName - unknown entity type \"%s\"", accessPolicy.DirectoryEntities[i].EntityType)
-			return errors.New(error)
+			return errors.Wrapf(err, "Failed to lookup displayName - unknown entity type \"%s\"", accessPolicy.DirectoryEntities[i].EntityType)
 		}
 
 		if err != nil {
-			error := fmt.Sprintf("Failed to lookup displayName for entity type %s with identifier id %s on Identity Provider ID %s: %v", accessPolicy.DirectoryEntities[i].EntityType, accessPolicy.DirectoryEntities[i].IdentifierInProvider, accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
-			return errors.New(error)
+			return errors.Wrapf(err, "Failed to lookup displayName for entity type %s with identifier id %s on Identity Provider ID %s", accessPolicy.DirectoryEntities[i].EntityType, accessPolicy.DirectoryEntities[i].IdentifierInProvider, accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		}
 		accessPolicy.DirectoryEntities[i].DisplayName = resolvedDisplayName
 	}
@@ -112,6 +110,7 @@ func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 }
 
 func resourceReadWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Reading web access policy")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("unable to cast Luminate service")
@@ -133,6 +132,7 @@ func resourceReadWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
+	log.Printf("[INFO] Updating web access policy")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("unable to cast Luminate service")
@@ -142,10 +142,9 @@ func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 	for i, _ := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
-			return errors.New(error)
+			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		}
-		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
 	accessPolicy.Id = d.Id()
 

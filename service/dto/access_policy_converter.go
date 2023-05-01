@@ -55,30 +55,30 @@ func ToApplicationType(targetProtocol string) *sdk.ApplicationType {
 	return &applicationType
 }
 
-func FromModelType(modelType sdk.ModelType) string {
+func FromModelType(modelType sdk.EntityType) string {
 
 	switch modelType {
-	case sdk.USER_ModelType:
+	case sdk.USER_EntityType:
 		return "User"
-	case sdk.GROUP_ModelType:
+	case sdk.GROUP_EntityType:
 		return "Group"
-	case sdk.API_CLIENT_ModelType:
+	case sdk.API_CLIENT_EntityType:
 		return "ApiClient"
 	}
 
 	return ""
 }
 
-func ToModelType(entityType string) *sdk.ModelType {
-	var modelType sdk.ModelType
+func ToModelType(entityType string) *sdk.EntityType {
+	var modelType sdk.EntityType
 
 	switch entityType {
 	case "User":
-		modelType = sdk.USER_ModelType
+		modelType = sdk.USER_EntityType
 	case "Group":
-		modelType = sdk.GROUP_ModelType
+		modelType = sdk.GROUP_EntityType
 	case "ApiClient":
-		modelType = sdk.API_CLIENT_ModelType
+		modelType = sdk.API_CLIENT_EntityType
 	}
 
 	return &modelType
@@ -180,7 +180,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 		if accessPolicy.Conditions.SourceIp != nil {
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: IpCondition,
-				Arguments: map[string]interface{}{
+				Arguments: map[string][]string{
 					IpUuid:           accessPolicy.Conditions.SourceIp,
 					SharedIpListUuid: accessPolicy.Conditions.SharedIpList,
 				},
@@ -190,7 +190,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 		if accessPolicy.Conditions.Location != nil {
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: LocationRestrictionCondition,
-				Arguments: map[string]interface{}{
+				Arguments: map[string][]string{
 					CountriesUuid: accessPolicy.Conditions.Location,
 				},
 			})
@@ -198,6 +198,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 
 		if accessPolicy.Conditions.ManagedDevice.SymantecCloudSoc || accessPolicy.Conditions.ManagedDevice.SymantecWebSecurityService {
 			var managedDeviceArguments []string
+			argumentsMap := map[string][]string{}
 
 			if accessPolicy.Conditions.ManagedDevice.SymantecWebSecurityService {
 				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceWssConditionArgument)
@@ -210,12 +211,11 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 			if accessPolicy.Conditions.ManagedDevice.OpswatMetaAccess {
 				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceOpswatConditionArgument)
 			}
-
+			argumentsMap[ManagedDeviceOpswatGroupsArgument] = []string{}
+			argumentsMap[ManagedDeviceUuid] = managedDeviceArguments
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: ManagedDeviceCondition,
-				Arguments: map[string]interface{}{
-					ManagedDeviceUuid: managedDeviceArguments,
-				},
+				Arguments:             argumentsMap,
 			})
 		}
 
@@ -304,35 +304,35 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 
 		for _, filterCondition := range accessPolicyDto.FilterConditions {
 			if filterCondition.ConditionDefinitionId == IpCondition {
-				for _, ipCondition := range filterCondition.Arguments[IpUuid].([]interface{}) {
-					conditions.SourceIp = append(conditions.SourceIp, ipCondition.(string))
+				for _, ipCondition := range filterCondition.Arguments[IpUuid] {
+					conditions.SourceIp = append(conditions.SourceIp, ipCondition)
 				}
 
 				if _, ok := filterCondition.Arguments[SharedIpListUuid]; ok {
-					for _, sharedIpListCondition := range filterCondition.Arguments[SharedIpListUuid].([]interface{}) {
-						conditions.SharedIpList = append(conditions.SharedIpList, sharedIpListCondition.(string))
+					for _, sharedIpListCondition := range filterCondition.Arguments[SharedIpListUuid] {
+						conditions.SharedIpList = append(conditions.SharedIpList, sharedIpListCondition)
 					}
 				}
 			}
 
 			if filterCondition.ConditionDefinitionId == LocationRestrictionCondition {
-				for _, locationCondition := range filterCondition.Arguments[CountriesUuid].([]interface{}) {
-					conditions.Location = append(conditions.Location, locationCondition.(string))
+				for _, locationCondition := range filterCondition.Arguments[CountriesUuid] {
+					conditions.Location = append(conditions.Location, locationCondition)
 				}
 			}
 
 			if filterCondition.ConditionDefinitionId == ManagedDeviceCondition {
-				for _, managedDeviceCondition := range filterCondition.Arguments[ManagedDeviceUuid].([]interface{}) {
+				for _, managedDeviceCondition := range filterCondition.Arguments[ManagedDeviceUuid] {
 
-					if ManagedDeviceOpswatConditionArgument == managedDeviceCondition.(string) {
+					if ManagedDeviceOpswatConditionArgument == managedDeviceCondition {
 						conditions.ManagedDevice.OpswatMetaAccess = true
 					}
 
-					if ManagedDeviceCloudSocConditionArgument == managedDeviceCondition.(string) {
+					if ManagedDeviceCloudSocConditionArgument == managedDeviceCondition {
 						conditions.ManagedDevice.SymantecCloudSoc = true
 					}
 
-					if ManagedDeviceWssConditionArgument == managedDeviceCondition.(string) {
+					if ManagedDeviceWssConditionArgument == managedDeviceCondition {
 						conditions.ManagedDevice.SymantecWebSecurityService = true
 					}
 				}

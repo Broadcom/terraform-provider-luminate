@@ -45,8 +45,8 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
 					resource.TestCheckResourceAttr(resourceName, "notification_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.2"),
-					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccrdp.%s", testAccDomain)),
-					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccrdp.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
 				),
 			},
 			{
@@ -54,8 +54,8 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccRDPUpd"),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.5"),
-					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccrdp.%s", testAccDomain)),
-					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccrdp.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
 				),
 			},
 		},

@@ -21,7 +21,7 @@ func NewSiteAPI(client *sdk.APIClient) *SiteAPI {
 
 func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 	s, resp, err := api.cli.SitesApi.GetSite(context.Background(), SiteID)
-	if resp != nil && resp.StatusCode == 404 {
+	if resp != nil && (resp.StatusCode == 403 || resp.StatusCode == 404) {
 		return nil, nil
 	}
 
@@ -30,11 +30,11 @@ func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 	}
 
 	site := dto.Site{
-		ID:         s.Id,
-		Name:       s.Name,
-		Region:     s.Region,
-		MuteHealth: s.MuteHealthNotification,
-		K8SVolume:  s.KubernetesPersistentVolumeName,
+		ID:               s.Id,
+		Name:             s.Name,
+		MuteHealth:       s.MuteHealthNotification,
+		K8SVolume:        s.KubernetesPersistentVolumeName,
+		CountCollections: s.CountCollections,
 	}
 
 	if s.KerberosConfiguration != nil {
@@ -62,9 +62,9 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 
 	newSite := sdk.Site{
 		Name:                           site.Name,
-		Region:                         site.Region,
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
+		CountCollections:               site.CountCollections,
 	}
 
 	if site.Kerberos != nil {
@@ -75,7 +75,7 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 		}
 	}
 
-	siteOpt := sdk.CreateSiteOpts{
+	siteOpt := sdk.SitesApiCreateSiteOpts{
 		Body: optional.NewInterface(newSite),
 	}
 
@@ -101,7 +101,6 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 
 	updateSite := sdk.Site{
 		Name:                           site.Name,
-		Region:                         site.Region,
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
 	}
@@ -114,7 +113,7 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 		}
 	}
 
-	siteOpt := sdk.UpdateSiteOpts{
+	siteOpt := sdk.SitesApiUpdateSiteOpts{
 		Body: optional.NewInterface(updateSite),
 	}
 

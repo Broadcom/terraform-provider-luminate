@@ -52,12 +52,12 @@ func resourceReadUsers(d *schema.ResourceData, m interface{}) error {
 	userNames := d.Get("users").([]interface{})
 
 	for _, userEmail := range userNames {
-		groupId, err := client.Users.GetUserId(identityProviderId, userEmail.(string))
+		userID, err := client.Users.GetUserId(identityProviderId, userEmail.(string))
 		if err != nil {
 			return err
 		}
 
-		userIds = append(userIds, groupId)
+		userIds = append(userIds, userID)
 	}
 
 	d.SetId(identityProviderId)

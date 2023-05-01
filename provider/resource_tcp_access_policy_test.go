@@ -7,13 +7,24 @@ import (
 )
 
 const resourceTcpAccessPolicy_enabled = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicyTCP"
+	}
+	resource "luminate_tcp_application" "new-tcp-application" {
+	  name = "tfAccTCPAccessPolicy"
+	  site_id = "${luminate_site.new-site.id}"
+	  target {
+		address = "127.0.0.1"
+		ports = ["8080"]
+	  }
+	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
 		enabled = "true"
 		name =  "resourceTcpAccessPolicy_enabled"
 		identity_provider_id = "local"
 
 		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 
 		allow_temporary_token = "true"
 		allow_public_key = "true"
@@ -21,44 +32,88 @@ const resourceTcpAccessPolicy_enabled = `
 `
 
 const resourceTcpAccessPolicy_disabled = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicyTCP"
+	}
+	resource "luminate_tcp_application" "new-tcp-application" {
+	  name = "tfAccTCPAccessPolicy"
+	  site_id = "${luminate_site.new-site.id}"
+	  target {
+		address = "127.0.0.1"
+		ports = ["8080"]
+	  }
+	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
 		enabled = "false"
   		name =  "resourceTcpAccessPolicy_disabled"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 	}
 `
 
 const resourceTcpAccessPolicy_enabled_not_specified = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicyTCP"
+	}
+	resource "luminate_tcp_application" "new-tcp-application" {
+	  name = "tfAccTCPAccessPolicy"
+	  site_id = "${luminate_site.new-site.id}"
+	  target {
+		address = "127.0.0.1"
+		ports = ["8080"]
+	  }
+	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
   		name =  "resourceTcpAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 	}
 `
 
 const resourceTcpAccessPolicy_optional_not_specified = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicyTCP"
+	}
+	resource "luminate_tcp_application" "new-tcp-application" {
+	  name = "tfAccTCPAccessPolicy"
+	  site_id = "${luminate_site.new-site.id}"
+	  target {
+		address = "127.0.0.1"
+		ports = ["8080"]
+	  }
+	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
 		enabled = "true"
   		name =  "resourceTcpAccessPolicy_optional_not_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 	}
 `
 
 const resourceTcpAccessPolicy_conditions_specified = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicyTCP"
+	}
+	resource "luminate_tcp_application" "new-tcp-application" {
+	  name = "tfAccTCPAccessPolicy"
+	  site_id = "${luminate_site.new-site.id}"
+	  target {
+		address = "127.0.0.1"
+		ports = ["8080"]
+	  }
+	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
   		name =  "resourceTcpAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 
 		conditions {
     		source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
@@ -69,12 +124,23 @@ const resourceTcpAccessPolicy_conditions_specified = `
 `
 
 const resourceTcpAccessPolicy_validators_specified = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSiteAccessPolicyTCP"
+	}
+	resource "luminate_tcp_application" "new-tcp-application" {
+	  name = "tfAccTCPAccessPolicy"
+	  site_id = "${luminate_site.new-site.id}"
+	  target {
+		address = "127.0.0.1"
+		ports = ["8080"]
+	  }
+	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
   		name =  "resourceTcpAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 
 		validators {
 			web_verification = true

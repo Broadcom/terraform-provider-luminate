@@ -7,13 +7,21 @@ import (
 )
 
 const resourceRdpAccessPolicy_enabled = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSite"
+	}
+	resource "luminate_rdp_application" "new-rdp-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccRDP"
+		internal_address = "tcp://127.0.0.2"
+	}
 	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
 		enabled = "true"
   		name =  "resourceRdpAccessPolicy_enabled"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
-  		applications = ["7fdde321-c795-4a49-82e1-210ee9a8e1de"]
+  		applications = ["${luminate_rdp_application.new-rdp-application.id}"]
 
   		allow_long_term_password = "true"
 	}

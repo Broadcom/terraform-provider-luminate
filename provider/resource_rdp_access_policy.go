@@ -1,8 +1,7 @@
 package provider
 
 import (
-	"errors"
-	"fmt"
+	"github.com/pkg/errors"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
@@ -40,13 +39,12 @@ func resourceCreateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 	}
 
 	accessPolicy := extractRdpAccessPolicy(d)
-	for i, _ := range accessPolicy.DirectoryEntities {
+	for i := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
-			return errors.New(error)
+			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		}
-		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
@@ -54,7 +52,10 @@ func resourceCreateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return err
 	}
 
-	setRdpAccessPolicyFields(d, createdAccessPolicy)
+	err = setRdpAccessPolicyFields(d, createdAccessPolicy)
+	if err != nil {
+		return errors.Wrap(err, "Failed to set access policy field")
+	}
 
 	return resourceReadRdpAccessPolicy(d, m)
 }
@@ -75,7 +76,10 @@ func resourceReadRdpAccessPolicy(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 
-	setRdpAccessPolicyFields(d, accessPolicy)
+	err = setRdpAccessPolicyFields(d, accessPolicy)
+	if err != nil {
+		return errors.Wrap(err, "Failed to set access policy field")
+	}
 
 	return nil
 }
@@ -87,13 +91,12 @@ func resourceUpdateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 	}
 
 	accessPolicy := extractRdpAccessPolicy(d)
-	for i, _ := range accessPolicy.DirectoryEntities {
+	for i := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			error := fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s: %s", accessPolicy.DirectoryEntities[i].IdentityProviderId, err)
-			return errors.New(error)
+			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		}
-		accessPolicy.DirectoryEntities[i].IdentityProviderType = resolvedIdentityProviderType
+		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
 	accessPolicy.Id = d.Id()
 
@@ -102,14 +105,17 @@ func resourceUpdateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		return err
 	}
 
-	setRdpAccessPolicyFields(d, updatedAccessPolicy)
+	err = setRdpAccessPolicyFields(d, updatedAccessPolicy)
+	if err != nil {
+		return errors.Wrapf(err, "Failed to set access policy field")
+	}
 
 	return resourceReadRdpAccessPolicy(d, m)
 }
 
-func setRdpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPolicy) {
+func setRdpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPolicy) error {
 	setAccessPolicyBaseFields(d, accessPolicy)
-	d.Set("allow_long_term_password", accessPolicy.RdpSettings.LongTermPassword)
+	return d.Set("allow_long_term_password", accessPolicy.RdpSettings.LongTermPassword)
 }
 
 func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {

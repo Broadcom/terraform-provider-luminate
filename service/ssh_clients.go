@@ -18,12 +18,12 @@ func NewSshClientAPI(client *sdk.APIClient) *SshClientAPI {
 }
 
 func (g *SshClientAPI) GetSshClientByName(sshClientName string) (*sdk.SshClient, error) {
-	page := int32(0)
+	page := float64(0)
 	for {
-		requestParams := &sdk.GetAllSshClientsOpts{
+		requestParams := &sdk.SSHClientsApiGetAllSshClientsOpts{
 			Filter: optional.NewString(sshClientName),
-			Size:   optional.NewInt32(100),
-			Page:   optional.NewInt32(page),
+			Size:   optional.NewFloat64(100),
+			Page:   optional.NewFloat64(page),
 		}
 		sshClientPage, _, err := g.cli.SSHClientsApi.GetAllSshClients(context.Background(), requestParams)
 		if err != nil {

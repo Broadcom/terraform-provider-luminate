@@ -2,26 +2,27 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"github.com/Broadcom/terraform-provider-luminate/service/roundtripper"
 	"context"
 	"fmt"
-	"strings"
+	"github.com/Broadcom/terraform-provider-luminate/service/roundtripper"
 	"golang.org/x/oauth2/clientcredentials"
+	"strings"
 )
 
 type LuminateService struct {
-	cli *sdk.APIClient
-	TenantBaseDomain  string
+	cli              *sdk.APIClient
+	TenantBaseDomain string
 
 	Sites             *SiteAPI
 	Connectors        *ConnectorsAPI
 	Applications      *ApplicationAPI
 	AccessPolicies    *AccessPolicyAPI
-	Users             *UserAPI
+	Users             *UserAPI ``
 	Groups            *GroupAPI
 	IdentityProviders *IdentityProviderAPI
 	IntegrationAPI    *IntegrationAPI
-	SshClientApi	  *SshClientAPI
+	SshClientApi      *SshClientAPI
+	CollectionAPI     *CollectionAPI
 }
 
 const (
@@ -42,7 +43,7 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	httpClient := cfg.Client(context.Background())
 
 	transport := roundtripper.NewSimpleRateLimitTransport(MaxRequestsPerSecond, httpClient.Transport)
-	httpClient.Transport = roundtripper.NewRetryableRateLimitTransport(MillsBetweenRetries, RetrySleepJitter,transport)
+	httpClient.Transport = roundtripper.NewRetryableRateLimitTransport(MillsBetweenRetries, RetrySleepJitter, transport)
 
 	var lumSvc LuminateService
 
@@ -51,11 +52,11 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 		UserAgent:  "luminate-terraform-provider",
 		HTTPClient: httpClient,
 		BasePath:   basePath,
-
 	})
 
 	lumSvc.Sites = NewSiteAPI(lumSvc.cli)
 	lumSvc.Connectors = NewConnectorsAPI(lumSvc.cli)
+	lumSvc.CollectionAPI = NewCollectionAPI(lumSvc.cli)
 	lumSvc.Applications = NewApplicationAPI(lumSvc.cli)
 	lumSvc.AccessPolicies = NewAccessPolicyAPI(lumSvc.cli)
 	lumSvc.Users = NewUserAPI(lumSvc.cli)

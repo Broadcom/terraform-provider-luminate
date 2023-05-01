@@ -2,12 +2,13 @@ package service
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"github.com/Broadcom/terraform-provider-luminate/service/dto"
-	"github.com/Broadcom/terraform-provider-luminate/service/utils"
 	"context"
-	"github.com/pkg/errors"
 	"fmt"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	serviceUtils "github.com/Broadcom/terraform-provider-luminate/service/utils"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/antihax/optional"
+	"github.com/pkg/errors"
 	"log"
 )
 
@@ -25,16 +26,15 @@ func (api *ApplicationAPI) CreateApplication(application *dto.Application) (*dto
 
 	app := dto.ConvertFromApplicationDTO(*application)
 
-	appOpts := sdk.CreateApplicationOpts{
+	appOpts := sdk.ApplicationsApiCreateApplicationOpts{
 		Body: optional.NewInterface(app),
 	}
 	log.Printf("[DEBUG] - Creating App")
-	log.Printf("[DEBUG APP DATA %v", app)
 	newApp, resp, err := api.cli.ApplicationsApi.CreateApplication(context.Background(), &appOpts)
 	if err != nil {
-		if resp != nil  {
-			body, _ := utils.ConvertReaderToString(resp.Body)
-			return nil, errors.Wrap(err, fmt.Sprintf("received status code: %d ('%s')", resp.StatusCode, body))
+		if resp != nil {
+			body, _ := serviceUtils.ConvertReaderToString(resp.Body)
+			return nil, errors.Wrapf(err, "received status code: %d ('%s')", resp.StatusCode, body)
 		}
 
 		return nil, err
@@ -76,7 +76,7 @@ func (api *ApplicationAPI) DeleteApplication(applicationID string) error {
 func (api *ApplicationAPI) GetApplicationById(applicationID string) (*dto.Application, error) {
 	app, resp, err := api.cli.ApplicationsApi.GetApplication(context.Background(), applicationID)
 
-	if resp != nil && resp.StatusCode == 404 {
+	if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 403) {
 		return nil, nil
 	}
 	if err != nil {
@@ -91,7 +91,7 @@ func (api *ApplicationAPI) GetApplicationById(applicationID string) (*dto.Applic
 func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto.Application, error) {
 	app := dto.ConvertFromApplicationDTO(*application)
 
-	appOpts := sdk.UpdateApplicationOpts{
+	appOpts := sdk.ApplicationsApiUpdateApplicationOpts{
 		Body: optional.NewInterface(app),
 	}
 
@@ -116,9 +116,24 @@ func (api *ApplicationAPI) UpdateApplication(application *dto.Application) (*dto
 
 func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, siteID string) error {
 	log.Printf("[DEBUG] - Update Binding App")
-	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID)
+
+	resp, err := api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID, nil)
+	// if bind fail with 400, there is chance that collection FT is enabled for this tenant, for BC we will try to link default collection
+	// and bind again
 	if err != nil {
-		return err
+		if resp.StatusCode == 400 {
+			err = api.linkSiteToDefaultCollectionIfNeeded(siteID)
+			if err != nil {
+				return err
+			}
+			resp, err = api.cli.ApplicationsApi.BindApplicationToSite(context.Background(), application.ID, siteID, nil)
+			if err != nil {
+				return err
+			}
+		}
+		if err != nil {
+			return err
+		}
 	}
 	if resp != nil {
 		if resp.StatusCode != 200 {
@@ -130,5 +145,34 @@ func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, s
 	}
 
 	application.SiteID = siteID
+	return nil
+}
+
+func (api *ApplicationAPI) linkSiteToDefaultCollectionIfNeeded(siteID string) error {
+	siteAPI := NewSiteAPI(api.cli)
+	collectionAPI := NewCollectionAPI(api.cli)
+	site, err := siteAPI.GetSiteByID(siteID)
+	if err != nil {
+		return err
+	}
+
+	if site.CountCollections != 0 {
+		return nil
+	}
+
+	collectionSiteLink := dto.CollectionSiteLink{
+		CollectionID: utils.DefaultCollection,
+		SiteID:       siteID,
+	}
+
+	links, err := collectionAPI.LinkSiteToCollection([]dto.CollectionSiteLink{collectionSiteLink})
+	if err != nil {
+		return err
+	}
+
+	if len(*links) == 0 {
+		return errors.New("unable to link site to collection")
+	}
+
 	return nil
 }
