@@ -149,29 +149,16 @@ func (api *ApplicationAPI) BindApplicationToSite(application *dto.Application, s
 }
 
 func (api *ApplicationAPI) linkSiteToDefaultCollectionIfNeeded(siteID string) error {
-	siteAPI := NewSiteAPI(api.cli)
 	collectionAPI := NewCollectionAPI(api.cli)
-	site, err := siteAPI.GetSiteByID(siteID)
-	if err != nil {
-		return err
-	}
-
-	if site.CountCollections != 0 {
-		return nil
-	}
 
 	collectionSiteLink := dto.CollectionSiteLink{
 		CollectionID: utils.DefaultCollection,
 		SiteID:       siteID,
 	}
 
-	links, err := collectionAPI.LinkSiteToCollection([]dto.CollectionSiteLink{collectionSiteLink})
+	_, err := collectionAPI.LinkSiteToCollection([]dto.CollectionSiteLink{collectionSiteLink})
 	if err != nil {
 		return err
-	}
-
-	if len(*links) == 0 {
-		return errors.New("unable to link site to collection")
 	}
 
 	return nil
