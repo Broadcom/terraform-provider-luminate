@@ -296,9 +296,10 @@ func (a *SCIMApiService) CreateSCIMUser(ctx context.Context, identityProviderId 
 /*
 SCIMApiService Delete SCIM Group
 Delete a SCIM group.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-  - @param groupId The group ID.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+ * @param groupId The group ID.
+
 */
 func (a *SCIMApiService) DeleteSCIMGroup(ctx context.Context, identityProviderId string, groupId string) (*http.Response, error) {
 	var (
@@ -374,9 +375,10 @@ func (a *SCIMApiService) DeleteSCIMGroup(ctx context.Context, identityProviderId
 /*
 SCIMApiService Delete SCIM User
 Delete a SCIM user.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-  - @param userId The user ID.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+ * @param userId The user ID.
+
 */
 func (a *SCIMApiService) DeleteSCIMUser(ctx context.Context, identityProviderId string, userId string) (*http.Response, error) {
 	var (
@@ -452,10 +454,9 @@ func (a *SCIMApiService) DeleteSCIMUser(ctx context.Context, identityProviderId 
 /*
 SCIMApiService Get SCIM Group
 Return the details of a SCIM group.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-  - @param groupId The group ID.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+ * @param groupId The group ID.
 @return ScimGroup
 */
 func (a *SCIMApiService) GetSCIMGroup(ctx context.Context, identityProviderId string, groupId string) (ScimGroup, *http.Response, error) {
@@ -561,10 +562,9 @@ func (a *SCIMApiService) GetSCIMGroup(ctx context.Context, identityProviderId st
 /*
 SCIMApiService Get SCIM User
 Return the details of a SCIM user.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-  - @param userId The user ID.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+ * @param userId The user ID.
 @return ScimUser
 */
 func (a *SCIMApiService) GetSCIMUser(ctx context.Context, identityProviderId string, userId string) (ScimUser, *http.Response, error) {
@@ -670,9 +670,8 @@ func (a *SCIMApiService) GetSCIMUser(ctx context.Context, identityProviderId str
 /*
 SCIMApiService List SCIM Groups
 Return an array of paginated JSON objects. Each object represents a SCIM group.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
 @return ScimGroupsPage
 */
 func (a *SCIMApiService) ListSCIMGroupsAPI(ctx context.Context, identityProviderId string) (ScimGroupsPage, *http.Response, error) {
@@ -767,9 +766,8 @@ func (a *SCIMApiService) ListSCIMGroupsAPI(ctx context.Context, identityProvider
 /*
 SCIMApiService List SCIM Users
 Return an array of paginated JSON objects. Each object represents a SCIM user.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
 @return ScimUsersPage
 */
 func (a *SCIMApiService) ListSCIMUsersAPI(ctx context.Context, identityProviderId string) (ScimUsersPage, *http.Response, error) {
@@ -864,11 +862,10 @@ func (a *SCIMApiService) ListSCIMUsersAPI(ctx context.Context, identityProviderI
 /*
 SCIMApiService Modify a SCIM Group
 Modify a SCIM group that has one or more required SCIM 2.0 attributes. Supports only add/remove/replace operations.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param body
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-  - @param groupId The group ID.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+ * @param groupId The group ID.
 @return ScimGroup
 */
 func (a *SCIMApiService) ModifySCIMGroup(ctx context.Context, body GroupsGroupidBody1, identityProviderId string, groupId string) (ScimGroup, *http.Response, error) {

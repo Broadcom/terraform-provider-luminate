@@ -22,8 +22,9 @@ func LuminateSite() *schema.Resource {
 			"region": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				Computed:     true,
+				ForceNew:     true,
 				Description:  "Site connectivity region",
-				Default:      "",
 				ValidateFunc: utils.ValidateString,
 			},
 			"mute_health_notification": {

@@ -8,7 +8,8 @@
  */
 package swagger
 
-type CollectionsBody struct {
-	Id   string `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
+type CollectionSiterolebindingsBody struct {
+	Entities []DirectoryEntity `json:"entities,omitempty"`
+	RoleType *SiteRoleType     `json:"roleType,omitempty"`
+	SiteId   string            `json:"siteId,omitempty"`
 }

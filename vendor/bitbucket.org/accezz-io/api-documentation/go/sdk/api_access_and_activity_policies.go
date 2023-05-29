@@ -295,8 +295,9 @@ func (a *AccessAndActivityPoliciesApiService) CreatePolicy(ctx context.Context, 
 /*
 AccessAndActivityPoliciesApiService Delete Policy
 Delete a policy from your Secure Access Cloud tenant.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param policyId Policy ID.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param policyId Policy ID.
+
 */
 func (a *AccessAndActivityPoliciesApiService) DeletePolicy(ctx context.Context, policyId string) (*http.Response, error) {
 	var (
@@ -560,9 +561,8 @@ func (a *AccessAndActivityPoliciesApiService) GetAllPolicies(ctx context.Context
 /*
 AccessAndActivityPoliciesApiService Get Application Assigned Policies.
 Returns an array of JSON objects. &lt;br&gt; Each object represents a policy assigned to the provided application in your Secure Access Cloud.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param applicationId Application ID.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param applicationId Application ID.
 @return []PolicyByType
 */
 func (a *AccessAndActivityPoliciesApiService) GetApplicationAssignedPolicies(ctx context.Context, applicationId string) ([]PolicyByType, *http.Response, error) {
@@ -697,9 +697,8 @@ func (a *AccessAndActivityPoliciesApiService) GetApplicationAssignedPolicies(ctx
 /*
 AccessAndActivityPoliciesApiService Get Policy
 Returns the details of a Policy from your Secure Access Cloud tenant.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param policyId Policy ID.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param policyId Policy ID.
 @return Policy
 */
 func (a *AccessAndActivityPoliciesApiService) GetPolicy(ctx context.Context, policyId string) (Policy, *http.Response, error) {
@@ -834,8 +833,7 @@ func (a *AccessAndActivityPoliciesApiService) GetPolicy(ctx context.Context, pol
 /*
 AccessAndActivityPoliciesApiService Get Supported Rules Actions
 Returns the actions that can be enforced when a user performs a specific operation. Examples are: ALLOW to allow the action, BLOCK to block the action, BLOCK USER to disconnect all active sessions of the user and block further login attempts. &lt;br&gt;
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 @return []PolicyActionType
 */
 func (a *AccessAndActivityPoliciesApiService) GetSupportedActions(ctx context.Context) ([]PolicyActionType, *http.Response, error) {
@@ -969,8 +967,7 @@ func (a *AccessAndActivityPoliciesApiService) GetSupportedActions(ctx context.Co
 /*
 AccessAndActivityPoliciesApiService Get Supported Conditions Definitions
 Returns all supported conditions that can be used as building blocks when defining policies. Conditions Definitions are used to define filter conditions and activity policy rules.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 @return PolicyConditionDefinition
 */
 func (a *AccessAndActivityPoliciesApiService) GetSupportedConditions(ctx context.Context) (PolicyConditionDefinition, *http.Response, error) {
@@ -1104,8 +1101,7 @@ func (a *AccessAndActivityPoliciesApiService) GetSupportedConditions(ctx context
 /*
 AccessAndActivityPoliciesApiService Get Supported Validators
 Returns the validators that can be used as a prerequisite for granting access to a requested resource. Examples are Multi-factor authentication and Web Verification. &lt;br&gt; **Note:** The validators are applicable for policies of type ACCESS only.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 @return []PolicyValidatorType
 */
 func (a *AccessAndActivityPoliciesApiService) GetSupportedValidators(ctx context.Context) ([]PolicyValidatorType, *http.Response, error) {

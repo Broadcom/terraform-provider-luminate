@@ -26,9 +26,8 @@ type AuditLogsApiService service
 /*
 AuditLogsApiService Search Audit logs
 Searches your tenant audit logs using the Elasticsearch query language. Timeframe between from_date to to_date is limited to 30 days. Results are always sorted by date in ascending order.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param body
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body
 @return AuditLogSearchResults
 */
 func (a *AuditLogsApiService) SearchAuditLogs(ctx context.Context, body LogsAuditBody) (AuditLogSearchResults, *http.Response, error) {
