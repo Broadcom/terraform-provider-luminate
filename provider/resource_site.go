@@ -19,6 +19,13 @@ func LuminateSite() *schema.Resource {
 				Description:  "Site name",
 				ValidateFunc: utils.ValidateSiteName,
 			},
+			"region": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				Description:  "Site connectivity region",
+				ValidateFunc: utils.ValidateString,
+			},
 			"mute_health_notification": {
 				Type:         schema.TypeBool,
 				Optional:     true,
@@ -158,6 +165,7 @@ func resourceDeleteSite(d *schema.ResourceData, m interface{}) error {
 func extractSiteFields(d *schema.ResourceData) *dto.Site {
 	site := dto.Site{
 		Name:       d.Get("name").(string),
+		Region:     d.Get("region").(string),
 		MuteHealth: d.Get("mute_health_notification").(bool),
 		K8SVolume:  d.Get("kubernetes_persistent_volume_name").(string),
 	}
@@ -178,6 +186,7 @@ func extractSiteFields(d *schema.ResourceData) *dto.Site {
 
 func setSiteFields(d *schema.ResourceData, site *dto.Site) {
 	d.Set("name", site.Name)
+	d.Set("region", site.Region)
 	d.Set("mute_health_notification", site.MuteHealth)
 	d.Set("kubernetes_persistent_volume_name", site.K8SVolume)
 

@@ -49,7 +49,7 @@ func (c *CollectionAPI) GetCollectionSiteLinks(collectionID string) (*[]dto.Coll
 
 // CreateCollection create collection
 func (c *CollectionAPI) CreateCollection(name string) (*dto.Collection, error) {
-	body := sdk.CollectionsBody{Name: name}
+	body := sdk.CollectionBody{Name: name}
 	collection, _, err := c.cli.CollectionsApi.CreateCollection(context.Background(), body)
 	if err != nil {
 		return nil, err

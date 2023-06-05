@@ -13,6 +13,7 @@ type Site struct {
 	Kerberos         *SiteKerberosConfig
 	Connectors       []Connector
 	CountCollections int32
+	Region           string
 }
 
 type SiteKerberosConfig struct {

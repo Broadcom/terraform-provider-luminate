@@ -28,9 +28,8 @@ type CloudIntegrationApiService service
 /*
 CloudIntegrationApiService Create Cloud Integration Configuration
 Create a new cloud integration configuration in your Secure Access Cloud tenant.&lt;br&gt;
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param body
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body
 @return CloudIntegration
 */
 func (a *CloudIntegrationApiService) CreateCloudIntegration(ctx context.Context, body CloudintegrationsIntegrationsBody) (CloudIntegration, *http.Response, error) {
@@ -166,8 +165,9 @@ func (a *CloudIntegrationApiService) CreateCloudIntegration(ctx context.Context,
 /*
 CloudIntegrationApiService Delete Cloud Integration
 Delete a Cloud Integration configuration from your Secure Access Cloud tenant. &lt;br&gt;
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param cloudIntegrationId Cloud Integration ID
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param cloudIntegrationId Cloud Integration ID
+
 */
 func (a *CloudIntegrationApiService) DeleteCloudIntegration(ctx context.Context, cloudIntegrationId string) (*http.Response, error) {
 	var (
@@ -272,9 +272,8 @@ func (a *CloudIntegrationApiService) DeleteCloudIntegration(ctx context.Context,
 /*
 CloudIntegrationApiService Get Cloud Integration Configuration
 Return a Cloud Integration configuration from your Secure Access Cloud tenant. &lt;br&gt;
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param cloudIntegrationId Cloud Integration ID
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param cloudIntegrationId Cloud Integration ID
 @return CloudIntegration
 */
 func (a *CloudIntegrationApiService) GetCloudIntegration(ctx context.Context, cloudIntegrationId string) (CloudIntegration, *http.Response, error) {
@@ -409,8 +408,7 @@ func (a *CloudIntegrationApiService) GetCloudIntegration(ctx context.Context, cl
 /*
 CloudIntegrationApiService List Cloud Integration Configurations
 Return an array of JSON objects. Each object represents a Cloud Integration configuration in your Secure Access Cloud tenant. &lt;br&gt;
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 @return []CloudIntegration
 */
 func (a *CloudIntegrationApiService) ListCloudIntegrations(ctx context.Context) ([]CloudIntegration, *http.Response, error) {

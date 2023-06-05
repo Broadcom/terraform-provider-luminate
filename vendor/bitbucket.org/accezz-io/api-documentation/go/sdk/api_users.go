@@ -28,9 +28,10 @@ type UsersApiService service
 /*
 UsersApiService Block User
 Blocks a user in your Secure Access Cloud tenant. Blocking a group of users is not supported. All active sessions of the given user will get disconnected and the user will no longer be able to login to your tenant.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-  - @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+ * @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
+
 */
 func (a *UsersApiService) BlockUser(ctx context.Context, identityProviderId string, entityId string) (*http.Response, error) {
 	var (
@@ -293,8 +294,9 @@ func (a *UsersApiService) CreateLocalUser(ctx context.Context, localVarOptionals
 /*
 UsersApiService Delete Local User
 Deletes a user permanently from Secure Access Cloud Identity Provider in your Secure Access Cloud tenant.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
+
 */
 func (a *UsersApiService) DeleteLocalUser(ctx context.Context, entityId string) (*http.Response, error) {
 	var (
@@ -409,10 +411,9 @@ func (a *UsersApiService) DeleteLocalUser(ctx context.Context, entityId string) 
 /*
 UsersApiService Get User
 Return user by ID from the specified identity provider. For the local users repository in your Secure Access Cloud tenant, set identity-provider-id to &#x27;local&#x27;.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-  - @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+ * @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
 @return User
 */
 func (a *UsersApiService) GetUser(ctx context.Context, identityProviderId string, entityId string) (User, *http.Response, error) {
@@ -548,8 +549,7 @@ func (a *UsersApiService) GetUser(ctx context.Context, identityProviderId string
 /*
 UsersApiService List Blocked Users
 Lists of blocked users in your Secure Access Cloud tenant.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 @return []BlockedUser
 */
 func (a *UsersApiService) ListBlockedUsers(ctx context.Context) ([]BlockedUser, *http.Response, error) {
@@ -839,9 +839,10 @@ func (a *UsersApiService) SearchUsersbyIdp(ctx context.Context, identityProvider
 /*
 UsersApiService Unblock User
 Unblocks a user in your Secure Access Cloud tenant. Unblocking a group of users is not supported. Upon a successful operation, the user will be able to login to your tenant.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
-  - @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+ * @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
+
 */
 func (a *UsersApiService) UnblockUser(ctx context.Context, identityProviderId string, entityId string) (*http.Response, error) {
 	var (

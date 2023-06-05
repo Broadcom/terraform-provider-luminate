@@ -216,15 +216,17 @@ resource "luminate_site" "new-site" {
 
 The following arguments are supported:
 
--   **name -** (Required) name of the site
+- **name** (Required) The name of the site
 
--   **mute_health_notification** (Optional) Don't send notification
+- **region** (Optional) Connectivity region. If not specified, the default region will be used
+
+- **mute_health_notification** (Optional) Don't send notification
     if the site is down
 
--   **kubernetes_persistent_volume_name** (Optional) Kubernetes
+- **kubernetes_persistent_volume_name** (Optional) Kubernetes
     persistent volume name - only relevant if running on top kubernetes
 
--   **kerberos** - (Optional)
+- **kerberos** - (Optional)
 
     -   **domain** (Required) - Active Directory domain name you want
         to SSO with.

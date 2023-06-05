@@ -32,6 +32,7 @@ func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 	site := dto.Site{
 		ID:               s.Id,
 		Name:             s.Name,
+		Region:           s.Region,
 		MuteHealth:       s.MuteHealthNotification,
 		K8SVolume:        s.KubernetesPersistentVolumeName,
 		CountCollections: s.CountCollections,
@@ -62,6 +63,7 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 
 	newSite := sdk.Site{
 		Name:                           site.Name,
+		Region:                         site.Region,
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
 		CountCollections:               site.CountCollections,
@@ -101,6 +103,7 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 
 	updateSite := sdk.Site{
 		Name:                           site.Name,
+		Region:                         site.Region,
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
 	}

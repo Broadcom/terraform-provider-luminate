@@ -46,14 +46,19 @@ Class | Method | HTTP request | Description
 *CloudIntegrationApi* | [**GetCloudIntegration**](docs/CloudIntegrationApi.md#getcloudintegration) | **Get** /cloud-integrations/integrations/{cloud-integration-id} | Get Cloud Integration Configuration
 *CloudIntegrationApi* | [**ListCloudIntegrations**](docs/CloudIntegrationApi.md#listcloudintegrations) | **Get** /cloud-integrations/integrations | List Cloud Integration Configurations
 *CloudIntegrationApi* | [**UpdateCloudIntegration**](docs/CloudIntegrationApi.md#updatecloudintegration) | **Put** /cloud-integrations/integrations/{cloud-integration-id} | Update Cloud Integration Configuration
-*CollectionsApi* | [**CreateCollection**](docs/CollectionsApi.md#createcollection) | **Post** /collections | Create Collection
-*CollectionsApi* | [**CreateCollectionSiteLink**](docs/CollectionsApi.md#createcollectionsitelink) | **Post** /collection/site-links | Assign Site to Collection.
+*CollectionsApi* | [**CreateCollection**](docs/CollectionsApi.md#createcollection) | **Post** /collection | Create Collection
+*CollectionsApi* | [**CreateCollectionRoleBinding**](docs/CollectionsApi.md#createcollectionrolebinding) | **Post** /collection/collection-role-bindings | Create Collection Role Binding
+*CollectionsApi* | [**CreateCollectionSiteLink**](docs/CollectionsApi.md#createcollectionsitelink) | **Post** /collection/site-links | Link Site to Collection.
+*CollectionsApi* | [**CreateSiteRoleBinding**](docs/CollectionsApi.md#createsiterolebinding) | **Post** /collection/site-role-bindings | Create Site Role Binding
+*CollectionsApi* | [**CreateTenantRoleBinding**](docs/CollectionsApi.md#createtenantrolebinding) | **Post** /collection/tenant-role-bindings | Create Tenant Role Binding
 *CollectionsApi* | [**DeleteCollection**](docs/CollectionsApi.md#deletecollection) | **Delete** /collection/{collection-id} | Delete Collection
 *CollectionsApi* | [**DeleteCollectionSiteLink**](docs/CollectionsApi.md#deletecollectionsitelink) | **Delete** /collection/site-links/{collection-id}/{site-id} | Unlinks site from collection
+*CollectionsApi* | [**DeleteRoleBinding**](docs/CollectionsApi.md#deleterolebinding) | **Post** /collection/role-bindings/delete | Delete Role Binding
 *CollectionsApi* | [**GetCollection**](docs/CollectionsApi.md#getcollection) | **Get** /collection/{collection-id} | Get Collection
-*CollectionsApi* | [**GetCollectionSiteLinks**](docs/CollectionsApi.md#getcollectionsitelinks) | **Get** /collection/site-links/{collection-id} | Get Sites assigned to Collection
+*CollectionsApi* | [**GetCollectionSiteLinks**](docs/CollectionsApi.md#getcollectionsitelinks) | **Get** /collection/site-links/{collection-id} | Get Collection Linked Sites.
 *CollectionsApi* | [**GetCollectionsBySite**](docs/CollectionsApi.md#getcollectionsbysite) | **Get** /collection/site/{site-id} | Get Collections by Site
-*CollectionsApi* | [**ListCollections**](docs/CollectionsApi.md#listcollections) | **Get** /collections | List Collections
+*CollectionsApi* | [**ListCollections**](docs/CollectionsApi.md#listcollections) | **Get** /collection | List Collections
+*CollectionsApi* | [**ListRoleBindings**](docs/CollectionsApi.md#listrolebindings) | **Get** /collection/role-bindings | List Role Bindings
 *CollectionsApi* | [**UpdateCollection**](docs/CollectionsApi.md#updatecollection) | **Put** /collection/{collection-id} | Update Collection
 *ConnectorsApi* | [**CreateConnector**](docs/ConnectorsApi.md#createconnector) | **Post** /connectors | Create Connector
 *ConnectorsApi* | [**DeleteConnector**](docs/ConnectorsApi.md#deleteconnector) | **Delete** /connectors/{connector-id} | Delete Connector
@@ -157,19 +162,23 @@ Class | Method | HTTP request | Description
  - [CloudIntegrationPut](docs/CloudIntegrationPut.md)
  - [CloudintegrationsIntegrationsBody](docs/CloudintegrationsIntegrationsBody.md)
  - [Collection](docs/Collection.md)
+ - [CollectionBody](docs/CollectionBody.md)
  - [CollectionCollectionidBody](docs/CollectionCollectionidBody.md)
  - [CollectionCollectionidBody1](docs/CollectionCollectionidBody1.md)
+ - [CollectionCollectionrolebindingsBody](docs/CollectionCollectionrolebindingsBody.md)
  - [CollectionIdSiteIdTuple](docs/CollectionIdSiteIdTuple.md)
  - [CollectionIdSiteIdTupleList](docs/CollectionIdSiteIdTupleList.md)
  - [CollectionIds](docs/CollectionIds.md)
  - [CollectionPage](docs/CollectionPage.md)
  - [CollectionRequest](docs/CollectionRequest.md)
+ - [CollectionRoleType](docs/CollectionRoleType.md)
  - [CollectionSiteLink](docs/CollectionSiteLink.md)
  - [CollectionSiteLinks](docs/CollectionSiteLinks.md)
  - [CollectionSitelinksBody](docs/CollectionSitelinksBody.md)
+ - [CollectionSiterolebindingsBody](docs/CollectionSiterolebindingsBody.md)
+ - [CollectionTenantrolebindingsBody](docs/CollectionTenantrolebindingsBody.md)
  - [CollectionUpdateRequest](docs/CollectionUpdateRequest.md)
  - [CollectionidSiteidBody](docs/CollectionidSiteidBody.md)
- - [CollectionsBody](docs/CollectionsBody.md)
  - [Connector](docs/Connector.md)
  - [ConnectorDeploymentCommand](docs/ConnectorDeploymentCommand.md)
  - [ConnectorEnvironmentVariables](docs/ConnectorEnvironmentVariables.md)
@@ -253,6 +262,15 @@ Class | Method | HTTP request | Description
  - [PolicyType](docs/PolicyType.md)
  - [PolicyUsage](docs/PolicyUsage.md)
  - [PolicyValidatorType](docs/PolicyValidatorType.md)
+ - [Resource](docs/Resource.md)
+ - [Role](docs/Role.md)
+ - [RoleBinding](docs/RoleBinding.md)
+ - [RoleBindings](docs/RoleBindings.md)
+ - [RoleBindingsCreateRequestBase](docs/RoleBindingsCreateRequestBase.md)
+ - [RoleBindingsDeleteRequest](docs/RoleBindingsDeleteRequest.md)
+ - [RoleBindingsPage](docs/RoleBindingsPage.md)
+ - [RoleType](docs/RoleType.md)
+ - [RolebindingsDeleteBody](docs/RolebindingsDeleteBody.md)
  - [ScimApiErrorResponse](docs/ScimApiErrorResponse.md)
  - [ScimEntityPaginatedResponseBase](docs/ScimEntityPaginatedResponseBase.md)
  - [ScimGroup](docs/ScimGroup.md)
@@ -272,6 +290,7 @@ Class | Method | HTTP request | Description
  - [SharedObjectValue](docs/SharedObjectValue.md)
  - [SharedobjectsSharedobjectidBody](docs/SharedobjectsSharedobjectidBody.md)
  - [Site](docs/Site.md)
+ - [SiteRoleType](docs/SiteRoleType.md)
  - [SiteSettings](docs/SiteSettings.md)
  - [SiteStatus](docs/SiteStatus.md)
  - [SitebindingSiteidBody](docs/SitebindingSiteidBody.md)
@@ -281,6 +300,8 @@ Class | Method | HTTP request | Description
  - [SshClient](docs/SshClient.md)
  - [SshClientsPage](docs/SshClientsPage.md)
  - [SshUserAccount](docs/SshUserAccount.md)
+ - [SubjectType](docs/SubjectType.md)
+ - [TenantRoleType](docs/TenantRoleType.md)
  - [User](docs/User.md)
  - [UserBase](docs/UserBase.md)
  - [UsersPage](docs/UsersPage.md)

@@ -177,8 +177,9 @@ func (a *ConnectorsApiService) CreateConnector(ctx context.Context, bindToSiteId
 /*
 ConnectorsApiService Delete Connector
 Delete the connector from the contained site in your Secure Access Cloud tenant. &lt;br&gt; In order to complete the action the connector container that runs in the corresponding datacenter should be removed.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param connectorId Connector ID.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param connectorId Connector ID.
+
 */
 func (a *ConnectorsApiService) DeleteConnector(ctx context.Context, connectorId string) (*http.Response, error) {
 	var (
@@ -432,9 +433,8 @@ func (a *ConnectorsApiService) GetAllConnectors(ctx context.Context, localVarOpt
 /*
 ConnectorsApiService Get Connector
 Returns the details of a Connector from your Secure Access Cloud tenant.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param connectorId Connector ID.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param connectorId Connector ID.
 @return Connector
 */
 func (a *ConnectorsApiService) GetConnector(ctx context.Context, connectorId string) (Connector, *http.Response, error) {
@@ -569,9 +569,8 @@ func (a *ConnectorsApiService) GetConnector(ctx context.Context, connectorId str
 /*
 ConnectorsApiService Get Connector Deployment Command
 Returns the command for deploying Secure Access Cloud connector as a docker image. This endpoint is valid for connectors of version 2.5.10 and higher. The command is generated based on the deployment_type that was set for the connector:  windows / linux / docker-compose / Kubernetes. Executing the command on the target machine is the last step in configuring the Secure Access Cloud Connector.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param connectorId Connector ID.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param connectorId Connector ID.
 @return ConnectorDeploymentCommand
 */
 func (a *ConnectorsApiService) GetConnectorCommand(ctx context.Context, connectorId string) (ConnectorDeploymentCommand, *http.Response, error) {
@@ -706,9 +705,8 @@ func (a *ConnectorsApiService) GetConnectorCommand(ctx context.Context, connecto
 /*
 ConnectorsApiService Get Connector Environment Variables
 Returns the set of environment variables required for deployed connector in a conveniently JSON format. Applicable for all connector types that was set for the connector: windows / linux / docker-compose / Kubernetes.
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param connectorId Connector ID.
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param connectorId Connector ID.
 @return ConnectorEnvironmentVariables
 */
 func (a *ConnectorsApiService) GetConnectorEnvironmentVariables(ctx context.Context, connectorId string) (ConnectorEnvironmentVariables, *http.Response, error) {
@@ -843,8 +841,7 @@ func (a *ConnectorsApiService) GetConnectorEnvironmentVariables(ctx context.Cont
 /*
 ConnectorsApiService Get Connector Version
 Returns the latest connector version available for the tenant
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 @return ConnectorVersion
 */
 func (a *ConnectorsApiService) GetConnectorVersion(ctx context.Context) (ConnectorVersion, *http.Response, error) {

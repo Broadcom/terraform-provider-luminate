@@ -25,4 +25,6 @@ type SitesSiteidBody struct {
 	KerberosConfiguration  *KerberosConfiguration `json:"kerberos_configuration,omitempty"`
 	// The number of collections that are associated with this site.
 	CountCollections int32 `json:"countCollections,omitempty"`
+	// The connectivity region of the site. If not specified, the default region will be used.
+	Region string `json:"region,omitempty"`
 }
