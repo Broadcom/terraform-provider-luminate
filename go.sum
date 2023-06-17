@@ -8,6 +8,8 @@ bitbucket.org/accezz-io/api-documentation v0.0.0-20230402135305-c523ad37ce9b h1:
 bitbucket.org/accezz-io/api-documentation v0.0.0-20230402135305-c523ad37ce9b/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20230529140757-a74a1166a78d h1:TkXDiUq3QPTpc1dQetcR5NJ9t4c9K7ev7lFUNUi2QQQ=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20230529140757-a74a1166a78d/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20230614152642-aa890aa55cca h1:D32DJQWHUPo1atpp/+ibUAkIEBA1iXhM1eURb53+8XU=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20230614152642-aa890aa55cca/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.31.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=

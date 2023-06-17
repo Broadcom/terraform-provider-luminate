@@ -21,13 +21,42 @@ resource "luminate_tcp_application" "new-tcp-application" {
 }
 `
 
+const testAccTCPApplication_with_collection = `
+resource "luminate_site" "new-site" {
+    name = "tfAccSite"
+}
+resource "luminate_collection" "new-collection" {
+	name = "tfAccCollectionForApp"
+}
+resource "luminate_collection_site_link" "new-collection-site-link" {
+	site_id = "${luminate_site.new-site.id}"
+	collection_ids = sort(["${luminate_collection.new-collection.id}"])
+}
+resource "luminate_tcp_application" "new-tcp-application-collection" {
+  name = "tfAccTCPWithCollection"
+  site_id = "${luminate_site.new-site.id}"
+  collection_id = "${luminate_collection.new-collection.id}"
+  target {
+    address = "127.0.0.1"
+    ports = ["8080"]
+  }
+ depends_on = [luminate_collection_site_link.new-collection-site-link]
+}
+`
+
 func TestAccLuminateTCPApplication(t *testing.T) {
 	resourceName := "luminate_tcp_application.new-tcp-application"
+	resourceNameCollection := "luminate_tcp_application.new-tcp-application-collection"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
+			{
+				Config: testAccTCPApplication_with_collection,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameCollection, "name", "tfAccTCPWithCollection")),
+			},
 			{
 				Config: testAccTCPApplication_minimal,
 				Check: resource.ComposeTestCheckFunc(

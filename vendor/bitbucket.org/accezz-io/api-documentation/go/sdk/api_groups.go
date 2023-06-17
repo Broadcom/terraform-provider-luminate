@@ -28,10 +28,9 @@ type GroupsApiService service
 /*
 GroupsApiService Assign User To Group
 Add user to group.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param groupId Group ID
- * @param userId User ID
-
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param groupId Group ID
+  - @param userId User ID
 */
 func (a *GroupsApiService) AssignUserToGroup(ctx context.Context, groupId string, userId string) (*http.Response, error) {
 	var (
@@ -147,9 +146,10 @@ func (a *GroupsApiService) AssignUserToGroup(ctx context.Context, groupId string
 /*
 GroupsApiService Get Group
 Return group by ID from the specified identity provider. For the local users repository in your Secure Access Cloud tenant, set identity-provider-id to &#x27;local&#x27;.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
- * @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param identityProviderId The identity provider id. This unique identifier can be retrieved using  &lt;a href&#x3D;\&quot;#operation/ListIdentityProviders\&quot;&gt;List Identity Providers API&lt;/a&gt;. &lt;br&gt; For Secure Access Cloud internal Identity Provider, set this property to local.
+  - @param entityId Entity identifier as determined by the owning Identity Provider. &lt;br&gt; This identifier can be retrieved using &lt;a href&#x3D;\&quot;#operation/SearchUsersbyIdp\&quot;&gt;Search Users By Identity Provider API&lt;/a&gt; for users or &lt;a href&#x3D;\&quot;#operation/SearchGroupsbyIdp\&quot;&gt;Search Groups By Identity Provider API&lt;/a&gt; for groups.
+
 @return Group
 */
 func (a *GroupsApiService) GetGroup(ctx context.Context, identityProviderId string, entityId string) (Group, *http.Response, error) {
@@ -438,10 +438,9 @@ func (a *GroupsApiService) ListAssignedUsers(ctx context.Context, identityProvid
 /*
 GroupsApiService Remove User From Group
 Remove user from group.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param groupId Group ID
- * @param userId User ID
-
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param groupId Group ID
+  - @param userId User ID
 */
 func (a *GroupsApiService) RemoveUserFromGroup(ctx context.Context, groupId string, userId string) (*http.Response, error) {
 	var (

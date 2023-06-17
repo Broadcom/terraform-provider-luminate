@@ -9,6 +9,7 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 	applicationServiceDTO := Application{
 		ID:                   applicationSDKDTO.Id,
 		Name:                 applicationSDKDTO.Name,
+		CollectionID:         applicationSDKDTO.CollectionId,
 		Visible:              applicationSDKDTO.IsVisible,
 		NotificationsEnabled: applicationSDKDTO.IsNotificationEnabled,
 		Type:                 GetApplicationTypeString(*applicationSDKDTO.Type_),
@@ -89,6 +90,7 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 
 	applicationSDKDTO := sdk.Application{
 		Name:                  applicationServiceDTO.Name,
+		CollectionId:          applicationServiceDTO.CollectionID,
 		Type_:                 &aType,
 		Icon:                  applicationServiceDTO.Icon,
 		IsVisible:             applicationServiceDTO.Visible,

@@ -64,6 +64,7 @@ type Application struct {
 	ID                    string
 	Name                  string
 	SiteID                string
+	CollectionID          string
 	Type                  string
 	SubType               string
 	Icon                  string

@@ -13,6 +13,12 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 			Description:  "Site ID to which the application will be bound",
 			ValidateFunc: utils.ValidateUuid,
 		},
+		"collection_id": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Optional:    true,
+			Description: "Collection ID to which the application will be assign",
+		},
 		"name": {
 			Type:         schema.TypeString,
 			Required:     true,
