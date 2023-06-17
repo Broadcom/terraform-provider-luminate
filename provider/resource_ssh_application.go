@@ -130,6 +130,7 @@ func resourceDeleteSSHApplication(d *schema.ResourceData, m interface{}) error {
 
 func setSHHApplicationFields(d *schema.ResourceData, application *dto.Application) {
 	d.Set("name", application.Name)
+	d.Set("collection_id", application.CollectionID)
 	d.Set("icon", application.Icon)
 	d.Set("type", application.Type)
 	d.Set("visible", application.Visible)
@@ -144,6 +145,7 @@ func setSHHApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 func extractSSHApplicationFields(d *schema.ResourceData) *dto.Application {
 	return &dto.Application{
 		ID:                   d.Id(),
+		CollectionID:         d.Get("collection_id").(string),
 		Name:                 d.Get("name").(string),
 		Icon:                 d.Get("icon").(string),
 		SiteID:               d.Get("site_id").(string),
