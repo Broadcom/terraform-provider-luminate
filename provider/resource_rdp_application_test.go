@@ -29,9 +29,28 @@ resource "luminate_rdp_application" "new-rdp-application" {
 	internal_address = "tcp://127.0.0.5"
 }
 `
+const testAccRDPApplication_collection = `
+resource "luminate_site" "new-site-collection" {
+	name = "tfAccSiteCollection"
+}
+resource "luminate_collection" "new-collection" {
+	name = "tfAccCollectionForApp"
+}
+resource "luminate_collection_site_link" "new-collection-site-link" {
+	site_id = "${luminate_site.new-site-collection.id}"
+	collection_ids = sort(["${luminate_collection.new-collection.id}"])
+}
+resource "luminate_rdp_application" "new-rdp-application-collection" {
+	site_id = "${luminate_site.new-site-collection.id}"
+	name = "tfAccRDPWithCollection"
+	internal_address = "tcp://127.0.0.2"
+	 depends_on = [luminate_collection_site_link.new-collection-site-link]
+}
+`
 
 func TestAccLuminateRDPApplication(t *testing.T) {
 	resourceName := "luminate_rdp_application.new-rdp-application"
+	resourceNameCollection := "luminate_rdp_application.new-rdp-application-collection"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -57,6 +76,11 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
 					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
 				),
+			},
+			{
+				Config: testAccRDPApplication_collection,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameCollection, "name", "tfAccRDPWithCollection")),
 			},
 		},
 	})
