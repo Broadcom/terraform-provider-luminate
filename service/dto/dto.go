@@ -163,6 +163,7 @@ type AccessPolicy struct {
 	RdpSettings       *PolicyRdpSettings
 	SshSettings       *PolicySshSettings
 	TcpSettings       *PolicyTcpSettings
+	CollectionID      string
 }
 
 type DirectoryEntity struct {

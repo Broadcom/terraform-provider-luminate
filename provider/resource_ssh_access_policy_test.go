@@ -153,9 +153,45 @@ const resourceSshAccessPolicy_validators_specified = `
 		accounts = ["ubuntu", "ec2-user"]
 	}
 `
+const resourceSshAccessPolicy_Collection = `
+	resource "luminate_site" "new-site-collection" {
+		name = "tfAccSiteAccessPolicySSHCollection"
+	}
+	resource "luminate_collection" "new-collection" {
+		name = "tfAccCollectionForAppCollection"
+	}
+	resource "luminate_collection_site_link" "new-collection-site-link" {
+		site_id = "${luminate_site.new-site-collection.id}"
+		collection_ids = sort(["${luminate_collection.new-collection.id}"])
+	}
+	resource "luminate_ssh_application" "new-ssh-application-collection" {
+		site_id = "${luminate_site.new-site-collection.id}"
+		name = "tfAccSSHCollection"
+      	collection_id = "${luminate_collection.new-collection.id}"
+		internal_address = "tcp://127.0.0.5"
+        depends_on = [luminate_collection_site_link.new-collection-site-link]
+	}
+	resource "luminate_ssh_access_policy" "new-ssh-access-policy-collection" {
+		enabled = "true"
+		name =  "resourceSshAccessPolicy_Collection"
+		identity_provider_id = "local"
+      	collection_id = "${luminate_collection.new-collection.id}"
+
+		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["${luminate_ssh_application.new-ssh-application-collection.id}"]
+
+		accounts = ["ubuntu", "ec2-user"]
+		use_auto_mapping = "true"
+		allow_agent_forwarding = "true"
+		allow_temporary_token = "true"
+		allow_public_key = "true"
+		depends_on = [luminate_collection_site_link.new-collection-site-link]
+	}
+`
 
 func TestAccLuminateSshAccessPolicy(t *testing.T) {
 	resourceName := "luminate_ssh_access_policy.new-ssh-access-policy"
+	resourceNameCollection := "luminate_ssh_access_policy.new-ssh-access-policy-collection"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -221,6 +257,12 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "accounts.0", "ubuntu"),
 					resource.TestCheckResourceAttr(resourceName, "accounts.1", "ec2-user"),
 					resource.TestCheckResourceAttr(resourceName, "validators.0.web_verification", "true"),
+				),
+			},
+			{
+				Config: resourceSshAccessPolicy_Collection,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceSshAccessPolicy_Collection"),
 				),
 			},
 		},

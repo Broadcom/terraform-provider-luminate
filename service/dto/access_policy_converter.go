@@ -211,7 +211,6 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 			if accessPolicy.Conditions.ManagedDevice.OpswatMetaAccess {
 				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceOpswatConditionArgument)
 			}
-			argumentsMap[ManagedDeviceOpswatGroupsArgument] = []string{}
 			argumentsMap[ManagedDeviceUuid] = managedDeviceArguments
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: ManagedDeviceCondition,
@@ -230,6 +229,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 		Type_:             &accessPolicyType,
 		TargetProtocol:    ToTargetProtocol(accessPolicy.TargetProtocol),
 		Id:                accessPolicy.Id,
+		CollectionId:      accessPolicy.CollectionID,
 		Enabled:           accessPolicy.Enabled,
 		CreatedAt:         accessPolicy.CreatedAt,
 		Name:              accessPolicy.Name,
@@ -346,6 +346,7 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 
 	return &AccessPolicy{
 		TargetProtocol:    FromTargetProtocol(*accessPolicyDto.TargetProtocol),
+		CollectionID:      accessPolicyDto.CollectionId,
 		Id:                accessPolicyDto.Id,
 		Enabled:           accessPolicyDto.Enabled,
 		CreatedAt:         accessPolicyDto.CreatedAt,
