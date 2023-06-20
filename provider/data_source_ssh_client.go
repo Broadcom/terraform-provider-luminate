@@ -13,14 +13,14 @@ func LuminateDataSourceSshClient() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Type: schema.TypeString,
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
 				ValidateFunc: validation.NoZeroValues,
-				Description: "ssh-client to retrieve",
+				Description:  "ssh-client to retrieve",
 			},
 			"description": {
 				Type:     schema.TypeString,

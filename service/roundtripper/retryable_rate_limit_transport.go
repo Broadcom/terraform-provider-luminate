@@ -11,18 +11,18 @@ import (
 )
 
 type RetryableRateLimitTransport struct {
-	roundTripper http.RoundTripper
+	roundTripper        http.RoundTripper
 	sleepBetweenRetries time.Duration
-	retrySleepJitter int
+	retrySleepJitter    int
 }
 
 func NewRetryableRateLimitTransport(millsBetweenRetries int, retrySleepJitter int, roundTripper http.RoundTripper) http.RoundTripper {
 	rand.Seed(time.Now().UnixNano())
 
 	return &RetryableRateLimitTransport{
-		roundTripper: roundTripper,
+		roundTripper:        roundTripper,
 		sleepBetweenRetries: time.Duration(millsBetweenRetries) * time.Millisecond,
-		retrySleepJitter: retrySleepJitter,
+		retrySleepJitter:    retrySleepJitter,
 	}
 }
 
@@ -48,8 +48,8 @@ func (t *RetryableRateLimitTransport) RoundTrip(r *http.Request) (*http.Response
 		log.Printf("[DEBUG] Retry request due to rate limit error.")
 
 		// Jitter sleep time to spread the retries more evenly
-		jitter := rand.Intn(t.retrySleepJitter) - t.retrySleepJitter / 2
-		sleep := t.sleepBetweenRetries + time.Duration(jitter) * time.Millisecond
+		jitter := rand.Intn(t.retrySleepJitter) - t.retrySleepJitter/2
+		sleep := t.sleepBetweenRetries + time.Duration(jitter)*time.Millisecond
 		time.Sleep(sleep)
 
 		return t.RoundTrip(r2)

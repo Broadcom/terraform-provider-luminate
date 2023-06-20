@@ -1,6 +1,7 @@
 package dto
 
 import (
+	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"github.com/google/uuid"
 	"time"
 )
@@ -214,4 +215,46 @@ type ListCollectionsRequest struct {
 	ApplicationId uuid.UUID
 	SiteId        uuid.UUID
 	PolicyId      uuid.UUID
+}
+
+type CreateRoleDTO struct {
+	Role     string
+	Entities []DirectoryEntity
+}
+
+type CreateCollectionRoleDTO struct {
+	CreateRoleDTO
+	CollectionID string
+}
+
+type CreateSiteRoleDTO struct {
+	CreateRoleDTO
+	SiteID string
+}
+
+type RoleBinding struct {
+	ID            string
+	EntityIDInIDP string
+	EntityIDPID   string
+	EntityType    string
+	RoleType      string
+	CollectionID  string
+	ResourceID    string
+}
+
+func EntityDTOToEntityModel(entities []DirectoryEntity) []sdk.DirectoryEntity {
+	var directoryEntities []sdk.DirectoryEntity
+	for _, directoryEntity := range entities {
+		identityProviderType, err := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
+		if err == nil {
+			directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
+				IdentifierInProvider: directoryEntity.IdentifierInProvider,
+				IdentityProviderId:   directoryEntity.IdentityProviderId,
+				DisplayName:          directoryEntity.DisplayName,
+				IdentityProviderType: &identityProviderType,
+				Type_:                ToModelType(directoryEntity.EntityType),
+			})
+		}
+	}
+	return directoryEntities
 }

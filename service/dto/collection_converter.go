@@ -45,3 +45,7 @@ func ConvertCollectionToDTO(collection *sdk.Collection) (*Collection, error) {
 		Fqdn:             collection.Fqdn,
 	}, err
 }
+
+func ConvertRoleBindingsToDTO(roles *sdk.RoleBindings) {
+
+}
