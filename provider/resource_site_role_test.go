@@ -9,8 +9,15 @@ const testSiteRole = `
 	resource "luminate_site" "site" {
 		name = "siteToBeAssign"
 	} 
-	resource "luminate_site_role" "site-role" {
+	resource "luminate_site_role" "site-editor" {
 		role_type = "SiteEditor"
+		identity_provider_id =  "local"
+		entity_id = "a8a48219-835f-4183-a2a9-bbba8cad8eb8"
+		entity_type = "User"
+		site_id = "${luminate_site.site.id}"
+	}
+	resource "luminate_site_role" "site-deployer" {
+		role_type = "SiteConnectorDeployer"
 		identity_provider_id =  "local"
 		entity_id = "a8a48219-835f-4183-a2a9-bbba8cad8eb8"
 		entity_type = "User"
@@ -19,8 +26,6 @@ const testSiteRole = `
 `
 
 func TestAccLuminateSiteRole(t *testing.T) {
-	resourceName := "luminate_site_role.site-role"
-
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
@@ -28,7 +33,9 @@ func TestAccLuminateSiteRole(t *testing.T) {
 			{
 				Config: testSiteRole,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "role_type", "SiteEditor")),
+					resource.TestCheckResourceAttr("luminate_site_role.site-editor", "role_type", "SiteEditor"),
+					resource.TestCheckResourceAttr("luminate_site_role.site-deployer", "role_type", "SiteConnectorDeployer"),
+				),
 			},
 		},
 	})
