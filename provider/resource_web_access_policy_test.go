@@ -20,7 +20,7 @@ const resourceWebAccessPolicy_enabled = `
 		name =  "resourceWebAccessPolicy_enabled"
 		identity_provider_id = "local"
 
-		user_ids = ["ee652343-ff29-4183-9aeb-e7e14d686ea9"]
+		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_web_application.new-application.id}"]
 	}
 `
@@ -49,7 +49,7 @@ const resourceWebAccessPolicy_collection = `
 	 	collection_id = "${luminate_collection.new-collection.id}"
 		identity_provider_id = "local"
 
-		user_ids = ["ee652343-ff29-4183-9aeb-e7e14d686ea9"]
+		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_web_application.new-application-collection.id}"]
 	 	depends_on = [luminate_collection_site_link.new-collection-site-link]
 	}
@@ -69,7 +69,7 @@ const resourceWebAccessPolicy_disabled = `
   		name =  "resourceWebAccessPolicy_disabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["ee652343-ff29-4183-9aeb-e7e14d686ea9"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_web_application.new-application.id}"]
 	}
 `
@@ -87,7 +87,7 @@ const resourceWebAccessPolicy_enabled_not_specified = `
   		name =  "resourceWebAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["ee652343-ff29-4183-9aeb-e7e14d686ea9"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_web_application.new-application.id}"]
 	}
 `
@@ -105,7 +105,7 @@ const resourceWebAccessPolicy_conditions_specified = `
   		name =  "resourceWebAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["ee652343-ff29-4183-9aeb-e7e14d686ea9"]
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_web_application.new-application.id}"]
 
 		conditions {
@@ -134,7 +134,7 @@ const resourceWebAccessPolicy_conditions_specified_update = `
 		name =  "resourceWebAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 	
-		user_ids = ["ee652343-ff29-4183-9aeb-e7e14d686ea9"]
+		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
 		applications = ["${luminate_web_application.new-application.id}"]
 	
 		conditions {
@@ -162,8 +162,8 @@ const resourceWebAccessPolicy_validators_specified = `
 	resource "luminate_web_access_policy" "new-web-access-policy" {
   		name =  "resourceWebAccessPolicy_validators_specified"
 		identity_provider_id = "local"
-
-  		user_ids = ["ee652343-ff29-4183-9aeb-e7e14d686ea9"]
+	
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_web_application.new-application.id}"]
 	}
 `

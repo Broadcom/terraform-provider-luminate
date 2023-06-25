@@ -42,9 +42,10 @@ resource "luminate_collection_site_link" "new-collection-site-link" {
 }
 resource "luminate_rdp_application" "new-rdp-application-collection" {
 	site_id = "${luminate_site.new-site-collection.id}"
+	collection_id = "${luminate_collection.new-collection.id}"
 	name = "tfAccRDPWithCollection"
 	internal_address = "tcp://127.0.0.2"
-	 depends_on = [luminate_collection_site_link.new-collection-site-link]
+    depends_on = [luminate_collection_site_link.new-collection-site-link]
 }
 `
 

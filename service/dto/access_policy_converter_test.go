@@ -2,7 +2,7 @@ package dto
 
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	uuid "github.com/satori/go.uuid"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -126,7 +126,7 @@ func TestConvertToDto(t *testing.T) {
 			AcceptCertificate:    true,
 		},
 
-		Applications: []string{uuid.NewV4().String()},
+		Applications: []string{uuid.New().String()},
 	}
 
 	// when
@@ -134,7 +134,7 @@ func TestConvertToDto(t *testing.T) {
 
 	// then
 	generatedAccessPolicy := ConvertFromDto(accessPolicyDto)
-	for i, _ := range generatedAccessPolicy.DirectoryEntities {
+	for i := range generatedAccessPolicy.DirectoryEntities {
 		generatedAccessPolicy.DirectoryEntities[i].IdentityProviderType = ""
 	}
 
