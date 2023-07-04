@@ -23,8 +23,6 @@ func convertCollectionRole(role string) *sdk.CollectionRoleType {
 	switch role {
 	case utils.ApplicationOwner:
 		collectionRoleType = sdk.APPLICATION_OWNER_CollectionRoleType
-	case utils.PolicyEntityAssigner:
-		collectionRoleType = sdk.POLICY_ENTITY_ASSIGNER_CollectionRoleType
 	case utils.PolicyOwner:
 		collectionRoleType = sdk.POLICY_OWNER_CollectionRoleType
 

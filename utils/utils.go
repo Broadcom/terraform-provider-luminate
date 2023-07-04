@@ -154,7 +154,7 @@ func ValidateTenantRole(role string) bool {
 }
 
 func ValidateCollectionRole(role string) bool {
-	roles := []string{utils.PolicyOwner, utils.PolicyEntityAssigner, utils.ApplicationOwner}
+	roles := []string{utils.PolicyOwner, utils.ApplicationOwner}
 	for _, r := range roles {
 		if r == role {
 			return true

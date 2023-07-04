@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"testing"
 
@@ -73,9 +74,9 @@ func TestAccLuminateApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceTest, "visible", "true"),
 					resource.TestCheckResourceAttr(resourceTest, "notification_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceTest, "internal_address", "http://127.0.0.1:8080"),
-					//resource.TestCheckResourceAttr(resourceTest, "external_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
-					//resource.TestCheckResourceAttr(resourceTest, "luminate_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
-					//resource.TestCheckResourceAttr(resourceTest, "collection_id", utils.DefaultCollection),
+					resource.TestCheckResourceAttr(resourceTest, "external_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceTest, "luminate_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceTest, "collection_id", utils.DefaultCollection),
 				),
 			},
 			{
@@ -84,8 +85,8 @@ func TestAccLuminateApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceTest, "name", "tfAccApplicationUpd"),
 					resource.TestCheckResourceAttr(resourceTest, "internal_address", "http://127.0.0.1:80"),
 					resource.TestCheckResourceAttr(resourceTest, "collection_id", utils.DefaultCollection),
-					//resource.TestCheckResourceAttr(resourceTest, "external_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
-					//resource.TestCheckResourceAttr(resourceTest, "luminate_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceTest, "external_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceTest, "luminate_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
 				),
 			},
 		},
