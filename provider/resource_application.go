@@ -17,7 +17,7 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Computed:    true,
 			Optional:    true,
-			Description: "Collection ID to which the application will be assign",
+			Description: "Collection ID to which the application will be assigned",
 		},
 		"name": {
 			Type:         schema.TypeString,

@@ -63,7 +63,7 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Computed:    true,
 			Optional:    true,
-			Description: "Collection ID to which the policy will be assign",
+			Description: "Collection ID to which the policy will be assigned",
 		},
 		"validators": {
 			Type:     schema.TypeList,

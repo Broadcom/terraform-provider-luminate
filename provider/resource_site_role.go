@@ -13,7 +13,7 @@ func LuminateSiteRole() *schema.Resource {
 	siteSchema := LuminateAssignRoleBaseSchema()
 	siteSchema["site_id"] = &schema.Schema{
 		Type:         schema.TypeString,
-		Description:  "the site id to which this role assigned to.",
+		Description:  "The site id to which this role is assigned to.",
 		Required:     true,
 		ValidateFunc: utils.ValidateUuid,
 		ForceNew:     true,
@@ -38,7 +38,7 @@ func resourceCreateSiteRole(d *schema.ResourceData, m interface{}) error {
 
 	baseFields, err := extractBaseFields(d)
 	if err != nil {
-		return errors.Wrap(err, "extract tenant role base fields error")
+		return errors.Wrap(err, "extract site role base fields error")
 	}
 	if !utils.ValidateSiteRole(baseFields.RoleType) {
 		return errors.New("invalid role type")
@@ -46,17 +46,9 @@ func resourceCreateSiteRole(d *schema.ResourceData, m interface{}) error {
 
 	siteID := d.Get("site_id").(string)
 
-	identityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(baseFields.EntityIDPID)
+	entity, err := getEntityByRoleBindings(client, baseFields)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", baseFields.EntityIDPID)
-	}
-
-	entity := dto.DirectoryEntity{
-		IdentifierInProvider: baseFields.EntityIDInIDP,
-		IdentityProviderId:   baseFields.EntityIDPID,
-		EntityType:           baseFields.EntityType,
-		IdentityProviderType: dto.ConvertIdentityProviderTypeToString(identityProviderType),
-		DisplayName:          "displayName",
+		return err
 	}
 
 	var tenantRole = dto.CreateSiteRoleDTO{
@@ -88,7 +80,7 @@ func resourceReadSiteRole(d *schema.ResourceData, m interface{}) error {
 	siteID := d.Get("site_id").(string)
 	role, err := client.RoleBindingsAPI.ReadRoleBindings(roleBindingsID, roleType, entityID, "", siteID)
 	if err != nil {
-		return errors.Wrap(err, "read tenant role failure")
+		return errors.Wrap(err, "read site role failure")
 	}
 
 	d.SetId(role.ID)

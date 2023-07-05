@@ -44,7 +44,7 @@ func (r *RoleBindingsAPI) CreateCollectionRoleBindings(roleDTO *dto.CreateCollec
 	return dto.ConvertRolesBindingsToDTO(roles), nil
 }
 
-// CreateSiteRoleBindings assign tenant role to admin
+// CreateSiteRoleBindings assign site role to admin
 func (r *RoleBindingsAPI) CreateSiteRoleBindings(roleDTO *dto.CreateSiteRoleDTO) ([]*dto.RoleBinding, error) {
 	body, err := dto.ConvertSiteRoleBindingsToModel(roleDTO)
 	if err != nil {
@@ -58,7 +58,7 @@ func (r *RoleBindingsAPI) CreateSiteRoleBindings(roleDTO *dto.CreateSiteRoleDTO)
 	return dto.ConvertRolesBindingsToDTO(roles), nil
 }
 
-// ReadRoleBindings get tenant role
+// ReadRoleBindings get role
 func (r *RoleBindingsAPI) ReadRoleBindings(
 	roleID string,
 	roleType string,

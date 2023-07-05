@@ -85,6 +85,7 @@ func ToModelType(entityType string) *sdk.EntityType {
 }
 
 func ConvertIdentityProviderTypeToString(idpType interface{}) string {
+
 	if idpType == "" || idpType == nil {
 		return ""
 	}

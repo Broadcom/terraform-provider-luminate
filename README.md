@@ -1099,7 +1099,7 @@ Provides Secure access cloud assign entity to tenant role
 #### Argument Reference
 
 The following arguments are supported:
--   **role_type  -** (Required) the role to assign TenantAdmin| TenantViewer
+-   **role_type  -** (Required) the role to assign TenantAdmin | TenantViewer
 -   **identity_provider_id -** (Required) The identity provider id
 -   **entity_id -** (Required) The entity id in idp
 -   **entity_type -** (Required) the entity type User | Group | ApiClient
@@ -1124,7 +1124,7 @@ Provides Secure access cloud assign entity to collection role
 #### Argument Reference
 
 The following arguments are supported:
--   **role_type  -** (Required) the role to assign PolicyOwner| ApplicationOwner
+-   **role_type  -** (Required) the role to assign PolicyOwner | ApplicationOwner
 -   **identity_provider_id -** (Required) The identity provider id
 -   **entity_id -** (Required) The entity id in idp
 -   **entity_type -** (Required) the entity type User | Group | ApiClient

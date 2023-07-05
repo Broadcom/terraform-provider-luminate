@@ -13,7 +13,7 @@ func LuminateCollectionRole() *schema.Resource {
 	collectionSchema := LuminateAssignRoleBaseSchema()
 	collectionSchema["collection_id"] = &schema.Schema{
 		Type:         schema.TypeString,
-		Description:  "the collection id to which this role assigned to.",
+		Description:  "The collection id to which this role will be assigned to.",
 		Required:     true,
 		ValidateFunc: utils.ValidateUuid,
 		ForceNew:     true,
@@ -38,7 +38,7 @@ func resourceCreateCollectionRole(d *schema.ResourceData, m interface{}) error {
 
 	baseFields, err := extractBaseFields(d)
 	if err != nil {
-		return errors.Wrap(err, "extract tenant role base fields error")
+		return errors.Wrap(err, "extract collection role base fields error")
 	}
 	if !utils.ValidateCollectionRole(baseFields.RoleType) {
 		return errors.New("invalid role type")
@@ -46,20 +46,12 @@ func resourceCreateCollectionRole(d *schema.ResourceData, m interface{}) error {
 
 	collectionID := d.Get("collection_id").(string)
 
-	identityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(baseFields.EntityIDPID)
+	entity, err := getEntityByRoleBindings(client, baseFields)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", baseFields.EntityIDPID)
+		return err
 	}
 
-	entity := dto.DirectoryEntity{
-		IdentifierInProvider: baseFields.EntityIDInIDP,
-		IdentityProviderId:   baseFields.EntityIDPID,
-		EntityType:           baseFields.EntityType,
-		IdentityProviderType: dto.ConvertIdentityProviderTypeToString(identityProviderType),
-		DisplayName:          "displayName",
-	}
-
-	var tenantRole = dto.CreateCollectionRoleDTO{
+	var collectionRole = dto.CreateCollectionRoleDTO{
 		CreateRoleDTO: dto.CreateRoleDTO{
 			Role:     baseFields.RoleType,
 			Entities: []dto.DirectoryEntity{entity},
@@ -67,7 +59,7 @@ func resourceCreateCollectionRole(d *schema.ResourceData, m interface{}) error {
 		CollectionID: collectionID,
 	}
 
-	roleBindings, err := client.RoleBindingsAPI.CreateCollectionRoleBindings(&tenantRole)
+	roleBindings, err := client.RoleBindingsAPI.CreateCollectionRoleBindings(&collectionRole)
 	if err != nil {
 		return err
 	}
@@ -77,7 +69,7 @@ func resourceCreateCollectionRole(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceReadCollectionRole(d *schema.ResourceData, m interface{}) error {
-	log.Println("[Info] Reading Tenant Role")
+	log.Println("[Info] >Reading Collection Role")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
@@ -88,7 +80,7 @@ func resourceReadCollectionRole(d *schema.ResourceData, m interface{}) error {
 	collectionID := d.Get("collection_id").(string)
 	role, err := client.RoleBindingsAPI.ReadRoleBindings(roleBindingsID, roleType, entityID, collectionID, "")
 	if err != nil {
-		return errors.Wrap(err, "read tenant role failure")
+		return errors.Wrap(err, "read collection role failure")
 	}
 
 	d.SetId(role.ID)

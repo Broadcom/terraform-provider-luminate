@@ -34,21 +34,16 @@ func resourceCreateTenantRole(d *schema.ResourceData, m interface{}) error {
 		return errors.Wrap(err, "extract tenant role base fields error")
 	}
 
-	identityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(baseFields.EntityIDPID)
+	entity, err := getEntityByRoleBindings(client, baseFields)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", baseFields.EntityIDPID)
+		return err
 	}
-
-	entity := dto.DirectoryEntity{
-		IdentifierInProvider: baseFields.EntityIDInIDP,
-		IdentityProviderId:   baseFields.EntityIDPID,
-		EntityType:           baseFields.EntityType,
-		IdentityProviderType: dto.ConvertIdentityProviderTypeToString(identityProviderType),
-		DisplayName:          "displayName",
+	roleType := d.Get("role_type").(string)
+	if !utils.ValidateTenantRole(roleType) {
+		return errors.New("invalid role type")
 	}
-
 	var tenantRole = dto.CreateRoleDTO{
-		Role:     baseFields.RoleType,
+		Role:     roleType,
 		Entities: []dto.DirectoryEntity{entity},
 	}
 

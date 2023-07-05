@@ -57,29 +57,29 @@ func ConvertTenantRoleBindingsToModel(tenantRole *CreateRoleDTO) (*sdk.Collectio
 	}, nil
 }
 
-func ConvertCollectionRoleBindingsToModel(tenantRole *CreateCollectionRoleDTO) (*sdk.CollectionCollectionrolebindingsBody, error) {
-	if len(tenantRole.Entities) == 0 || tenantRole.Role == "" {
+func ConvertCollectionRoleBindingsToModel(collectionRole *CreateCollectionRoleDTO) (*sdk.CollectionCollectionrolebindingsBody, error) {
+	if len(collectionRole.Entities) == 0 || collectionRole.Role == "" {
 		return &sdk.CollectionCollectionrolebindingsBody{}, errors.New("invalid input")
 	}
-	entities := EntityDTOToEntityModel(tenantRole.Entities)
-	role := convertCollectionRole(tenantRole.Role)
+	entities := EntityDTOToEntityModel(collectionRole.Entities)
+	role := convertCollectionRole(collectionRole.Role)
 	return &sdk.CollectionCollectionrolebindingsBody{
 		Entities:     entities,
 		RoleType:     role,
-		CollectionId: tenantRole.CollectionID,
+		CollectionId: collectionRole.CollectionID,
 	}, nil
 }
 
-func ConvertSiteRoleBindingsToModel(tenantRole *CreateSiteRoleDTO) (*sdk.CollectionSiterolebindingsBody, error) {
-	if len(tenantRole.Entities) == 0 || tenantRole.Role == "" {
+func ConvertSiteRoleBindingsToModel(siteRole *CreateSiteRoleDTO) (*sdk.CollectionSiterolebindingsBody, error) {
+	if len(siteRole.Entities) == 0 || siteRole.Role == "" {
 		return &sdk.CollectionSiterolebindingsBody{}, errors.New("invalid input")
 	}
-	entities := EntityDTOToEntityModel(tenantRole.Entities)
-	role := convertSiteRole(tenantRole.Role)
+	entities := EntityDTOToEntityModel(siteRole.Entities)
+	role := convertSiteRole(siteRole.Role)
 	return &sdk.CollectionSiterolebindingsBody{
 		Entities: entities,
 		RoleType: role,
-		SiteId:   tenantRole.SiteID,
+		SiteId:   siteRole.SiteID,
 	}, nil
 }
 
