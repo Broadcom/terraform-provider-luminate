@@ -69,7 +69,7 @@ func resourceCreateCollectionRole(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceReadCollectionRole(d *schema.ResourceData, m interface{}) error {
-	log.Println("[Info] > Reading Collection Role")
+	log.Println("[Info] > Reading Collection Role ")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
 		return errors.New("invalid client")
