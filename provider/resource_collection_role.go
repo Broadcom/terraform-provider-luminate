@@ -76,6 +76,9 @@ func resourceReadCollectionRole(d *schema.ResourceData, m interface{}) error {
 	}
 	roleBindingsID := d.Id()
 	roleType := d.Get("role_type").(string)
+	if !utils.ValidateCollectionRole(roleType) {
+		return errors.New("invalid role type")
+	}
 	entityID := d.Get("entity_id").(string)
 	collectionID := d.Get("collection_id").(string)
 	role, err := client.RoleBindingsAPI.ReadRoleBindings(roleBindingsID, roleType, entityID, collectionID, "")
