@@ -17,6 +17,7 @@ EOF
 RESP=$(curl -X POST -H "Authorization: token ${AUTH}" ${GITHUB_BASE_URL}/releases -d "${PAYLOAD}")
 
 UPLOAD_URL=$(echo ${RESP} | jq -r .upload_url | cut -f1 -d{ )
+echo "Upload URL: $UPLOAD_URL"
 
 for FILE in $(ls release)
 do
