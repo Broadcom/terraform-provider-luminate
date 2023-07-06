@@ -28,8 +28,9 @@ type CollectionsApiService service
 /*
 CollectionsApiService Create Collection
 Create Collection in your Secure Access Cloud tenant.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+
 @return Collection
 */
 func (a *CollectionsApiService) CreateCollection(ctx context.Context, body CollectionBody) (Collection, *http.Response, error) {
@@ -155,8 +156,9 @@ func (a *CollectionsApiService) CreateCollection(ctx context.Context, body Colle
 /*
 CollectionsApiService Create Collection Role Binding
 Create Collection Role Binding in your Secure Access Cloud tenant.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+
 @return RoleBindings
 */
 func (a *CollectionsApiService) CreateCollectionRoleBinding(ctx context.Context, body CollectionCollectionrolebindingsBody) (RoleBindings, *http.Response, error) {
@@ -282,8 +284,9 @@ func (a *CollectionsApiService) CreateCollectionRoleBinding(ctx context.Context,
 /*
 CollectionsApiService Link Site to Collection.
 Link a Site to a Collection in your Secure Access Cloud tenant.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+
 @return CollectionSiteLinks
 */
 func (a *CollectionsApiService) CreateCollectionSiteLink(ctx context.Context, body CollectionSitelinksBody) (CollectionSiteLinks, *http.Response, error) {
@@ -409,8 +412,9 @@ func (a *CollectionsApiService) CreateCollectionSiteLink(ctx context.Context, bo
 /*
 CollectionsApiService Create Site Role Binding
 Create Site Role Binding in your Secure Access Cloud tenant.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+
 @return RoleBindings
 */
 func (a *CollectionsApiService) CreateSiteRoleBinding(ctx context.Context, body CollectionSiterolebindingsBody) (RoleBindings, *http.Response, error) {
@@ -536,8 +540,9 @@ func (a *CollectionsApiService) CreateSiteRoleBinding(ctx context.Context, body 
 /*
 CollectionsApiService Create Tenant Role Binding
 Create Tenant Role Binding in your Secure Access Cloud tenant.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+
 @return RoleBindings
 */
 func (a *CollectionsApiService) CreateTenantRoleBinding(ctx context.Context, body CollectionTenantrolebindingsBody) (RoleBindings, *http.Response, error) {
@@ -905,9 +910,8 @@ func (a *CollectionsApiService) DeleteCollectionSiteLink(ctx context.Context, co
 /*
 CollectionsApiService Delete Role Binding
 Delete Collection Role Binding in your Secure Access Cloud tenant by role binding IDs. you can retrieve role bindings ids from &lt;a href&#x3D;\&quot;#operation/getRoleBindings\&quot;&gt; List Role Bindings&lt;/a&gt; API.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
-
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
 */
 func (a *CollectionsApiService) DeleteRoleBinding(ctx context.Context, body RolebindingsDeleteBody) (*http.Response, error) {
 	var (
@@ -1013,8 +1017,9 @@ func (a *CollectionsApiService) DeleteRoleBinding(ctx context.Context, body Role
 /*
 CollectionsApiService Get Collection
 Get Collection in your Secure Access Cloud tenant.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param collectionId The collection ID.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param collectionId The collection ID.
+
 @return Collection
 */
 func (a *CollectionsApiService) GetCollection(ctx context.Context, collectionId string) (Collection, *http.Response, error) {
@@ -1139,8 +1144,9 @@ func (a *CollectionsApiService) GetCollection(ctx context.Context, collectionId 
 /*
 CollectionsApiService Get Collection Linked Sites.
 Get the Sites linked to the Collection in your Secure Access Cloud tenant.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param collectionId The collection ID.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param collectionId The collection ID.
+
 @return CollectionSiteLinks
 */
 func (a *CollectionsApiService) GetCollectionSiteLinks(ctx context.Context, collectionId string) (CollectionSiteLinks, *http.Response, error) {
@@ -1265,8 +1271,9 @@ func (a *CollectionsApiService) GetCollectionSiteLinks(ctx context.Context, coll
 /*
 CollectionsApiService Get Collections by Site
 Get Collections by Site in your Secure Access Cloud tenant.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param siteId The site ID.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param siteId The site ID.
+
 @return CollectionIds
 */
 func (a *CollectionsApiService) GetCollectionsBySite(ctx context.Context, siteId string) (CollectionIds, *http.Response, error) {
@@ -1739,9 +1746,10 @@ func (a *CollectionsApiService) ListRoleBindings(ctx context.Context, localVarOp
 /*
 CollectionsApiService Update Collection
 Update Collection in your Secure Access Cloud tenant.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
- * @param collectionId The collection ID.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+  - @param collectionId The collection ID.
+
 @return Collection
 */
 func (a *CollectionsApiService) UpdateCollection(ctx context.Context, body CollectionCollectionidBody, collectionId string) (Collection, *http.Response, error) {

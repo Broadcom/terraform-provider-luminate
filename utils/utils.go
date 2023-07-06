@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/md5"
 	"fmt"
+	"github.com/Broadcom/terraform-provider-luminate/service/utils"
 	"github.com/asaskevich/govalidator"
 	"io"
 )
@@ -13,6 +14,7 @@ const (
 	MAX_POLICY_NAME_LENGTH = 255
 	LocalIdpId             = "local"
 	DefaultCollection      = "7cef2ccc-ed3e-4812-9ef2-b986c5dac2a5"
+	RootCollection         = "6b21619f-f505-41ec-af1b-09350be40000"
 )
 
 func StringMD5(in string) string {
@@ -139,4 +141,45 @@ func ParseStringList(stringListInterface []interface{}) []string {
 	}
 
 	return stringList
+}
+
+func ValidateTenantRole(role string) bool {
+	roles := []string{utils.TenantAdmin, utils.TenantViewer}
+	for _, r := range roles {
+		if r == role {
+			return true
+		}
+	}
+	return false
+}
+
+func ValidateCollectionRole(role string) bool {
+	roles := []string{utils.PolicyOwner, utils.ApplicationOwner}
+	for _, r := range roles {
+		if r == role {
+			return true
+		}
+	}
+	return false
+}
+
+func ValidateSiteRole(role string) bool {
+	roles := []string{utils.SiteEditor, utils.SiteConnectorDeployer}
+	for _, r := range roles {
+		if r == role {
+			return true
+		}
+	}
+	return false
+
+}
+
+func ValidateEntityType(entityType string) bool {
+	types := []string{"User", "Group", "ApiClient"}
+	for _, t := range types {
+		if t == entityType {
+			return true
+		}
+	}
+	return false
 }

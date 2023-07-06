@@ -91,9 +91,42 @@ const resourceRdpAccessPolicy_validators_specified = `
 		}
 	}
 `
+const resourceRdpAccessPolicy_collection = `
+	resource "luminate_site" "new-site-collection" {
+		name = "tfAccSiteCollection"
+	}
+	resource "luminate_collection" "new-collection" {
+		name = "tfAccCollectionForAppCollection"
+	}
+	resource "luminate_collection_site_link" "new-collection-site-link" {
+		site_id = "${luminate_site.new-site-collection.id}"
+		collection_ids = sort(["${luminate_collection.new-collection.id}"])
+	}
+	resource "luminate_rdp_application" "new-rdp-application-collection" {
+		site_id = "${luminate_site.new-site-collection.id}"
+		name = "tfAccRDPCollection"
+		internal_address = "tcp://127.0.0.2"
+        depends_on = [luminate_collection_site_link.new-collection-site-link]
+      	collection_id = "${luminate_collection.new-collection.id}"
+	}
+	resource "luminate_rdp_access_policy" "new-rdp-access-policy-collection" {
+		enabled = "true"
+  		name =  "resourceRdpAccessPolicy_collection"
+		identity_provider_id = "local"
+
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["${luminate_rdp_application.new-rdp-application-collection.id}"]
+
+  		allow_long_term_password = "true"
+        depends_on = [luminate_collection_site_link.new-collection-site-link]
+	    collection_id = "${luminate_collection.new-collection.id}"
+		
+	}
+`
 
 func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 	resourceName := "luminate_rdp_access_policy.new-rdp-access-policy"
+	resourceNameCollection := "luminate_rdp_access_policy.new-rdp-access-policy-collection"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -146,6 +179,12 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "validators.0.web_verification", "true"),
+				),
+			},
+			{
+				Config: resourceRdpAccessPolicy_collection,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceRdpAccessPolicy_collection"),
 				),
 			},
 		},

@@ -85,6 +85,7 @@ func ToModelType(entityType string) *sdk.EntityType {
 }
 
 func ConvertIdentityProviderTypeToString(idpType interface{}) string {
+
 	if idpType == "" || idpType == nil {
 		return ""
 	}
@@ -120,18 +121,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	var validatorsDto map[string]bool
 	var conditionsDto []sdk.PolicyCondition
 
-	for _, directoryEntity := range accessPolicy.DirectoryEntities {
-		identityProviderType, err := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
-		if err == nil {
-			directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
-				IdentifierInProvider: directoryEntity.IdentifierInProvider,
-				IdentityProviderId:   directoryEntity.IdentityProviderId,
-				DisplayName:          directoryEntity.DisplayName,
-				IdentityProviderType: &identityProviderType,
-				Type_:                ToModelType(directoryEntity.EntityType),
-			})
-		}
-	}
+	directoryEntities = EntityDTOToEntityModel(accessPolicy.DirectoryEntities)
 
 	for _, applicationId := range accessPolicy.Applications {
 		applications = append(applications, sdk.ApplicationBase{
@@ -211,7 +201,6 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 			if accessPolicy.Conditions.ManagedDevice.OpswatMetaAccess {
 				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceOpswatConditionArgument)
 			}
-			argumentsMap[ManagedDeviceOpswatGroupsArgument] = []string{}
 			argumentsMap[ManagedDeviceUuid] = managedDeviceArguments
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: ManagedDeviceCondition,
@@ -230,6 +219,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 		Type_:             &accessPolicyType,
 		TargetProtocol:    ToTargetProtocol(accessPolicy.TargetProtocol),
 		Id:                accessPolicy.Id,
+		CollectionId:      accessPolicy.CollectionID,
 		Enabled:           accessPolicy.Enabled,
 		CreatedAt:         accessPolicy.CreatedAt,
 		Name:              accessPolicy.Name,
@@ -346,6 +336,7 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 
 	return &AccessPolicy{
 		TargetProtocol:    FromTargetProtocol(*accessPolicyDto.TargetProtocol),
+		CollectionID:      accessPolicyDto.CollectionId,
 		Id:                accessPolicyDto.Id,
 		Enabled:           accessPolicyDto.Enabled,
 		CreatedAt:         accessPolicyDto.CreatedAt,

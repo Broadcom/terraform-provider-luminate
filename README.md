@@ -41,6 +41,9 @@
 [Collection resources](#collection-resources)
 - [Resource: luminate_collection](#resource-luminatecollection)
 - [Resource: luminate_collection_site_link](#resource-luminatecollectionsitelink)
+- [Resource: luminate_tenant_role](#resource-luminatetenantrole)
+- [Resource: luminate_collection_role](#resource-luminatecollectionrole)
+- [Resource: luminate_site_role](#resource-luminatesiterole)
 
 [Identities resources](#identities-resources)
 - [Resource: luminate_group_user](#resource-luminategroupuser)
@@ -369,6 +372,9 @@ The following arguments are supported:
 
 -   **header_customization** - (Optional) Custom headers key:value
     pairs to be added to all requests.
+- 
+-   **collection_id -** (Optional) Collection id to be linked to app, if empty will be assigned to default collection
+
 
 #### Attribute Reference
 
@@ -430,6 +436,8 @@ The following arguments are supported:
 -   **internal_address** - (Required) Internal address of the
     application, accessible by connector
 
+-   **collection_id -** (Optional) Collection id to be linked to app, if empty will be assigned to default collection
+
 #### Attribute Reference
 
 In addition to arguments above, the following attributes are exported:
@@ -487,6 +495,8 @@ The following arguments are supported:
 
 -   **internal_address** - (Required) Internal address of the
     application, accessible by connector
+
+- **collection_id -** (Optional) Collection id to be linked to app, if empty will be assigned to default collection
 
 #### Attribute Reference
 
@@ -551,6 +561,8 @@ The following arguments are supported:
     -   **address** - (Required) application target address.
 
     -   **ports** - (Required) list of forwarded ports.
+    
+    -   **collection_id -** (Optional) Collection id to be linked to app, if empty will be assigned to default collection
 
 #### Attribute Reference
 
@@ -1063,10 +1075,86 @@ resource "luminate_collection_site_link" "new-collection-site-link" {
 #### Argument Reference
 
 The following arguments are supported:
-
 -   **site_id -** (Required) Site id
 -   **collection_ids -** (Required) Collection ids to be linked to site must be sorted
 
+
+
+Resource: luminate_tenant_role
+---------------
+
+Provides Secure access cloud assign entity to tenant role
+
+#### Example Usage
+
+```
+	resource "luminate_tenant_role" "tenant-admin" {
+		role_type = "TenantAdmin"
+		identity_provider_id =  "local"
+		entity_id = "a8a48219-835f-4183-a2a9-bbba8cad8eb8"
+		entity_type = "User"
+	}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+-   **role_type  -** (Required) the role to assign TenantAdmin | TenantViewer
+-   **identity_provider_id -** (Required) The identity provider id
+-   **entity_id -** (Required) The entity id in idp
+-   **entity_type -** (Required) the entity type User | Group | ApiClient
+
+Resource: luminate_collection_role
+---------------
+
+Provides Secure access cloud assign entity to collection role
+
+#### Example Usage
+
+```
+    resource "luminate_collection_role" "policy-owner" {
+		role_type = "PolicyOwner"
+		identity_provider_id =  "local"
+		entity_id = "a8a48219-835f-4183-a2a9-bbba8cad8eb8"
+		entity_type = "User"
+		collection_id = "${luminate_collection.collection.id}"
+	}   
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+-   **role_type  -** (Required) the role to assign PolicyOwner | ApplicationOwner
+-   **identity_provider_id -** (Required) The identity provider id
+-   **entity_id -** (Required) The entity id in idp
+-   **entity_type -** (Required) the entity type User | Group | ApiClient
+-   **collection_id -** (Required) Collection id to be assigned
+
+Resource: luminate_site_role
+---------------
+
+Provides Secure access cloud assign entity to site role
+
+#### Example Usage
+
+```
+	resource "luminate_site_role" "site-editor" {
+		role_type = "SiteEditor"
+		identity_provider_id =  "local"
+		entity_id = "a8a48219-835f-4183-a2a9-bbba8cad8eb8"
+		entity_type = "User"
+		site_id = "${luminate_site.site.id}"
+	}
+```
+
+#### Argument Reference
+
+The following arguments are supported:
+-   **role_type  -** (Required) the role to assign SiteEditor | SiteConnectorDeployer
+-   **identity_provider_id -** (Required) The identity provider id
+-   **entity_id -** (Required) The entity id in idp
+-   **entity_type -** (Required) the entity type User | Group | ApiClient
+-   **site_id -** (Required) Site id to be assigned
 
 # Identities resources
 

@@ -273,6 +273,7 @@ func extractWebApplication(d *schema.ResourceData) *dto.Application {
 		Name:                              d.Get("name").(string),
 		Icon:                              d.Get("icon").(string),
 		SiteID:                            d.Get("site_id").(string),
+		CollectionID:                      d.Get("collection_id").(string),
 		Type:                              "web",
 		SubType:                           d.Get("sub_type").(string),
 		Visible:                           d.Get("visible").(bool),
@@ -305,6 +306,7 @@ func setWebApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 	d.Set("external_address", application.ExternalAddress)
 	d.Set("subdomain", application.Subdomain)
 	d.Set("custom_external_address", application.CustomExternalAddress)
+	d.Set("collection_id", application.CollectionID)
 
 	if application.CustomExternalAddress != "" {
 		trimmedAddress := strings.ReplaceAll(application.CustomExternalAddress, "https://", "")

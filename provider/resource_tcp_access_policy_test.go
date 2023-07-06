@@ -148,8 +148,47 @@ const resourceTcpAccessPolicy_validators_specified = `
 	}
 `
 
+const resourceTCPAccessPolicy_collection = `
+	resource "luminate_site" "new-site-collection" {
+	   name = "tfAccSiteAccessPolicyCollection"
+	}
+	resource "luminate_collection" "new-collection" {
+		name = "tfAccCollectionForApp"
+	}
+	resource "luminate_collection_site_link" "new-collection-site-link" {
+		site_id = "${luminate_site.new-site-collection.id}"
+		collection_ids = sort(["${luminate_collection.new-collection.id}"])
+	}
+	resource "luminate_tcp_application" "new-tcp-application-collection" {
+	  name = "tfAccTCPAccessPolicyCollection"
+	  site_id = "${luminate_site.new-site-collection.id}"
+      collection_id = "${luminate_collection.new-collection.id}"
+	  target {
+		address = "127.0.0.1"
+		ports = ["8080"]
+	  }
+
+      depends_on = [luminate_collection_site_link.new-collection-site-link]
+	}
+	resource "luminate_tcp_access_policy" "new-tcp-access-policy-collection" {
+		enabled = "true"
+		name =  "resourceTcpAccessPolicy_collection"
+      	collection_id = "${luminate_collection.new-collection.id}"
+		identity_provider_id = "local"
+
+		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["${luminate_tcp_application.new-tcp-application-collection.id}"]
+
+		allow_temporary_token = "true"
+		allow_public_key = "true"
+
+		depends_on = [luminate_collection_site_link.new-collection-site-link]
+	}
+`
+
 func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 	resourceName := "luminate_tcp_access_policy.new-tcp-access-policy"
+	resourceNameCollection := "luminate_tcp_access_policy.new-tcp-access-policy-collection"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -203,6 +242,12 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "validators.0.web_verification", "true"),
+				),
+			},
+			{
+				Config: resourceTCPAccessPolicy_collection,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceTcpAccessPolicy_collection"),
 				),
 			},
 		},

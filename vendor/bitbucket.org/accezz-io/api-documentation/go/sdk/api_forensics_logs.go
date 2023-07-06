@@ -26,8 +26,9 @@ type ForensicsLogsApiService service
 /*
 ForensicsLogsApiService Search Forensics logs
 Searches for the tenant&#x27;s forensics logs using the Elasticsearch query language. Time search frame between [from_date to to_date] limited to 30 days. Results are always sorted by date in ascending order.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+
 @return ForensicsLogSearchResults
 */
 func (a *ForensicsLogsApiService) SearchForensicsLogs(ctx context.Context, body LogsForensicsBody) (ForensicsLogSearchResults, *http.Response, error) {

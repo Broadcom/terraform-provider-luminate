@@ -1,6 +1,7 @@
 package dto
 
 import (
+	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"github.com/google/uuid"
 	"time"
 )
@@ -64,6 +65,7 @@ type Application struct {
 	ID                    string
 	Name                  string
 	SiteID                string
+	CollectionID          string
 	Type                  string
 	SubType               string
 	Icon                  string
@@ -144,7 +146,6 @@ const (
 	ManagedDeviceCondition                 = "IS_DEVICE_COMPLIANCE"
 	ManagedDeviceCloudSocConditionArgument = "CloudSOC"
 	ManagedDeviceOpswatConditionArgument   = "OPSWAT"
-	ManagedDeviceOpswatGroupsArgument      = "OPSWAT_GROUPS"
 	ManagedDeviceWssConditionArgument      = "IsWSSIp"
 	UnmanagedDeviceCondition               = "IS_NOT_WSS_IP"
 )
@@ -162,6 +163,7 @@ type AccessPolicy struct {
 	RdpSettings       *PolicyRdpSettings
 	SshSettings       *PolicySshSettings
 	TcpSettings       *PolicyTcpSettings
+	CollectionID      string
 }
 
 type DirectoryEntity struct {
@@ -212,4 +214,46 @@ type ListCollectionsRequest struct {
 	ApplicationId uuid.UUID
 	SiteId        uuid.UUID
 	PolicyId      uuid.UUID
+}
+
+type CreateRoleDTO struct {
+	Role     string
+	Entities []DirectoryEntity
+}
+
+type CreateCollectionRoleDTO struct {
+	CreateRoleDTO
+	CollectionID string
+}
+
+type CreateSiteRoleDTO struct {
+	CreateRoleDTO
+	SiteID string
+}
+
+type RoleBinding struct {
+	ID            string
+	EntityIDInIDP string
+	EntityIDPID   string
+	EntityType    string
+	RoleType      string
+	CollectionID  string
+	ResourceID    string
+}
+
+func EntityDTOToEntityModel(entities []DirectoryEntity) []sdk.DirectoryEntity {
+	var directoryEntities []sdk.DirectoryEntity
+	for _, directoryEntity := range entities {
+		identityProviderType, err := ConvertIdentityProviderTypeToEnum(directoryEntity.IdentityProviderType)
+		if err == nil {
+			directoryEntities = append(directoryEntities, sdk.DirectoryEntity{
+				IdentifierInProvider: directoryEntity.IdentifierInProvider,
+				IdentityProviderId:   directoryEntity.IdentityProviderId,
+				DisplayName:          directoryEntity.DisplayName,
+				IdentityProviderType: &identityProviderType,
+				Type_:                ToModelType(directoryEntity.EntityType),
+			})
+		}
+	}
+	return directoryEntities
 }

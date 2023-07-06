@@ -59,6 +59,12 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 				ValidateFunc: utils.ValidateUuid,
 			},
 		},
+		"collection_id": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Optional:    true,
+			Description: "Collection ID to which the policy will be assigned",
+		},
 		"validators": {
 			Type:     schema.TypeList,
 			Optional: true,
@@ -110,6 +116,7 @@ func setAccessPolicyBaseFields(d *schema.ResourceData, accessPolicy *dto.AccessP
 	d.Set("enabled", accessPolicy.Enabled)
 	d.Set("name", accessPolicy.Name)
 	d.Set("applications", accessPolicy.Applications)
+	d.Set("collection_id", accessPolicy.CollectionID)
 
 	if accessPolicy.Validators != nil {
 		d.Set("validators", flattenValidators(accessPolicy.Validators))
@@ -178,6 +185,8 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 
 	userIdsInterface := d.Get("user_ids").([]interface{})
 
+	collectionID := d.Get("collection_id").(string)
+
 	for _, userId := range userIdsInterface {
 		directoryEntity = append(directoryEntity, dto.DirectoryEntity{
 			IdentityProviderId:   identityProviderId,
@@ -211,6 +220,7 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 		Applications:      applicationIds,
 		Validators:        validators,
 		Conditions:        conditions,
+		CollectionID:      collectionID,
 	}
 }
 

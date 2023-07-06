@@ -23,6 +23,7 @@ type LuminateService struct {
 	IntegrationAPI    *IntegrationAPI
 	SshClientApi      *SshClientAPI
 	CollectionAPI     *CollectionAPI
+	RoleBindingsAPI   *RoleBindingsAPI
 }
 
 const (
@@ -64,6 +65,7 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	lumSvc.IdentityProviders = NewIdentityProviderAPI(lumSvc.cli)
 	lumSvc.IntegrationAPI = NewIntegrationAPI(lumSvc.cli, httpClient, basePath)
 	lumSvc.SshClientApi = NewSshClientAPI(lumSvc.cli)
+	lumSvc.RoleBindingsAPI = NewRoleBindingsAPI(lumSvc.cli)
 
 	return &lumSvc
 }

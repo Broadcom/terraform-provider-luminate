@@ -1,13 +1,7 @@
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230326202819-838508e90027 h1:RSet2OZKzxzmydPgHjEg5nf6UwwzHi+MtB2XGxw4zS8=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230326202819-838508e90027/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230330082227-d773f8ad9942 h1:TrKa/71OM14lnyHoBL2mwuv5JPIyOsYS1qPKX4nirgI=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230330082227-d773f8ad9942/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230330120443-d170359a6117 h1:CzvPBcjBsD+Yz1X+EXKgpZrjCDcQ8SnpsVJlGEEoSfc=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230330120443-d170359a6117/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230402135305-c523ad37ce9b h1:argJmZXq5bka3D/xh6tWLLe6YoDtsUk0EdASCoZ2pOY=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230402135305-c523ad37ce9b/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230529140757-a74a1166a78d h1:TkXDiUq3QPTpc1dQetcR5NJ9t4c9K7ev7lFUNUi2QQQ=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230529140757-a74a1166a78d/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20230614152642-aa890aa55cca h1:D32DJQWHUPo1atpp/+ibUAkIEBA1iXhM1eURb53+8XU=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20230614152642-aa890aa55cca/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20230620110801-81ce4de3aa2e h1:QRJeMwczYy8QpQ8rlq+mJcWof5JD5e1MNXh+qI9UvKo=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20230620110801-81ce4de3aa2e/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.31.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=

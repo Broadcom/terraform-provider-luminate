@@ -130,6 +130,7 @@ func resourceDeleteRDPApplication(d *schema.ResourceData, m interface{}) error {
 
 func setRDPApplicationFields(d *schema.ResourceData, application *dto.Application) {
 	d.Set("name", application.Name)
+	d.Set("collection_id", application.CollectionID)
 	d.Set("icon", application.Icon)
 	d.Set("type", application.Type)
 	d.Set("visible", application.Visible)
@@ -145,6 +146,7 @@ func extractRDPApplicationFields(d *schema.ResourceData) *dto.Application {
 	return &dto.Application{
 		ID:                   d.Id(),
 		Name:                 d.Get("name").(string),
+		CollectionID:         d.Get("collection_id").(string),
 		Icon:                 d.Get("icon").(string),
 		SiteID:               d.Get("site_id").(string),
 		Type:                 "rdp",
