@@ -11,7 +11,7 @@ BINARY_NAME=terraform-provider-luminate
 
 GO111MODULE=on
 
-all: linux darwin windows
+all: linux darwin darwin_arm64 windows
 
 linux:
 	mkdir -p release || true
@@ -33,3 +33,8 @@ testacc:
 	export LUMINATE_API_CLIENT_ID="${TERRAFORM_ACCEPTANCE_CLIENT_ID}" && \
 	export LUMINATE_API_CLIENT_SECRET="${TERRAFORM_ACCEPTANCE_CLIENT_SECRET}" && \
 	export TF_ACC=1 && $(GOTEST) -p 1 -v  ./...
+
+darwin_arm64:
+	mkdir -p release || true
+	export GOOS=darwin GOARCH=arm64; $(GOBUILD) -o $(OUTPUT_DIR)/darwin_arm64/$(BINARY_NAME) -v
+	zip -j release/$(BINARY_NAME)-darwin_arm64.zip $(OUTPUT_DIR)/darwin_arm64/*

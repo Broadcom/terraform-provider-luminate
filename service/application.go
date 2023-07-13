@@ -171,7 +171,7 @@ func (api *ApplicationAPI) linkSiteToDefaultCollectionIfNeeded(siteID string) er
 	}
 
 	if len(*links) == 0 {
-		return errors.New("unable to link site to collection")
+		log.Print("[DEBUG] Link site to collection returned with 0 links")
 	}
 
 	return nil
