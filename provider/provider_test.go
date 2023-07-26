@@ -4,24 +4,28 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var testAccProviders map[string]terraform.ResourceProvider
+var testAccProviders map[string]*schema.Provider
+var newTestAccProviders map[string]func() (*schema.Provider, error)
 var testAccProvider *schema.Provider
 var testAccDomain string
 
 func init() {
-	testAccProvider = Provider().(*schema.Provider)
-	testAccProviders = map[string]terraform.ResourceProvider{
+	testAccProvider = Provider()
+	testAccProviders = map[string]*schema.Provider{
 		"luminate": testAccProvider,
+	}
+	newTestAccProviders = make(map[string]func() (*schema.Provider, error))
+	newTestAccProviders["luminate"] = func() (*schema.Provider, error) {
+		return testAccProvider, nil
 	}
 	testAccDomain = "terraformat.luminatesec.com"
 }
 
 func TestProvider(t *testing.T) {
-	if err := Provider().(*schema.Provider).InternalValidate(); err != nil {
+	if err := Provider().InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }

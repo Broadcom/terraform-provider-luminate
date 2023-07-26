@@ -6,8 +6,8 @@ import (
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
@@ -105,6 +105,20 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 							ValidateFunc: validation.NoZeroValues,
 						},
 					},
+					"managed_device": {
+						Type:        schema.TypeList,
+						Optional:    true,
+						Description: "location based condition, specify the list of accepted locations.",
+						Elem: &schema.Schema{
+							Type:         schema.TypeBool,
+							ValidateFunc: validation.NoZeroValues,
+						},
+					},
+					"unmanaged_device": {
+						Type:        schema.TypeBool,
+						Optional:    true,
+						Description: "location based condition, if had unmanaged device",
+					},
 				},
 			},
 		},
@@ -153,7 +167,9 @@ func flattenManagedDevice(manageDevice dto.ManagedDevice) []interface{} {
 	if manageDevice.SymantecWebSecurityService {
 		k["symantec_web_security_service"] = manageDevice.SymantecWebSecurityService
 	}
-
+	if len(k) == 0 {
+		return nil
+	}
 	out = append(out, k)
 	return out
 }
@@ -166,11 +182,29 @@ func flattenConditions(conditions *dto.Conditions) []interface{} {
 	k := map[string]interface{}{
 		"source_ip":        conditions.SourceIp,
 		"location":         conditions.Location,
-		"managed_device":   flattenManagedDevice(conditions.ManagedDevice),
 		"unmanaged_device": conditions.UnmanagedDevice,
 	}
 
+	if hasDeviceCondition(conditions.ManagedDevice) {
+		k["managed_device"] = flattenManagedDevice(conditions.ManagedDevice)
+	}
+
 	return []interface{}{k}
+}
+
+func hasDeviceCondition(managedDevice dto.ManagedDevice) bool {
+	if managedDevice.OpswatMetaAccess {
+		return true
+	}
+
+	if managedDevice.SymantecCloudSoc {
+		return true
+	}
+
+	if managedDevice.SymantecWebSecurityService {
+		return true
+	}
+	return false
 }
 
 func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {

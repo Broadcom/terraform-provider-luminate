@@ -61,7 +61,7 @@ type Key struct {
 type KeyRing interface {
 	// KeysById returns the set of keys that have the given key id.
 	KeysById(id uint64) []Key
-	// KeysByIdAndUsage returns the set of keys with the given id
+	// KeysByIdUsage returns the set of keys with the given id
 	// that also meet the key usage given by requiredUsage.
 	// The requiredUsage is expressed as the bitwise-OR of
 	// packet.KeyFlag* values.
@@ -183,7 +183,7 @@ func (el EntityList) KeysById(id uint64) (keys []Key) {
 	return
 }
 
-// KeysByIdAndUsage returns the set of keys with the given id that also meet
+// KeysByIdUsage returns the set of keys with the given id that also meet
 // the key usage given by requiredUsage.  The requiredUsage is expressed as
 // the bitwise-OR of packet.KeyFlag* values.
 func (el EntityList) KeysByIdUsage(id uint64, requiredUsage byte) (keys []Key) {
@@ -504,7 +504,7 @@ const defaultRSAKeyBits = 2048
 // which may be empty but must not contain any of "()<>\x00".
 // If config is nil, sensible defaults will be used.
 func NewEntity(name, comment, email string, config *packet.Config) (*Entity, error) {
-	currentTime := config.Now()
+	creationTime := config.Now()
 
 	bits := defaultRSAKeyBits
 	if config != nil && config.RSABits != 0 {
@@ -525,8 +525,8 @@ func NewEntity(name, comment, email string, config *packet.Config) (*Entity, err
 	}
 
 	e := &Entity{
-		PrimaryKey: packet.NewRSAPublicKey(currentTime, &signingPriv.PublicKey),
-		PrivateKey: packet.NewRSAPrivateKey(currentTime, signingPriv),
+		PrimaryKey: packet.NewRSAPublicKey(creationTime, &signingPriv.PublicKey),
+		PrivateKey: packet.NewRSAPrivateKey(creationTime, signingPriv),
 		Identities: make(map[string]*Identity),
 	}
 	isPrimaryId := true
@@ -534,7 +534,7 @@ func NewEntity(name, comment, email string, config *packet.Config) (*Entity, err
 		Name:   uid.Id,
 		UserId: uid,
 		SelfSignature: &packet.Signature{
-			CreationTime: currentTime,
+			CreationTime: creationTime,
 			SigType:      packet.SigTypePositiveCert,
 			PubKeyAlgo:   packet.PubKeyAlgoRSA,
 			Hash:         config.Hash(),
@@ -563,10 +563,10 @@ func NewEntity(name, comment, email string, config *packet.Config) (*Entity, err
 
 	e.Subkeys = make([]Subkey, 1)
 	e.Subkeys[0] = Subkey{
-		PublicKey:  packet.NewRSAPublicKey(currentTime, &encryptingPriv.PublicKey),
-		PrivateKey: packet.NewRSAPrivateKey(currentTime, encryptingPriv),
+		PublicKey:  packet.NewRSAPublicKey(creationTime, &encryptingPriv.PublicKey),
+		PrivateKey: packet.NewRSAPrivateKey(creationTime, encryptingPriv),
 		Sig: &packet.Signature{
-			CreationTime:              currentTime,
+			CreationTime:              creationTime,
 			SigType:                   packet.SigTypeSubkeyBinding,
 			PubKeyAlgo:                packet.PubKeyAlgoRSA,
 			Hash:                      config.Hash(),
