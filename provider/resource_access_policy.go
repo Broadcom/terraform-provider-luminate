@@ -1,7 +1,9 @@
 package provider
 
 import (
+	"context"
 	"errors"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
@@ -76,6 +78,13 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 						Optional:     true,
 						Default:      false,
 						Description:  "Indicate whatever to perform web verification validation. not compatible for HTTP applications",
+						ValidateFunc: utils.ValidateBool,
+					},
+					"compliance_check": {
+						Type:         schema.TypeBool,
+						Optional:     true,
+						Default:      false,
+						Description:  "Indicate whatever to perform compliance check validation.",
 						ValidateFunc: utils.ValidateBool,
 					},
 				},
@@ -356,15 +365,15 @@ func deviceList(managedDeviceInterface []interface{}, managedDevice dto.Device) 
 	}
 }
 
-func resourceDeleteAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	err := client.AccessPolicies.DeleteAccessPolicy(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")

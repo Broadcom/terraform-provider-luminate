@@ -197,7 +197,6 @@ func setTCPApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 	d.Set("type", application.Type)
 	d.Set("visible", application.Visible)
 	d.Set("notification_enabled", application.NotificationsEnabled)
-	d.Set("internal_address", TCPApplicationInternalAddress)
 	d.Set("external_address", application.ExternalAddress)
 	d.Set("subdomain", application.Subdomain)
 	d.Set("luminate_address", application.LuminateAddress)

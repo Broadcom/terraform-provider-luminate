@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/pkg/errors"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
@@ -29,51 +31,54 @@ func LuminateTcpAccessPolicy() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Schema: tcpSchema,
-		Create: resourceCreateTcpAccessPolicy,
-		Read:   resourceReadTcpAccessPolicy,
-		Update: resourceUpdateTcpAccessPolicy,
-		Delete: resourceDeleteAccessPolicy,
+		Schema:        tcpSchema,
+		CreateContext: resourceCreateTcpAccessPolicy,
+		ReadContext:   resourceReadTcpAccessPolicy,
+		UpdateContext: resourceUpdateTcpAccessPolicy,
+		DeleteContext: resourceDeleteAccessPolicy,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateTcpAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceCreateTcpAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	accessPolicy := extractTcpAccessPolicy(d)
 	for i, _ := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
+			return diag.FromErr(errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId))
 		}
 		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setTcpAccessPolicyFields(d, createdAccessPolicy)
 
-	return resourceReadTcpAccessPolicy(d, m)
+	resourceReadTcpAccessPolicy(ctx, d, m)
+	return diagnostics
 }
 
-func resourceReadTcpAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceReadTcpAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	accessPolicy, err := client.AccessPolicies.GetAccessPolicy(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if accessPolicy == nil {
@@ -83,20 +88,21 @@ func resourceReadTcpAccessPolicy(d *schema.ResourceData, m interface{}) error {
 
 	setTcpAccessPolicyFields(d, accessPolicy)
 
-	return nil
+	return diagnostics
 }
 
-func resourceUpdateTcpAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateTcpAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	accessPolicy := extractTcpAccessPolicy(d)
 	for i, _ := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
+			return diag.FromErr(errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId))
 		}
 		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
@@ -104,12 +110,13 @@ func resourceUpdateTcpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 
 	accessPolicy, err := client.AccessPolicies.UpdateAccessPolicy(accessPolicy)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setTcpAccessPolicyFields(d, accessPolicy)
 
-	return resourceReadTcpAccessPolicy(d, m)
+	resourceReadTcpAccessPolicy(ctx, d, m)
+	return diagnostics
 }
 
 func setTcpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPolicy) {
