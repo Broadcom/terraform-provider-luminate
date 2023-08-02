@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"

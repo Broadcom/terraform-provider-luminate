@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"sort"
 
-	"github.com/vmihailenco/msgpack"
+	"github.com/vmihailenco/msgpack/v5"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
 )
@@ -31,6 +31,8 @@ func Marshal(val cty.Value, ty cty.Type) ([]byte, error) {
 	var path cty.Path
 	var buf bytes.Buffer
 	enc := msgpack.NewEncoder(&buf)
+	enc.UseCompactInts(true)
+	enc.UseCompactFloats(true)
 
 	err := marshal(val, ty, path, enc)
 	if err != nil {
@@ -41,6 +43,10 @@ func Marshal(val cty.Value, ty cty.Type) ([]byte, error) {
 }
 
 func marshal(val cty.Value, ty cty.Type, path cty.Path, enc *msgpack.Encoder) error {
+	if val.IsMarked() {
+		return path.NewErrorf("value has marks, so it cannot be serialized")
+	}
+
 	// If we're going to decode as DynamicPseudoType then we need to save
 	// dynamic type information to recover the real type.
 	if ty == cty.DynamicPseudoType && val.Type() != cty.DynamicPseudoType {
@@ -48,11 +54,7 @@ func marshal(val cty.Value, ty cty.Type, path cty.Path, enc *msgpack.Encoder) er
 	}
 
 	if !val.IsKnown() {
-		err := enc.Encode(unknownVal)
-		if err != nil {
-			return path.NewError(err)
-		}
-		return nil
+		return marshalUnknownValue(val.Range(), path, enc)
 	}
 	if val.IsNull() {
 		err := enc.EncodeNil()
