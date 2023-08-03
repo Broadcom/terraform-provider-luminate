@@ -117,7 +117,7 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 					"managed_device": {
 						Type:        schema.TypeList,
 						Optional:    true,
-						Description: "location based condition, specify the list of accepted locations.",
+						Description: "list of managed devices",
 						Elem: &schema.Schema{
 							Type:         schema.TypeBool,
 							ValidateFunc: validation.NoZeroValues,
@@ -126,7 +126,7 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 					"unmanaged_device": {
 						Type:        schema.TypeList,
 						Optional:    true,
-						Description: "location based condition, if had unmanaged device",
+						Description: "use unmanaged device",
 						Elem: &schema.Schema{
 							Type:         schema.TypeBool,
 							ValidateFunc: validation.NoZeroValues,
