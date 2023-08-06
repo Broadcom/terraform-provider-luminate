@@ -159,3 +159,19 @@ func TestGetDeviceArguments(t *testing.T) {
 
 	assert.Equal(t, expectedMap, actualMap)
 }
+
+func TestHaveDeviceArgument(t *testing.T) {
+	device := Device{
+		OpswatMetaAccess:           false,
+		SymantecCloudSoc:           false,
+		SymantecWebSecurityService: false,
+	}
+	actual := hasDeviceArgument(device)
+	assert.Equal(t, false, actual)
+
+	device.SymantecWebSecurityService = true
+	actual = hasDeviceArgument(device)
+
+	assert.Equal(t, true, actual)
+
+}

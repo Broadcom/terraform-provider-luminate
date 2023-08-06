@@ -117,19 +117,61 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 					"managed_device": {
 						Type:        schema.TypeList,
 						Optional:    true,
-						Description: "list of managed devices",
-						Elem: &schema.Schema{
-							Type:         schema.TypeBool,
-							ValidateFunc: validation.NoZeroValues,
+						Description: "list of managed devices that have restriction access",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"opswat": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to Opswat MetaAccess",
+									ValidateFunc: utils.ValidateBool,
+								},
+								"symantec_cloudsoc": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to symantec cloudsoc",
+									ValidateFunc: utils.ValidateBool,
+								},
+								"symantec_web_security_service": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to symantec web security service",
+									ValidateFunc: utils.ValidateBool,
+								},
+							},
 						},
 					},
 					"unmanaged_device": {
 						Type:        schema.TypeList,
 						Optional:    true,
-						Description: "use unmanaged device",
-						Elem: &schema.Schema{
-							Type:         schema.TypeBool,
-							ValidateFunc: validation.NoZeroValues,
+						Description: "list of unmanaged devices that have restriction access",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"opswat": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to Opswat MetaAccess",
+									ValidateFunc: utils.ValidateBool,
+								},
+								"symantec_cloudsoc": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to symantec cloudsoc",
+									ValidateFunc: utils.ValidateBool,
+								},
+								"symantec_web_security_service": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to symantec web security service",
+									ValidateFunc: utils.ValidateBool,
+								},
+							},
 						},
 					},
 				},
@@ -328,11 +370,11 @@ func extractConditions(d *schema.ResourceData) *dto.Conditions {
 			}
 
 			if managedDeviceInterface, ok := elem["managed_device"].([]interface{}); ok {
-				deviceList(managedDeviceInterface, managedDevice)
+				deviceList(managedDeviceInterface, &managedDevice)
 			}
 
 			if unManagedDeviceInterface, ok := elem["unmanaged_device"].([]interface{}); ok {
-				deviceList(unManagedDeviceInterface, unmanagedDevice)
+				deviceList(unManagedDeviceInterface, &unmanagedDevice)
 			}
 
 			conditions = &dto.Conditions{
@@ -347,20 +389,20 @@ func extractConditions(d *schema.ResourceData) *dto.Conditions {
 	return conditions
 }
 
-func deviceList(managedDeviceInterface []interface{}, managedDevice dto.Device) {
-	for _, managedDeviceElements := range managedDeviceInterface {
-		elem := managedDeviceElements.(map[string]interface{})
+func deviceList(deviceInterface []interface{}, device *dto.Device) {
+	for _, deviceElements := range deviceInterface {
+		elem := deviceElements.(map[string]interface{})
 
 		if elem["opswat"].(bool) {
-			managedDevice.OpswatMetaAccess = elem["opswat"].(bool)
+			device.OpswatMetaAccess = elem["opswat"].(bool)
 		}
 
 		if elem["symantec_cloudsoc"].(bool) {
-			managedDevice.SymantecCloudSoc = elem["symantec_cloudsoc"].(bool)
+			device.SymantecCloudSoc = elem["symantec_cloudsoc"].(bool)
 		}
 
 		if elem["symantec_web_security_service"].(bool) {
-			managedDevice.SymantecWebSecurityService = elem["symantec_web_security_service"].(bool)
+			device.SymantecWebSecurityService = elem["symantec_web_security_service"].(bool)
 		}
 	}
 }

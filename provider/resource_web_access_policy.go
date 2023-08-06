@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
-	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -14,47 +13,6 @@ import (
 
 func LuminateWebAccessPolicy() *schema.Resource {
 	webSchema := LuminateAccessPolicyBaseSchema()
-
-	conditionsResource := webSchema["conditions"].Elem.(*schema.Resource)
-
-	conditionsResource.Schema["managed_device"] = &schema.Schema{
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "Indicate whatever to restrict access to managed devices only",
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"opswat": {
-					Type:         schema.TypeBool,
-					Optional:     true,
-					Default:      false,
-					Description:  "Indicate whatever to restrict access to Opswat MetaAccess",
-					ValidateFunc: utils.ValidateBool,
-				},
-				"symantec_cloudsoc": {
-					Type:         schema.TypeBool,
-					Optional:     true,
-					Default:      false,
-					Description:  "Indicate whatever to restrict access to symantec cloudsoc",
-					ValidateFunc: utils.ValidateBool,
-				},
-				"symantec_web_security_service": {
-					Type:         schema.TypeBool,
-					Optional:     true,
-					Default:      false,
-					Description:  "Indicate whatever to restrict access to symantec web security service",
-					ValidateFunc: utils.ValidateBool,
-				},
-			},
-		},
-	}
-
-	conditionsResource.Schema["unmanaged_device"] = &schema.Schema{
-		Type:         schema.TypeBool,
-		Optional:     true,
-		Default:      false,
-		Description:  "Indicate whatever to restrict access to unmanaged devices only",
-		ValidateFunc: utils.ValidateBool,
-	}
 
 	return &schema.Resource{
 		Schema:        webSchema,
@@ -78,7 +36,7 @@ func resourceCreateWebAccessPolicy(ctx context.Context, d *schema.ResourceData, 
 
 	accessPolicy := extractWebAccessPolicy(d)
 
-	for i, _ := range accessPolicy.DirectoryEntities {
+	for i := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
 			return diag.FromErr(errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId))
@@ -144,7 +102,7 @@ func resourceUpdateWebAccessPolicy(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	accessPolicy := extractWebAccessPolicy(d)
-	for i, _ := range accessPolicy.DirectoryEntities {
+	for i := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
 			return diag.FromErr(errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId))

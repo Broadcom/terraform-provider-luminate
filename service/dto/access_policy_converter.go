@@ -186,7 +186,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 			})
 		}
 
-		if haveDeviceArgument(accessPolicy.Conditions.ManagedDevice) {
+		if hasDeviceArgument(accessPolicy.Conditions.ManagedDevice) {
 			managedArgumentsMap := getDeviceArguments(accessPolicy.Conditions.ManagedDevice)
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: ManagedDeviceCondition,
@@ -194,7 +194,7 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 			})
 		}
 
-		if haveDeviceArgument(accessPolicy.Conditions.UnmanagedDevice) {
+		if hasDeviceArgument(accessPolicy.Conditions.UnmanagedDevice) {
 			unmanagedArgumentsMap := getDeviceArguments(accessPolicy.Conditions.UnmanagedDevice)
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: UnmanagedDeviceCondition,
@@ -224,30 +224,30 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 }
 
 func getDeviceArguments(deviceArg Device) map[string][]string {
-	var managedDeviceArguments []string
+	var deviceArguments []string
 
-	managedArgumentsMap := map[string][]string{}
+	deviceArgumentsMap := map[string][]string{}
 
 	if deviceArg.SymantecWebSecurityService {
-		managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceWssConditionArgument)
+		deviceArguments = append(deviceArguments, ManagedDeviceWssConditionArgument)
 	}
 
 	if deviceArg.SymantecCloudSoc {
-		managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceCloudSocConditionArgument)
+		deviceArguments = append(deviceArguments, ManagedDeviceCloudSocConditionArgument)
 	}
 
 	if deviceArg.OpswatMetaAccess {
-		managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceOpswatConditionArgument)
+		deviceArguments = append(deviceArguments, ManagedDeviceOpswatConditionArgument)
 	}
 
-	if managedDeviceArguments != nil {
-		managedArgumentsMap[Authentication] = managedDeviceArguments
+	if deviceArguments != nil {
+		deviceArgumentsMap[Authentication] = deviceArguments
 	}
 
-	return managedArgumentsMap
+	return deviceArgumentsMap
 }
 
-func haveDeviceArgument(deviceArg Device) bool {
+func hasDeviceArgument(deviceArg Device) bool {
 	if deviceArg.OpswatMetaAccess || deviceArg.SymantecCloudSoc || deviceArg.SymantecWebSecurityService {
 		return true
 	}
