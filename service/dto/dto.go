@@ -115,24 +115,25 @@ type Validators struct {
 	WebVerification bool
 }
 
-type ManagedDevice struct {
+type Device struct {
 	OpswatMetaAccess           bool
 	SymantecCloudSoc           bool
 	SymantecWebSecurityService bool
 }
+
 type Conditions struct {
 	SourceIp        []string
 	SharedIpList    []string
 	Location        []string
-	ManagedDevice   ManagedDevice
-	UnmanagedDevice bool
+	ManagedDevice   Device
+	UnmanagedDevice Device
 }
 
 const (
-	IpUuid            = "IP_LIST"
-	SharedIpListUuid  = "SHARED_IP_LIST"
-	CountriesUuid     = "COUNTRIES"
-	ManagedDeviceUuid = "AUTHENTICATION"
+	IpUuid           = "IP_LIST"
+	SharedIpListUuid = "SHARED_IP_LIST"
+	CountriesUuid    = "COUNTRIES"
+	Authentication   = "Authentication"
 )
 
 const (

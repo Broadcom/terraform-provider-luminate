@@ -1,7 +1,9 @@
 package provider
 
 import (
+	"context"
 	"errors"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
@@ -78,6 +80,13 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 						Description:  "Indicate whatever to perform web verification validation. not compatible for HTTP applications",
 						ValidateFunc: utils.ValidateBool,
 					},
+					"compliance_check": {
+						Type:         schema.TypeBool,
+						Optional:     true,
+						Default:      false,
+						Description:  "Indicate whatever to perform compliance check validation.",
+						ValidateFunc: utils.ValidateBool,
+					},
 				},
 			},
 		},
@@ -108,16 +117,62 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 					"managed_device": {
 						Type:        schema.TypeList,
 						Optional:    true,
-						Description: "list of managed devices",
-						Elem: &schema.Schema{
-							Type:         schema.TypeBool,
-							ValidateFunc: validation.NoZeroValues,
+						Description: "list of managed devices that have restriction access",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"opswat": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to Opswat MetaAccess",
+									ValidateFunc: utils.ValidateBool,
+								},
+								"symantec_cloudsoc": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to symantec cloudsoc",
+									ValidateFunc: utils.ValidateBool,
+								},
+								"symantec_web_security_service": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to symantec web security service",
+									ValidateFunc: utils.ValidateBool,
+								},
+							},
 						},
 					},
 					"unmanaged_device": {
-						Type:        schema.TypeBool,
+						Type:        schema.TypeList,
 						Optional:    true,
-						Description: "use unmanaged device",
+						Description: "list of unmanaged devices that have restriction access",
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"opswat": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to Opswat MetaAccess",
+									ValidateFunc: utils.ValidateBool,
+								},
+								"symantec_cloudsoc": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to symantec cloudsoc",
+									ValidateFunc: utils.ValidateBool,
+								},
+								"symantec_web_security_service": {
+									Type:         schema.TypeBool,
+									Optional:     true,
+									Default:      false,
+									Description:  "Indicate whatever to restrict access to symantec web security service",
+									ValidateFunc: utils.ValidateBool,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -152,7 +207,7 @@ func flattenValidators(validators *dto.Validators) []interface{} {
 	return []interface{}{k}
 }
 
-func flattenManagedDevice(manageDevice dto.ManagedDevice) []interface{} {
+func flattenManagedDevice(manageDevice dto.Device) []interface{} {
 	var out = make([]interface{}, 0, 0)
 	k := make(map[string]interface{})
 
@@ -180,19 +235,22 @@ func flattenConditions(conditions *dto.Conditions) []interface{} {
 	}
 
 	k := map[string]interface{}{
-		"source_ip":        conditions.SourceIp,
-		"location":         conditions.Location,
-		"unmanaged_device": conditions.UnmanagedDevice,
+		"source_ip": conditions.SourceIp,
+		"location":  conditions.Location,
 	}
 
 	if hasDeviceCondition(conditions.ManagedDevice) {
 		k["managed_device"] = flattenManagedDevice(conditions.ManagedDevice)
 	}
 
+	if hasDeviceCondition(conditions.ManagedDevice) {
+		k["unmanaged_device"] = flattenManagedDevice(conditions.UnmanagedDevice)
+	}
+
 	return []interface{}{k}
 }
 
-func hasDeviceCondition(managedDevice dto.ManagedDevice) bool {
+func hasDeviceCondition(managedDevice dto.Device) bool {
 	if managedDevice.OpswatMetaAccess {
 		return true
 	}
@@ -296,8 +354,8 @@ func extractConditions(d *schema.ResourceData) *dto.Conditions {
 
 			var sourceIpList []string
 			var locations []string
-			var managedDevice dto.ManagedDevice
-			var unmanagedDevice bool
+			var managedDevice dto.Device
+			var unmanagedDevice dto.Device
 
 			if sourceIpInterface, ok := elem["source_ip"].([]interface{}); ok {
 				for _, sourceIp := range sourceIpInterface {
@@ -312,26 +370,11 @@ func extractConditions(d *schema.ResourceData) *dto.Conditions {
 			}
 
 			if managedDeviceInterface, ok := elem["managed_device"].([]interface{}); ok {
-				for _, managedDeviceElements := range managedDeviceInterface {
-					elem := managedDeviceElements.(map[string]interface{})
-
-					if elem["opswat"].(bool) {
-						managedDevice.OpswatMetaAccess = elem["opswat"].(bool)
-					}
-
-					if elem["symantec_cloudsoc"].(bool) {
-						managedDevice.SymantecCloudSoc = elem["symantec_cloudsoc"].(bool)
-					}
-
-					if elem["symantec_web_security_service"].(bool) {
-						managedDevice.SymantecWebSecurityService = elem["symantec_web_security_service"].(bool)
-					}
-				}
+				deviceList(managedDeviceInterface, &managedDevice)
 			}
 
-			unmanagedDevice, ok = elem["unmanaged_device"].(bool)
-			if !ok {
-				unmanagedDevice = false
+			if unManagedDeviceInterface, ok := elem["unmanaged_device"].([]interface{}); ok {
+				deviceList(unManagedDeviceInterface, &unmanagedDevice)
 			}
 
 			conditions = &dto.Conditions{
@@ -346,15 +389,33 @@ func extractConditions(d *schema.ResourceData) *dto.Conditions {
 	return conditions
 }
 
-func resourceDeleteAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func deviceList(deviceInterface []interface{}, device *dto.Device) {
+	for _, deviceElements := range deviceInterface {
+		elem := deviceElements.(map[string]interface{})
+
+		if elem["opswat"].(bool) {
+			device.OpswatMetaAccess = elem["opswat"].(bool)
+		}
+
+		if elem["symantec_cloudsoc"].(bool) {
+			device.SymantecCloudSoc = elem["symantec_cloudsoc"].(bool)
+		}
+
+		if elem["symantec_web_security_service"].(bool) {
+			device.SymantecWebSecurityService = elem["symantec_web_security_service"].(bool)
+		}
+	}
+}
+
+func resourceDeleteAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	err := client.AccessPolicies.DeleteAccessPolicy(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")
