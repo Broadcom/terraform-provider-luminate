@@ -210,7 +210,7 @@ func extractSshGwApplicationFields(d *schema.ResourceData) *dto.Application {
 	vpcs := extractSshGwVpc(d, integrationId)
 
 	var segmentId string
-	if segmentIdInterface, ok := d.GetOkExists("segment_id"); ok {
+	if segmentIdInterface, ok := d.GetOk("segment_id"); ok {
 		segmentId = segmentIdInterface.(string)
 	}
 
