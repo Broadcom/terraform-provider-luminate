@@ -133,7 +133,7 @@ const (
 	IpUuid           = "IP_LIST"
 	SharedIpListUuid = "SHARED_IP_LIST"
 	CountriesUuid    = "COUNTRIES"
-	Authentication   = "Authentication"
+	Authentication   = "AUTHENTICATION"
 )
 
 const (

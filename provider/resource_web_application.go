@@ -1,8 +1,10 @@
 package provider
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 
@@ -120,56 +122,55 @@ func LuminateWebApplication() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Schema: webAppSchema,
-		Create: resourceCreateWebApplication,
-		Read:   resourceReadWebApplication,
-		Update: resourceUpdateWebApplication,
-		Delete: resourceDeleteWebApplication,
+		Schema:        webAppSchema,
+		CreateContext: resourceCreateWebApplication,
+		ReadContext:   resourceReadWebApplication,
+		UpdateContext: resourceUpdateWebApplication,
+		DeleteContext: resourceDeleteWebApplication,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateWebApplication(d *schema.ResourceData, m interface{}) error {
+func resourceCreateWebApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	log.Printf("[DEBUG] LUMINATE CREATE APP")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	newApp := extractWebApplication(d)
 
 	app, err := client.Applications.CreateApplication(newApp)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = client.Applications.BindApplicationToSite(app, newApp.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(app.ID)
 	setWebApplicationFields(d, app, client.TenantBaseDomain)
-
-	return resourceReadWebApplication(d, m)
+	resourceReadWebApplication(ctx, d, m)
+	return diagnostics
 }
 
-func resourceReadWebApplication(d *schema.ResourceData, m interface{}) error {
-
+func resourceReadWebApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE READ APP")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	app, err := client.Applications.GetApplicationById(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if app == nil {
@@ -180,15 +181,15 @@ func resourceReadWebApplication(d *schema.ResourceData, m interface{}) error {
 	app.SiteID = d.Get("site_id").(string)
 	setWebApplicationFields(d, app, client.TenantBaseDomain)
 	log.Printf("[DEBUG] LUMINATE READ APP DONE")
-	return nil
+	return diagnostics
 }
 
-func resourceUpdateWebApplication(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateWebApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE UPDATE APP")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	app := extractWebApplication(d)
 
@@ -196,33 +197,35 @@ func resourceUpdateWebApplication(d *schema.ResourceData, m interface{}) error {
 
 	updApp, err := client.Applications.UpdateApplication(app)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = client.Applications.BindApplicationToSite(updApp, app.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setWebApplicationFields(d, updApp, client.TenantBaseDomain)
 
-	return resourceReadWebApplication(d, m)
+	resourceReadWebApplication(ctx, d, m)
+	return diagnostics
 }
 
-func resourceDeleteWebApplication(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteWebApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE DELETE APP")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	err := client.Applications.DeleteApplication(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return resourceReadWebApplication(d, m)
+	resourceReadWebApplication(ctx, d, m)
+	return diagnostics
 }
 
 func validateHealthMethod(v interface{}, k string) (ws []string, es []error) {
