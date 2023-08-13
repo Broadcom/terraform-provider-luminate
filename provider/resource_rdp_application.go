@@ -3,8 +3,11 @@ package provider
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
+	"regexp"
+	"strings"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
@@ -16,10 +19,11 @@ func LuminateRDPApplication() *schema.Resource {
 	rdpSchema := CommonApplicationSchema()
 
 	rdpSchema["internal_address"] = &schema.Schema{
-		Type:         schema.TypeString,
-		Required:     true,
-		ValidateFunc: utils.ValidateString,
-		Description:  "Internal address of the application, accessible by connector",
+		Type:             schema.TypeString,
+		Required:         true,
+		ValidateFunc:     utils.ValidateString,
+		Description:      "Internal address of the application, accessible by connector",
+		DiffSuppressFunc: suppressExternalAddressUpdate,
 	}
 
 	return &schema.Resource{
@@ -44,11 +48,6 @@ func resourceCreateRDPApplication(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	newApp := extractRDPApplicationFields(d)
-
-	if newApp.InternalAddress == "" {
-		newApp.InternalAddress = "3389"
-	}
-
 	app, err := client.Applications.CreateApplication(newApp)
 	if err != nil {
 		return diag.FromErr(err)
@@ -149,6 +148,15 @@ func setRDPApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 }
 
 func extractRDPApplicationFields(d *schema.ResourceData) *dto.Application {
+
+	// adding port to rdp app when provided without one
+	internalAddress := d.Get("internal_address").(string)
+	pattern := `\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}$`
+	re := regexp.MustCompile(pattern)
+	if !re.MatchString(internalAddress) {
+		internalAddress = fmt.Sprintf("%s:3389", internalAddress)
+	}
+
 	return &dto.Application{
 		ID:                   d.Id(),
 		Name:                 d.Get("name").(string),
@@ -158,8 +166,18 @@ func extractRDPApplicationFields(d *schema.ResourceData) *dto.Application {
 		Type:                 "rdp",
 		Visible:              d.Get("visible").(bool),
 		NotificationsEnabled: d.Get("notification_enabled").(bool),
-		InternalAddress:      d.Get("internal_address").(string),
+		InternalAddress:      internalAddress,
 		ExternalAddress:      d.Get("external_address").(string),
 		Subdomain:            d.Get("subdomain").(string),
 	}
+}
+
+func suppressExternalAddressUpdate(k, oldValue, newValue string, d *schema.ResourceData) bool {
+	if oldValue == "" {
+		return false
+	}
+	if !strings.Contains(oldValue, newValue) {
+		return false
+	}
+	return true
 }

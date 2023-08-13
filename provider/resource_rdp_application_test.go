@@ -14,7 +14,7 @@ resource "luminate_site" "new-site" {
 resource "luminate_rdp_application" "new-rdp-application" {
 	site_id = "${luminate_site.new-site.id}"
 	name = "tfAccRDP"
-	internal_address = "tcp://127.0.0.2"
+	internal_address = "127.0.0.2"
 }
 `
 
@@ -26,7 +26,7 @@ resource "luminate_site" "new-site" {
 resource "luminate_rdp_application" "new-rdp-application" {
 	site_id = "${luminate_site.new-site.id}"
 	name = "tfAccRDPUpd"
-	internal_address = "tcp://127.0.0.5"
+	internal_address = "tcp://127.0.0.5:126"
 }
 `
 const testAccRDPApplication_collection = `
@@ -54,8 +54,8 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 	resourceNameCollection := "luminate_rdp_application.new-rdp-application-collection"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config:  testAccRDPApplication_minimal,
@@ -64,7 +64,7 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccRDP"),
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
 					resource.TestCheckResourceAttr(resourceName, "notification_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.2"),
+					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.2:3389"),
 					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
 					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
 				),
@@ -73,7 +73,7 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 				Config: testAccRDPApplication_options,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccRDPUpd"),
-					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.5"),
+					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.5:126"),
 					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
 					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
 				),
