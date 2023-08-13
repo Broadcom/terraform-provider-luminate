@@ -1,8 +1,10 @@
 package provider
 
 import (
+	"context"
 	"errors"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
@@ -35,72 +37,72 @@ func LuminateAWSIntegration() *schema.Resource {
 				Computed:    true,
 			},
 		},
-		Create: resourceCreateAwsIntegration,
-		Read:   resourceAwsReadIntegration,
-		Update: resourceUpdateAwsIntegration,
-		Delete: resourceDeleteAwsIntegration,
+		CreateContext: resourceCreateAwsIntegration,
+		ReadContext:   resourceAwsReadIntegration,
+		UpdateContext: resourceUpdateAwsIntegration,
+		DeleteContext: resourceDeleteAwsIntegration,
 	}
 }
 
-func resourceCreateAwsIntegration(d *schema.ResourceData, m interface{}) error {
+func resourceCreateAwsIntegration(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE INTEGRATION - CREATE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	integrationName := d.Get("integration_name").(string)
 
 	newIntegration, err := client.IntegrationAPI.CreateAWSIntegration(integrationName)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	d.SetId(newIntegration.Id)
 	setAwsIntegrationFields(d, newIntegration)
 
-	return nil
+	return resourceAwsReadIntegration(ctx, d, m)
 }
 
-func resourceAwsReadIntegration(d *schema.ResourceData, m interface{}) error {
+func resourceAwsReadIntegration(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE INTEGRATION - READ")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	integrationID := d.Get("integration_id").(string)
 
 	awsIntegration, err := client.IntegrationAPI.ReadAWSIntegration(integrationID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setAwsIntegrationFields(d, awsIntegration)
 
-	return nil
+	return diagnostics
 }
 
-func resourceUpdateAwsIntegration(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateAwsIntegration(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE INTEGRATION - UPDATE")
 
-	return resourceAwsReadIntegration(d, m)
+	return resourceAwsReadIntegration(ctx, d, m)
 }
 
-func resourceDeleteAwsIntegration(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteAwsIntegration(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE INTEGRATION - DELETE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	integrationID := d.Get("integration_id").(string)
 
 	err := client.IntegrationAPI.DeleteAWSIntegration(integrationID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	return nil

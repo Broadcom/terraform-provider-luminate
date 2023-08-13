@@ -1,8 +1,10 @@
 package provider
 
 import (
+	"context"
 	"errors"
 	"github.com/Broadcom/terraform-provider-luminate/service"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"log"
@@ -47,22 +49,22 @@ func LuminateDataSourceSshClient() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Read: resourceReadSshClient,
+		ReadContext: resourceReadSshClient,
 	}
 }
 
-func resourceReadSshClient(d *schema.ResourceData, m interface{}) error {
+func resourceReadSshClient(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE GET SSH-CLIENT")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	sshClientName := d.Get("name").(string)
 
 	sshClient, err := client.SshClientApi.GetSshClientByName(sshClientName)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.Set("description", sshClient.Description)
@@ -73,5 +75,5 @@ func resourceReadSshClient(d *schema.ResourceData, m interface{}) error {
 	d.Set("expires", sshClient.Expires.Format(time.RFC3339))
 	d.SetId(sshClient.Id)
 
-	return nil
+	return diagnostics
 }

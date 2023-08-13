@@ -1,7 +1,9 @@
 package provider
 
 import (
+	"context"
 	"errors"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
@@ -22,22 +24,22 @@ func LuminateDataSourceIdentityProvider() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Read: resourceReadIdentityProvider,
+		ReadContext: resourceReadIdentityProvider,
 	}
 }
 
-func resourceReadIdentityProvider(d *schema.ResourceData, m interface{}) error {
+func resourceReadIdentityProvider(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	identityProviderName := d.Get("identity_provider_name").(string)
 
 	identityProviderId, err := client.IdentityProviders.GetIdentityProviderId(identityProviderName)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(identityProviderName)

@@ -30,8 +30,8 @@ func TestAccLuminateSite(t *testing.T) {
 	resourceName := "luminate_site.new-site"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceSite_minimal,

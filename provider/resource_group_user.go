@@ -1,9 +1,11 @@
 package provider
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/utils"
@@ -28,40 +30,40 @@ func LuminateGroupUser() *schema.Resource {
 				ForceNew:     true,
 			},
 		},
-		Create: resourceCreateGroupUser,
-		Read:   resourceReadGroupUser,
-		Delete: resourceDeleteGroupUser,
+		CreateContext: resourceCreateGroupUser,
+		ReadContext:   resourceReadGroupUser,
+		DeleteContext: resourceDeleteGroupUser,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateGroupUser(d *schema.ResourceData, m interface{}) error {
+func resourceCreateGroupUser(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE GROUP_USER CREATE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	groupId := d.Get("group_id").(string)
 	userId := d.Get("user_id").(string)
 	if err := client.Groups.AssignUser(groupId, userId); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(formatId(groupId, userId))
 
-	return nil
+	return resourceReadGroupUser(ctx, d, m)
 }
 
-func resourceReadGroupUser(d *schema.ResourceData, m interface{}) error {
+func resourceReadGroupUser(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE GROUP_USER READ")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	groupId := d.Get("group_id").(string)
@@ -69,28 +71,28 @@ func resourceReadGroupUser(d *schema.ResourceData, m interface{}) error {
 
 	isAssigned, err := client.Groups.CheckAssignedUser(groupId, userId)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if !isAssigned {
-		return errors.New("user wasn't assigned to group")
+		return diag.FromErr(errors.New("user wasn't assigned to group"))
 	}
 
-	return nil
+	return diagnostics
 }
 
-func resourceDeleteGroupUser(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteGroupUser(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE GROUP_USER DELETE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	groupId := d.Get("group_id").(string)
 	userId := d.Get("user_id").(string)
 	if err := client.Groups.RemoveUser(groupId, userId); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")

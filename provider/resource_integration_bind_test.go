@@ -24,8 +24,8 @@ func TestAccLuminateIntegrationBind(t *testing.T) {
 	resourceName := "luminate_aws_integration_bind.new-integration-bind"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceIntegrationBind_minimal,

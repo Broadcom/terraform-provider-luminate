@@ -42,7 +42,7 @@ func Provider() *schema.Provider {
 			"luminate_dns_server":             LuminateDNSserver(),
 			"luminate_group_user":             LuminateGroupUser(),
 			"luminate_aws_integration":        LuminateAWSIntegration(),
-			"luminate_aws_integration_bind":   LuminateawsIntegrationBind(),
+			"luminate_aws_integration_bind":   LuminateAWSIntegrationBind(),
 			"luminate_collection_site_link":   LuminateCollectionSiteLink(),
 			"luminate_collection_site_unlink": LuminateCollectionSiteLink(),
 			"luminate_collection":             LuminateCollection(),

@@ -16,8 +16,8 @@ func TestAccLuminateDataSourceSshClients(t *testing.T) {
 	resourceName := "data.luminate_ssh_client.my-ssh-client"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceSshClients,
