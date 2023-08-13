@@ -26,7 +26,7 @@ func LuminateSiteRole() *schema.Resource {
 		ReadContext:   resourceReadSiteRole,
 		DeleteContext: resourceDeleteRoleBindings,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
