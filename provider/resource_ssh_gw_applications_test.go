@@ -83,8 +83,8 @@ func TestAccLuminateSshGwApplication(t *testing.T) {
 	resourceName := "luminate_ssh_gw_application.new-ssh-gw-application"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config:  testAccSshGwApplication,

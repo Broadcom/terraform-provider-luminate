@@ -49,8 +49,8 @@ func TestAccLuminateTCPApplication(t *testing.T) {
 	resourceNameCollection := "luminate_tcp_application.new-tcp-application-collection"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccTCPApplication_with_collection,
