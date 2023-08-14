@@ -1,7 +1,9 @@
 package provider
 
 import (
+	"context"
 	"errors"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
@@ -36,14 +38,15 @@ func LuminateDataSourceUsers() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Read: resourceReadUsers,
+		ReadContext: resourceReadUsers,
 	}
 }
 
-func resourceReadUsers(d *schema.ResourceData, m interface{}) error {
+func resourceReadUsers(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*service.LuminateService)
+	var diagnostics diag.Diagnostics
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	var userIds []string
@@ -54,7 +57,7 @@ func resourceReadUsers(d *schema.ResourceData, m interface{}) error {
 	for _, userEmail := range userNames {
 		userID, err := client.Users.GetUserId(identityProviderId, userEmail.(string))
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 		userIds = append(userIds, userID)
@@ -63,5 +66,5 @@ func resourceReadUsers(d *schema.ResourceData, m interface{}) error {
 	d.SetId(identityProviderId)
 	d.Set("user_ids", userIds)
 
-	return nil
+	return diagnostics
 }
