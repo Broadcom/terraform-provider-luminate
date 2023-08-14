@@ -172,6 +172,8 @@ func extractRDPApplicationFields(d *schema.ResourceData) *dto.Application {
 	}
 }
 
+// suppressExternalAddressUpdate will determine if needed another action (CRUD) from terraform, in will run after terraform plan is running
+// if it returns false terraform will run another action when state != require value
 func suppressExternalAddressUpdate(k, oldValue, newValue string, d *schema.ResourceData) bool {
 	if oldValue == "" {
 		return false

@@ -59,8 +59,8 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 	resourceNameCollection := "luminate_ssh_application.new-ssh-application-collection"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccSSHApplication_minimal,
