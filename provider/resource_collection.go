@@ -1,8 +1,10 @@
 package provider
 
 import (
+	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/google/uuid"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 	"log"
@@ -17,74 +19,74 @@ func LuminateCollection() *schema.Resource {
 				Description: "Collection Name",
 			},
 		},
-		Create: resourceCreateCollection,
-		Read:   resourceReadCollection,
-		Update: resourceUpdateCollection,
-		Delete: resourceDeleteCollection,
+		CreateContext: resourceCreateCollection,
+		ReadContext:   resourceReadCollection,
+		UpdateContext: resourceUpdateCollection,
+		DeleteContext: resourceDeleteCollection,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateCollection(d *schema.ResourceData, m interface{}) error {
+func resourceCreateCollection(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Creating collection")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("invalid client ")
+		return diag.FromErr(errors.New("invalid client "))
 	}
 	collectionName := d.Get("name").(string)
 	collection, err := client.CollectionAPI.CreateCollection(collectionName)
 	if err != nil {
-		return errors.Wrap(err, "failed to create collection")
+		return diag.FromErr(errors.Wrap(err, "failed to create collection"))
 	}
 	d.SetId(collection.ID.String())
-	return nil
+	return resourceReadCollection(ctx, d, m)
 }
 
-func resourceReadCollection(d *schema.ResourceData, m interface{}) error {
+func resourceReadCollection(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Reading colelction")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("invalid client")
+		return diag.FromErr(errors.New("invalid client"))
 	}
 	collectionID := d.Id()
 	collection, err := client.CollectionAPI.GetCollection(collectionID)
 	if err != nil {
-		return errors.Wrap(err, "failed to get collection")
+		return diag.FromErr(errors.Wrap(err, "failed to get collection"))
 	}
 	d.SetId(collection.ID.String())
 	return nil
 }
 
-func resourceUpdateCollection(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateCollection(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Updating collection")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("invalid client")
+		return diag.FromErr(errors.New("invalid client"))
 	}
 	collectionName := d.Get("name").(string)
 	collectionID := d.Id()
 	_, err := client.CollectionAPI.UpdateCollection(collectionName, collectionID)
 	if err != nil {
-		return errors.Wrap(err, "failed to update collection")
+		return diag.FromErr(errors.Wrap(err, "failed to update collection"))
 	}
-	return nil
+	return resourceReadCollection(ctx, d, m)
 }
 
-func resourceDeleteCollection(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteCollection(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Deleting collection")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("invalid client")
+		return diag.FromErr(errors.New("invalid client"))
 	}
 	collectionID, err := uuid.Parse(d.Id())
 	if err != nil {
-		return errors.Wrap(err, "failed to parse collection id")
+		return diag.FromErr(errors.Wrap(err, "failed to parse collection id"))
 	}
 	err = client.CollectionAPI.DeleteCollection(collectionID.String())
 	if err != nil {
-		return errors.Wrap(err, "failed to delete collection")
+		return diag.FromErr(errors.Wrap(err, "failed to delete collection"))
 	}
 	return nil
 }
