@@ -55,5 +55,8 @@ else
   echo -e "${BITBUCKET_SSH_HOST_KEY_WORKAROUND_HEADER}\nHost bitbucket.org\n  HostName bitbucket.org\n  CheckHostIP=no" >>~/.ssh/config
 fi
 
+echo "Configuring git to use ssh"
+git config --global url.ssh://git@bitbucket.org/.insteadOf https://bitbucket.org/
+
 echo ""
 exit ${RETVAL}
