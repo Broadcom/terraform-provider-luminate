@@ -1,5 +1,4 @@
 GOCMD=go
-GOARGS="-mod=vendor"
 GOBUILD=$(GOCMD) build $(GOARGS)
 GOTEST=$(GOCMD) test $(GOARGS)
 
