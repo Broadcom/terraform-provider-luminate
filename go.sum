@@ -1,5 +1,3 @@
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230614152642-aa890aa55cca h1:D32DJQWHUPo1atpp/+ibUAkIEBA1iXhM1eURb53+8XU=
-bitbucket.org/accezz-io/api-documentation v0.0.0-20230614152642-aa890aa55cca/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20230620110801-81ce4de3aa2e h1:QRJeMwczYy8QpQ8rlq+mJcWof5JD5e1MNXh+qI9UvKo=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20230620110801-81ce4de3aa2e/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=

@@ -23,6 +23,11 @@ commands:
               circleci step halt
             fi
 
+  setup-ssh-key:
+    steps:
+      - run:
+          command: build-scripts/setup-ssh-keys.sh
+
   validate-release-version-was-incremented:
     steps:
       - run:
@@ -38,7 +43,7 @@ commands:
               echo 'export SKIP=true'
               echo 'export SKIP=true' >> ${BASH_ENV}
             fi
-            
+
             exit 0
 
 jobs:
@@ -64,6 +69,7 @@ jobs:
       - attach-env
       - check-skip
       - checkout
+      - setup-ssh-key
       - run: make
       - run: bash .circleci/github-release.sh
 
