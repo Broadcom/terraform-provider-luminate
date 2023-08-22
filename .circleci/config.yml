@@ -62,6 +62,15 @@ jobs:
       - checkout
       # Temporarily disable integration tests since the integration environment is broken
       #- run: make testacc
+  build:
+    docker:
+      - image: circleci/golang:1.13.6
+    steps:
+      - attach-env
+      - check-skip
+      - checkout
+      - setup-ssh-key
+      - run: make
   release:
     docker:
       - image: circleci/golang:1.13.6
@@ -83,6 +92,13 @@ workflows:
           context: terraform-acceptance
           requires:
             - validate
+      - build:
+          context: terraform-release
+          filters:
+            branches:
+              ignore: master
+          requires:
+            - test
       - release:
           context: terraform-release
           filters:
