@@ -67,7 +67,6 @@ jobs:
       - image: circleci/golang:1.13.6
     steps:
       - attach-env
-      - check-skip
       - checkout
       - setup-ssh-key
       - run: make
