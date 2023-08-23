@@ -23,6 +23,13 @@ commands:
               circleci step halt
             fi
 
+  setup-ssh-key:
+    steps:
+      - run:
+          command: |
+            chmod +x build-scripts/setup-ssh-keys.sh
+            build-scripts/setup-ssh-keys.sh
+
   validate-release-version-was-incremented:
     steps:
       - run:
@@ -38,32 +45,41 @@ commands:
               echo 'export SKIP=true'
               echo 'export SKIP=true' >> ${BASH_ENV}
             fi
-            
+
             exit 0
 
 jobs:
   validate:
     docker:
-      - image: circleci/golang:1.13.6
+      - image: cimg/go:1.19
     steps:
       - checkout
       - validate-release-version-was-incremented
       - persist-env
   test:
     docker:
-      - image: circleci/golang:1.13.6
+      - image: cimg/go:1.19
     steps:
       - attach-env
       - checkout
       # Temporarily disable integration tests since the integration environment is broken
       #- run: make testacc
+  build:
+    docker:
+      - image: cimg/go:1.19
+    steps:
+      - attach-env
+      - checkout
+      - setup-ssh-key
+      - run: make
   release:
     docker:
-      - image: circleci/golang:1.13.6
+      - image: cimg/go:1.19
     steps:
       - attach-env
       - check-skip
       - checkout
+      - setup-ssh-key
       - run: make
       - run: bash .circleci/github-release.sh
 
@@ -77,6 +93,13 @@ workflows:
           context: terraform-acceptance
           requires:
             - validate
+      - build:
+          context: terraform-release
+          filters:
+            branches:
+              ignore: master
+          requires:
+            - test
       - release:
           context: terraform-release
           filters:
