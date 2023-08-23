@@ -11,7 +11,7 @@ BINARY_NAME=terraform-provider-luminate
 
 GO111MODULE=on
 
-all: linux darwin windows
+all: linux darwin windows darwin_arm64
 
 linux:
 	mkdir -p release || true
