@@ -4,15 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"log"
-	"regexp"
-	"strings"
-
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"log"
+	"regexp"
 )
 
 func LuminateRDPApplication() *schema.Resource {
@@ -154,7 +152,7 @@ func extractRDPApplicationFields(d *schema.ResourceData) *dto.Application {
 	pattern := `\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}$`
 	re := regexp.MustCompile(pattern)
 	if !re.MatchString(internalAddress) {
-		internalAddress = fmt.Sprintf("%s:3389", internalAddress)
+		internalAddress = fmt.Sprintf("%s:%s", internalAddress, utils.DefaultRDPPort)
 	}
 
 	return &dto.Application{
@@ -178,7 +176,15 @@ func suppressExternalAddressUpdate(k, oldValue, newValue string, d *schema.Resou
 	if oldValue == "" {
 		return false
 	}
-	if !strings.Contains(oldValue, newValue) {
+	if oldValue == newValue {
+		return true
+	}
+	newAddress, newPort := utils.ExtractIPAndPort(newValue)
+	oldAddress, oldPort := utils.ExtractIPAndPort(oldValue)
+	if ((oldPort == "" && newPort == utils.DefaultRDPPort) || (oldPort == utils.DefaultRDPPort && newPort == "")) && (newAddress == oldAddress) {
+		return true
+	}
+	if (newAddress != oldAddress) || (newPort != oldPort) {
 		return false
 	}
 	return true

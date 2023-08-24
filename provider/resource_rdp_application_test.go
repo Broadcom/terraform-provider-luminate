@@ -17,6 +17,38 @@ resource "luminate_rdp_application" "new-rdp-application" {
 	internal_address = "127.0.0.2"
 }
 `
+const testAccRDPApplication_changeInternalAddress = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSite"
+	}
+	resource "luminate_rdp_application" "new-rdp-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccRDP"
+		internal_address = "tcp://127.0.0.2:33"
+	}
+`
+
+const testAccRDPApplication_changeInternalAddress_2 = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSite"
+	}
+	resource "luminate_rdp_application" "new-rdp-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccRDP"
+		internal_address = "tcp://127.0.0.2"
+	}
+`
+
+const testAccRDPApplication_changeInternalAddress_3 = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSite"
+	}
+	resource "luminate_rdp_application" "new-rdp-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccRDP"
+		internal_address = "tcp://127.0.0.3:3389"
+	}
+`
 
 const testAccRDPApplication_options = `
 resource "luminate_site" "new-site" {
@@ -67,6 +99,27 @@ func TestAccLuminateRDPApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.2:3389"),
 					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
 					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccrdp.rdp.%s", testAccDomain)),
+				),
+			},
+			{
+				Config:  testAccRDPApplication_changeInternalAddress,
+				Destroy: false,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.2:33"),
+				),
+			},
+			{
+				Config:  testAccRDPApplication_changeInternalAddress_2,
+				Destroy: false,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.2:3389"),
+				),
+			},
+			{
+				Config:  testAccRDPApplication_changeInternalAddress_3,
+				Destroy: false,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.3:3389"),
 				),
 			},
 			{
