@@ -1,11 +1,13 @@
 package provider
 
 import (
+	"context"
 	"errors"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func LuminateDataSourceGroups() *schema.Resource {
@@ -37,15 +39,15 @@ func LuminateDataSourceGroups() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Read: resourceReadGroups,
+		ReadContext: resourceReadGroups,
 	}
 }
 
-func resourceReadGroups(d *schema.ResourceData, m interface{}) error {
-
+func resourceReadGroups(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diagnostic diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	var groupIds []string
@@ -56,7 +58,7 @@ func resourceReadGroups(d *schema.ResourceData, m interface{}) error {
 	for _, groupName := range groupNames {
 		groupId, err := client.Groups.GetGroupId(identityProviderId, groupName.(string))
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 		groupIds = append(groupIds, groupId)
@@ -65,5 +67,5 @@ func resourceReadGroups(d *schema.ResourceData, m interface{}) error {
 	d.SetId(identityProviderId)
 	d.Set("group_ids", groupIds)
 
-	return nil
+	return diagnostic
 }

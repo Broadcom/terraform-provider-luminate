@@ -1,11 +1,13 @@
 package provider
 
 import (
+	"context"
 	"errors"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func LuminateDataSourceAwsIntegration() *schema.Resource {
@@ -23,25 +25,26 @@ func LuminateDataSourceAwsIntegration() *schema.Resource {
 				Computed:    true,
 			},
 		},
-		Read: resourceReadAwsIntegration,
+		ReadContext: resourceReadAwsIntegration,
 	}
 }
 
-func resourceReadAwsIntegration(d *schema.ResourceData, m interface{}) error {
+func resourceReadAwsIntegration(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	client, ok := m.(*service.LuminateService)
+	var diagnostics diag.Diagnostics
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	integrationName := d.Get("integration_name").(string)
 
 	integrationId, err := client.IntegrationAPI.GetIntegrationId(integrationName)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(integrationId)
 
-	return nil
+	return diagnostics
 }

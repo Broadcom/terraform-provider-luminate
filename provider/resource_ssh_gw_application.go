@@ -1,13 +1,15 @@
 package provider
 
 import (
+	"context"
 	"errors"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
-	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func LuminateSshGwApplication() *schema.Resource {
@@ -64,57 +66,57 @@ func LuminateSshGwApplication() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Schema: sshGwSchema,
-		Create: resourceCreateSshGwApplication,
-		Read:   resourceReadSshGwApplication,
-		Update: resourceUpdateSshGwApplication,
-		Delete: resourceDeleteSshGwApplication,
+		Schema:        sshGwSchema,
+		CreateContext: resourceCreateSshGwApplication,
+		ReadContext:   resourceReadSshGwApplication,
+		UpdateContext: resourceUpdateSshGwApplication,
+		DeleteContext: resourceDeleteSshGwApplication,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateSshGwApplication(d *schema.ResourceData, m interface{}) error {
+func resourceCreateSshGwApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	log.Printf("[DEBUG] LUMINATE CREATE SSH-GW APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	newApp := extractSshGwApplicationFields(d)
 
 	app, err := client.Applications.CreateApplication(newApp)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(app.ID)
 
 	err = client.Applications.BindApplicationToSite(app, newApp.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setSshGwApplicationFields(d, app)
 
-	return resourceReadSshGwApplication(d, m)
+	return resourceReadSshGwApplication(ctx, d, m)
 }
 
-func resourceReadSshGwApplication(d *schema.ResourceData, m interface{}) error {
+func resourceReadSshGwApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	log.Printf("[DEBUG] LUMINATE READ SSH-GW APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	app, err := client.Applications.GetApplicationById(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if app == nil {
@@ -129,45 +131,45 @@ func resourceReadSshGwApplication(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceUpdateSshGwApplication(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateSshGwApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE UPDATE SSH-GW APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	app := extractSshGwApplicationFields(d)
 
 	updApp, err := client.Applications.UpdateApplication(app)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = client.Applications.BindApplicationToSite(app, app.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setSshGwApplicationFields(d, updApp)
 
-	return resourceReadSshGwApplication(d, m)
+	return resourceReadSshGwApplication(ctx, d, m)
 }
 
-func resourceDeleteSshGwApplication(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteSshGwApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE DELETE SSH-GW APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	err := client.Applications.DeleteApplication(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return resourceReadSshGwApplication(d, m)
+	return resourceReadSshGwApplication(ctx, d, m)
 }
 
 func setSshGwApplicationFields(d *schema.ResourceData, application *dto.Application) {
@@ -208,7 +210,7 @@ func extractSshGwApplicationFields(d *schema.ResourceData) *dto.Application {
 	vpcs := extractSshGwVpc(d, integrationId)
 
 	var segmentId string
-	if segmentIdInterface, ok := d.GetOkExists("segment_id"); ok {
+	if segmentIdInterface, ok := d.GetOk("segment_id"); ok {
 		segmentId = segmentIdInterface.(string)
 	}
 

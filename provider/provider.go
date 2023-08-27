@@ -1,13 +1,14 @@
 package provider
 
 import (
+	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func Provider() terraform.ResourceProvider {
-	return &schema.Provider{
+func Provider() *schema.Provider {
+	p := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"api_endpoint": {
 				Type:        schema.TypeString,
@@ -41,7 +42,7 @@ func Provider() terraform.ResourceProvider {
 			"luminate_dns_server":             LuminateDNSserver(),
 			"luminate_group_user":             LuminateGroupUser(),
 			"luminate_aws_integration":        LuminateAWSIntegration(),
-			"luminate_aws_integration_bind":   LuminateawsIntegrationBind(),
+			"luminate_aws_integration_bind":   LuminateAWSIntegrationBind(),
 			"luminate_collection_site_link":   LuminateCollectionSiteLink(),
 			"luminate_collection_site_unlink": LuminateCollectionSiteLink(),
 			"luminate_collection":             LuminateCollection(),
@@ -56,15 +57,18 @@ func Provider() terraform.ResourceProvider {
 			"luminate_aws_integration":   LuminateDataSourceAwsIntegration(),
 			"luminate_ssh_client":        LuminateDataSourceSshClient(),
 		},
-		ConfigureFunc: providerConfigure,
 	}
+	p.ConfigureContextFunc = configure()
+	return p
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	apiEndpoint := d.Get("api_endpoint").(string)
-	apiClient := d.Get("api_client_id").(string)
-	apiSecret := d.Get("api_client_secret").(string)
+func configure() func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+		apiEndpoint := d.Get("api_endpoint").(string)
+		apiClient := d.Get("api_client_id").(string)
+		apiSecret := d.Get("api_client_secret").(string)
 
-	cli := service.NewClient(apiClient, apiSecret, apiEndpoint)
-	return cli, nil
+		cli := service.NewClient(apiClient, apiSecret, apiEndpoint)
+		return cli, nil
+	}
 }

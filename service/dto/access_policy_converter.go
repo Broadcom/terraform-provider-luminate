@@ -186,31 +186,19 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 			})
 		}
 
-		if accessPolicy.Conditions.ManagedDevice.SymantecCloudSoc || accessPolicy.Conditions.ManagedDevice.SymantecWebSecurityService {
-			var managedDeviceArguments []string
-			argumentsMap := map[string][]string{}
-
-			if accessPolicy.Conditions.ManagedDevice.SymantecWebSecurityService {
-				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceWssConditionArgument)
-			}
-
-			if accessPolicy.Conditions.ManagedDevice.SymantecCloudSoc {
-				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceCloudSocConditionArgument)
-			}
-
-			if accessPolicy.Conditions.ManagedDevice.OpswatMetaAccess {
-				managedDeviceArguments = append(managedDeviceArguments, ManagedDeviceOpswatConditionArgument)
-			}
-			argumentsMap[ManagedDeviceUuid] = managedDeviceArguments
+		if hasDeviceArgument(accessPolicy.Conditions.ManagedDevice) {
+			managedArgumentsMap := getDeviceArguments(accessPolicy.Conditions.ManagedDevice)
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: ManagedDeviceCondition,
-				Arguments:             argumentsMap,
+				Arguments:             managedArgumentsMap,
 			})
 		}
 
-		if accessPolicy.Conditions.UnmanagedDevice {
+		if hasDeviceArgument(accessPolicy.Conditions.UnmanagedDevice) {
+			unmanagedArgumentsMap := getDeviceArguments(accessPolicy.Conditions.UnmanagedDevice)
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: UnmanagedDeviceCondition,
+				Arguments:             unmanagedArgumentsMap,
 			})
 		}
 	}
@@ -233,6 +221,37 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	}
 
 	return accessPolicyDto
+}
+
+func getDeviceArguments(deviceArg Device) map[string][]string {
+	var deviceArguments []string
+
+	deviceArgumentsMap := map[string][]string{}
+
+	if deviceArg.SymantecWebSecurityService {
+		deviceArguments = append(deviceArguments, ManagedDeviceWssConditionArgument)
+	}
+
+	if deviceArg.SymantecCloudSoc {
+		deviceArguments = append(deviceArguments, ManagedDeviceCloudSocConditionArgument)
+	}
+
+	if deviceArg.OpswatMetaAccess {
+		deviceArguments = append(deviceArguments, ManagedDeviceOpswatConditionArgument)
+	}
+
+	if deviceArguments != nil {
+		deviceArgumentsMap[Authentication] = deviceArguments
+	}
+
+	return deviceArgumentsMap
+}
+
+func hasDeviceArgument(deviceArg Device) bool {
+	if deviceArg.OpswatMetaAccess || deviceArg.SymantecCloudSoc || deviceArg.SymantecWebSecurityService {
+		return true
+	}
+	return false
 }
 
 func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
@@ -311,26 +330,23 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 				}
 			}
 
-			if filterCondition.ConditionDefinitionId == ManagedDeviceCondition {
-				for _, managedDeviceCondition := range filterCondition.Arguments[ManagedDeviceUuid] {
+			if filterCondition.ConditionDefinitionId == ManagedDeviceCondition || filterCondition.ConditionDefinitionId == UnmanagedDeviceCondition {
+				for _, deviceCondition := range filterCondition.Arguments[Authentication] {
 
-					if ManagedDeviceOpswatConditionArgument == managedDeviceCondition {
+					if ManagedDeviceOpswatConditionArgument == deviceCondition {
 						conditions.ManagedDevice.OpswatMetaAccess = true
 					}
 
-					if ManagedDeviceCloudSocConditionArgument == managedDeviceCondition {
+					if ManagedDeviceCloudSocConditionArgument == deviceCondition {
 						conditions.ManagedDevice.SymantecCloudSoc = true
 					}
 
-					if ManagedDeviceWssConditionArgument == managedDeviceCondition {
+					if ManagedDeviceWssConditionArgument == deviceCondition {
 						conditions.ManagedDevice.SymantecWebSecurityService = true
 					}
 				}
 			}
 
-			if filterCondition.ConditionDefinitionId == UnmanagedDeviceCondition {
-				conditions.UnmanagedDevice = true
-			}
 		}
 	}
 

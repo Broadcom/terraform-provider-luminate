@@ -1,13 +1,15 @@
 package provider
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func LuminateConnector() *schema.Resource {
@@ -45,48 +47,49 @@ func LuminateConnector() *schema.Resource {
 				Computed:    true,
 			},
 		},
-		Create: resourceCreateConnector,
-		Read:   resourceReadConnector,
-		Delete: resourceDeleteConnector,
+		CreateContext: resourceCreateConnector,
+		ReadContext:   resourceReadConnector,
+		DeleteContext: resourceDeleteConnector,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateConnector(d *schema.ResourceData, m interface{}) error {
+func resourceCreateConnector(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	conOpts := extractConnectorFields(d)
 
 	newCon, err := client.Connectors.CreateConnector(conOpts, conOpts.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setConnectorFields(d, newCon)
 
 	command, err := client.Connectors.GetConnectorCommand(newCon.ID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.Set("command", command)
 
-	return resourceReadConnector(d, m)
+	return resourceReadConnector(ctx, d, m)
 }
 
-func resourceReadConnector(d *schema.ResourceData, m interface{}) error {
+func resourceReadConnector(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*service.LuminateService)
+	var diagnostics diag.Diagnostics
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	connector, err := client.Connectors.GetConnectorByID(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if connector == nil {
@@ -98,22 +101,22 @@ func resourceReadConnector(d *schema.ResourceData, m interface{}) error {
 
 	setConnectorFields(d, connector)
 
-	return nil
+	return diagnostics
 }
 
-func resourceDeleteConnector(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteConnector(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	err := client.Connectors.DeleteConnector(d.Id())
 	if err != nil {
-		return errors.New("unable to delete connector")
+		return diag.FromErr(errors.New("unable to delete connector"))
 	}
 	d.SetId("")
 
-	return resourceReadConnector(d, m)
+	return resourceReadConnector(ctx, d, m)
 }
 
 func validateConnectorType(v interface{}, k string) (ws []string, es []error) {

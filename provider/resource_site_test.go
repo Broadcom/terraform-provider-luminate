@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
 	"testing"
 )
@@ -30,8 +30,8 @@ func TestAccLuminateSite(t *testing.T) {
 	resourceName := "luminate_site.new-site"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceSite_minimal,

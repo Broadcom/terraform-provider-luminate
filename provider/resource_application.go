@@ -2,7 +2,7 @@ package provider
 
 import (
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func CommonApplicationSchema() map[string]*schema.Schema {
@@ -24,6 +24,13 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 			Required:     true,
 			Description:  "Name of the application",
 			ValidateFunc: utils.ValidateApplicationName,
+		},
+		"type": {
+			Type:         schema.TypeString,
+			Optional:     true,
+			Description:  "app type",
+			ValidateFunc: utils.ValidateString,
+			Computed:     true,
 		},
 		"icon": {
 			Type:         schema.TypeString,

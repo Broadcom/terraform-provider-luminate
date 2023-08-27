@@ -3,7 +3,7 @@ package provider
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 const resourceTcpAccessPolicy_enabled = `
@@ -191,8 +191,8 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 	resourceNameCollection := "luminate_tcp_access_policy.new-tcp-access-policy-collection"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: resourceTcpAccessPolicy_enabled,

@@ -1,13 +1,15 @@
 package provider
 
 import (
+	"context"
 	"errors"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func LuminateSSHApplication() *schema.Resource {
@@ -21,56 +23,56 @@ func LuminateSSHApplication() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Schema: sshSchema,
-		Create: resourceCreateSSHApplication,
-		Read:   resourceReadSSHApplication,
-		Update: resourceUpdateSSHApplication,
-		Delete: resourceDeleteSSHApplication,
+		Schema:        sshSchema,
+		CreateContext: resourceCreateSSHApplication,
+		ReadContext:   resourceReadSSHApplication,
+		UpdateContext: resourceUpdateSSHApplication,
+		DeleteContext: resourceDeleteSSHApplication,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateSSHApplication(d *schema.ResourceData, m interface{}) error {
+func resourceCreateSSHApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	log.Printf("[DEBUG] LUMINATE CREATE APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	newApp := extractSSHApplicationFields(d)
 
 	app, err := client.Applications.CreateApplication(newApp)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = client.Applications.BindApplicationToSite(app, newApp.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(app.ID)
 	setSHHApplicationFields(d, app)
 
-	return resourceReadSSHApplication(d, m)
+	return resourceReadSSHApplication(ctx, d, m)
 }
 
-func resourceReadSSHApplication(d *schema.ResourceData, m interface{}) error {
+func resourceReadSSHApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	log.Printf("[DEBUG] LUMINATE READ APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	app, err := client.Applications.GetApplicationById(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if app == nil {
@@ -86,46 +88,46 @@ func resourceReadSSHApplication(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceUpdateSSHApplication(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateSSHApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE UPDATE APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	app := extractSSHApplicationFields(d)
 
 	updApp, err := client.Applications.UpdateApplication(app)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = client.Applications.BindApplicationToSite(app, app.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	updApp.SiteID = app.SiteID
 	setSHHApplicationFields(d, updApp)
 
-	return resourceReadSSHApplication(d, m)
+	return resourceReadSSHApplication(ctx, d, m)
 }
 
-func resourceDeleteSSHApplication(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteSSHApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE DELETE APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	err := client.Applications.DeleteApplication(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return resourceReadSSHApplication(d, m)
+	return resourceReadSSHApplication(ctx, d, m)
 }
 
 func setSHHApplicationFields(d *schema.ResourceData, application *dto.Application) {

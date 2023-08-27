@@ -1,10 +1,11 @@
 package provider
 
 import (
+	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
-	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 	"log"
 	"strings"
@@ -13,72 +14,32 @@ import (
 func LuminateWebAccessPolicy() *schema.Resource {
 	webSchema := LuminateAccessPolicyBaseSchema()
 
-	conditionsResource := webSchema["conditions"].Elem.(*schema.Resource)
-
-	conditionsResource.Schema["managed_device"] = &schema.Schema{
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "Indicate whatever to restrict access to managed devices only",
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"opswat": {
-					Type:         schema.TypeBool,
-					Optional:     true,
-					Default:      false,
-					Description:  "Indicate whatever to restrict access to Opswat MetaAccess",
-					ValidateFunc: utils.ValidateBool,
-				},
-				"symantec_cloudsoc": {
-					Type:         schema.TypeBool,
-					Optional:     true,
-					Default:      false,
-					Description:  "Indicate whatever to restrict access to symantec cloudsoc",
-					ValidateFunc: utils.ValidateBool,
-				},
-				"symantec_web_security_service": {
-					Type:         schema.TypeBool,
-					Optional:     true,
-					Default:      false,
-					Description:  "Indicate whatever to restrict access to symantec web security service",
-					ValidateFunc: utils.ValidateBool,
-				},
-			},
-		},
-	}
-
-	conditionsResource.Schema["unmanaged_device"] = &schema.Schema{
-		Type:         schema.TypeBool,
-		Optional:     true,
-		Default:      false,
-		Description:  "Indicate whatever to restrict access to unmanaged devices only",
-		ValidateFunc: utils.ValidateBool,
-	}
-
 	return &schema.Resource{
-		Schema: webSchema,
-		Create: resourceCreateWebAccessPolicy,
-		Read:   resourceReadWebAccessPolicy,
-		Update: resourceUpdateWebAccessPolicy,
-		Delete: resourceDeleteAccessPolicy,
+		Schema:        webSchema,
+		CreateContext: resourceCreateWebAccessPolicy,
+		ReadContext:   resourceReadWebAccessPolicy,
+		UpdateContext: resourceUpdateWebAccessPolicy,
+		DeleteContext: resourceDeleteAccessPolicy,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceCreateWebAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Creating web access policy")
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	accessPolicy := extractWebAccessPolicy(d)
 
-	for i, _ := range accessPolicy.DirectoryEntities {
+	for i := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
+			return diag.FromErr(errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId))
 		}
 		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 
@@ -90,35 +51,36 @@ func resourceCreateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 		case "group":
 			resolvedDisplayName, err = client.IdentityProviders.GetGroupDisplayNameTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId, accessPolicy.DirectoryEntities[i].IdentifierInProvider)
 		default:
-			return errors.Wrapf(err, "Failed to lookup displayName - unknown entity type \"%s\"", accessPolicy.DirectoryEntities[i].EntityType)
+			return diag.FromErr(errors.Wrapf(err, "Failed to lookup displayName - unknown entity type \"%s\"", accessPolicy.DirectoryEntities[i].EntityType))
 		}
 
 		if err != nil {
-			return errors.Wrapf(err, "Failed to lookup displayName for entity type %s with identifier id %s on Identity Provider ID %s", accessPolicy.DirectoryEntities[i].EntityType, accessPolicy.DirectoryEntities[i].IdentifierInProvider, accessPolicy.DirectoryEntities[i].IdentityProviderId)
+			return diag.FromErr(errors.Wrapf(err, "Failed to lookup displayName for entity type %s with identifier id %s on Identity Provider ID %s", accessPolicy.DirectoryEntities[i].EntityType, accessPolicy.DirectoryEntities[i].IdentifierInProvider, accessPolicy.DirectoryEntities[i].IdentityProviderId))
 		}
 		accessPolicy.DirectoryEntities[i].DisplayName = resolvedDisplayName
 	}
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setAccessPolicyBaseFields(d, createdAccessPolicy)
-
-	return resourceReadWebAccessPolicy(d, m)
+	resourceReadWebAccessPolicy(ctx, d, m)
+	return diagnostics
 }
 
-func resourceReadWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceReadWebAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Reading web access policy")
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	accessPolicy, err := client.AccessPolicies.GetAccessPolicy(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if accessPolicy == nil {
@@ -128,21 +90,22 @@ func resourceReadWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
 
 	setAccessPolicyBaseFields(d, accessPolicy)
 
-	return nil
+	return diagnostics
 }
 
-func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateWebAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Updating web access policy")
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	accessPolicy := extractWebAccessPolicy(d)
-	for i, _ := range accessPolicy.DirectoryEntities {
+	for i := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
+			return diag.FromErr(errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId))
 		}
 		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
@@ -150,12 +113,13 @@ func resourceUpdateWebAccessPolicy(d *schema.ResourceData, m interface{}) error 
 
 	accessPolicy, err := client.AccessPolicies.UpdateAccessPolicy(accessPolicy)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setAccessPolicyBaseFields(d, accessPolicy)
 
-	return resourceReadWebAccessPolicy(d, m)
+	resourceReadWebAccessPolicy(ctx, d, m)
+	return diagnostics
 }
 
 func extractWebAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {

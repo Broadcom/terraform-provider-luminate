@@ -1,9 +1,11 @@
 package provider
 
 import (
+	"context"
 	"errors"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
@@ -33,56 +35,56 @@ func LuminateSegmentApplication() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Schema: segmentAppSchema,
-		Create: resourceCreateSegmentApplication,
-		Read:   resourceReadSegmentApplication,
-		Update: resourceUpdateSegmentApplication,
-		Delete: resourceDeleteSegmentApplication,
+		Schema:        segmentAppSchema,
+		CreateContext: resourceCreateSegmentApplication,
+		ReadContext:   resourceReadSegmentApplication,
+		UpdateContext: resourceUpdateSegmentApplication,
+		DeleteContext: resourceDeleteSegmentApplication,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateSegmentApplication(d *schema.ResourceData, m interface{}) error {
+func resourceCreateSegmentApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	log.Printf("[DEBUG] LUMINATE CREATE APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	newApp := extractSegmentApplication(d)
 
 	app, err := client.Applications.CreateApplication(newApp)
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = client.Applications.BindApplicationToSite(app, newApp.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(app.ID)
 	setSegmentApplicationFields(d, app, client.TenantBaseDomain)
 
-	return resourceReadSegmentApplication(d, m)
+	return resourceReadSegmentApplication(ctx, d, m)
 }
 
-func resourceReadSegmentApplication(d *schema.ResourceData, m interface{}) error {
+func resourceReadSegmentApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	log.Printf("[DEBUG] LUMINATE READ APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	app, err := client.Applications.GetApplicationById(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if app == nil {
@@ -96,12 +98,12 @@ func resourceReadSegmentApplication(d *schema.ResourceData, m interface{}) error
 	return nil
 }
 
-func resourceUpdateSegmentApplication(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateSegmentApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE UPDATE APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	app := extractSegmentApplication(d)
 
@@ -109,33 +111,33 @@ func resourceUpdateSegmentApplication(d *schema.ResourceData, m interface{}) err
 
 	updApp, err := client.Applications.UpdateApplication(app)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = client.Applications.BindApplicationToSite(updApp, app.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setSegmentApplicationFields(d, updApp, client.TenantBaseDomain)
 
-	return resourceReadSegmentApplication(d, m)
+	return resourceReadSegmentApplication(ctx, d, m)
 }
 
-func resourceDeleteSegmentApplication(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteSegmentApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE DELETE APP")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	err := client.Applications.DeleteApplication(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return resourceReadSegmentApplication(d, m)
+	return resourceReadSegmentApplication(ctx, d, m)
 }
 
 func extractSegmentApplication(d *schema.ResourceData) *dto.Application {

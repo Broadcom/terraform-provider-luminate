@@ -1,9 +1,11 @@
 package provider
 
 import (
+	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 	"log"
 	"sort"
@@ -25,27 +27,27 @@ func LuminateCollectionSiteLink() *schema.Resource {
 				},
 			},
 		},
-		Create: resourceCollectionSiteLinkCreate,
-		Delete: resourceCollectionSiteLinkDelete,
-		Read:   resourceCollectionSiteLinkRead,
-		Update: resourcesCollectionSiteLinkUpdate,
+		CreateContext: resourceCollectionSiteLinkCreate,
+		DeleteContext: resourceCollectionSiteLinkDelete,
+		ReadContext:   resourceCollectionSiteLinkRead,
+		UpdateContext: resourcesCollectionSiteLinkUpdate,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCollectionSiteLinkRead(d *schema.ResourceData, m interface{}) error {
+func resourceCollectionSiteLinkRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Reading site link")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	siteID := d.Get("site_id").(string)
 
 	res, err := client.CollectionAPI.GetCollectionsBySite(siteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(siteID)
@@ -54,22 +56,22 @@ func resourceCollectionSiteLinkRead(d *schema.ResourceData, m interface{}) error
 	log.Println("collection_ids_read", ids)
 	err = d.Set("collection_ids", ids)
 	if err != nil {
-		return errors.Wrapf(err, "unable to set collection_id for site %s", siteID)
+		return diag.FromErr(errors.Wrapf(err, "unable to set collection_id for site %s", siteID))
 	}
 	return nil
 }
 
-func resourceCollectionSiteLinkCreate(d *schema.ResourceData, m interface{}) error {
+func resourceCollectionSiteLinkCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Creating site link")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	links := extractCollectionSiteLinkFields(d)
 
 	createdLinks, err := client.CollectionAPI.LinkSiteToCollection(*links)
 	if err != nil || createdLinks == nil || *createdLinks == nil {
-		return errors.Wrapf(err, "unable to link site to collections")
+		return diag.FromErr(errors.Wrapf(err, "unable to link site to collections"))
 	}
 	siteID := (*createdLinks)[0].SiteID
 	collectionIDs := make([]string, len(*createdLinks))
@@ -82,23 +84,23 @@ func resourceCollectionSiteLinkCreate(d *schema.ResourceData, m interface{}) err
 	sort.Strings(collectionIDs)
 	err = d.Set("collection_ids", collectionIDs)
 	if err != nil {
-		return errors.Wrapf(err, "unable to set collection_id for site %s", siteID)
+		return diag.FromErr(errors.Wrapf(err, "unable to set collection_id for site %s", siteID))
 	}
-	return nil
+	return resourceCollectionSiteLinkRead(ctx, d, m)
 }
 
-func resourcesCollectionSiteLinkUpdate(d *schema.ResourceData, m interface{}) error {
+func resourcesCollectionSiteLinkUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Updating site link")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	if d.HasChange("collection_ids") {
 		siteID := d.Get("site_id").(string)
 		currentCollections, err := client.CollectionAPI.GetCollectionsBySite(siteID)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 		newCollectionState := d.Get("collection_ids").([]interface{})
 		if newCollectionState == nil {
@@ -119,7 +121,7 @@ func resourcesCollectionSiteLinkUpdate(d *schema.ResourceData, m interface{}) er
 					SiteID:       siteID,
 				})
 				if err != nil {
-					return err
+					return diag.FromErr(err)
 				}
 			}
 		}
@@ -133,24 +135,24 @@ func resourcesCollectionSiteLinkUpdate(d *schema.ResourceData, m interface{}) er
 			}
 			_, err := client.CollectionAPI.LinkSiteToCollection(links)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			}
 		}
 	}
-	return resourceCollectionSiteLinkRead(d, m)
+	return resourceCollectionSiteLinkRead(ctx, d, m)
 }
 
-func resourceCollectionSiteLinkDelete(d *schema.ResourceData, m interface{}) error {
+func resourceCollectionSiteLinkDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Deleting site link")
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	links := *extractCollectionSiteLinkFields(d)
 	for _, link := range links {
 		err := client.CollectionAPI.UnlinkSiteFromCollection(link)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	d.SetId("")

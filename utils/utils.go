@@ -6,6 +6,7 @@ import (
 	"github.com/Broadcom/terraform-provider-luminate/service/utils"
 	"github.com/asaskevich/govalidator"
 	"io"
+	"regexp"
 )
 
 const (
@@ -15,6 +16,7 @@ const (
 	LocalIdpId             = "local"
 	DefaultCollection      = "7cef2ccc-ed3e-4812-9ef2-b986c5dac2a5"
 	RootCollection         = "6b21619f-f505-41ec-af1b-09350be40000"
+	DefaultRDPPort         = "3389"
 )
 
 func StringMD5(in string) string {
@@ -182,4 +184,28 @@ func ValidateEntityType(entityType string) bool {
 		}
 	}
 	return false
+}
+
+func ExtractIPAndPort(ipString string) (string, string) {
+	pattern := `(?i)(?P<protocol>[\w]+)://(?P<ip>[^\s:]+)(?::(?P<port>\d+))?|(?P<ipOnly>[^\s:]+)`
+	regex := regexp.MustCompile(pattern)
+	matches := regex.FindStringSubmatch(ipString)
+	if matches == nil {
+		return "", ""
+	}
+	subMatchesMap := make(map[string]string)
+	for i, name := range regex.SubexpNames() {
+		if name != "" {
+			subMatchesMap[name] = matches[i]
+		}
+	}
+	port := subMatchesMap["port"]
+	ip := subMatchesMap["ip"]
+	ipOnly := subMatchesMap["ipOnly"]
+
+	if ip == "" {
+		return ipOnly, port
+	}
+
+	return ip, port
 }

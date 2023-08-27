@@ -1,13 +1,15 @@
 package provider
 
 import (
+	"context"
 	"errors"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func LuminateSite() *schema.Resource {
@@ -67,50 +69,50 @@ func LuminateSite() *schema.Resource {
 				},
 			},
 		},
-		Create: resourceCreateSite,
-		Read:   resourceReadSite,
-		Update: resourceUpdateSite,
-		Delete: resourceDeleteSite,
+		CreateContext: resourceCreateSite,
+		ReadContext:   resourceReadSite,
+		UpdateContext: resourceUpdateSite,
+		DeleteContext: resourceDeleteSite,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateSite(d *schema.ResourceData, m interface{}) error {
+func resourceCreateSite(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE SITE CREATE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 	site := extractSiteFields(d)
 
 	newSite, err := client.Sites.CreateSite(site)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	d.SetId(site.ID)
 	setSiteFields(d, newSite)
 
-	return resourceReadSite(d, m)
+	return resourceReadSite(ctx, d, m)
 }
 
-func resourceReadSite(d *schema.ResourceData, m interface{}) error {
+func resourceReadSite(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE SITE READ")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	if client == nil {
-		return errors.New("unable to initialize client")
+		return diag.FromErr(errors.New("unable to initialize client"))
 	}
 
 	site, err := client.Sites.GetSiteByID(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if site == nil {
@@ -120,15 +122,15 @@ func resourceReadSite(d *schema.ResourceData, m interface{}) error {
 
 	setSiteFields(d, site)
 
-	return nil
+	return diagnostics
 }
 
-func resourceUpdateSite(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateSite(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE SITE UPDATE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	site := extractSiteFields(d)
@@ -136,30 +138,30 @@ func resourceUpdateSite(d *schema.ResourceData, m interface{}) error {
 	s, err := client.Sites.UpdateSite(site, d.Id())
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setSiteFields(d, s)
 
-	return resourceReadSite(d, m)
+	return resourceReadSite(ctx, d, m)
 }
 
-func resourceDeleteSite(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteSite(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE SITE DELETE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	err := client.Sites.DeleteSite(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId("")
 
-	return resourceReadSite(d, m)
+	return resourceReadSite(ctx, d, m)
 }
 
 func extractSiteFields(d *schema.ResourceData) *dto.Site {

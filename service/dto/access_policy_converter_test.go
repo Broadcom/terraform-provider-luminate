@@ -140,3 +140,38 @@ func TestConvertToDto(t *testing.T) {
 
 	assert.Equal(t, accessPolicy, generatedAccessPolicy)
 }
+
+func TestGetDeviceArguments(t *testing.T) {
+	device := Device{
+		OpswatMetaAccess:           true,
+		SymantecCloudSoc:           true,
+		SymantecWebSecurityService: true,
+	}
+
+	expectedMap := map[string][]string{}
+	expectedMap[Authentication] = []string{
+		ManagedDeviceWssConditionArgument,
+		ManagedDeviceCloudSocConditionArgument,
+		ManagedDeviceOpswatConditionArgument,
+	}
+
+	actualMap := getDeviceArguments(device)
+
+	assert.Equal(t, expectedMap, actualMap)
+}
+
+func TestHaveDeviceArgument(t *testing.T) {
+	device := Device{
+		OpswatMetaAccess:           false,
+		SymantecCloudSoc:           false,
+		SymantecWebSecurityService: false,
+	}
+	actual := hasDeviceArgument(device)
+	assert.Equal(t, false, actual)
+
+	device.SymantecWebSecurityService = true
+	actual = hasDeviceArgument(device)
+
+	assert.Equal(t, true, actual)
+
+}

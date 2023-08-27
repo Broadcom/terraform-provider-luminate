@@ -1,12 +1,14 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/pkg/errors"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func LuminateRdpAccessPolicy() *schema.Resource {
@@ -21,54 +23,58 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Schema: rdpSchema,
-		Create: resourceCreateRdpAccessPolicy,
-		Read:   resourceReadRdpAccessPolicy,
-		Update: resourceUpdateRdpAccessPolicy,
-		Delete: resourceDeleteAccessPolicy,
+		Schema:        rdpSchema,
+		CreateContext: resourceCreateRdpAccessPolicy,
+		ReadContext:   resourceReadRdpAccessPolicy,
+		UpdateContext: resourceUpdateRdpAccessPolicy,
+		DeleteContext: resourceDeleteAccessPolicy,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceCreateRdpAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	accessPolicy := extractRdpAccessPolicy(d)
 	for i := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
+			err = errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
+			return diag.FromErr(err)
 		}
 		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
 
 	createdAccessPolicy, err := client.AccessPolicies.CreateAccessPolicy(accessPolicy)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = setRdpAccessPolicyFields(d, createdAccessPolicy)
 	if err != nil {
-		return errors.Wrap(err, "Failed to set access policy field")
+		return diag.FromErr(errors.Wrap(err, "Failed to set access policy field"))
 	}
 
-	return resourceReadRdpAccessPolicy(d, m)
+	resourceReadRdpAccessPolicy(ctx, d, m)
+	return diagnostics
 }
 
-func resourceReadRdpAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceReadRdpAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	accessPolicy, err := client.AccessPolicies.GetAccessPolicy(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if accessPolicy == nil {
@@ -78,23 +84,25 @@ func resourceReadRdpAccessPolicy(d *schema.ResourceData, m interface{}) error {
 
 	err = setRdpAccessPolicyFields(d, accessPolicy)
 	if err != nil {
-		return errors.Wrap(err, "Failed to set access policy field")
+		return diag.FromErr(errors.Wrap(err, "Failed to set access policy field"))
 	}
 
-	return nil
+	return diagnostics
 }
 
-func resourceUpdateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateRdpAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diagnostics diag.Diagnostics
+
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	accessPolicy := extractRdpAccessPolicy(d)
 	for i := range accessPolicy.DirectoryEntities {
 		resolvedIdentityProviderType, err := client.IdentityProviders.GetIdentityProviderTypeById(accessPolicy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId)
+			return diag.FromErr(errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s", accessPolicy.DirectoryEntities[i].IdentityProviderId))
 		}
 		accessPolicy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 	}
@@ -102,15 +110,16 @@ func resourceUpdateRdpAccessPolicy(d *schema.ResourceData, m interface{}) error 
 
 	updatedAccessPolicy, err := client.AccessPolicies.UpdateAccessPolicy(accessPolicy)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = setRdpAccessPolicyFields(d, updatedAccessPolicy)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to set access policy field")
+		return diag.FromErr(errors.Wrapf(err, "Failed to set access policy field"))
 	}
 
-	return resourceReadRdpAccessPolicy(d, m)
+	resourceReadRdpAccessPolicy(ctx, d, m)
+	return diagnostics
 }
 
 func setRdpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPolicy) error {

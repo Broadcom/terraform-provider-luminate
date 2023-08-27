@@ -1,19 +1,22 @@
 package provider
 
 import (
+	"context"
 	"errors"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func LuminateawsIntegrationBind() *schema.Resource {
+func LuminateAWSIntegrationBind() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"integration_name": {
+
 				Type:         schema.TypeString,
 				Description:  "The aws integration name as configured in Luminate portal",
 				Required:     true,
@@ -52,58 +55,58 @@ func LuminateawsIntegrationBind() *schema.Resource {
 				},
 			},
 		},
-		Create: resourceCreateAwsIntegrationBind,
-		Read:   resourceReadAwsIntegrationBind,
-		Update: resourceUpdateIntegrationBind,
-		Delete: resourceDeleteAwsIntegrationBind,
+		CreateContext: resourceCreateAwsIntegrationBind,
+		ReadContext:   resourceReadAwsIntegrationBind,
+		UpdateContext: resourceUpdateIntegrationBind,
+		DeleteContext: resourceDeleteAwsIntegrationBind,
 	}
 }
 
-func resourceCreateAwsIntegrationBind(d *schema.ResourceData, m interface{}) error {
+func resourceCreateAwsIntegrationBind(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE INTEGRATION BIND CREATE")
 
-	return resourceUpdateIntegrationBind(d, m)
+	return resourceUpdateIntegrationBind(ctx, d, m)
 }
-func resourceReadAwsIntegrationBind(d *schema.ResourceData, m interface{}) error {
+func resourceReadAwsIntegrationBind(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE INTEGRATION BIND READ")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	integrationID := d.Get("integration_id").(string)
 
 	awsIntegration, err := client.IntegrationAPI.ReadAWSIntegrationBind(integrationID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	setAwsIntegrationFieldsBind(d, awsIntegration)
 
-	return nil
+	return diagnostics
 }
 
-func resourceUpdateIntegrationBind(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateIntegrationBind(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE INTEGRATION BIND UPDATE")
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
-	awsBody := createAWSrequestBody(d)
+	awsBody := createAWSRequestBody(d)
 
 	_, err := client.IntegrationAPI.UpdateAWSIntegration(awsBody)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	d.SetId(awsBody.ID)
 
 	return nil
 }
 
-func resourceDeleteAwsIntegrationBind(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteAwsIntegrationBind(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE INTEGRATION BIND DELETE")
 
 	return nil
@@ -117,7 +120,7 @@ func setAwsIntegrationFieldsBind(d *schema.ResourceData, integration *dto.AwsInt
 	d.Set("aws_role_arn", integration.AwsRoleArn)
 }
 
-func createAWSrequestBody(d *schema.ResourceData) *service.AWSRequestBody {
+func createAWSRequestBody(d *schema.ResourceData) *service.AWSRequestBody {
 	integrationName := d.Get("integration_name").(string)
 	integrationID := d.Get("integration_id").(string)
 	awsArn := d.Get("aws_role_arn").(string)

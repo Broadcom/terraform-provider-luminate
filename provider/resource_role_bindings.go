@@ -1,11 +1,13 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 	"log"
 )
@@ -62,18 +64,18 @@ func extractBaseFields(d *schema.ResourceData) (dto.RoleBinding, error) {
 	}, nil
 }
 
-func resourceDeleteRoleBindings(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteRoleBindings(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	roleType := d.Get("role_type").(string)
 	log.Println(fmt.Sprintf("[Info] Delete Role binding for role: %s", roleType))
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("invalid client")
+		return diag.FromErr(errors.New("invalid client"))
 	}
 	roleID := d.Id()
 
 	err := client.RoleBindingsAPI.DeleteRoleBindings(roleID)
 	if err != nil {
-		return errors.Wrap(err, "failed delete tenant role")
+		return diag.FromErr(errors.Wrap(err, "failed delete tenant role"))
 	}
 
 	return nil

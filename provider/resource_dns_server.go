@@ -1,14 +1,16 @@
 package provider
 
 import (
+	"context"
 	"errors"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func LuminateDNSserver() *schema.Resource {
@@ -41,51 +43,52 @@ func LuminateDNSserver() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Schema: dnsSchema,
-		Create: resourceCreateDNSServer,
-		Read:   resourceReadDNSServer,
-		Update: resourceUpdateDNSServer,
-		Delete: resourceDeleteDNSServer,
+		Schema:        dnsSchema,
+		CreateContext: resourceCreateDNSServer,
+		ReadContext:   resourceReadDNSServer,
+		UpdateContext: resourceUpdateDNSServer,
+		DeleteContext: resourceDeleteDNSServer,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
 }
 
-func resourceCreateDNSServer(d *schema.ResourceData, m interface{}) error {
+func resourceCreateDNSServer(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	log.Printf("[DEBUG] LUMINATE CREATE APP")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		return diag.FromErr(errors.New("unable to cast Luminate service"))
 	}
 
 	newApp := extractDNSServerFields(d)
 
 	app, err := client.Applications.CreateApplication(newApp)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = client.Applications.BindApplicationToSite(app, newApp.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(app.ID)
 	setDNSServerFields(d, app)
-
-	return resourceReadDNSServer(d, m)
+	resourceReadDNSServer(ctx, d, m)
+	return diagnostics
 }
 
-func resourceReadDNSServer(d *schema.ResourceData, m interface{}) error {
+func resourceReadDNSServer(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 
 	log.Printf("[DEBUG] LUMINATE READ APP")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		err := errors.New("unable to cast Luminate service")
+		return diag.FromErr(err)
 	}
 
 	app, err := client.Applications.GetApplicationById(d.Id())
@@ -95,7 +98,7 @@ func resourceReadDNSServer(d *schema.ResourceData, m interface{}) error {
 			d.SetId("")
 			return nil
 		}
-		return err
+		return diag.FromErr(err)
 	}
 
 	if app == nil {
@@ -108,49 +111,52 @@ func resourceReadDNSServer(d *schema.ResourceData, m interface{}) error {
 	app.SiteID = d.Get("site_id").(string)
 	setDNSServerFields(d, app)
 
-	return nil
+	return diagnostics
 }
 
-func resourceUpdateDNSServer(d *schema.ResourceData, m interface{}) error {
+func resourceUpdateDNSServer(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE UPDATE APP")
+	var diagnostics diag.Diagnostics
 
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		err := errors.New("unable to cast Luminate service")
+		return diag.FromErr(err)
 	}
 
 	app := extractDNSServerFields(d)
 
 	updApp, err := client.Applications.UpdateApplication(app)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = client.Applications.BindApplicationToSite(app, app.SiteID)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	updApp.SiteID = app.SiteID
 	setDNSServerFields(d, updApp)
 
-	return resourceReadDNSServer(d, m)
+	return diagnostics
 }
 
-func resourceDeleteDNSServer(d *schema.ResourceData, m interface{}) error {
+func resourceDeleteDNSServer(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] LUMINATE DELETE APP")
-
+	var diagnostics diag.Diagnostics
 	client, ok := m.(*service.LuminateService)
 	if !ok {
-		return errors.New("unable to cast Luminate service")
+		err := errors.New("unable to cast Luminate service")
+		return diag.FromErr(err)
 	}
 
 	err := client.Applications.DeleteApplication(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return resourceReadDNSServer(d, m)
+	return diagnostics
 }
 
 func setDNSServerFields(d *schema.ResourceData, application *dto.Application) {
