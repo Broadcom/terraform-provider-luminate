@@ -62,6 +62,7 @@ jobs:
     steps:
       - attach-env
       - checkout
+      - setup-ssh-key
       - run: make testacc
   build:
     docker:
