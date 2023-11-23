@@ -32,7 +32,7 @@ func LuminateAssignRoleBaseSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Description:  "The entity id to which this role is assigned.",
 			Required:     true,
-			ValidateFunc: utils.ValidateUuid,
+			ValidateFunc: utils.ValidateString,
 			ForceNew:     true,
 		},
 		"entity_type": {
