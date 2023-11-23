@@ -36,8 +36,8 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 		applicationServiceDTO.UseExternalAddressForHostAndSni = applicationSDKDTO.LinkTranslationSettings.UseExternalAddressForHostAndSni
 
 		var linkedins []*string
-		for _, v := range applicationSDKDTO.LinkTranslationSettings.LinkedApplications {
-			linkedins = append(linkedins, &v)
+		for index := range applicationSDKDTO.LinkTranslationSettings.LinkedApplications {
+			linkedins = append(linkedins, &applicationSDKDTO.LinkTranslationSettings.LinkedApplications[index])
 		}
 		applicationServiceDTO.LinkedApplications = linkedins
 	}

@@ -107,7 +107,7 @@ func LuminateWebApplication() *schema.Resource {
 		Description:  "Indicates whether to use external address for host header and SNI.",
 	}
 	webAppSchema["linked_applications"] = &schema.Schema{
-		Type:     schema.TypeList,
+		Type:     schema.TypeSet,
 		Optional: true,
 		Elem: &schema.Schema{
 			Type: schema.TypeString,
@@ -291,7 +291,7 @@ func extractWebApplication(d *schema.ResourceData) *dto.Application {
 		DefaultContentRewriteRulesEnabled: d.Get("default_content_rewrite_rules_enabled").(bool),
 		DefaultHeaderRewriteRulesEnabled:  d.Get("default_header_rewrite_rules_enabled").(bool),
 		UseExternalAddressForHostAndSni:   d.Get("use_external_address_for_host_and_sni").(bool),
-		LinkedApplications:                expandStringList(d.Get("linked_applications").([]interface{})),
+		LinkedApplications:                expandStringList(d.Get("linked_applications").(*schema.Set)),
 		HeaderCustomization:               d.Get("header_customization").(map[string]interface{}),
 		WildcardCertificate:               d.Get("wildcard_certificate").(string),
 		WildcardPrivateKey:                d.Get("wildcard_private_key").(string),
