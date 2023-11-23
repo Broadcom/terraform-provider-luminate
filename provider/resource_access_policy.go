@@ -53,7 +53,7 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 			},
 		},
 		"applications": {
-			Type:        schema.TypeList,
+			Type:        schema.TypeSet,
 			Description: "The applications to which this policy applies.",
 			Required:    true,
 			Elem: &schema.Schema{
@@ -297,8 +297,9 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 		})
 	}
 
-	applicationIdsInterface := d.Get("applications").([]interface{})
-	for _, applicationId := range applicationIdsInterface {
+	applicationIdsInterface := d.Get("applications").(*schema.Set)
+	applicationIdsList := applicationIdsInterface.List()
+	for _, applicationId := range applicationIdsList {
 		applicationIds = append(applicationIds, applicationId.(string))
 	}
 

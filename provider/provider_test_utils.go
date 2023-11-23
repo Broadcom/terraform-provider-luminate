@@ -1,8 +1,11 @@
 package provider
 
-func expandStringList(configured []interface{}) []*string {
-	vs := make([]*string, 0, len(configured))
-	for _, v := range configured {
+import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+func expandStringList(configured *schema.Set) []*string {
+	configuredList := configured.List()
+	vs := make([]*string, 0, len(configuredList))
+	for _, v := range configuredList {
 		val, ok := v.(string)
 		if ok && val != "" {
 			str := v.(string)
