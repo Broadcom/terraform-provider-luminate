@@ -49,8 +49,9 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 	if applicationSDKDTO.TcpTunnelSettings != nil && len(*tcpTunnelSettings) > 0 {
 		for _, t := range *tcpTunnelSettings {
 			target := TCPTarget{
-				Address: t.Target,
-				Ports:   t.Ports,
+				Address:     t.Target,
+				Ports:       t.Ports,
+				PortMapping: t.PortMapping,
 			}
 			applicationServiceDTO.Targets = append(applicationServiceDTO.Targets, target)
 		}
@@ -135,8 +136,9 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 		ApplicationTcpTargetSlice := make([]sdk.ApplicationTcpTarget, 0)
 		for _, v := range applicationServiceDTO.Targets {
 			t := sdk.ApplicationTcpTarget{
-				Ports:  v.Ports,
-				Target: v.Address,
+				Ports:       v.Ports,
+				Target:      v.Address,
+				PortMapping: v.PortMapping,
 			}
 			log.Printf("[DEBUG] TUNNEL Target %v", t)
 

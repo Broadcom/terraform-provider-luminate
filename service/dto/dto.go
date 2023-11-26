@@ -106,8 +106,9 @@ type DnsSettings struct {
 }
 
 type TCPTarget struct {
-	Address string
-	Ports   []int32
+	Address     string
+	Ports       []int32
+	PortMapping []int32
 }
 
 type Validators struct {
