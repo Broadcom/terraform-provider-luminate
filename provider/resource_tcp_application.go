@@ -36,6 +36,13 @@ func LuminateTCPApplication() *schema.Resource {
 						Type: schema.TypeInt,
 					},
 				},
+				"port_mapping": {
+					Type:     schema.TypeList,
+					Required: true,
+					Elem: &schema.Schema{
+						Type: schema.TypeInt,
+					},
+				},
 			},
 		},
 	}
@@ -185,9 +192,17 @@ func extractTCPTargets(d *schema.ResourceData) []dto.TCPTarget {
 			ports = append(ports, int32(port.(int)))
 		}
 
+		pm := vt["port_mapping"].([]interface{})
+		var portMapping []int32
+
+		for _, port := range pm {
+			portMapping = append(portMapping, int32(port.(int)))
+		}
+
 		target := dto.TCPTarget{
-			Address: vt["address"].(string),
-			Ports:   ports,
+			Address:     vt["address"].(string),
+			Ports:       ports,
+			PortMapping: portMapping,
 		}
 		targets = append(targets, target)
 	}
@@ -215,8 +230,9 @@ func flattenTCPTargets(targets []dto.TCPTarget) []interface{} {
 
 	for _, c := range targets {
 		t := map[string]interface{}{
-			"address": c.Address,
-			"ports":   c.Ports,
+			"address":      c.Address,
+			"ports":        c.Ports,
+			"port_mapping": c.PortMapping,
 		}
 		flat = append(flat, t)
 	}
