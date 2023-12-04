@@ -19,7 +19,7 @@ commands:
           command: |
             if [[ $SKIP == true ]]
             then
-              echo "No .go files were modified - skipping release" 
+              echo "No .go files or version were modified - skipping release" 
               circleci step halt
             fi
 
@@ -38,6 +38,7 @@ commands:
             SKIP=true
             git diff --name-only HEAD~ HEAD | egrep -q "\.go$" && SKIP=false
             git diff --name-only HEAD~ HEAD | egrep -q "VERSION" && SKIP=false
+            git log -1 HEAD --pretty=format:%s 2>/dev/null | egrep -q "force release" && SKIP=false
             echo "export SKIP=$SKIP" | tee -a ${BASH_ENV}
             if [[ "SKIP" == "false" ]]
             then
