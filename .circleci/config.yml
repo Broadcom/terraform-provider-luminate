@@ -35,13 +35,14 @@ commands:
       - run:
           command: |
             set +o errexit
-            SKIP=false
-            git diff --name-only HEAD~ HEAD | egrep -q "\.go$" && SKIP=true
-            git diff --name-only HEAD~ HEAD | egrep -q "VERSION" && SKIP=true
+            SKIP=true
+            git diff --name-only HEAD~ HEAD | egrep -q "\.go$" && SKIP=false
+            git diff --name-only HEAD~ HEAD | egrep -q "VERSION" && SKIP=false
             echo "export SKIP=$SKIP" | tee -a ${BASH_ENV}
-            if [[ "SKIP" == "true" ]]
+            if [[ "SKIP" == "false" ]]
             then
               .circleci/validate-release.sh
+              exit $?
             fi
 
             exit 0
