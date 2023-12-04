@@ -92,7 +92,8 @@ type Application struct {
 	WildcardCertificate string
 	WildcardPrivateKey  string
 	//SEGMENT
-	SegmentSettings *SegmentSettings
+	SegmentSettings         *SegmentSettings
+	MultipleSegmentSettings []*SegmentSettings
 	//DNS
 	DnsSettings *DnsSettings
 }

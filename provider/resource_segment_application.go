@@ -14,6 +14,12 @@ import (
 
 func LuminateSegmentApplication() *schema.Resource {
 	segmentAppSchema := CommonApplicationSchema()
+	segmentAppSchema["sub_type"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		ValidateFunc: utils.ValidateString,
+		Description:  "The segment application sub type",
+	}
 
 	segmentAppSchema["segment_settings"] = &schema.Schema{
 		Type:     schema.TypeList,
@@ -25,6 +31,24 @@ func LuminateSegmentApplication() *schema.Resource {
 					Type:        schema.TypeString,
 					Optional:    true,
 					Description: "Target ip",
+					Elem: &schema.Schema{
+						Type:         schema.TypeString,
+						ValidateFunc: utils.ValidateString,
+					},
+				},
+			},
+		},
+	}
+
+	segmentAppSchema["multiple_segment_settings"] = &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"original_ip": {
+					Type:        schema.TypeList,
+					Optional:    true,
+					Description: "List of target IPs",
 					Elem: &schema.Schema{
 						Type:         schema.TypeString,
 						ValidateFunc: utils.ValidateString,
@@ -142,16 +166,19 @@ func resourceDeleteSegmentApplication(ctx context.Context, d *schema.ResourceDat
 
 func extractSegmentApplication(d *schema.ResourceData) *dto.Application {
 	segmentSettings := extractSegmentSettings(d)
+	multipleSegmentSettings := extractMultipleSegmentSettings(d)
 	return &dto.Application{
-		Name:                 d.Get("name").(string),
-		Icon:                 d.Get("icon").(string),
-		SiteID:               d.Get("site_id").(string),
-		Type:                 "segment",
-		Visible:              d.Get("visible").(bool),
-		NotificationsEnabled: d.Get("notification_enabled").(bool),
-		Subdomain:            d.Get("subdomain").(string),
-		ExternalAddress:      d.Get("external_address").(string),
-		SegmentSettings:      segmentSettings,
+		Name:                    d.Get("name").(string),
+		Icon:                    d.Get("icon").(string),
+		SiteID:                  d.Get("site_id").(string),
+		Type:                    "segment",
+		SubType:                 d.Get("sub_type").(string),
+		Visible:                 d.Get("visible").(bool),
+		NotificationsEnabled:    d.Get("notification_enabled").(bool),
+		Subdomain:               d.Get("subdomain").(string),
+		ExternalAddress:         d.Get("external_address").(string),
+		SegmentSettings:         segmentSettings,
+		MultipleSegmentSettings: multipleSegmentSettings,
 	}
 }
 
@@ -159,12 +186,15 @@ func setSegmentApplicationFields(d *schema.ResourceData, application *dto.Applic
 	d.Set("name", application.Name)
 	d.Set("icon", application.Icon)
 	d.Set("type", application.Type)
+	d.Set("sub_type", application.SubType)
 	d.Set("visible", application.Visible)
 	d.Set("notification_enabled", application.NotificationsEnabled)
-	d.Set("internal_address", application.InternalAddress)
 	d.Set("external_address", application.ExternalAddress)
 	if application.SegmentSettings != nil {
 		d.Set("segment_settings", flattenSegmentSettings(application.SegmentSettings))
+	}
+	if application.MultipleSegmentSettings != nil {
+		d.Set("multiple_segment_settings", flattenMultipleSegmentSettings(application.MultipleSegmentSettings))
 	}
 }
 
@@ -177,6 +207,17 @@ func flattenSegmentSettings(settings *dto.SegmentSettings) []interface{} {
 		"original_ip": settings.OriginalIP,
 	}
 
+	return []interface{}{k}
+}
+
+func flattenMultipleSegmentSettings(settings []*dto.SegmentSettings) []interface{} {
+	var originalIPs []interface{}
+	for _, setting := range settings {
+		originalIPs = append(originalIPs, setting.OriginalIP)
+	}
+	k := map[string]interface{}{
+		"original_ip": originalIPs,
+	}
 	return []interface{}{k}
 }
 
@@ -198,4 +239,22 @@ func extractSegmentSettings(d *schema.ResourceData) *dto.SegmentSettings {
 	}
 
 	return segmentSettings
+}
+
+func extractMultipleSegmentSettings(d *schema.ResourceData) []*dto.SegmentSettings {
+	var multipleSegmentSettings []*dto.SegmentSettings
+
+	if v, ok := d.GetOk("multiple_segment_settings"); ok {
+		for _, element := range v.([]interface{}) {
+			elem := element.(map[string]interface{})
+
+			ipsList := elem["original_ip"].([]interface{})
+
+			for _, ip := range ipsList {
+				multipleSegmentSettings = append(multipleSegmentSettings, &dto.SegmentSettings{
+					OriginalIP: ip.(string)})
+			}
+		}
+	}
+	return multipleSegmentSettings
 }

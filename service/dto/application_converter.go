@@ -83,16 +83,30 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 		applicationServiceDTO.CloudIntegrationData = cloudIntegrationData
 	}
 
+	if applicationSDKDTO.SegmentSettings != nil {
+		applicationServiceDTO.SegmentSettings = &SegmentSettings{OriginalIP: applicationSDKDTO.SegmentSettings.OriginalIp}
+	}
+	if applicationSDKDTO.MultipleSegmentSettings != nil {
+		var multipleSegmentSettings []*SegmentSettings
+		for i := 0; i < len(*applicationSDKDTO.MultipleSegmentSettings); i++ {
+			multipleSegmentSettings = append(multipleSegmentSettings,
+				&SegmentSettings{OriginalIP: (*applicationSDKDTO.MultipleSegmentSettings)[i].OriginalIp})
+		}
+		applicationServiceDTO.MultipleSegmentSettings = multipleSegmentSettings
+	}
+
 	return applicationServiceDTO
 }
 
 func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Application {
+	saType := GetApplicationSubType(applicationServiceDTO.SubType)
 	aType := GetApplicationType(applicationServiceDTO.Type)
 
 	applicationSDKDTO := sdk.Application{
 		Name:                  applicationServiceDTO.Name,
 		CollectionId:          applicationServiceDTO.CollectionID,
 		Type_:                 &aType,
+		SubType:               &saType,
 		Icon:                  applicationServiceDTO.Icon,
 		IsVisible:             applicationServiceDTO.Visible,
 		IsNotificationEnabled: applicationServiceDTO.NotificationsEnabled,
@@ -172,8 +186,19 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			SegmentId: applicationServiceDTO.CloudIntegrationData.SegmentId,
 		}
 	case "segment":
-		applicationSDKDTO.SegmentSettings = &sdk.ApplicationConnectionSettingsSegment{
-			OriginalIp: applicationServiceDTO.SegmentSettings.OriginalIP,
+		if applicationServiceDTO.SegmentSettings != nil {
+			applicationSDKDTO.SegmentSettings = &sdk.ApplicationConnectionSettingsSegment{
+				OriginalIp: applicationServiceDTO.SegmentSettings.OriginalIP,
+			}
+		}
+		if applicationServiceDTO.MultipleSegmentSettings != nil {
+			var multipleSegmentSettings []sdk.ApplicationConnectionSettingsSegment
+			for i := 0; i < len(applicationServiceDTO.MultipleSegmentSettings); i++ {
+				multipleSegmentSettings = append(multipleSegmentSettings, sdk.ApplicationConnectionSettingsSegment{
+					OriginalIp: applicationServiceDTO.MultipleSegmentSettings[i].OriginalIP,
+				})
+			}
+			applicationSDKDTO.MultipleSegmentSettings = &multipleSegmentSettings
 		}
 	case "dns":
 		applicationSDKDTO.DnsSettings = &sdk.DnsServerData{
@@ -262,6 +287,10 @@ func GetApplicationSubType(appSubType string) sdk.ApplicationSubType {
 		return sdk.SINGLE_MACHINE_ApplicationSubType
 	case string(sdk.MULTIPLE_MACHINES_ApplicationSubType):
 		return sdk.MULTIPLE_MACHINES_ApplicationSubType
+	case string(sdk.SEGMENT_RANGE_ApplicationSubType):
+		return sdk.SEGMENT_RANGE_ApplicationSubType
+	case string(sdk.SEGMENT_SPECIFIC_IPS_ApplicationSubType):
+		return sdk.SEGMENT_SPECIFIC_IPS_ApplicationSubType
 	}
 	return ""
 }
