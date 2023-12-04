@@ -40,7 +40,7 @@ for FILE in $(ls release); do
     "${UPLOAD_URL}?name=${FILE}"
   RETVAL=$?
   echo ""
-  if [ $RETVAL -ne 0]; then
+  if [ $RETVAL -ne 0 ]; then
     echo "Error! Failed to upload $FILE to $UPLOAD_URL - curl returned error #$RETVAL"
     exit $RETVAL
   fi
