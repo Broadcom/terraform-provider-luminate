@@ -687,19 +687,35 @@ resource "luminate_segment_application" "nginx-app" {
 	}
 }
 ```
+Or using multiple_segment_settings
+```
+resource "luminate_segment_application" "new-segment-application" {
+	name = "ngnix"
+	sub_type = "SEGMENT_SPECIFIC_IPS"
+	site_id = "${luminate_site.new-site.id}"
+  	multiple_segment_settings {
+            original_ip = ["192.168.1.1", "192.168.1.2"]
+  	}
+}
+
+```
 
 #### Argument Reference
 
 The following arguments are supported:
 
--   **name -** (Required) name of the applications
+- **name -** (Required) name of the applications
 
--   **site_id** - (Required) Site ID to which the application will be
+- **site_id** - (Required) Site ID to which the application will be
     bound
 
--   **segment settings** - (Required) The segment application settings
+- **segment settings** - The segment application settings. This field will be deprecated, please use multiple segment settings instead.
 
-    -   **original_ip** - (Required) The internal resource IP address which is used by the connector for access to the application.
+    - **original_ip** - (Required) The internal resource IP address which is used by the connector for access to the application.
+  
+- **multiple segment settings** - (Required) The segment application settings
+
+    - **original_ip** - (Required) The internal resource IPs addresses which is used by the connector for access to the application.
 
 Policy resources
 ============
