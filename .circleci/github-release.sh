@@ -17,7 +17,11 @@ echo "Creating release $VERSION on URL: $GITHUB_BASE_URL"
 OUTPUT=$(mktemp)
 RESP=$(curl -f -X POST -H "Authorization: token ${AUTH}" ${GITHUB_BASE_URL}/releases -d "${PAYLOAD}" -w "%{response_code}" -o $OUTPUT)
 if [ $? -ne 0 ]; then
-  echo "ERROR: creating the release failed with HTTP/$RESP"
+  if [ "$RESP" == "422" ]; then
+    echo "ERROR: release ${VERSION} already exists, please increment it in https://github.com/Broadcom/terraform-provider-luminate/blob/master/VERSION and commit again"
+  else
+    echo "ERROR: creating the release failed with HTTP/$RESP"
+  fi
   cat "$OUTPUT"
   exit 1
 fi
