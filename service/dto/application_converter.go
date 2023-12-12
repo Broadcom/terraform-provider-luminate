@@ -108,6 +108,7 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 		Type_:                 &aType,
 		SubType:               &saType,
 		Icon:                  applicationServiceDTO.Icon,
+		Enabled:               true,
 		IsVisible:             applicationServiceDTO.Visible,
 		IsNotificationEnabled: applicationServiceDTO.NotificationsEnabled,
 		ConnectionSettings: &sdk.ApplicationConnectionSettings{
