@@ -1,6 +1,7 @@
 package provider
 
 import (
+	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"errors"
 	"fmt"
@@ -22,6 +23,14 @@ func LuminateRDPApplication() *schema.Resource {
 		ValidateFunc:     utils.ValidateString,
 		Description:      "Internal address of the application, accessible by connector",
 		DiffSuppressFunc: suppressExternalAddressUpdate,
+	}
+
+	rdpSchema["sub_type"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		Default:      string(sdk.SINGLE_MACHINE_ApplicationSubType),
+		ValidateFunc: validateSubType,
+		Description:  "rdp application sub type",
 	}
 
 	return &schema.Resource{
@@ -134,6 +143,7 @@ func resourceDeleteRDPApplication(ctx context.Context, d *schema.ResourceData, m
 func setRDPApplicationFields(d *schema.ResourceData, application *dto.Application) {
 	d.Set("name", application.Name)
 	d.Set("collection_id", application.CollectionID)
+	d.Set("sub_type", application.SubType)
 	d.Set("icon", application.Icon)
 	d.Set("type", application.Type)
 	d.Set("visible", application.Visible)
@@ -159,6 +169,7 @@ func extractRDPApplicationFields(d *schema.ResourceData) *dto.Application {
 		ID:                   d.Id(),
 		Name:                 d.Get("name").(string),
 		CollectionID:         d.Get("collection_id").(string),
+		SubType:              d.Get("sub_type").(string),
 		Icon:                 d.Get("icon").(string),
 		SiteID:               d.Get("site_id").(string),
 		Type:                 "rdp",
