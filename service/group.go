@@ -3,6 +3,7 @@ package service
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
+	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
@@ -25,7 +26,7 @@ func (g *GroupAPI) GetGroupId(identityProviderId string, groupName string) (stri
 	}
 
 	if len(groupPage.Content) < 1 {
-		return "", errors.New("no groups found")
+		return "", errors.New(fmt.Sprintf("no groups found with name: %s", groupName))
 	}
 
 	for _, group := range groupPage.Content {
