@@ -1,6 +1,7 @@
 package provider
 
 import (
+	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"errors"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
@@ -18,6 +19,7 @@ func LuminateSegmentApplication() *schema.Resource {
 		Type:         schema.TypeString,
 		Optional:     true,
 		ValidateFunc: utils.ValidateString,
+		Default:      string(sdk.SEGMENT_ApplicationType),
 		Description:  "The segment application sub type",
 	}
 
