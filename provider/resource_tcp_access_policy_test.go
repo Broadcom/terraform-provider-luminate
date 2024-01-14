@@ -16,6 +16,7 @@ const resourceTcpAccessPolicy_enabled = `
 	  target {
 		address = "127.0.0.1"
 		ports = ["8080"]
+		port_mapping = [80]	
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
@@ -41,6 +42,7 @@ const resourceTcpAccessPolicy_disabled = `
 	  target {
 		address = "127.0.0.1"
 		ports = ["8080"]
+		port_mapping = [80]	
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
@@ -63,6 +65,7 @@ const resourceTcpAccessPolicy_enabled_not_specified = `
 	  target {
 		address = "127.0.0.1"
 		ports = ["8080"]
+		port_mapping = [80]	
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
@@ -84,6 +87,7 @@ const resourceTcpAccessPolicy_optional_not_specified = `
 	  target {
 		address = "127.0.0.1"
 		ports = ["8080"]
+		port_mapping = [80]	
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
@@ -106,6 +110,7 @@ const resourceTcpAccessPolicy_conditions_specified = `
 	  target {
 		address = "127.0.0.1"
 		ports = ["8080"]
+		port_mapping = [80]	
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
@@ -133,6 +138,7 @@ const resourceTcpAccessPolicy_validators_specified = `
 	  target {
 		address = "127.0.0.1"
 		ports = ["8080"]
+		port_mapping = [80]	
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
@@ -166,6 +172,7 @@ const resourceTCPAccessPolicy_collection = `
 	  target {
 		address = "127.0.0.1"
 		ports = ["8080"]
+		port_mapping = [80]	
 	  }
 
       depends_on = [luminate_collection_site_link.new-collection-site-link]

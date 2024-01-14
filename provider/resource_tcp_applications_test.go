@@ -17,6 +17,7 @@ resource "luminate_tcp_application" "new-tcp-application" {
   target {
     address = "127.0.0.1"
     ports = ["8080"]
+	port_mapping = [80]	
   }
 }
 `
@@ -38,7 +39,8 @@ resource "luminate_tcp_application" "new-tcp-application-collection" {
   collection_id = "${luminate_collection.new-collection.id}"
   target {
     address = "127.0.0.1"
-    ports = ["8080"]
+    ports = [8080]
+	port_mapping = [80]	
   }
  depends_on = [luminate_collection_site_link.new-collection-site-link]
 }
