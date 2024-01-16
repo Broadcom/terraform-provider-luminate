@@ -62,8 +62,9 @@ jobs:
     steps:
       - attach-env
       - checkout
+      - setup-ssh-key
       # Temporarily disable integration tests since the integration environment is broken
-      #- run: make testacc
+      - run: make testacc
   build:
     docker:
       - image: cimg/go:1.19
