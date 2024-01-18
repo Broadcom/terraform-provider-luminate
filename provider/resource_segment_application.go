@@ -19,7 +19,7 @@ func LuminateSegmentApplication() *schema.Resource {
 		Type:         schema.TypeString,
 		Optional:     true,
 		ValidateFunc: utils.ValidateString,
-		Default:      string(sdk.SEGMENT_ApplicationType),
+		Default:      string(sdk.SEGMENT_RANGE_ApplicationSubType),
 		Description:  "The segment application sub type",
 	}
 

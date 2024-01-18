@@ -21,7 +21,6 @@ func NewAccessPolicyAPI(client *sdk.APIClient) *AccessPolicyAPI {
 
 func (api *AccessPolicyAPI) CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
 	accessPolicyDto := dto.ConvertToDto(accessPolicy)
-	body := sdk.AccessAndActivityPoliciesApiCreatePolicyOpts{Body: optional.NewInterface(accessPolicyDto)}
 	log.Printf("[DEBUG] - Creating Policy")
 	ctx := context.Background()
 	for i, entity := range accessPolicyDto.DirectoryEntities {
@@ -33,6 +32,7 @@ func (api *AccessPolicyAPI) CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (
 			accessPolicyDto.DirectoryEntities[i].DisplayName = group.Name
 		}
 	}
+	body := sdk.AccessAndActivityPoliciesApiCreatePolicyOpts{Body: optional.NewInterface(accessPolicyDto)}
 	createdAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.CreatePolicy(ctx, &body)
 	if err != nil {
 		return nil, err
