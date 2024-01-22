@@ -1,6 +1,7 @@
 package provider
 
 import (
+	swagger "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"errors"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -194,6 +195,20 @@ func setAccessPolicyBaseFields(d *schema.ResourceData, accessPolicy *dto.AccessP
 	if accessPolicy.Conditions != nil {
 		d.Set("conditions", flattenConditions(accessPolicy.Conditions))
 	}
+	if len(accessPolicy.DirectoryEntities) > 0 {
+		groupIDs := make([]string, 0)
+		userIDs := make([]string, 0)
+		for _, entity := range accessPolicy.DirectoryEntities {
+			if *dto.ToModelType(entity.EntityType) == swagger.GROUP_EntityType {
+				groupIDs = append(groupIDs, entity.IdentifierInProvider)
+			}
+			if *dto.ToModelType(entity.EntityType) == swagger.USER_EntityType {
+				userIDs = append(userIDs, entity.IdentifierInProvider)
+			}
+		}
+		d.Set("group_ids", groupIDs)
+		d.Set("user_ids", userIDs)
+	}
 }
 
 func flattenValidators(validators *dto.Validators) []interface{} {
@@ -302,7 +317,6 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 	for _, applicationId := range applicationIdsList {
 		applicationIds = append(applicationIds, applicationId.(string))
 	}
-
 	validators = extractValidators(d)
 	conditions = extractConditions(d)
 

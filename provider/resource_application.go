@@ -35,7 +35,7 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 		"icon": {
 			Type:         schema.TypeString,
 			Optional:     true,
-			Description:  "Base64 representation of 40x40 icon",
+			Description:  "Base64 representation of 128x128 icon",
 			ValidateFunc: utils.ValidateString,
 		},
 		"visible": {

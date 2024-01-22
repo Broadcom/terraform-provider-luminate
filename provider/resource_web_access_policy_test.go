@@ -20,8 +20,9 @@ const resourceWebAccessPolicy_enabled = `
 		name =  "resourceWebAccessPolicy_enabled"
 		identity_provider_id = "local"
 
-		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430","ed974d59-1941-4584-9336-2a9ed35043f2"]
   		applications = ["${luminate_web_application.new-application.id}"]
+		group_ids = ["3b61849d-f08d-42d3-a158-da1a53cd2ac6"]
 	}
 `
 
