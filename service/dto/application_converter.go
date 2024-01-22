@@ -99,14 +99,13 @@ func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
 }
 
 func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Application {
-	saType := GetApplicationSubType(applicationServiceDTO.SubType)
+
 	aType := GetApplicationType(applicationServiceDTO.Type)
 
 	applicationSDKDTO := sdk.Application{
 		Name:                  applicationServiceDTO.Name,
 		CollectionId:          applicationServiceDTO.CollectionID,
 		Type_:                 &aType,
-		SubType:               &saType,
 		Icon:                  applicationServiceDTO.Icon,
 		Enabled:               true,
 		IsVisible:             applicationServiceDTO.Visible,
@@ -120,6 +119,10 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			CustomSSLCertificate: applicationServiceDTO.WildcardCertificate,
 			WildcardPrivateKey:   applicationServiceDTO.WildcardPrivateKey,
 		},
+	}
+	if applicationServiceDTO.SubType != "" {
+		saType := GetApplicationSubType(applicationServiceDTO.SubType)
+		applicationSDKDTO.SubType = &saType
 	}
 
 	switch applicationServiceDTO.Type {
