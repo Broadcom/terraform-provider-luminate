@@ -16,7 +16,6 @@ const resourceTcpAccessPolicy_enabled = `
 	  target {
 		address = "127.0.0.1"
 		ports = ["8080"]
-		port_mapping = [80]	
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
