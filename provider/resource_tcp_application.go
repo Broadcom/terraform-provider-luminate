@@ -38,7 +38,7 @@ func LuminateTCPApplication() *schema.Resource {
 				},
 				"port_mapping": {
 					Type:     schema.TypeList,
-					Required: true,
+					Optional: true,
 					Elem: &schema.Schema{
 						Type: schema.TypeInt,
 					},
