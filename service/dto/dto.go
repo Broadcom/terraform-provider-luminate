@@ -113,7 +113,6 @@ type TCPTarget struct {
 }
 
 type Validators struct {
-	ComplianceCheck bool
 	WebVerification bool
 }
 
@@ -139,7 +138,6 @@ const (
 )
 
 const (
-	ValidatorComplianceCheck = "VALIDATOR_COMPLIANCE_CHECK"
 	ValidatorWebVerification = "VALIDATOR_WEB_VERIFICATION"
 )
 

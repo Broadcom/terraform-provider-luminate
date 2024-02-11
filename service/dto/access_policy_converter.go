@@ -157,10 +157,6 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	if accessPolicy.Validators != nil {
 		validatorsDto = map[string]bool{}
 
-		if accessPolicy.Validators.ComplianceCheck {
-			validatorsDto[ValidatorComplianceCheck] = accessPolicy.Validators.ComplianceCheck
-		}
-
 		if accessPolicy.Validators.WebVerification {
 			validatorsDto[ValidatorWebVerification] = accessPolicy.Validators.WebVerification
 		}
@@ -303,7 +299,6 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 
 	if accessPolicyDto.Validators != nil && len(accessPolicyDto.Validators) > 0 {
 		validators = &Validators{
-			ComplianceCheck: accessPolicyDto.Validators[ValidatorComplianceCheck],
 			WebVerification: accessPolicyDto.Validators[ValidatorWebVerification],
 		}
 	}
