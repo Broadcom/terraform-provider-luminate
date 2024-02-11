@@ -140,7 +140,7 @@ const (
 
 const (
 	ValidatorWebVerification = "VALIDATOR_WEB_VERIFICATION"
-	MFA                      = "MFA_VERIFICATION"
+	MFA                      = "VALIDATOR_MFA"
 )
 
 const (

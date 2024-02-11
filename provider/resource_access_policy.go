@@ -205,12 +205,15 @@ func setAccessPolicyBaseFields(d *schema.ResourceData, accessPolicy *dto.AccessP
 }
 
 func flattenValidators(validators *dto.Validators) []interface{} {
+	k := make(map[string]interface{})
 	if validators == nil {
 		return []interface{}{}
 	}
-	k := map[string]interface{}{
-		"web_verification": validators.WebVerification,
-		"mfa":              validators.MFA,
+	if validators.WebVerification {
+		k["web_verification"] = true
+	}
+	if validators.MFA {
+		k["mfa"] = true
 	}
 	return []interface{}{k}
 }
@@ -344,7 +347,12 @@ func extractValidators(d *schema.ResourceData) *dto.Validators {
 		if webVerification {
 			validators = &dto.Validators{
 				WebVerification: webVerification,
-				MFA:             mfaVerification,
+			}
+		}
+
+		if mfaVerification {
+			validators = &dto.Validators{
+				MFA: true,
 			}
 		}
 	}
