@@ -160,6 +160,9 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 		if accessPolicy.Validators.WebVerification {
 			validatorsDto[ValidatorWebVerification] = accessPolicy.Validators.WebVerification
 		}
+		if accessPolicy.Validators.MFA {
+			validatorsDto[MFA] = accessPolicy.Validators.MFA
+		}
 	}
 
 	if accessPolicy.Conditions != nil {

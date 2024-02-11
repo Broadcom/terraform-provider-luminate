@@ -210,6 +210,7 @@ func flattenValidators(validators *dto.Validators) []interface{} {
 	}
 	k := map[string]interface{}{
 		"web_verification": validators.WebVerification,
+		"mfa":              validators.MFA,
 	}
 	return []interface{}{k}
 }
@@ -328,17 +329,22 @@ func extractValidators(d *schema.ResourceData) *dto.Validators {
 
 	if v, ok := d.GetOk("validators"); ok {
 		var webVerification bool
+		var mfaVerification bool
 
 		for _, element := range v.([]interface{}) {
 			elem := element.(map[string]interface{})
 			if value, ok := elem["web_verification"].(bool); ok && value {
 				webVerification = true
 			}
+			if value, ok := elem["mfa"].(bool); ok && value {
+				mfaVerification = true
+			}
 		}
 
 		if webVerification {
 			validators = &dto.Validators{
 				WebVerification: webVerification,
+				MFA:             mfaVerification,
 			}
 		}
 	}

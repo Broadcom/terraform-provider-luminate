@@ -166,6 +166,9 @@ const resourceWebAccessPolicy_validators_specified = `
 	
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_web_application.new-application.id}"]
+		validators {
+			mfa = true
+		}
 	}
 `
 
@@ -228,6 +231,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "validators.0.mfa", "true"),
 				),
 			},
 			{

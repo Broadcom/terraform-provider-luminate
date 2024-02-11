@@ -114,6 +114,7 @@ type TCPTarget struct {
 
 type Validators struct {
 	WebVerification bool
+	MFA             bool
 }
 
 type Device struct {
@@ -139,6 +140,7 @@ const (
 
 const (
 	ValidatorWebVerification = "VALIDATOR_WEB_VERIFICATION"
+	MFA                      = "MFA_VERIFICATION"
 )
 
 const (
