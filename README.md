@@ -913,6 +913,9 @@ resource "luminate_web_access_policy" "new-web-access-policy" {
       symantec_cloudsoc = true
       symantec_web_security_service = false
     }
+    validators {
+        mfa = true
+    }
   }
 }
 ```
@@ -940,9 +943,7 @@ The following arguments are supported:
 
 -   **validators** - (Optional)
 
-    -   **web_verification** - (Optional) Indicate whatever to perform
-        web verification validation. not compatible for HTTP
-        applications
+    -   **mfa** - (Optional) Specifies whether to carry out mfa (multi-factor authentication) validation.
 
 -   **conditions** - (Optional)
 
