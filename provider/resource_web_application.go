@@ -299,15 +299,9 @@ func extractWebApplication(d *schema.ResourceData) *dto.Application {
 }
 
 func setWebApplicationFields(d *schema.ResourceData, application *dto.Application, tenantBaseDomain string) {
-	d.Set("name", application.Name)
-	d.Set("icon", application.Icon)
-	d.Set("type", application.Type)
+	SetBaseApplicationFields(d, application)
 	d.Set("sub_type", application.SubType)
-	d.Set("visible", application.Visible)
-	d.Set("notification_enabled", application.NotificationsEnabled)
 	d.Set("internal_address", application.InternalAddress)
-	d.Set("external_address", application.ExternalAddress)
-	d.Set("subdomain", application.Subdomain)
 	d.Set("custom_external_address", application.CustomExternalAddress)
 	d.Set("collection_id", application.CollectionID)
 

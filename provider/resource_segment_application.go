@@ -185,13 +185,8 @@ func extractSegmentApplication(d *schema.ResourceData) *dto.Application {
 }
 
 func setSegmentApplicationFields(d *schema.ResourceData, application *dto.Application, tenantBaseDomain string) {
-	d.Set("name", application.Name)
-	d.Set("icon", application.Icon)
-	d.Set("type", application.Type)
+	SetBaseApplicationFields(d, application)
 	d.Set("sub_type", application.SubType)
-	d.Set("visible", application.Visible)
-	d.Set("notification_enabled", application.NotificationsEnabled)
-	d.Set("external_address", application.ExternalAddress)
 	if application.SegmentSettings != nil {
 		d.Set("segment_settings", flattenSegmentSettings(application.SegmentSettings))
 	}

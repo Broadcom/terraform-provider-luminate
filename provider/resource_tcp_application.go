@@ -210,14 +210,8 @@ func extractTCPTargets(d *schema.ResourceData) []dto.TCPTarget {
 }
 
 func setTCPApplicationFields(d *schema.ResourceData, application *dto.Application) {
-	d.Set("name", application.Name)
+	SetBaseApplicationFields(d, application)
 	d.Set("collection_id", application.CollectionID)
-	d.Set("icon", application.Icon)
-	d.Set("type", application.Type)
-	d.Set("visible", application.Visible)
-	d.Set("notification_enabled", application.NotificationsEnabled)
-	d.Set("external_address", application.ExternalAddress)
-	d.Set("subdomain", application.Subdomain)
 	d.Set("luminate_address", application.LuminateAddress)
 	log.Printf("[DEBUG] Settings TCP Targets")
 

@@ -141,17 +141,11 @@ func resourceDeleteRDPApplication(ctx context.Context, d *schema.ResourceData, m
 }
 
 func setRDPApplicationFields(d *schema.ResourceData, application *dto.Application) {
-	d.Set("name", application.Name)
+	SetBaseApplicationFields(d, application)
 	d.Set("collection_id", application.CollectionID)
 	d.Set("sub_type", application.SubType)
-	d.Set("icon", application.Icon)
-	d.Set("type", application.Type)
-	d.Set("visible", application.Visible)
 	d.Set("site_id", application.SiteID)
-	d.Set("notification_enabled", application.NotificationsEnabled)
 	d.Set("internal_address", application.InternalAddress)
-	d.Set("external_address", application.ExternalAddress)
-	d.Set("subdomain", application.Subdomain)
 	d.Set("luminate_address", application.LuminateAddress)
 }
 

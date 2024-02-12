@@ -16,6 +16,7 @@ resource "luminate_web_application" "new-application" {
  site_id = "${luminate_site.new-site.id}"
  name = "tfAccApplication"
  internal_address = "http://127.0.0.1:8080"
+ icon = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII="
 }
 `
 

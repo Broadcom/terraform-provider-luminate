@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -37,6 +38,15 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 			Optional:     true,
 			Description:  "Base64 representation of 128x128 icon",
 			ValidateFunc: utils.ValidateString,
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				return false
+			},
+		},
+		"icon_name": {
+			Type:         schema.TypeString,
+			Optional:     true,
+			Description:  "Icon Terraform's name, will only presented and affect terraform state",
+			ValidateFunc: utils.ValidateString,
 		},
 		"visible": {
 			Type:         schema.TypeBool,
@@ -67,4 +77,15 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 			Computed: true,
 		},
 	}
+}
+func SetBaseApplicationFields(d *schema.ResourceData, application *dto.Application) {
+	d.Set("name", application.Name)
+	if application.Icon != "" {
+		d.Set("icon", application.Icon)
+	}
+	d.Set("visible", application.Visible)
+	d.Set("notification_enabled", application.NotificationsEnabled)
+	d.Set("external_address", application.ExternalAddress)
+	d.Set("subdomain", application.Subdomain)
+	d.Set("type", application.Type)
 }
