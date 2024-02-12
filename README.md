@@ -3,12 +3,12 @@
 
 #### Latest Binaries  
 
-| Platform    |                                                                                                                                                                          |
-|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Linux       | [terraform-provider-luminate-linux.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-linux.zip)          |
-| MacOS Intel | [terraform-provider-luminate-darwin.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-darwin.zip)        |
-| MacOS M1    | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate- darwin_arm64.zip)|
-| Windows     | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-windows.zip) <br/>|
+| Platform    |                                                                                                                                                                           |
+|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Linux       | [terraform-provider-luminate-linux.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-linux.zip)           |
+| MacOS Intel | [terraform-provider-luminate-darwin.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-darwin.zip)         |
+| MacOS M1    | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate- darwin_arm64.zip) |
+| Windows     | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-windows.zip) <br/> |
 
 [![CircleCI](https://circleci.com/gh/Broadcom/terraform-provider-luminate/tree/master.svg?style=shield)](https://circleci.com/gh/Broadcom/terraform-provider-luminate)  
 ---
@@ -22,39 +22,39 @@
 - [Usage Example](#provider-usage-example)
 
 [Core resources](#core-resources)
-- [Resource: luminate_site](#resource-luminatesite)
-- [Resource: luminate_connector](#resource-luminateconnector)
+- [Resource: luminate_site](#resource-luminate_site)
+- [Resource: luminate_connector](#resource-luminate_connector)
 
 [Application Resources](#application-resources)
-- [Resource: luminate_web_application](#resource-luminatewebapplication)
-- [Resource: luminate_ssh_application](#resource-luminatesshapplication)
-- [Resource: luminate_rdp_application](#resource-luminaterdpapplication)
-- [Resource: luminate_tcp_application](#resource-luminatetcpapplication)
-- [Resource: luminate_ssh_gw_application](#resource-luminatesshapplication)
-- [Resource: luminate_segment_application](#resource-luminatesegmentapplication)
+- [Resource: luminate_web_application](#resource-luminate_web_application)
+- [Resource: luminate_ssh_application](#resource-luminate_ssh_application)
+- [Resource: luminate_rdp_application](#resource-luminate_rdp_application)
+- [Resource: luminate_tcp_application](#resource-luminate_tcp_application)
+- [Resource: luminate_ssh_gw_application](#resource-luminate_ssh_application)
+- [Resource: luminate_segment_application](#resource-luminate_segment_application)
 
 [Policy resources](#policy-resources)
-- [Resource: luminate_rdp_access_policy](#resource-luminaterdpaccesspolicy)
-- [Resource: luminate_ssh_access_policy](#resource-luminatesshaccesspolicy)
-- [Resource: luminate_web_access_policy](#resource-luminatewebaccesspolicy)
-- [Resource: luminate_tcp_access_policy](#resource-luminatetcpaccesspolicy)
+- [Resource: luminate_rdp_access_policy](#resource-luminate_rdp_access_policy)
+- [Resource: luminate_ssh_access_policy](#resource-luminate_ssh_access_policy)
+- [Resource: luminate_web_access_policy](#resource-luminate_web_access_policy)
+- [Resource: luminate_tcp_access_policy](#resource-luminate_tcp_access_policy)
 
 [Collection resources](#collection-resources)
-- [Resource: luminate_collection](#resource-luminatecollection)
-- [Resource: luminate_collection_site_link](#resource-luminatecollectionsitelink)
-- [Resource: luminate_tenant_role](#resource-luminatetenantrole)
-- [Resource: luminate_collection_role](#resource-luminatecollectionrole)
-- [Resource: luminate_site_role](#resource-luminatesiterole)
+- [Resource: luminate_collection](#resource-luminate_collection)
+- [Resource: luminate_collection_site_link](#resource-luminate_collection_site_link)
+- [Resource: luminate_tenant_role](#resource-luminate_tenant_role)
+- [Resource: luminate_collection_role](#resource-luminate_collection_role)
+- [Resource: luminate_site_role](#resource-luminate_site_role)
 
 [Identities resources](#identities-resources)
-- [Resource: luminate_group_user](#resource-luminategroupuser)
+- [Resource: luminate_group_user](#resource-luminate_group_user)
 
 [Data sources](#data-sources)
-- [Data Source: luminate_identity_provider](#data-source-luminateidentityprovider)
-- [Data Source: luminate_user](#data-source-luminateuser)
-- [Data Source: luminate_group](#data-source-luminategroup)
-- [Data Source: luminate_aws_integration](#data-source-luminateawsintegration)
-- [Data Source: luminate_ssh_client](#data-source-luminatesshclient)
+- [Data Source: luminate_identity_provider](#data-Source: luminate_identity_provider)
+- [Data Source: luminate_user](#data-Source: luminate_user)
+- [Data Source: luminate_group](#data-Source: luminate_group)
+- [Data Source: luminate_aws_integration](#data-Source: luminate_aws_integration)
+- [Data Source: luminate_ssh_client](#data-Source: luminate_ssh_client)
 
 
 Basic configuration and usage
@@ -342,7 +342,7 @@ The following arguments are supported:
     DNS address that exposes the application.
 
 -   **internal_address** - (Required) Internal address of the
-    application, accessable by connector
+    application, accessible by connector
 
 -   **custom_root_path** - (Optional) Requests coming into the
     external address root path \'/\', will be redirected to this custom
@@ -634,7 +634,7 @@ The following arguments are supported:
 -   **internal_address** - (Required) Internal address of the
     application, accessible by connector
 
--   **integration_id** - (Required) integration id used to setup the
+-   **integration_id** - (Required) integration id used to set up the
     ssh gw application
 
 -   **tags** - (Required) a map of tags used to determine which
@@ -850,7 +850,7 @@ The following arguments are supported:
     applications only
 
 -   **allow_agent_forwarding** - (Optional) Indicates whether SSH
-    agent forwarding is allowed for a transparent secure access to all
+    agent forwarding is allowed for transparent secure access to all
     corporate SSH Servers via this SSH application that acts a Bastion.
     This property is relevant for SSH applications only.
 
@@ -913,6 +913,9 @@ resource "luminate_web_access_policy" "new-web-access-policy" {
       symantec_cloudsoc = true
       symantec_web_security_service = false
     }
+    validators {
+        mfa = true
+    }
   }
 }
 ```
@@ -940,9 +943,7 @@ The following arguments are supported:
 
 -   **validators** - (Optional)
 
-    -   **web_verification** - (Optional) Indicate whatever to perform
-        web verification validation. not compatible for HTTP
-        applications
+    -   **mfa** - (Optional) Specifies whether to carry out mfa (multi-factor authentication) validation.
 
 -   **conditions** - (Optional)
 
@@ -1358,7 +1359,7 @@ The following arguments are supported:
 -   **site_id -** (Required) site id to attach the connector
 
 -   **internal_address** - (Required) Internal address of the
-    application, accessable by connector
+    application, accessible by connector
 -   **dns_settings** [domain_suffixes] - (Required) The domain suffix
 
 
@@ -1413,7 +1414,7 @@ The following arguments are supported:
 
 -   **identity_provider_id -** (Required) id of the identity provider
 
--   **users -** (Required) List of user names to retrieve
+-   **users -** (Required) List of usernames to retrieve
 
 #### Attribute Reference
 

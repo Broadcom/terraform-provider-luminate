@@ -105,7 +105,6 @@ func TestConvertToDto(t *testing.T) {
 		Name: "my policy",
 
 		Validators: &Validators{
-			ComplianceCheck: true,
 			WebVerification: true,
 		},
 

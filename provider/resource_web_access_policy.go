@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -13,6 +14,23 @@ import (
 
 func LuminateWebAccessPolicy() *schema.Resource {
 	webSchema := LuminateAccessPolicyBaseSchema()
+	// web application is the only one that have mfa verification on access policy
+	webSchema["validators"] = &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"mfa": {
+					Type:         schema.TypeBool,
+					Optional:     true,
+					Default:      false,
+					Description:  "Indicate whatever to mfa verification validation.",
+					ValidateFunc: utils.ValidateBool,
+				},
+			},
+		},
+	}
 
 	return &schema.Resource{
 		Schema:        webSchema,

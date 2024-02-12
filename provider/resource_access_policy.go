@@ -81,13 +81,6 @@ func LuminateAccessPolicyBaseSchema() map[string]*schema.Schema {
 						Description:  "Indicate whatever to perform web verification validation. not compatible for HTTP applications",
 						ValidateFunc: utils.ValidateBool,
 					},
-					"compliance_check": {
-						Type:         schema.TypeBool,
-						Optional:     true,
-						Default:      false,
-						Description:  "Indicate whatever to perform compliance check validation.",
-						ValidateFunc: utils.ValidateBool,
-					},
 				},
 			},
 		},
@@ -212,12 +205,15 @@ func setAccessPolicyBaseFields(d *schema.ResourceData, accessPolicy *dto.AccessP
 }
 
 func flattenValidators(validators *dto.Validators) []interface{} {
+	k := make(map[string]interface{})
 	if validators == nil {
 		return []interface{}{}
 	}
-	k := map[string]interface{}{
-		"compliance_check": validators.ComplianceCheck,
-		"web_verification": validators.WebVerification,
+	if validators.WebVerification {
+		k["web_verification"] = true
+	}
+	if validators.MFA {
+		k["mfa"] = true
 	}
 	return []interface{}{k}
 }
@@ -335,24 +331,28 @@ func extractValidators(d *schema.ResourceData) *dto.Validators {
 	var validators *dto.Validators
 
 	if v, ok := d.GetOk("validators"); ok {
-		var complianceCheck bool
 		var webVerification bool
+		var mfaVerification bool
 
 		for _, element := range v.([]interface{}) {
 			elem := element.(map[string]interface{})
-			if value, ok := elem["compliance_check"].(bool); ok && value {
-				complianceCheck = true
-			}
-
 			if value, ok := elem["web_verification"].(bool); ok && value {
 				webVerification = true
 			}
+			if value, ok := elem["mfa"].(bool); ok && value {
+				mfaVerification = true
+			}
 		}
 
-		if complianceCheck || webVerification {
+		if webVerification {
 			validators = &dto.Validators{
-				ComplianceCheck: complianceCheck,
 				WebVerification: webVerification,
+			}
+		}
+
+		if mfaVerification {
+			validators = &dto.Validators{
+				MFA: true,
 			}
 		}
 	}
