@@ -38,15 +38,6 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 			Optional:     true,
 			Description:  "Base64 representation of 128x128 icon",
 			ValidateFunc: utils.ValidateString,
-			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
-				return false
-			},
-		},
-		"icon_name": {
-			Type:         schema.TypeString,
-			Optional:     true,
-			Description:  "Icon Terraform's name, will only presented and affect terraform state",
-			ValidateFunc: utils.ValidateString,
 		},
 		"visible": {
 			Type:         schema.TypeBool,
