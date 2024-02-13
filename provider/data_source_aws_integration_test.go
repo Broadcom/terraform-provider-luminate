@@ -8,15 +8,11 @@ import (
 
 const testAccResourceAwsIntegration = `
 	data "luminate_aws_integration" "my-aws_integration" {
-	  integration_name = "terraform-acceptance"
+	  integration_name = "terraform-test"
 	}
 `
 
 func TestAccLuminateDataSourceAwsIntegration(t *testing.T) {
-	// FIXME: https://jira.luminate.io/browse/AC-27711
-	t.Skip("Skipping testing see: https://jira.luminate.io/browse/AC-27711")
-	return
-
 	resourceName := "data.luminate_aws_integration.my-aws_integration"
 
 	resource.Test(t, resource.TestCase{
