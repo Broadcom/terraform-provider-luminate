@@ -173,14 +173,8 @@ func resourceDeleteSshGwApplication(ctx context.Context, d *schema.ResourceData,
 }
 
 func setSshGwApplicationFields(d *schema.ResourceData, application *dto.Application) {
-	d.Set("name", application.Name)
-	d.Set("icon", application.Icon)
-	d.Set("type", application.Type)
-	d.Set("visible", application.Visible)
-	d.Set("notification_enabled", application.NotificationsEnabled)
+	SetBaseApplicationFields(d, application)
 	d.Set("internal_address", application.InternalAddress)
-	d.Set("external_address", application.ExternalAddress)
-	d.Set("subdomain", application.Subdomain)
 	d.Set("luminate_address", application.LuminateAddress)
 	d.Set("segment_id", application.CloudIntegrationData.SegmentId)
 	d.Set("tags", application.CloudIntegrationData.Tags)

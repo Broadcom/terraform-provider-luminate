@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -67,4 +68,15 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 			Computed: true,
 		},
 	}
+}
+func SetBaseApplicationFields(d *schema.ResourceData, application *dto.Application) {
+	d.Set("name", application.Name)
+	if application.Icon != "" {
+		d.Set("icon", application.Icon)
+	}
+	d.Set("visible", application.Visible)
+	d.Set("notification_enabled", application.NotificationsEnabled)
+	d.Set("external_address", application.ExternalAddress)
+	d.Set("subdomain", application.Subdomain)
+	d.Set("type", application.Type)
 }
