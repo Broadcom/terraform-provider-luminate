@@ -1,7 +1,9 @@
 package provider
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"os"
 
 	"testing"
 )
@@ -12,22 +14,25 @@ resource "luminate_site" "new-site" {
 }
 `
 
-const testAccResourceSite_options = `
-resource "luminate_site" "new-site" {
+func testAccResourceSite_options(region string) string {
+	return fmt.Sprintf(`resource "luminate_site" "new-site" {
 	name = "tfAccSiteOpt"
-	region = "us-west1"
+	region = "%s"
 	mute_health_notification = "true"
 	kubernetes_persistent_volume_name = "K8SVolume"
 	kerberos {
 		domain = "domain.com"
 		kdc_address = "kdc_address"
 		keytab_pair = "keytab_pair"
-	}
+	}}`, region)
 }
-`
 
 func TestAccLuminateSite(t *testing.T) {
 	resourceName := "luminate_site.new-site"
+	var region string
+	if region = os.Getenv("TEST_SITE_REGION"); region == "" {
+		t.Skip("skipping TestAccLuminateSite no  site provided")
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -43,7 +48,7 @@ func TestAccLuminateSite(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceSite_options,
+				Config: testAccResourceSite_options(region),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSiteOpt"),
 					resource.TestCheckResourceAttr(resourceName, "region", "us-west1"),

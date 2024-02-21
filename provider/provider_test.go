@@ -2,6 +2,7 @@ package provider
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +22,6 @@ func init() {
 	newTestAccProviders["luminate"] = func() (*schema.Provider, error) {
 		return testAccProvider, nil
 	}
-	testAccDomain = "terraformat.luminatesec.com"
 }
 
 func TestProvider(t *testing.T) {
@@ -31,8 +31,11 @@ func TestProvider(t *testing.T) {
 }
 
 func testAccPreCheck(t *testing.T) {
-	if v := os.Getenv("LUMINATE_API_ENDPOINT"); v == "" {
+	apiEndpoint := os.Getenv("LUMINATE_API_ENDPOINT")
+	if apiEndpoint == "" {
 		t.Fatal("LUMINATE_API_ENDPOINT must be set for acceptance tests")
+	} else {
+		testAccDomain = strings.Replace(apiEndpoint, "api.", "", 1)
 	}
 	if v := os.Getenv("LUMINATE_API_CLIENT_ID"); v == "" {
 		t.Fatal("LUMINATE_API_CLIENT_ID must be set for acceptance tests")
