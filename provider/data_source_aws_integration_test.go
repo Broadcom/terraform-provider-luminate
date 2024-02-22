@@ -1,22 +1,26 @@
 package provider
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-const testAccResourceAwsIntegration = `
+func testAccResourceAwsIntegration(name string) string {
+	return fmt.Sprintf(`
 	data "luminate_aws_integration" "my-aws_integration" {
-	  integration_name = "terraform-test"
+	  integration_name = "%s"
 	}
-`
+`, name)
+}
 
 func TestAccLuminateDataSourceAwsIntegration(t *testing.T) {
 	resourceName := "data.luminate_aws_integration.my-aws_integration"
-	if testIsNeeded := os.Getenv("TEST_AWS_INTEGRATION_NAME"); testIsNeeded == "" {
-		t.Skip("skipping TestAccLuminateDataSourceAwsIntegration, no intergration name provided")
+	var integrationName string
+	if integrationName = os.Getenv("TEST_AWS_INTEGRATION_NAME"); integrationName == "" {
+		t.Skip("skipping TestAccLuminateDataSourceAwsIntegration, no integration name provided")
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -24,7 +28,7 @@ func TestAccLuminateDataSourceAwsIntegration(t *testing.T) {
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceAwsIntegration,
+				Config: testAccResourceAwsIntegration(integrationName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 				),

@@ -12,13 +12,13 @@ func testTenantRole(name string) string {
 	resource "luminate_tenant_role" "tenant-admin" {
 		role_type = "TenantAdmin"
 		identity_provider_id =  "local"
-		entity_id = %s
+		entity_id = "%s"
 		entity_type = "User"
 	}
 	resource "luminate_tenant_role" "tenant-viewer" {
 		role_type = "TenantViewer"
 		identity_provider_id =  "local"
-		entity_id = %s
+		entity_id = "%s"
 		entity_type = "User"
 	}`, name, name)
 }

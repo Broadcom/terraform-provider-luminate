@@ -29,10 +29,10 @@ func testAccResourceGroupUsers(groupName string, username string) string {
 func TestAccLuminateGroupUser(t *testing.T) {
 	resourceName := "luminate_group_user.new_group_membership"
 	var username, groupName string
-	if username = os.Getenv("TEST_USER_NAME"); username == "" {
-		t.Skip("skipping TestAccLuminateDataSourceUser no  username provided")
+	if username = os.Getenv("TEST_USERNAME"); username == "" {
+		t.Skip("skipping TestAccLuminateDataSourceUser no username provided")
 	}
-	if groupName = os.Getenv("TEST_USER_NAME"); groupName == "" {
+	if groupName = os.Getenv("TEST_GROUP_NAME"); groupName == "" {
 		t.Skip("skipping TestAccLuminateDataSourceUser no  groupName provided")
 	}
 	resource.Test(t, resource.TestCase{

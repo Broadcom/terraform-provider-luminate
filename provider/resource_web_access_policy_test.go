@@ -29,7 +29,7 @@ func resourceWebAccessPolicy_enabled(groupName, userID1, userID2 string) string 
 
 		user_ids = ["%s","%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
-		group_ids = ["${luminate_group.groups.0}"]
+		group_ids = ["${data.luminate_group.my-groups.group_ids.0}"]
 	}`, groupName, userID1, userID2)
 }
 

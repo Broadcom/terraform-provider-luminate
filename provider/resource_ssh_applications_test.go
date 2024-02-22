@@ -9,7 +9,7 @@ import (
 
 const testAccSSHApplication_minimal = `
 resource "luminate_site" "new-site" {
-   name = "tfAccSite"
+   name = "tfAccSiteSSH"
 }
 
 resource "luminate_ssh_application" "new-ssh-application" {
@@ -21,7 +21,7 @@ resource "luminate_ssh_application" "new-ssh-application" {
 
 const testAccSSHApplication_options = `
 resource "luminate_site" "new-site" {
-	name = "tfAccSite"
+	name = "tfAccSiteSSH"
 }
 
 resource "luminate_ssh_application" "new-ssh-application" {

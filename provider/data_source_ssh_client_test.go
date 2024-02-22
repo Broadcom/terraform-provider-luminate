@@ -18,9 +18,12 @@ func testAccResourceSshClients(name string) string {
 
 func TestAccLuminateDataSourceSshClients(t *testing.T) {
 	resourceName := "data.luminate_ssh_client.my-ssh-client"
-	var sshClientName string
+	var sshClientName, sshClientID string
 	if sshClientName = os.Getenv("TEST_SSH_CLIENT_NAME"); sshClientName == "" {
 		t.Skip("skipping TestAccLuminateDataSourceSshClients no ssh client name provided")
+	}
+	if sshClientID = os.Getenv("TEST_SSH_CLIENT_ID"); sshClientID == "" {
+		t.Skip("skipping TestAccLuminateDataSourceSshClients no ssh client id provided")
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -30,7 +33,7 @@ func TestAccLuminateDataSourceSshClients(t *testing.T) {
 			{
 				Config: testAccResourceSshClients(sshClientName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", "6ddace8e-39a3-4cd3-bba7-ad26e826df5b"),
+					resource.TestCheckResourceAttr(resourceName, "id", sshClientID),
 				),
 			},
 		},

@@ -24,7 +24,8 @@ func testAccResourceSite_options(region string) string {
 		domain = "domain.com"
 		kdc_address = "kdc_address"
 		keytab_pair = "keytab_pair"
-	}}`, region)
+	}
+}`, region)
 }
 
 func TestAccLuminateSite(t *testing.T) {
@@ -51,7 +52,7 @@ func TestAccLuminateSite(t *testing.T) {
 				Config: testAccResourceSite_options(region),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSiteOpt"),
-					resource.TestCheckResourceAttr(resourceName, "region", "us-west1"),
+					resource.TestCheckResourceAttr(resourceName, "region", region),
 					resource.TestCheckResourceAttr(resourceName, "mute_health_notification", "true"),
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_persistent_volume_name", "K8SVolume"),
 					resource.TestCheckResourceAttr(resourceName, "kerberos.#", "1"),

@@ -8,7 +8,8 @@ import (
 )
 
 func testCollectionRole(name string) string {
-	return fmt.Sprintf(`data "luminate_user"  "my-users" {
+	return fmt.Sprintf(`
+	data "luminate_user"  "my-users" {
 		identity_provider_id = "local"
 		users = ["%s"]
 	}
@@ -18,7 +19,7 @@ func testCollectionRole(name string) string {
 	resource "luminate_collection_role" "policy-owner" {
 		role_type = "PolicyOwner"
 		identity_provider_id =  "local"
-		entity_id = "f75f45b8-d10d-4aa6-9200-5c6d60110430"
+		entity_id = "${data.luminate_user.my-users.user_ids.0}"
 		entity_type = "User"
 		collection_id = "${luminate_collection.collection.id}"
 	}
@@ -33,8 +34,8 @@ func testCollectionRole(name string) string {
 
 func TestAccLuminateCollectionRole(t *testing.T) {
 	var username string
-	if username = os.Getenv("TEST_USER_NAME"); username == "" {
-		t.Skip("skipping TestAccLuminateDataSourceUser no  username provided")
+	if username = os.Getenv("TEST_USERNAME"); username == "" {
+		t.Skip("skipping TestAccLuminateDataSourceUser no username provided")
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

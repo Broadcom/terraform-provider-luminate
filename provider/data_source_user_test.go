@@ -11,8 +11,9 @@ import (
 func testAccResourceUser(name string) string {
 	return fmt.Sprintf(
 		`data "luminate_user"  "my-users" {
-		identity_provider_id = "local"
-		users = ["%s"]}`, name)
+			identity_provider_id = "local"
+			users = ["%s"]
+		}`, name)
 }
 
 func TestAccLuminateDataSourceUser(t *testing.T) {

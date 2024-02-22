@@ -15,14 +15,14 @@ func testSiteRole(name string) string {
 	resource "luminate_site_role" "site-editor" {
 		role_type = "SiteEditor"
 		identity_provider_id =  "local"
-		entity_id = %s
+		entity_id = "%s"
 		entity_type = "User"
 		site_id = "${luminate_site.site.id}"
 	}
 	resource "luminate_site_role" "site-deployer" {
 		role_type = "SiteConnectorDeployer"
 		identity_provider_id =  "local"
-		entity_id = %s
+		entity_id = "%s"
 		entity_type = "User"
 		site_id = "${luminate_site.site.id}"
 	}

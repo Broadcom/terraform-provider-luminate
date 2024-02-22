@@ -30,9 +30,6 @@ func TestAccLuminateIntegrationBind(t *testing.T) {
 	if awsAccountID = os.Getenv("TEST_AWS_ACCOUNT_ID"); awsAccountID == "" {
 		t.Skip("skipping TestAccLuminateIntegrationBind no  aws account number provided")
 	}
-	if awsAccountID = os.Getenv("TEST_LUMINATE_AWS_ACCOUNT_ID"); awsAccountID == "" {
-		t.Skip("skipping TestAccLuminateIntegrationBind no  luminate aws account number provided")
-	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
