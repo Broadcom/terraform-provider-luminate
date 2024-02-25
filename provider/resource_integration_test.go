@@ -12,11 +12,11 @@ resource "luminate_aws_integration" "new-integration" {
 }
 `
 
-func TestAccLuminateIntegration(t *testing.T) {
+func TestAccLuminateIntegration_Serial(t *testing.T) {
 	resourceName := "luminate_aws_integration.new-integration"
 	var awsAccountID string
 	if awsAccountID = os.Getenv("TEST_AWS_ACCOUNT_ID"); awsAccountID == "" {
-		t.Skip("skipping TestAccLuminateIntegration no luminate aws account id provided")
+		t.Error("skipping TestAccLuminateIntegration no luminate aws account id provided")
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

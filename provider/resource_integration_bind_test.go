@@ -24,11 +24,11 @@ func testAccResourceIntegrationBind_minimal(id string) string {
 		}`, id)
 }
 
-func TestAccLuminateIntegrationBind(t *testing.T) {
+func TestAccLuminateIntegrationBind_Serial(t *testing.T) {
 	resourceName := "luminate_aws_integration_bind.new-integration-bind"
 	var awsAccountID string
 	if awsAccountID = os.Getenv("TEST_AWS_ACCOUNT_ID"); awsAccountID == "" {
-		t.Skip("skipping TestAccLuminateIntegrationBind no  aws account number provided")
+		t.Error("skipping TestAccLuminateIntegrationBind no  aws account number provided")
 	}
 
 	resource.Test(t, resource.TestCase{

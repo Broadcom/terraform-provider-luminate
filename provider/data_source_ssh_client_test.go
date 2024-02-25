@@ -20,10 +20,10 @@ func TestAccLuminateDataSourceSshClients(t *testing.T) {
 	resourceName := "data.luminate_ssh_client.my-ssh-client"
 	var sshClientName, sshClientID string
 	if sshClientName = os.Getenv("TEST_SSH_CLIENT_NAME"); sshClientName == "" {
-		t.Skip("skipping TestAccLuminateDataSourceSshClients no ssh client name provided")
+		t.Error("skipping TestAccLuminateDataSourceSshClients no ssh client name provided")
 	}
 	if sshClientID = os.Getenv("TEST_SSH_CLIENT_ID"); sshClientID == "" {
-		t.Skip("skipping TestAccLuminateDataSourceSshClients no ssh client id provided")
+		t.Error("skipping TestAccLuminateDataSourceSshClients no ssh client id provided")
 	}
 
 	resource.Test(t, resource.TestCase{

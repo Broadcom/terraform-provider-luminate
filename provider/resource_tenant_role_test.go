@@ -26,7 +26,7 @@ func testTenantRole(name string) string {
 func TestAccLuminateTenantRole(t *testing.T) {
 	var userID string
 	if userID = os.Getenv("TEST_USER_ID"); userID == "" {
-		t.Skip("skipping TestAccLuminateTenantRole no user id provided")
+		t.Error("skipping TestAccLuminateTenantRole no user id provided")
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

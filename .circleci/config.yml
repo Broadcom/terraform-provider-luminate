@@ -63,9 +63,7 @@ jobs:
       - attach-env
       - checkout
       - setup-ssh-key
-      - run:
-          command: make testacc
-          name: run terraform tests
+      - run: make testacc
   build:
     docker:
       - image: cimg/go:1.19

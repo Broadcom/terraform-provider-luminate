@@ -21,10 +21,10 @@ func TestAccLuminateDataSourceUser(t *testing.T) {
 	var username, userID string
 
 	if username = os.Getenv("TEST_USERNAME"); username == "" {
-		t.Skip("skipping TestAccLuminateDataSourceUser no  username provided")
+		t.Error("skipping TestAccLuminateDataSourceUser no  username provided")
 	}
 	if userID = os.Getenv("TEST_USER_ID"); userID == "" {
-		t.Skip("skipping TestAccLuminateDataSourceUser no user provided")
+		t.Error("skipping TestAccLuminateDataSourceUser no user provided")
 	}
 
 	resource.Test(t, resource.TestCase{

@@ -35,7 +35,7 @@ func testCollectionRole(name string) string {
 func TestAccLuminateCollectionRole(t *testing.T) {
 	var username string
 	if username = os.Getenv("TEST_USERNAME"); username == "" {
-		t.Skip("skipping TestAccLuminateDataSourceUser no username provided")
+		t.Error("skipping TestAccLuminateDataSourceUser no username provided")
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
