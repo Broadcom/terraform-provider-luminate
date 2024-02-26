@@ -32,7 +32,7 @@ func TestAccLuminateSite(t *testing.T) {
 	resourceName := "luminate_site.new-site"
 	var region string
 	if region = os.Getenv("TEST_SITE_REGION"); region == "" {
-		t.Error("skipping TestAccLuminateSite no  site provided")
+		t.Error("stopping TestAccLuminateSite no  site provided")
 	}
 
 	resource.Test(t, resource.TestCase{

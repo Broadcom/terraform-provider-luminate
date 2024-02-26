@@ -191,15 +191,15 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 	resourceNameCollection := "luminate_web_access_policy.new-web-access-policy-collection"
 	var userID1 string
 	if userID1 = os.Getenv("TEST_USER_ID"); userID1 == "" {
-		t.Error("skipping TestAccLuminateWebAccessPolicy no user id provided")
+		t.Error("stopping TestAccLuminateWebAccessPolicy no user id provided")
 	}
 	var userID2 string
 	if userID2 = os.Getenv("TEST_USER_ID2"); userID2 == "" {
-		t.Error("skipping TestAccLuminateWebAccessPolicy no user id 2 provided")
+		t.Error("stopping TestAccLuminateWebAccessPolicy no user id 2 provided")
 	}
 	var groupName string
 	if groupName = os.Getenv("TEST_GROUP_NAME"); groupName == "" {
-		t.Error("skipping TestAccLuminateDataSourceGroup no group name provided")
+		t.Error("stopping TestAccLuminateDataSourceGroup no group name provided")
 	}
 
 	resource.Test(t, resource.TestCase{

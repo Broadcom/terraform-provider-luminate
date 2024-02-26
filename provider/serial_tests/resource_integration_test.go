@@ -16,7 +16,7 @@ func TestAccLuminateIntegration_Serial(t *testing.T) {
 	resourceName := "luminate_aws_integration.new-integration"
 	var awsAccountID string
 	if awsAccountID = os.Getenv("TEST_AWS_ACCOUNT_ID"); awsAccountID == "" {
-		t.Error("skipping TestAccLuminateIntegration no luminate aws account id provided")
+		t.Error("stopping TestAccLuminateIntegration no luminate aws account id provided")
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

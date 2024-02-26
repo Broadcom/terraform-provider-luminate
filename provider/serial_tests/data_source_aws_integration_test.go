@@ -20,7 +20,7 @@ func TestAccLuminateDataSourceAwsIntegration_Serial(t *testing.T) {
 	resourceName := "data.luminate_aws_integration.my-aws_integration"
 	var integrationName string
 	if integrationName = os.Getenv("TEST_AWS_INTEGRATION_NAME"); integrationName == "" {
-		t.Error("skipping TestAccLuminateDataSourceAsIntegration, no integration name provided")
+		t.Error("stopping TestAccLuminateDataSourceAsIntegration, no integration name provided")
 	}
 
 	resource.Test(t, resource.TestCase{

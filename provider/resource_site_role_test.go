@@ -32,7 +32,7 @@ func testSiteRole(name string) string {
 func TestAccLuminateSiteRole(t *testing.T) {
 	var userID string
 	if userID = os.Getenv("TEST_USER_ID"); userID == "" {
-		t.Error("skipping TestAccLuminateSiteRole no user id provided")
+		t.Error("stopping TestAccLuminateSiteRole no user id provided")
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

@@ -30,10 +30,10 @@ func TestAccLuminateGroupUser(t *testing.T) {
 	resourceName := "luminate_group_user.new_group_membership"
 	var username, groupName string
 	if username = os.Getenv("TEST_USERNAME"); username == "" {
-		t.Error("skipping TestAccLuminateDataSourceUser no username provided")
+		t.Error("stopping TestAccLuminateDataSourceUser no username provided")
 	}
 	if groupName = os.Getenv("TEST_GROUP_NAME"); groupName == "" {
-		t.Error("skipping TestAccLuminateDataSourceUser no  groupName provided")
+		t.Error("stopping TestAccLuminateDataSourceUser no  groupName provided")
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

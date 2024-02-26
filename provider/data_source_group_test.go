@@ -21,7 +21,7 @@ func TestAccLuminateDataSourceGroup(t *testing.T) {
 	resourceName := "data.luminate_group.my-groups"
 	var groupName string
 	if groupName = os.Getenv("TEST_GROUP_NAME"); groupName == "" {
-		t.Error("skipping TestAccLuminateDataSourceGroup no group name provided")
+		t.Error("stopping TestAccLuminateDataSourceGroup no group name provided")
 	}
 
 	resource.Test(t, resource.TestCase{
