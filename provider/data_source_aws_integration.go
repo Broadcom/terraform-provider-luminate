@@ -39,7 +39,7 @@ func resourceReadAwsIntegration(ctx context.Context, d *schema.ResourceData, m i
 
 	integrationName := d.Get("integration_name").(string)
 
-	integrationId, err := client.IntegrationAPI.GetIntegrationId(ctx, integrationName)
+	integrationId, err := client.IntegrationAPI.GetIntegrationId(integrationName)
 	if err != nil {
 		return diag.FromErr(err)
 	}
