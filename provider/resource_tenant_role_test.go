@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func testTenantRole(name string) string {
+func testTenantRole(entityID string) string {
 	return fmt.Sprintf(`
 	resource "luminate_tenant_role" "tenant-admin" {
 		role_type = "TenantAdmin"
@@ -20,7 +20,7 @@ func testTenantRole(name string) string {
 		identity_provider_id =  "local"
 		entity_id = "%s"
 		entity_type = "User"
-	}`, name, name)
+	}`, entityID, entityID)
 }
 
 func TestAccLuminateTenantRole(t *testing.T) {
