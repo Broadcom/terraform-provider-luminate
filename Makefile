@@ -9,6 +9,29 @@ OUTPUT_DIR=build
 BINARY_NAME=terraform-provider-luminate
 
 GO111MODULE=on
+define TEST_ENV_VARS
+export LUMINATE_API_ENDPOINT="${LUMINATE_API_ENDPOINT}"
+export LUMINATE_API_CLIENT_ID="${LUMINATE_API_CLIENT_ID}"
+export LUMINATE_API_CLIENT_SECRET="${LUMINATE_API_CLIENT_SECRET}"
+export TF_ACC=1
+export TF_LOG=ERROR
+export TEST_GROUP_NAME="${TEST_GROUP_NAME}"
+export TEST_SSH_CLIENT_NAME="${TEST_SSH_CLIENT_NAME}"
+export TEST_SSH_CLIENT_ID="${TEST_SSH_CLIENT_ID}"
+export TEST_USERNAME="${TEST_USERNAME}"
+export TEST_USER_ID="${TEST_USER_ID}"
+export TEST_USER_ID2="${TEST_USER_ID2}"
+export TEST_SITE_REGION="${TEST_SITE_REGION}"
+endef
+
+testacc_no_serial:
+	$(TEST_ENV_VARS)
+	@echo "Running go list command"
+	go_list_results=`go list ./... | grep -v 'serial_tests'`
+	@echo "go list command executed successfully"
+	@echo "Running go test command"
+	$(GOTEST) -p 1 -v go_list_results
+	@echo "go test command executed successfully."
 
 all: linux darwin windows darwin_arm64
 
@@ -67,7 +90,7 @@ testacc_no_serial:
 	export TEST_USER_ID="${TEST_USER_ID}" && \
 	export TEST_USER_ID2="${TEST_USER_ID2}" && \
 	export TEST_SITE_REGION="${TEST_SITE_REGION}" && \
-	$(GOTEST) -p 1 -v `go list ./... | grep -v 'serial_tests'`
+	go_list_results=$$(go list ./... | grep -v 'serial_tests') && $(GOTEST) -p 1 -v $$go_list_results
 
 darwin_arm64:
 	mkdir -p release || true
