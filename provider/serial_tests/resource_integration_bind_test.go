@@ -11,7 +11,7 @@ func testAccResourceIntegrationBind_minimal(id string) string {
 	return fmt.Sprintf(
 		`
 		resource "luminate_aws_integration" "new-integration" {
-			integration_name = "tfAccIntegrationBind1 "
+			integration_name = "tfAccIntegrationBind"
 		}
 		
 		resource "luminate_aws_integration_bind" "new-integration-bind" {

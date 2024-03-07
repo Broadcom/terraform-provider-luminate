@@ -71,6 +71,7 @@ func (r *RoleBindingsAPI) ReadRoleBindings(
 		RoleType:      optional.NewInterface(roleType),
 		SubjectType:   optional.NewInterface("Collection"),
 		SubjectId:     optional.NewInterface(collectionID),
+		Size:          optional.NewFloat64(100),
 	}
 	if collectionID == "" {
 		params.SubjectId = optional.NewInterface(utils.RootCollection)
