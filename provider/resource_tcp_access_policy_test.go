@@ -185,6 +185,7 @@ const resourceTCPAccessPolicy_collection = `
 		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_tcp_application.new-tcp-application-collection.id}"]
 
+
 		allow_temporary_token = "true"
 		allow_public_key = "true"
 
