@@ -28,9 +28,9 @@ windows:
 	zip -j release/$(BINARY_NAME)-windows.zip $(OUTPUT_DIR)/windows/*
 
 testacc:
-	export LUMINATE_API_ENDPOINT="api.terraformat.luminatesec.com" && \
-	export LUMINATE_API_CLIENT_ID="16a49c4909f4165f7ad33f1d022d83fc" && \
-	export LUMINATE_API_CLIENT_SECRET="734ea9a0d4ae44c55f00773a14538f505d16058fc892286b17a0219be4f84c54" && \
+	export LUMINATE_API_ENDPOINT="${TERRAFORM_ACCEPTANCE_TENANT}" && \
+	export LUMINATE_API_CLIENT_ID="${TERRAFORM_ACCEPTANCE_CLIENT_ID}" && \
+	export LUMINATE_API_CLIENT_SECRET="${TERRAFORM_ACCEPTANCE_CLIENT_SECRET}" && \
 	export TF_ACC=1 && \
 	export TF_LOG="ERROR" && \
 	export TEST_GROUP_NAME="tf-acceptance" && \
