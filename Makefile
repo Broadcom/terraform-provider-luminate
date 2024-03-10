@@ -14,7 +14,7 @@ all: linux darwin windows darwin_arm64
 
 linux:
 	mkdir -p release || true
-	export GOOS=linux; $(GOBUILD) -o $(OUTPUT_DIR)/linux/$(BINARY_NAME) -v
+	export GOOS=linux; export CGO_ENABLED=0; $(GOBUILD) -o $(OUTPUT_DIR)/linux/$(BINARY_NAME) -v
 	zip -j release/$(BINARY_NAME)-linux.zip $(OUTPUT_DIR)/linux/*
 
 darwin:
