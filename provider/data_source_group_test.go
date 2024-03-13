@@ -1,29 +1,37 @@
 package provider
 
 import (
-	"testing"
-
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"os"
+	"testing"
 )
 
-const testAccResourceGroup = `
+func getTestAccResourceGroup(name string) string {
+	return fmt.Sprintf(`
 	data "luminate_group"  "my-groups" {
 		identity_provider_id = "local"
-		groups = ["tf-acceptance"]
+		groups = ["%s"]
 	}
-`
+`, name)
+
+}
 
 func TestAccLuminateDataSourceGroup(t *testing.T) {
 	resourceName := "data.luminate_group.my-groups"
+	var groupName string
+	if groupName = os.Getenv("TEST_GROUP_NAME"); groupName == "" {
+		t.Error("stopping TestAccLuminateDataSourceGroup no group name provided")
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGroup,
+				Config: getTestAccResourceGroup(groupName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "groups.0", "tf-acceptance"),
+					resource.TestCheckResourceAttr(resourceName, "groups.0", groupName),
 				),
 			},
 		},

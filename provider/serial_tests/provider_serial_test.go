@@ -1,23 +1,18 @@
-package provider
+package serial_tests
 
 import (
+	"github.com/Broadcom/terraform-provider-luminate/provider"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var testAccProviders map[string]*schema.Provider
 var newTestAccProviders map[string]func() (*schema.Provider, error)
 var testAccProvider *schema.Provider
-var testAccDomain string
 
 func init() {
-	testAccProvider = Provider()
-	testAccProviders = map[string]*schema.Provider{
-		"luminate": testAccProvider,
-	}
+	testAccProvider = provider.Provider()
 	newTestAccProviders = make(map[string]func() (*schema.Provider, error))
 	newTestAccProviders["luminate"] = func() (*schema.Provider, error) {
 		return testAccProvider, nil
@@ -25,7 +20,7 @@ func init() {
 }
 
 func TestProvider(t *testing.T) {
-	if err := Provider().InternalValidate(); err != nil {
+	if err := provider.Provider().InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }
@@ -34,8 +29,6 @@ func testAccPreCheck(t *testing.T) {
 	apiEndpoint := os.Getenv("LUMINATE_API_ENDPOINT")
 	if apiEndpoint == "" {
 		t.Fatal("LUMINATE_API_ENDPOINT must be set for acceptance tests")
-	} else {
-		testAccDomain = strings.Replace(apiEndpoint, "api.", "", 1)
 	}
 	if v := os.Getenv("LUMINATE_API_CLIENT_ID"); v == "" {
 		t.Fatal("LUMINATE_API_CLIENT_ID must be set for acceptance tests")

@@ -1,12 +1,19 @@
 package provider
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-const resourceWebAccessPolicy_enabled = `
+func resourceWebAccessPolicy_enabled(groupName, userID1, userID2 string) string {
+	return fmt.Sprintf(`
+	data "luminate_group"  "my-groups" {
+		identity_provider_id = "local"
+		groups = ["%s"]
+	}
 	resource "luminate_site" "new-site" {
 	   name = "tfAccSiteAccessPolicy"
 	}
@@ -20,13 +27,14 @@ const resourceWebAccessPolicy_enabled = `
 		name =  "resourceWebAccessPolicy_enabled"
 		identity_provider_id = "local"
 
-		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430","ed974d59-1941-4584-9336-2a9ed35043f2"]
+		user_ids = ["%s","%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
-		group_ids = ["3b61849d-f08d-42d3-a158-da1a53cd2ac6"]
-	}
-`
+		group_ids = ["${data.luminate_group.my-groups.group_ids.0}"]
+	}`, groupName, userID1, userID2)
+}
 
-const resourceWebAccessPolicy_collection = `
+func resourceWebAccessPolicy_collection(userID1 string) string {
+	return fmt.Sprintf(`
 	resource "luminate_site" "new-site-collection" {
 	   name = "tfAccSiteAccessPolicyCollection"
 	}
@@ -50,13 +58,14 @@ const resourceWebAccessPolicy_collection = `
 	 	collection_id = "${luminate_collection.new-collection.id}"
 		identity_provider_id = "local"
 
-		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application-collection.id}"]
 	 	depends_on = [luminate_collection_site_link.new-collection-site-link]
-	}
-`
+	}`, userID1)
+}
 
-const resourceWebAccessPolicy_disabled = `
+func resourceWebAccessPolicy_disabled(userID1 string) string {
+	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
 	   name = "tfAccSiteAccessPolicy"
 	}
@@ -70,12 +79,13 @@ const resourceWebAccessPolicy_disabled = `
   		name =  "resourceWebAccessPolicy_disabled"
 		identity_provider_id = "local"
 
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
-	}
-`
+	}`, userID1)
+}
 
-const resourceWebAccessPolicy_enabled_not_specified = `
+func resourceWebAccessPolicy_enabled_not_specified(userID1 string) string {
+	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
 	   name = "tfAccSiteAccessPolicy"
 	}
@@ -88,12 +98,13 @@ const resourceWebAccessPolicy_enabled_not_specified = `
   		name =  "resourceWebAccessPolicy_enabled_not_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
-	}
-`
+	}`, userID1)
+}
 
-const resourceWebAccessPolicy_conditions_specified = `
+func resourceWebAccessPolicy_conditions_specified(userID1 string) string {
+	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
 	   name = "tfAccSiteAccessPolicy"
 	}
@@ -106,7 +117,7 @@ const resourceWebAccessPolicy_conditions_specified = `
   		name =  "resourceWebAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
 
 		conditions {
@@ -120,9 +131,11 @@ const resourceWebAccessPolicy_conditions_specified = `
   		}
 
 	}
-`
+`, userID1)
+}
 
-const resourceWebAccessPolicy_conditions_specified_update = `
+func resourceWebAccessPolicy_conditions_specified_update(userID1 string) string {
+	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
 	   name = "tfAccSiteAccessPolicy"
 	}
@@ -135,7 +148,7 @@ const resourceWebAccessPolicy_conditions_specified_update = `
 		name =  "resourceWebAccessPolicy_conditions_specified"
 		identity_provider_id = "local"
 	
-		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+		user_ids = ["%s"]
 		applications = ["${luminate_web_application.new-application.id}"]
 	
 		conditions {
@@ -148,10 +161,11 @@ const resourceWebAccessPolicy_conditions_specified_update = `
 			}
 		}
 
-	}
-`
+	}`, userID1)
+}
 
-const resourceWebAccessPolicy_validators_specified = `
+func resourceWebAccessPolicy_validators_specified(userID1 string) string {
+	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
 	   name = "tfAccSiteAccessPolicy"
 	}
@@ -164,45 +178,57 @@ const resourceWebAccessPolicy_validators_specified = `
   		name =  "resourceWebAccessPolicy_validators_specified"
 		identity_provider_id = "local"
 	
-  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
 		validators {
 			mfa = true
 		}
-	}
-`
+	}`, userID1)
+}
 
 func TestAccLuminateWebAccessPolicy(t *testing.T) {
 	resourceName := "luminate_web_access_policy.new-web-access-policy"
 	resourceNameCollection := "luminate_web_access_policy.new-web-access-policy-collection"
+	var userID1 string
+	if userID1 = os.Getenv("TEST_USER_ID"); userID1 == "" {
+		t.Error("stopping TestAccLuminateWebAccessPolicy no user id provided")
+	}
+	var userID2 string
+	if userID2 = os.Getenv("TEST_USER_ID2"); userID2 == "" {
+		t.Error("stopping TestAccLuminateWebAccessPolicy no user id 2 provided")
+	}
+	var groupName string
+	if groupName = os.Getenv("TEST_GROUP_NAME"); groupName == "" {
+		t.Error("stopping TestAccLuminateDataSourceGroup no group name provided")
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: resourceWebAccessPolicy_enabled,
+				Config: resourceWebAccessPolicy_enabled(groupName, userID1, userID2),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_disabled,
+				Config: resourceWebAccessPolicy_disabled(userID1),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_enabled_not_specified,
+				Config: resourceWebAccessPolicy_enabled_not_specified(userID1),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config:  resourceWebAccessPolicy_conditions_specified,
+				Config:  resourceWebAccessPolicy_conditions_specified(userID1),
 				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
@@ -215,7 +241,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_conditions_specified_update,
+				Config: resourceWebAccessPolicy_conditions_specified_update(userID1),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -227,7 +253,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_validators_specified,
+				Config: resourceWebAccessPolicy_validators_specified(userID1),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -235,7 +261,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_collection,
+				Config: resourceWebAccessPolicy_collection(userID1),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceWebAccessPolicy_collection"),
 				),

@@ -1,7 +1,8 @@
-package provider
+package serial_tests
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"os"
 	"testing"
 )
 
@@ -11,9 +12,12 @@ resource "luminate_aws_integration" "new-integration" {
 }
 `
 
-func TestAccLuminateIntegration(t *testing.T) {
+func TestAccLuminateIntegration_Serial(t *testing.T) {
 	resourceName := "luminate_aws_integration.new-integration"
-
+	var awsAccountID string
+	if awsAccountID = os.Getenv("TEST_AWS_ACCOUNT_ID"); awsAccountID == "" {
+		t.Error("stopping TestAccLuminateIntegration no luminate aws account id provided")
+	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: newTestAccProviders,
@@ -21,7 +25,7 @@ func TestAccLuminateIntegration(t *testing.T) {
 			{
 				Config: testAccResourceIntegration_minimal,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "luminate_aws_account_id", "957040371666"),
+					resource.TestCheckResourceAttr(resourceName, "luminate_aws_account_id", awsAccountID),
 				),
 			},
 		},
