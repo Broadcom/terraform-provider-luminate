@@ -66,7 +66,7 @@ func resourceCreateRDPApplication(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	d.SetId(app.ID)
-	setSHHApplicationFields(d, app)
+	setRDPApplicationFields(d, app)
 
 	return resourceReadRDPApplication(ctx, d, m)
 }
@@ -93,7 +93,7 @@ func resourceReadRDPApplication(ctx context.Context, d *schema.ResourceData, m i
 	d.SetId(app.ID)
 
 	app.SiteID = d.Get("site_id").(string)
-	setSHHApplicationFields(d, app)
+	setRDPApplicationFields(d, app)
 
 	return nil
 }

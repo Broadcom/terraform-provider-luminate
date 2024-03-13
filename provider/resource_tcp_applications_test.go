@@ -14,6 +14,7 @@ resource "luminate_site" "new-site" {
 resource "luminate_tcp_application" "new-tcp-application" {
   name = "tfAccTCP"
   site_id = "${luminate_site.new-site.id}"
+  icon = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII="
   target {
     address = "127.0.0.1"
     ports = ["8080"]
