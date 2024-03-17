@@ -56,7 +56,7 @@ func resourceCreateSSHApplication(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	d.SetId(app.ID)
-	setSHHApplicationFields(d, app)
+	setSSHApplicationFields(d, app)
 
 	return resourceReadSSHApplication(ctx, d, m)
 }
@@ -83,7 +83,7 @@ func resourceReadSSHApplication(ctx context.Context, d *schema.ResourceData, m i
 	d.SetId(app.ID)
 
 	app.SiteID = d.Get("site_id").(string)
-	setSHHApplicationFields(d, app)
+	setSSHApplicationFields(d, app)
 
 	return nil
 }
@@ -109,7 +109,7 @@ func resourceUpdateSSHApplication(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	updApp.SiteID = app.SiteID
-	setSHHApplicationFields(d, updApp)
+	setSSHApplicationFields(d, updApp)
 
 	return resourceReadSSHApplication(ctx, d, m)
 }
@@ -130,17 +130,11 @@ func resourceDeleteSSHApplication(ctx context.Context, d *schema.ResourceData, m
 	return resourceReadSSHApplication(ctx, d, m)
 }
 
-func setSHHApplicationFields(d *schema.ResourceData, application *dto.Application) {
-	d.Set("name", application.Name)
+func setSSHApplicationFields(d *schema.ResourceData, application *dto.Application) {
+	SetBaseApplicationFields(d, application)
 	d.Set("collection_id", application.CollectionID)
-	d.Set("icon", application.Icon)
-	d.Set("type", application.Type)
-	d.Set("visible", application.Visible)
 	d.Set("site_id", application.SiteID)
-	d.Set("notification_enabled", application.NotificationsEnabled)
 	d.Set("internal_address", application.InternalAddress)
-	d.Set("external_address", application.ExternalAddress)
-	d.Set("subdomain", application.Subdomain)
 	d.Set("luminate_address", application.LuminateAddress)
 }
 

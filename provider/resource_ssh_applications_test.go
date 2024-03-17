@@ -16,6 +16,7 @@ resource "luminate_ssh_application" "new-ssh-application" {
 	site_id = "${luminate_site.new-site.id}"
 	name = "tfAccSSH"
 	internal_address = "tcp://127.0.0.2"
+ 	icon = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII="
 }
 `
 

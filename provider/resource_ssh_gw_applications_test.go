@@ -20,6 +20,7 @@ resource "luminate_ssh_gw_application" "new-ssh-gw-application" {
   site_id = "${luminate_site.new-site.id}"
   name = "tf-ssh-gw"
   
+  icon = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII="
   integration_id = "${data.luminate_aws_integration.my-aws_integration.id}"
 
   tags = {

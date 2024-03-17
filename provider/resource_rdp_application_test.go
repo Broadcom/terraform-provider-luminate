@@ -15,6 +15,7 @@ resource "luminate_rdp_application" "new-rdp-application" {
 	site_id = "${luminate_site.new-site.id}"
 	name = "tfAccRDP"
 	internal_address = "127.0.0.2"
+ 	icon = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII="
 }
 `
 const testAccRDPApplication_changeInternalAddress = `
