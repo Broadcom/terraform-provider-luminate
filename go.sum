@@ -2,6 +2,12 @@ bitbucket.org/accezz-io/api-documentation v0.0.0-20231204095147-45639cd6c661 h1:
 bitbucket.org/accezz-io/api-documentation v0.0.0-20231204095147-45639cd6c661/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20240110152910-d188e4c0d588 h1:plIWuYsuKn59Gi30Q52ekiCmiH/0ipYu5TYeUsCi8YY=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20240110152910-d188e4c0d588/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20240521201300-574d00053307 h1:qtPLwJ0rafsDP06gU1vSuH487IzofIXeotysh7n9qC4=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20240521201300-574d00053307/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20240521205033-726e7f806d3d h1:S/smjIChKI+H2N05VswM9teMfoQGEkzHBU8Gmjv5/ms=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20240521205033-726e7f806d3d/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20240522130925-570e89396dc0 h1:5cMjX5+mWfEbqMXFF20nLcR7JJdbnDt4IBNEu7Omoms=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20240522130925-570e89396dc0/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 github.com/Microsoft/go-winio v0.5.2 h1:a9IhgEQBCUEk6QCdml9CiJGhAws+YwffDHEMp1VMrpA=
 github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 h1:wPbRQzjjwFc0ih8puEVAOFGELsn1zoIIYdxvML7mDxA=
 github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8/go.mod h1:I0gYDMZ6Z5GRU7l58bNFSkPTFN6Yl12dsUlAZ8xy98g=
