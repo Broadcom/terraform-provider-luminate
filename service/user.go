@@ -3,6 +3,7 @@ package service
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
+	"fmt"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
 )
@@ -18,7 +19,11 @@ func NewUserAPI(client *sdk.APIClient) *UserAPI {
 }
 
 func (u *UserAPI) GetUserId(identityProviderId string, email string) (string, error) {
-	userPage, _, err := u.cli.UsersApi.SearchUsersbyIdp(context.Background(), identityProviderId, &sdk.UsersApiSearchUsersbyIdpOpts{Email: optional.NewString(email)})
+
+	userPage, resp, err := u.cli.UsersApi.SearchUsersbyIdp(context.Background(), identityProviderId, &sdk.UsersApiSearchUsersbyIdpOpts{Email: optional.NewString(email)})
+	if resp != nil && (resp.StatusCode == 403 || resp.StatusCode == 404) {
+		return "", nil
+	}
 	if err != nil {
 		return "", err
 	}
@@ -34,4 +39,20 @@ func (u *UserAPI) GetUserId(identityProviderId string, email string) (string, er
 	}
 
 	return "", errors.Errorf("can't find user with email: '%s'", email)
+}
+
+func (u *UserAPI) DeleteUser(identityProviderId string, UserID string) error {
+	resp, err := u.cli.UsersApi.DeleteUser(context.Background(), identityProviderId, UserID)
+	if err != nil {
+		return err
+	}
+	if resp != nil {
+		if resp.StatusCode != 204 {
+			errMsg := fmt.Sprintf("received bad status code deleting site. Status Code: %d", resp.StatusCode)
+			return errors.New(errMsg)
+		}
+	} else {
+		return errors.New("received empty response from the server")
+	}
+	return nil
 }
