@@ -29,7 +29,6 @@ func LuminateGroup() *schema.Resource {
 
 		CreateContext: resourceCreateGroup,
 		ReadContext:   resourceReadGroup,
-		//UpdateContext: resourceUpdateGroup,
 		DeleteContext: resourceDeleteGroup,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
