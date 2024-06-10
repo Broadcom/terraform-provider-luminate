@@ -1,6 +1,9 @@
 package provider
 
 import (
+	"math/rand"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -8,11 +11,11 @@ import (
 
 const resourceRdpAccessPolicy_enabled = `
 	resource "luminate_site" "new-site" {
-		name = "tfAccSite"
+		name = "tfAccSite<RANDOM_PLACEHOLDER>"
 	}
 	resource "luminate_rdp_application" "new-rdp-application" {
 		site_id = "${luminate_site.new-site.id}"
-		name = "tfAccRDP"
+		name = "tfAccRDP<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.2"
 	}
 	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
@@ -93,10 +96,10 @@ const resourceRdpAccessPolicy_validators_specified = `
 `
 const resourceRdpAccessPolicy_collection = `
 	resource "luminate_site" "new-site-collection" {
-		name = "tfAccSiteCollection"
+		name = "tfAccSiteCollection<RANDOM_PLACEHOLDER>"
 	}
 	resource "luminate_collection" "new-collection" {
-		name = "tfAccCollectionForAppCollection"
+		name = "tfAccCollectionForAppCollection<RANDOM_PLACEHOLDER>"
 	}
 	resource "luminate_collection_site_link" "new-collection-site-link" {
 		site_id = "${luminate_site.new-site-collection.id}"
@@ -104,7 +107,7 @@ const resourceRdpAccessPolicy_collection = `
 	}
 	resource "luminate_rdp_application" "new-rdp-application-collection" {
 		site_id = "${luminate_site.new-site-collection.id}"
-		name = "tfAccRDPCollection"
+		name = "tfAccRDPCollection<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.2"
         depends_on = [luminate_collection_site_link.new-collection-site-link]
       	collection_id = "${luminate_collection.new-collection.id}"
@@ -127,13 +130,14 @@ const resourceRdpAccessPolicy_collection = `
 func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 	resourceName := "luminate_rdp_access_policy.new-rdp-access-policy"
 	resourceNameCollection := "luminate_rdp_access_policy.new-rdp-access-policy-collection"
+	randNum := 100 + rand.Intn(100)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: resourceRdpAccessPolicy_enabled,
+				Config: strings.ReplaceAll(resourceRdpAccessPolicy_enabled, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -182,7 +186,7 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceRdpAccessPolicy_collection,
+				Config: strings.ReplaceAll(resourceRdpAccessPolicy_collection, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceRdpAccessPolicy_collection"),
 				),
