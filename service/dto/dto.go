@@ -244,6 +244,12 @@ type RoleBinding struct {
 	ResourceID    string
 }
 
+type Group struct {
+	Name               string
+	ID                 string
+	IdentityProviderId string
+}
+
 func EntityDTOToEntityModel(entities []DirectoryEntity) []sdk.DirectoryEntity {
 	var directoryEntities []sdk.DirectoryEntity
 	for _, directoryEntity := range entities {

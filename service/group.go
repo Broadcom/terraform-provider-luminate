@@ -4,9 +4,11 @@ import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"fmt"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
+	"log"
 )
 
 type GroupAPI struct {
@@ -85,5 +87,63 @@ func (g *GroupAPI) CheckAssignedUser(groupId string, userId string) (bool, error
 
 		// next page
 		offset = offset + perPage
+	}
+}
+
+func (g *GroupAPI) GetGroup(groupID string, IDPID string) (*dto.Group, error) {
+	group, resp, err := g.cli.GroupsApi.GetGroup(context.Background(), IDPID, groupID)
+
+	if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 403) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	groupDto := convertGroupToDTO(group)
+
+	return &groupDto, err
+}
+
+// CreateGroup create Group
+func (g *GroupAPI) CreateGroup(idpid string, groupName string) (*dto.Group, error) {
+	groupsDto := &sdk.Group{Name: groupName}
+	body := sdk.GroupsApiCreateGroupOpts{Body: optional.NewInterface(groupsDto)}
+	group, resp, err := g.cli.GroupsApi.CreateGroup(context.Background(), idpid, &body)
+	if resp != nil {
+		if resp.StatusCode != 201 {
+			errMsg := fmt.Sprintf("received bad status code for creating group. Status Code: %d, group name %s",
+				resp.StatusCode, groupName)
+			return nil, errors.New(errMsg)
+		}
+	} else {
+		return nil, errors.New("received empty response from the server for creating group ")
+	}
+	log.Printf("[DEBUG] - Done Creating Group")
+	groupDto := convertGroupToDTO(group)
+	return &groupDto, err
+}
+
+func (g *GroupAPI) DeleteGroup(idpid string, groupID string) error {
+	resp, err := g.cli.GroupsApi.DeleteGroup(context.Background(), idpid, groupID)
+	if err != nil {
+		return err
+	}
+	if resp != nil {
+		if resp.StatusCode != 204 {
+			errMsg := fmt.Sprintf("received bad status code for creating group. Status Code: %d, group ID %s",
+				resp.StatusCode, groupID)
+			return errors.New(errMsg)
+		}
+	} else {
+		return errors.New("received empty response from the server for deleting group ")
+	}
+	return nil
+}
+
+func convertGroupToDTO(group sdk.Group) dto.Group {
+	return dto.Group{
+		Name:               group.Name,
+		ID:                 group.Id,
+		IdentityProviderId: group.IdentityProviderId,
 	}
 }
