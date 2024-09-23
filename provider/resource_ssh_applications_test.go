@@ -79,8 +79,8 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
 					resource.TestCheckResourceAttr(resourceName, "notification_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.2"),
-					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccssh.ssh.%s", testAccDomain)),
-					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccssh.ssh.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccssh%d.ssh.%s", randNum, testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccssh%d.ssh.%s", randNum, testAccDomain)),
 				),
 			},
 			{
@@ -88,8 +88,8 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tfAccSSHUpd%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.5"),
-					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccssh.ssh.%s", testAccDomain)),
-					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccssh.ssh.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccssh%d.ssh.%s", randNum, testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccssh%d.ssh.%s", randNum, testAccDomain)),
 				),
 			},
 			{
