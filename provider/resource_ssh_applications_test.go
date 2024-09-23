@@ -57,10 +57,10 @@ resource "luminate_collection_site_link" "new-collection-site-link" {
 resource "luminate_ssh_application" "new-ssh-application-collection" {
 	site_id = "${luminate_site.new-site-collection.id}"
 	collection_id = "${luminate_collection.new-collection.id}"
-	name = "tfAccSSHWithCollection"
+	name = "tfAccSSHWithCollection%d"
 	internal_address = "tcp://127.0.0.5"
  	depends_on = [luminate_collection_site_link.new-collection-site-link]
-}`, rand, rand)
+}`, rand, rand, rand)
 }
 
 func TestAccLuminateSSHApplication(t *testing.T) {
