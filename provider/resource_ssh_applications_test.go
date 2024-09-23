@@ -67,14 +67,15 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 	resourceName := "luminate_ssh_application.new-ssh-application"
 	resourceNameCollection := "luminate_ssh_application.new-ssh-application-collection"
 
+	randNum := 100 + rand.Intn(100)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSSHApplication_minimal(100 + rand.Intn(100)),
+				Config: testAccSSHApplication_minimal(randNum),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSSH"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tfAccSSH%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
 					resource.TestCheckResourceAttr(resourceName, "notification_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.2"),
@@ -83,18 +84,18 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccSSHApplication_options(100 + rand.Intn(100)),
+				Config: testAccSSHApplication_options(randNum),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "tfAccSSHUpd"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tfAccSSHUpd%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", "tcp://127.0.0.5"),
 					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfaccssh.ssh.%s", testAccDomain)),
 					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfaccssh.ssh.%s", testAccDomain)),
 				),
 			},
 			{
-				Config: testAccSSHApplication_collection(100 + rand.Intn(100)),
+				Config: testAccSSHApplication_collection(randNum),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceNameCollection, "name", "tfAccSSHWithCollection")),
+					resource.TestCheckResourceAttr(resourceNameCollection, "name", fmt.Sprintf("tfAccSSHWithCollection%d", randNum))),
 			},
 		},
 	})

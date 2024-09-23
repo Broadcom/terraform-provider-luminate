@@ -54,20 +54,21 @@ resource "luminate_tcp_application" "new-tcp-application-collection" {
 func TestAccLuminateTCPApplication(t *testing.T) {
 	resourceName := "luminate_tcp_application.new-tcp-application"
 	resourceNameCollection := "luminate_tcp_application.new-tcp-application-collection"
+	randNum := 100 + rand.Intn(100)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccTCPApplication_with_collection(100 + rand.Intn(100)),
+				Config: testAccTCPApplication_with_collection(randNum),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameCollection, "name", "tfAccTCPWithCollection")),
 			},
 			{
-				Config: testAccTCPApplication_minimal(100 + rand.Intn(100)),
+				Config: testAccTCPApplication_minimal(randNum),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "tfAccTCP"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tfAccTCP%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
 					resource.TestCheckResourceAttr(resourceName, "notification_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfacctcp.tcp.%s", testAccDomain)),

@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"math/rand"
 	"strconv"
@@ -31,13 +32,13 @@ func TestAccLuminateCollection(t *testing.T) {
 			{
 				Config: strings.ReplaceAll(testAccResourceCollection, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "tfAccCollection"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tfAccCollection%d", randNum)),
 				),
 			},
 			{
 				Config: strings.ReplaceAll(testAccResourceCollectionUpdate, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "tfAccCollectionUpdate"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tfAccCollectionUpdate%d", randNum)),
 				),
 			},
 		},
