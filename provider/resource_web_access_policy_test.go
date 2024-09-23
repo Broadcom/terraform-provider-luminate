@@ -170,7 +170,7 @@ func resourceWebAccessPolicy_conditions_specified_update(userID1 string, rand in
 func resourceWebAccessPolicy_validators_specified(userID1 string, rand int) string {
 	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
-	   name = "tfAccSiteAccessPolicy%s"
+	   name = "tfAccSiteAccessPolicy%d"
 	}
 	resource "luminate_web_application" "new-application" {
 	 site_id = "${luminate_site.new-site.id}"
