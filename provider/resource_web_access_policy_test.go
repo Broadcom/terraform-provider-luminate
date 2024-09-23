@@ -2,20 +2,23 @@ package provider
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"math/rand"
 	"os"
 	"testing"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func resourceWebAccessPolicy_enabled(groupName, userID1, userID2 string) string {
+func resourceWebAccessPolicy_enabled(groupName,
+	userID1,
+	userID2 string,
+	rand int) string {
 	return fmt.Sprintf(`
 	data "luminate_group"  "my-groups" {
 		identity_provider_id = "local"
 		groups = ["%s"]
 	}
 	resource "luminate_site" "new-site" {
-	   name = "tfAccSiteAccessPolicy"
+	   name = "tfAccSiteAccessPolicy%d"
 	}
 	resource "luminate_web_application" "new-application" {
 	 site_id = "${luminate_site.new-site.id}"
@@ -30,16 +33,16 @@ func resourceWebAccessPolicy_enabled(groupName, userID1, userID2 string) string 
 		user_ids = ["%s","%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
 		group_ids = ["${data.luminate_group.my-groups.group_ids.0}"]
-	}`, groupName, userID1, userID2)
+	}`, groupName, rand, userID1, userID2)
 }
 
-func resourceWebAccessPolicy_collection(userID1 string) string {
+func resourceWebAccessPolicy_collection(userID1 string, rand int) string {
 	return fmt.Sprintf(`
 	resource "luminate_site" "new-site-collection" {
-	   name = "tfAccSiteAccessPolicyCollection"
+	   name = "tfAccSiteAccessPolicyCollection%d"
 	}
 	resource "luminate_collection" "new-collection" {
-		name = "tfAccCollectionForAppCollection"
+		name = "tfAccCollectionForAppCollection%d"
 	}
 	resource "luminate_collection_site_link" "new-collection-site-link" {
 		site_id = "${luminate_site.new-site-collection.id}"
@@ -61,17 +64,17 @@ func resourceWebAccessPolicy_collection(userID1 string) string {
 		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application-collection.id}"]
 	 	depends_on = [luminate_collection_site_link.new-collection-site-link]
-	}`, userID1)
+	}`, rand, rand, userID1)
 }
 
-func resourceWebAccessPolicy_disabled(userID1 string) string {
+func resourceWebAccessPolicy_disabled(userID1 string, rand int) string {
 	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
-	   name = "tfAccSiteAccessPolicy"
+	   name = "tfAccSiteAccessPolicy%d"
 	}
 	resource "luminate_web_application" "new-application" {
 	 site_id = "${luminate_site.new-site.id}"
-	 name = "tfAccApplicationAccessPolicy"
+	 name = "tfAccApplicationAccessPolicy%d"
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
@@ -81,17 +84,17 @@ func resourceWebAccessPolicy_disabled(userID1 string) string {
 
   		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
-	}`, userID1)
+	}`, rand, rand, userID1)
 }
 
-func resourceWebAccessPolicy_enabled_not_specified(userID1 string) string {
+func resourceWebAccessPolicy_enabled_not_specified(userID1 string, rand int) string {
 	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
-	   name = "tfAccSiteAccessPolicy"
+	   name = "tfAccSiteAccessPolicy%d"
 	}
 	resource "luminate_web_application" "new-application" {
 	 site_id = "${luminate_site.new-site.id}"
-	 name = "tfAccApplicationAccessPolicy"
+	 name = "tfAccApplicationAccessPolicy%d"
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
@@ -100,17 +103,17 @@ func resourceWebAccessPolicy_enabled_not_specified(userID1 string) string {
 
   		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
-	}`, userID1)
+	}`, rand, rand, userID1)
 }
 
-func resourceWebAccessPolicy_conditions_specified(userID1 string) string {
+func resourceWebAccessPolicy_conditions_specified(userID1 string, rand int) string {
 	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
-	   name = "tfAccSiteAccessPolicy"
+	   name = "tfAccSiteAccessPolicy%d"
 	}
 	resource "luminate_web_application" "new-application" {
 	 site_id = "${luminate_site.new-site.id}"
-	 name = "tfAccApplicationAccessPolicy"
+	 name = "tfAccApplicationAccessPolicy%d"
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
@@ -131,17 +134,17 @@ func resourceWebAccessPolicy_conditions_specified(userID1 string) string {
   		}
 
 	}
-`, userID1)
+`, rand, rand, userID1)
 }
 
-func resourceWebAccessPolicy_conditions_specified_update(userID1 string) string {
+func resourceWebAccessPolicy_conditions_specified_update(userID1 string, rand int) string {
 	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
-	   name = "tfAccSiteAccessPolicy"
+	   name = "tfAccSiteAccessPolicy%d"
 	}
 	resource "luminate_web_application" "new-application" {
 	 site_id = "${luminate_site.new-site.id}"
-	 name = "tfAccApplicationAccessPolicy"
+	 name = "tfAccApplicationAccessPolicy%d"
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
@@ -161,17 +164,17 @@ func resourceWebAccessPolicy_conditions_specified_update(userID1 string) string 
 			}
 		}
 
-	}`, userID1)
+	}`, rand, rand, userID1)
 }
 
-func resourceWebAccessPolicy_validators_specified(userID1 string) string {
+func resourceWebAccessPolicy_validators_specified(userID1 string, rand int) string {
 	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
-	   name = "tfAccSiteAccessPolicy"
+	   name = "tfAccSiteAccessPolicy%s"
 	}
 	resource "luminate_web_application" "new-application" {
 	 site_id = "${luminate_site.new-site.id}"
-	 name = "tfAccApplicationAccessPolicy"
+	 name = "tfAccApplicationAccessPolicy%s"
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
@@ -183,7 +186,7 @@ func resourceWebAccessPolicy_validators_specified(userID1 string) string {
 		validators {
 			mfa = true
 		}
-	}`, userID1)
+	}`, userID1, rand)
 }
 
 func TestAccLuminateWebAccessPolicy(t *testing.T) {
@@ -207,28 +210,28 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: resourceWebAccessPolicy_enabled(groupName, userID1, userID2),
+				Config: resourceWebAccessPolicy_enabled(groupName, userID1, userID2, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_disabled(userID1),
+				Config: resourceWebAccessPolicy_disabled(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_enabled_not_specified(userID1),
+				Config: resourceWebAccessPolicy_enabled_not_specified(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config:  resourceWebAccessPolicy_conditions_specified(userID1),
+				Config:  resourceWebAccessPolicy_conditions_specified(userID1, 100+rand.Intn(100)),
 				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
@@ -241,7 +244,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_conditions_specified_update(userID1),
+				Config: resourceWebAccessPolicy_conditions_specified_update(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -253,7 +256,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_validators_specified(userID1),
+				Config: resourceWebAccessPolicy_validators_specified(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -261,7 +264,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceWebAccessPolicy_collection(userID1),
+				Config: resourceWebAccessPolicy_collection(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceWebAccessPolicy_collection"),
 				),

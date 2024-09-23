@@ -3,14 +3,17 @@ package provider
 import (
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
+	"math/rand"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-const testAccWebApplication_minimal = `
+func testAccWebApplication_minimal(rand int) string {
+	return fmt.Sprintf(
+		`
 resource "luminate_site" "new-site" {
-   name = "tfAccSite"
+   name = "tfAccSiteForWebApp%d"
 }
 resource "luminate_web_application" "new-application" {
  site_id = "${luminate_site.new-site.id}"
@@ -18,11 +21,14 @@ resource "luminate_web_application" "new-application" {
  internal_address = "http://127.0.0.1:8080"
  icon = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII="
 }
-`
+`, rand)
+}
 
-const testAccWebApplication_options = `
+func testAccWebApplication_options(rand int) string {
+	return fmt.Sprintf(
+		`
 resource "luminate_site" "new-site" {
-   name = "tfAccSite"
+   name = "tfAccSiteForWebApp%d"
 }
 resource "luminate_web_application" "new-application" {
  site_id = "${luminate_site.new-site.id}"
@@ -30,14 +36,17 @@ resource "luminate_web_application" "new-application" {
  internal_address = "http://127.0.0.1:80"
 	custom_root_path = "/testAcc"
 }
-`
+`, rand)
+}
 
-const testAccWebApplication_with_collection = `
+func testAccWebApplication_with_collection(rand int) string {
+	return fmt.Sprintf(
+		`
 	resource "luminate_site" "new-site" {
-		name = "tfAccSite"	
+		name = "tfAccSiteForWebApp%d"
 	}
 	resource "luminate_collection" "new-collection" {
-		name = "tfAccCollectionForApp"
+		name = "tfAccCollectionForApp%d"
 	}
 	resource "luminate_collection_site_link" "new-collection-site-link" {
 		site_id = "${luminate_site.new-site.id}"
@@ -52,7 +61,8 @@ const testAccWebApplication_with_collection = `
 
  		depends_on = [luminate_collection_site_link.new-collection-site-link]
 	}
-`
+	`, rand, rand)
+}
 
 func TestAccLuminateApplication(t *testing.T) {
 	resourceCollectionTest := "luminate_web_application.new-collection-application"
@@ -63,13 +73,13 @@ func TestAccLuminateApplication(t *testing.T) {
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccWebApplication_with_collection,
+				Config: testAccWebApplication_with_collection(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceCollectionTest, "name", "tfAccApplicationWithCollection"),
 				),
 			},
 			{
-				Config: testAccWebApplication_minimal,
+				Config: testAccWebApplication_minimal(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceTest, "name", "tfAccApplication"),
 					resource.TestCheckResourceAttr(resourceTest, "visible", "true"),
@@ -81,7 +91,7 @@ func TestAccLuminateApplication(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccWebApplication_options,
+				Config: testAccWebApplication_options(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceTest, "name", "tfAccApplicationUpd"),
 					resource.TestCheckResourceAttr(resourceTest, "internal_address", "http://127.0.0.1:80"),
