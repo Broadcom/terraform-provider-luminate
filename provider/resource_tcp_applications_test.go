@@ -2,17 +2,20 @@ package provider
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-const testAccTCPApplication_minimal = `
+func testAccTCPApplication_minimal(rand int) string {
+	return fmt.Sprintf(
+		`
 resource "luminate_site" "new-site" {
-    name = "tfAccSite"
+    name = "tfAccSite%d"
 }
 resource "luminate_tcp_application" "new-tcp-application" {
-  name = "tfAccTCP"
+  name = "tfAccTCP%d"
   site_id = "${luminate_site.new-site.id}"
   icon = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII="
   target {
@@ -20,15 +23,16 @@ resource "luminate_tcp_application" "new-tcp-application" {
     ports = ["8080"]
 	port_mapping = [80]	
   }
+}`, rand, rand)
 }
-`
 
-const testAccTCPApplication_with_collection = `
+func testAccTCPApplication_with_collection(rand int) string {
+	return fmt.Sprintf(`
 resource "luminate_site" "new-site" {
-    name = "tfAccSite"
+    name = "tfAccSite%d"
 }
 resource "luminate_collection" "new-collection" {
-	name = "tfAccCollectionForApp"
+	name = "tfAccCollectionForApp%d"
 }
 resource "luminate_collection_site_link" "new-collection-site-link" {
 	site_id = "${luminate_site.new-site.id}"
@@ -44,30 +48,31 @@ resource "luminate_tcp_application" "new-tcp-application-collection" {
 	port_mapping = [80]	
   }
  depends_on = [luminate_collection_site_link.new-collection-site-link]
+} `, rand, rand)
 }
-`
 
 func TestAccLuminateTCPApplication(t *testing.T) {
 	resourceName := "luminate_tcp_application.new-tcp-application"
 	resourceNameCollection := "luminate_tcp_application.new-tcp-application-collection"
+	randNum := 100 + rand.Intn(100)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccTCPApplication_with_collection,
+				Config: testAccTCPApplication_with_collection(randNum),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameCollection, "name", "tfAccTCPWithCollection")),
 			},
 			{
-				Config: testAccTCPApplication_minimal,
+				Config: testAccTCPApplication_minimal(randNum),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "tfAccTCP"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tfAccTCP%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "visible", "true"),
 					resource.TestCheckResourceAttr(resourceName, "notification_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfacctcp.tcp.%s", testAccDomain)),
-					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfacctcp.tcp.%s", testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "external_address", fmt.Sprintf("tfacctcp%d.tcp.%s", randNum, testAccDomain)),
+					resource.TestCheckResourceAttr(resourceName, "luminate_address", fmt.Sprintf("tfacctcp%d.tcp.%s", randNum, testAccDomain)),
 					resource.TestCheckResourceAttr(resourceName, "target.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "target.0.address", "127.0.0.1"),
 					resource.TestCheckResourceAttr(resourceName, "target.0.ports.#", "1"),
