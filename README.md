@@ -1,4 +1,4 @@
-# **Terraform provider luminate**
+~~# **Terraform provider luminate**
 
 
 #### Latest Binaries  
@@ -48,6 +48,10 @@
 
 [Identities resources](#identities-resources)
 - [Resource: luminate_group_user](#resource-luminate_group_user)
+
+[Dns Resiliency resources](#identities-resources)
+- [Resource: luminate_dns_group_resiliency](#resource-luminate_dns_resiliency_group)
+- [Resource: luminate_dns_server_resiliency](#resource-luminate_dns_resiliency_server)
 
 [Data sources](#data-sources)
 - [Data Source: luminate_identity_provider](#data-Source: luminate_identity_provider)
@@ -1507,3 +1511,70 @@ In addition to arguments above, the following attributes are exported:
 - **last_accessed** (String)
 - **created_on** (String)
 - **modified_on** (String)
+
+# DNS Resiliency resources
+
+Resource: luminate_dns_server_resiliency
+----------
+
+Provides crud of dns resiliency servers
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_site" "new-site" {
+	name = "tfAccSite"
+}
+
+resource "luminate_dns_group_resiliency" "new-dns-group" {
+	name = "testDNSGroupResiliency"
+	sendNotifications = true
+	domainSuffixes = ["somedomain.com"]
+}
+
+data "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
+    name = "testDNSServerResiliency"
+	site_id = "${luminate_site.new-site.id}"
+	group_id = "${luminate_dns_group_resiliency.new-dns-group.id}"
+	internal_address = "udp://20.0.0.1:63"
+}
+
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **group_id -** (Required) Group id
+-   **name -** (Required) Dns Server name
+-   **site_id -** (Required) Associated Site id
+-   **internal_address -** (Required) Dns server address 
+
+
+Resource: luminate_dns_group_resiliency
+----------
+
+Provides crud of dns resiliency groups
+
+­­­
+
+#### Example Usage
+
+```
+
+resource "luminate_dns_group_resiliency" "new-dns-group" {
+	name = "testDNSGroupResiliency"
+	sendNotifications = true
+	domainSuffixes = ["somedomain.com"]
+}
+
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) Dns Group name
+-   **sendNotifications -** (Required) Indicates if notification are enabled
+-   **domainSuffixes -** (Required) List of domain suffixes
+
