@@ -1517,7 +1517,7 @@ In addition to arguments above, the following attributes are exported:
 Resource: luminate_dns_server_resiliency
 ----------
 
-Provides crud of dns resiliency servers
+Provides CRUD of dns resiliency servers
 
 ­­­
 

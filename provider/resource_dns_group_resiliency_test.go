@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-var testDNSGroupResiliency = fmt.Sprintf(`resource "luminate_dns_group_resiliency" "new-dns-group-resiliency" {
+var testDNSGroupResiliency = fmt.Sprintf(`resource "luminate_dns_group_resiliency" "new-dns-group" {
 	name = "testDNSGroupResiliency<RANDOM_PLACEHOLDER>"
 	domain_suffixes = ["%s"]
 	send_notifications = true
@@ -18,7 +18,7 @@ var testDNSGroupResiliency = fmt.Sprintf(`resource "luminate_dns_group_resilienc
 `, "somedomain<RANDOM_PLACEHOLDER>.com")
 
 func TestAccLuminateDNSGroupResiliency(t *testing.T) {
-	resourceName := "luminate_dns_group_resiliency.new-dns-group-resiliency"
+	resourceName := "luminate_dns_group_resiliency.new-dns-group"
 	randNum := 100 + rand.Intn(100)
 
 	resource.Test(t, resource.TestCase{
