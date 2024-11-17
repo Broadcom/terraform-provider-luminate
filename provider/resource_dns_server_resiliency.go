@@ -64,13 +64,7 @@ func resourceCreateDNSResiliencyServer(ctx context.Context, d *schema.ResourceDa
 		SiteID:          d.Get("site_id").(string),
 		GroupID:         DNSGroupID,
 	}
-	DNSGroup, err := client.DNSResiliencyAPI.GetDNSGroup(DNSGroupID)
-	if err != nil {
-		log.Println(fmt.Sprintf("[Error] failed Reading DNS Resiliency Group with error: %s", err.Error()))
-		return diag.FromErr(errors.Wrap(err, "read DNS Resiliency group failure"))
-	}
-
-	DNSResiliencyServer, err := client.DNSResiliencyAPI.CreateDNServer(DNSResiliencyServerDTO, DNSGroup.ID)
+	DNSResiliencyServer, err := client.DNSResiliencyAPI.CreateDNServer(DNSResiliencyServerDTO, DNSGroupID)
 	if err != nil {
 		log.Println(fmt.Sprintf("[Error] failed Creating DNS Resiliency Server with error: %s", err.Error()))
 		return diag.FromErr(errors.Wrap(err, "Create DNS Resiliency server failure"))
