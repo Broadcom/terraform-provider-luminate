@@ -26,12 +26,26 @@ func LuminateDNSGroupResiliency() *schema.Resource {
 		ValidateFunc: utils.ValidateBool,
 		Description:  "Indicates whether notifications should be sent to admin",
 	}
+	dnsGroupSchema["is_enabled"] = &schema.Schema{
+		Type:         schema.TypeBool,
+		Required:     true,
+		ValidateFunc: utils.ValidateBool,
+		Description:  "Indicates if group is enabled",
+	}
 	dnsGroupSchema["domain_suffixes"] = &schema.Schema{
 		Type:     schema.TypeList,
 		Required: true,
 		Elem: &schema.Schema{
 			Type:         schema.TypeString,
 			ValidateFunc: utils.ValidateString,
+		},
+	}
+	dnsGroupSchema["servers"] = &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: utils.ValidateUuid,
 		},
 	}
 
@@ -96,10 +110,20 @@ func resourceUpdateDNSResiliencyGroup(ctx context.Context, d *schema.ResourceDat
 		log.Println(fmt.Sprintf("[Error] failed Reading DNS Resiliency Group with error: %s", err.Error()))
 		return diag.FromErr(errors.Wrap(err, "read DNS Resiliency group failure"))
 	}
+	isEnabled := d.Get("is_enabled").(bool)
+	if isEnabled != DNSGroup.IsEnabled {
+		err = client.DNSResiliencyAPI.EnableDisableDNSGroups(&dto.EnableDisableDNSGroupDTO{
+			Enable:   isEnabled,
+			GroupIDs: []string{DNSGroup.ID},
+		})
+		log.Println(fmt.Sprintf("[Error] failed enabled/ disabled DNS Resiliency Group with error: %s", err.Error()))
+		return diag.FromErr(errors.Wrap(err, "update DNS Resiliency group failure"))
+	}
 	DNSGroupDTO := dto.DNSGroupInputDTO{
 		Name:             d.Get("name").(string),
 		DomainSuffixes:   d.Get("domain_suffixes").([]interface{}),
 		SendNotification: d.Get("send_notifications").(bool),
+		IsEnabled:        d.Get("is_enabled").(bool),
 	}
 	_, err = client.DNSResiliencyAPI.UpdateDNSGroup(&DNSGroupDTO, DNSGroup.ID)
 	if err != nil {

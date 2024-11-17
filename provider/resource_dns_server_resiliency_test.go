@@ -3,7 +3,6 @@ package provider
 import (
 	"fmt"
 	"math/rand"
-	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -25,6 +24,7 @@ resource "luminate_dns_group_resiliency" "new-dns-group" {
 	name = "testDNSGroupResiliency<RANDOM_PLACEHOLDER>"
 	domain_suffixes = ["%s"]
 	send_notifications = true
+	is_enabled = true
 }
 
 resource "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
@@ -50,8 +50,7 @@ func TestAccLuminateDNSServerResiliency(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testDNSServerResiliency%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", strings.ReplaceAll("udp://<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>:63", "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum))),
 				),
-				Destroy:     true,
-				ExpectError: regexp.MustCompile(".*"),
+				Destroy: false,
 			},
 		},
 	})

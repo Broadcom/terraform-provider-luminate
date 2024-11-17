@@ -14,6 +14,7 @@ var testDNSGroupResiliency = fmt.Sprintf(`resource "luminate_dns_group_resilienc
 	name = "testDNSGroupResiliency<RANDOM_PLACEHOLDER>"
 	domain_suffixes = ["%s"]
 	send_notifications = true
+	is_enabled = true
 }
 `, "somedomain<RANDOM_PLACEHOLDER>.com")
 

@@ -263,6 +263,7 @@ func EntityDTOToEntityModel(entities []DirectoryEntity) []sdk.DirectoryEntity {
 
 type DNSGroupInputDTO struct {
 	Name             string
+	IsEnabled        bool          `json:"isEnabled"`
 	DomainSuffixes   []interface{} `json:"domainSuffixes"`
 	SendNotification bool          `json:"sendNotification"`
 }
@@ -276,6 +277,7 @@ type DNSGroupOutputDTO struct {
 	ServerInUse         string
 	ActiveServerAddress string
 	Servers             []string
+	IsEnabled           bool `json:"isEnabled"`
 }
 
 type DNSServerInputDTO struct {
