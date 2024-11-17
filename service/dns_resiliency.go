@@ -58,14 +58,6 @@ func (d *DNSResiliencyAPI) GetDNSGroup(DNSGroupID string) (*dto.DNSGroupOutputDT
 	return dto.ConvertDnsGroupOutputTODTO(res), nil
 }
 
-func (d *DNSResiliencyAPI) ListDNSGroups(input *sdk.DNSResiliencyApiListDnsGroupsOpts) (*sdk.DnsGroupOutputPage, error) {
-	res, _, err := d.cli.DNSResiliencyApi.ListDnsGroups(context.Background(), input)
-	if err != nil {
-		return nil, err
-	}
-	return &res, nil
-}
-
 func (d *DNSResiliencyAPI) GetDNServer(DNSServerID, DNSGroupID string) (*dto.DNSServerOutputDTO, error) {
 	res, _, err := d.cli.DNSResiliencyApi.GetDNSServer(context.Background(), DNSGroupID, DNSServerID)
 	if err != nil {

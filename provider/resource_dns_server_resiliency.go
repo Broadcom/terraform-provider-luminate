@@ -36,7 +36,7 @@ func LuminateDNSServerResiliency() *schema.Resource {
 		Type:         schema.TypeString,
 		Required:     true,
 		ValidateFunc: utils.ValidateUuid,
-		Description:  "DNS server name",
+		Description:  "DNS group Id",
 	}
 	return &schema.Resource{
 		Schema:        DNSServerSchema,
@@ -93,7 +93,6 @@ func resourceReadDNSResiliencyServer(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(errors.Wrap(err, "read DNS Resiliency server failure"))
 	}
 
-	d.SetId(DNSResiliencyServerID)
 	return nil
 }
 
@@ -115,7 +114,6 @@ func resourceUpdateDNSResiliencyServer(ctx context.Context, d *schema.ResourceDa
 		log.Println(fmt.Sprintf("[Error] failed Updating DNS Resiliency Server with error: %s", err.Error()))
 		return diag.FromErr(err)
 	}
-	d.SetId(d.Id())
 	return nil
 }
 

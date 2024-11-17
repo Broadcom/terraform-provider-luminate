@@ -75,13 +75,12 @@ func resourceReadDNSResiliencyGroup(ctx context.Context, d *schema.ResourceData,
 		return diag.FromErr(errors.New("invalid client"))
 	}
 	DNSGroupID := d.Id()
-	DNSGroup, err := client.DNSResiliencyAPI.GetDNSGroup(DNSGroupID)
+	_, err := client.DNSResiliencyAPI.GetDNSGroup(DNSGroupID)
 	if err != nil {
 		log.Println(fmt.Sprintf("[Error] failed Reading DNS Resiliency Group with error: %s", err.Error()))
 		return diag.FromErr(errors.Wrap(err, "read DNS Resiliency group failure"))
 	}
 
-	d.SetId(DNSGroup.ID)
 	return nil
 }
 
@@ -96,24 +95,6 @@ func resourceUpdateDNSResiliencyGroup(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		log.Println(fmt.Sprintf("[Error] failed Reading DNS Resiliency Group with error: %s", err.Error()))
 		return diag.FromErr(errors.Wrap(err, "read DNS Resiliency group failure"))
-	}
-	disableDTO := &dto.EnableDisableDNSGroupDTO{
-		Enable:   false,
-		GroupIDs: []string{DNSGroupID},
-	}
-	err = client.DNSResiliencyAPI.EnableDisableDNSGroups(disableDTO)
-	if err != nil {
-		log.Println(fmt.Sprintf("[Error] failed Disable DNS Resiliency Group with error: %s", err.Error()))
-		return diag.FromErr(err)
-	}
-	enableDTO := &dto.EnableDisableDNSGroupDTO{
-		Enable:   true,
-		GroupIDs: []string{DNSGroupID},
-	}
-	err = client.DNSResiliencyAPI.EnableDisableDNSGroups(enableDTO)
-	if err != nil {
-		log.Println(fmt.Sprintf("[Error] failed Enable DNS Resiliency Group with error: %s", err.Error()))
-		return diag.FromErr(err)
 	}
 	DNSGroupDTO := dto.DNSGroupInputDTO{
 		Name:             d.Get("name").(string),
