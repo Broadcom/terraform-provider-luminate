@@ -50,7 +50,6 @@ func TestAccLuminateDNSServerResiliency(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testDNSServerResiliency%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "internal_address", strings.ReplaceAll("udp://<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>:63", "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum))),
 				),
-				Destroy: false,
 			},
 		},
 	})

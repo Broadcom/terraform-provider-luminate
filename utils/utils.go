@@ -1,11 +1,14 @@
 package utils
 
 import (
+	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"crypto/md5"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/utils"
 	"github.com/asaskevich/govalidator"
+	"github.com/pkg/errors"
 	"io"
+	"log"
 	"regexp"
 )
 
@@ -208,4 +211,11 @@ func ExtractIPAndPort(ipString string) (string, string) {
 	}
 
 	return ip, port
+}
+
+func ParseSwaggerError(err error) error {
+	e := err.(sdk.GenericSwaggerError)
+	model := e.Model().(sdk.ModelApiResponse)
+	log.Println(model.Status)
+	return errors.Wrap(err, model.Message)
 }

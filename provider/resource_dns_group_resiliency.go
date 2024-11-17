@@ -28,7 +28,7 @@ func LuminateDNSGroupResiliency() *schema.Resource {
 	}
 	dnsGroupSchema["is_enabled"] = &schema.Schema{
 		Type:         schema.TypeBool,
-		Required:     true,
+		Optional:     true,
 		ValidateFunc: utils.ValidateBool,
 		Description:  "Indicates if group is enabled",
 	}

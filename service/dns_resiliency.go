@@ -4,6 +4,7 @@ import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
 )
 
 type DNSResiliencyAPI struct {
@@ -15,7 +16,10 @@ func NewDNSResiliencyAPI(client *sdk.APIClient) *DNSResiliencyAPI {
 }
 
 func (d *DNSResiliencyAPI) CreateDNSGroup(DNSGroupInput *dto.DNSGroupInputDTO) (*dto.DNSGroupOutputDTO, error) {
-	domainSuffix := []string{DNSGroupInput.DomainSuffixes[0].(string)}
+	var domainSuffix []string
+	for _, domain := range DNSGroupInput.DomainSuffixes {
+		domainSuffix = append(domainSuffix, domain.(string))
+	}
 	body := sdk.WssintegrationtenantDnsgroupsBody{
 		Name:              DNSGroupInput.Name,
 		DomainSuffixes:    domainSuffix,
@@ -29,7 +33,10 @@ func (d *DNSResiliencyAPI) CreateDNSGroup(DNSGroupInput *dto.DNSGroupInputDTO) (
 }
 
 func (d *DNSResiliencyAPI) UpdateDNSGroup(DNSGroupInput *dto.DNSGroupInputDTO, DNSGroupID string) (*dto.DNSGroupOutputDTO, error) {
-	domainSuffix := []string{DNSGroupInput.DomainSuffixes[0].(string)}
+	var domainSuffix []string
+	for _, domain := range DNSGroupInput.DomainSuffixes {
+		domainSuffix = append(domainSuffix, domain.(string))
+	}
 	body := sdk.DnsgroupsDnsGroupIdBody{
 		Name:              DNSGroupInput.Name,
 		DomainSuffixes:    domainSuffix,
@@ -112,7 +119,7 @@ func (d *DNSResiliencyAPI) DeleteDNSServer(DNSServerIDs []string, DNSGroupID str
 	}
 	_, err := d.cli.DNSResiliencyApi.DeleteDNSServers(context.Background(), ids, DNSGroupID)
 	if err != nil {
-		return err
+		return utils.ParseSwaggerError(err)
 	}
 	return nil
 }
