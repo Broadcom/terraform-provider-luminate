@@ -40,14 +40,6 @@ func LuminateDNSGroupResiliency() *schema.Resource {
 			ValidateFunc: utils.ValidateString,
 		},
 	}
-	dnsGroupSchema["servers"] = &schema.Schema{
-		Type:     schema.TypeList,
-		Optional: true,
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: utils.ValidateUuid,
-		},
-	}
 
 	return &schema.Resource{
 		Schema:        dnsGroupSchema,
