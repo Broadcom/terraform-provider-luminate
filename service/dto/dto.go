@@ -274,7 +274,7 @@ type DNSGroupOutputDTO struct {
 	DomainSuffixes      []string `json:"domainSuffixes"`
 	SendNotification    bool     `json:"sendNotification"`
 	Status              string
-	ServerInUse         string
+	ServerInUse         string `json:"serverInUsed"`
 	ActiveServerAddress string
 	Servers             []string
 	IsEnabled           bool `json:"isEnabled"`
@@ -296,7 +296,6 @@ type DNSServerOutputDTO struct {
 	HealthStatus    string
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
-	ServerInUsed    string
 }
 
 type EnableDisableDNSGroupDTO struct {
@@ -311,7 +310,7 @@ func ConvertDnsGroupOutputTODTO(dto sdk.DnsGroupOutput) *DNSGroupOutputDTO {
 		DomainSuffixes:      dto.DomainSuffixes,
 		SendNotification:    dto.SendNotifications,
 		Status:              dto.Status,
-		ServerInUse:         dto.ServerInUse,
+		ServerInUse:         dto.ServerInUsed,
 		ActiveServerAddress: dto.ActiveServerAddress,
 		Servers:             dto.Servers,
 	}

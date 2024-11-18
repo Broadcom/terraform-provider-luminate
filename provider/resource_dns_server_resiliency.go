@@ -81,12 +81,16 @@ func resourceReadDNSResiliencyServer(ctx context.Context, d *schema.ResourceData
 	}
 	DNSResiliencyServerID := d.Id()
 	DNSResiliencyGroupID := d.Get("group_id").(string)
-	_, err := client.DNSResiliencyAPI.GetDNServer(DNSResiliencyServerID, DNSResiliencyGroupID)
+	DNSServer, err := client.DNSResiliencyAPI.GetDNServer(DNSResiliencyServerID, DNSResiliencyGroupID)
 	if err != nil {
 		log.Println(fmt.Sprintf("[Error] failed Reading DNS Resiliency Server with error: %s", err.Error()))
 		return diag.FromErr(errors.Wrap(err, "read DNS Resiliency server failure"))
 	}
-
+	d.SetId(DNSResiliencyServerID)
+	d.Set("group_id", DNSServer.GroupID)
+	d.Set("name", DNSServer.Name)
+	d.Set("site_id", DNSServer.SiteID)
+	d.Set("internal_address", DNSServer.InternalAddress)
 	return nil
 }
 
@@ -108,7 +112,7 @@ func resourceUpdateDNSResiliencyServer(ctx context.Context, d *schema.ResourceDa
 		log.Println(fmt.Sprintf("[Error] failed Updating DNS Resiliency Server with error: %s", err.Error()))
 		return diag.FromErr(err)
 	}
-	return nil
+	return resourceReadDNSResiliencyServer(ctx, d, m)
 }
 
 func resourceDeleteDNSResiliencyServer(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -119,7 +123,25 @@ func resourceDeleteDNSResiliencyServer(ctx context.Context, d *schema.ResourceDa
 	}
 
 	DNSResiliencyGroupID := d.Get("group_id").(string)
-	err := client.DNSResiliencyAPI.DeleteDNSServer([]string{d.Id()}, DNSResiliencyGroupID)
+	DNSResiliencyServerID := d.Id()
+	DNSGroup, err := client.DNSResiliencyAPI.GetDNSGroup(DNSResiliencyGroupID)
+	if err != nil {
+		log.Println(fmt.Sprintf("[Error] failed Getting DNS Resiliency Group with error: %s", err.Error()))
+		return diag.FromErr(errors.Wrap(err, "Get DNS Group by id failure"))
+	}
+	if DNSGroup.ServerInUse == DNSResiliencyServerID {
+		if len(DNSGroup.Servers) == 1 {
+			err = client.DNSResiliencyAPI.DeleteDNSGroup(DNSResiliencyGroupID)
+			if err != nil {
+				log.Println(fmt.Sprintf("[Error] failed Deleting DNS Resiliency Group with error: %s", err.Error()))
+				return diag.FromErr(errors.Wrap(err, "Delete DNS Group by id failure"))
+			}
+			return nil
+		}
+		return diag.FromErr(errors.Wrap(err, "Can't delete active DNS Resiliency Server"))
+	}
+	// not active
+	err = client.DNSResiliencyAPI.DeleteDNSServer([]string{d.Id()}, DNSResiliencyGroupID)
 	if err != nil {
 		log.Println(fmt.Sprintf("[Error] failed Deleting DNS Resiliency Server with error: %s", err.Error()))
 		return diag.FromErr(errors.Wrap(err, "Delete DNS server by ids failure"))
