@@ -31,7 +31,8 @@ resource "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
 	name = "testDNSServerResiliency<RANDOM_PLACEHOLDER>"
 	site_id = "${luminate_site.new-site.id}"
 	group_id = "${luminate_dns_group_resiliency.new-dns-group.id}"
-	internal_address = "udp://<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>:63"
+	internal_address = "<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>"
+    depends_on = [luminate_collection_site_link.new-collection-site-link]
 }
 
 `, "otherdomains<RANDOM_PLACEHOLDER>.com")
@@ -48,7 +49,7 @@ func TestAccLuminateDNSServerResiliency(t *testing.T) {
 				Config: strings.ReplaceAll(testDNSServerResiliency, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testDNSServerResiliency%d", randNum)),
-					resource.TestCheckResourceAttr(resourceName, "internal_address", strings.ReplaceAll("udp://<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>:63", "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum))),
+					resource.TestCheckResourceAttr(resourceName, "internal_address", strings.ReplaceAll("<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>", "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum))),
 				),
 			},
 		},
