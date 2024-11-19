@@ -17,11 +17,11 @@ resource "luminate_site" "new-site" {
 }
 resource "luminate_web_application" "new-application" {
  site_id = "${luminate_site.new-site.id}"
- name = "tfAccApplication"
+ name = "tfAccApplication%d"
  internal_address = "http://127.0.0.1:8080"
  icon = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII="
 }
-`, rand)
+`, rand, rand)
 }
 
 func testAccWebApplication_options(rand int) string {
@@ -32,11 +32,11 @@ resource "luminate_site" "new-site" {
 }
 resource "luminate_web_application" "new-application" {
  site_id = "${luminate_site.new-site.id}"
- name = "tfAccApplicationUpd"
+ name = "tfAccApplicationUpd%d"
  internal_address = "http://127.0.0.1:80"
 	custom_root_path = "/testAcc"
 }
-`, rand)
+`, rand, rand)
 }
 
 func testAccWebApplication_with_collection(rand int) string {
@@ -55,13 +55,13 @@ func testAccWebApplication_with_collection(rand int) string {
 	resource "luminate_web_application" "new-collection-application" {
 		site_id = "${luminate_site.new-site.id}"
 		collection_id = "${luminate_collection.new-collection.id}"
-		name = "tfAccApplicationWithCollection"
+		name = "tfAccApplicationWithCollection%d"
 		internal_address = "http://127.0.0.1:80"
 		custom_root_path = "/testAcc"
 
  		depends_on = [luminate_collection_site_link.new-collection-site-link]
 	}
-	`, rand, rand)
+	`, rand, rand, rand)
 }
 
 func TestAccLuminateApplication(t *testing.T) {

@@ -22,7 +22,7 @@ func resourceWebAccessPolicy_enabled(groupName,
 	}
 	resource "luminate_web_application" "new-application" {
 	 site_id = "${luminate_site.new-site.id}"
-	 name = "tfAccApplicationAccessPolicy"
+	 name = "tfAccApplicationAccessPolicy%d"
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
@@ -33,7 +33,7 @@ func resourceWebAccessPolicy_enabled(groupName,
 		user_ids = ["%s","%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
 		group_ids = ["${data.luminate_group.my-groups.group_ids.0}"]
-	}`, groupName, rand, userID1, userID2)
+	}`, groupName, rand, rand, userID1, userID2)
 }
 
 func resourceWebAccessPolicy_collection(userID1 string, rand int) string {
@@ -51,7 +51,7 @@ func resourceWebAccessPolicy_collection(userID1 string, rand int) string {
 	resource "luminate_web_application" "new-application-collection" {
 	 site_id = "${luminate_site.new-site-collection.id}"
 	 collection_id = "${luminate_collection.new-collection.id}"
-	 name = "tfAccApplicationAccessPolicyCollection"
+	 name = "tfAccApplicationAccessPolicyCollection%d"
 	 internal_address = "http://127.0.0.1:8080"
 	 depends_on = [luminate_collection_site_link.new-collection-site-link]
 	}
@@ -64,7 +64,7 @@ func resourceWebAccessPolicy_collection(userID1 string, rand int) string {
 		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application-collection.id}"]
 	 	depends_on = [luminate_collection_site_link.new-collection-site-link]
-	}`, rand, rand, userID1)
+	}`, rand, rand, rand, userID1)
 }
 
 func resourceWebAccessPolicy_disabled(userID1 string, rand int) string {
