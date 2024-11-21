@@ -178,7 +178,7 @@ func resourceWebAccessPolicy_validators_specified(userID1 string, rand int) stri
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
-  		name =  "resourceWebAccessPolicy_validators_specified"
+  		name =  "resourceWebAccessPolicy_validators_specified%d"
 		identity_provider_id = "local"
 	
   		user_ids = ["%s"]
@@ -186,7 +186,7 @@ func resourceWebAccessPolicy_validators_specified(userID1 string, rand int) stri
 		validators {
 			mfa = true
 		}
-	}`, rand, rand, userID1)
+	}`, rand, rand, rand, userID1)
 }
 
 func TestAccLuminateWebAccessPolicy(t *testing.T) {
