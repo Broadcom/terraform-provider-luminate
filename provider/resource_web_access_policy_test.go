@@ -275,6 +275,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 }
 
 func createRegExpForNamePrefix(prefix string) *regexp.Regexp {
-	exp := fmt.Sprintf("^prefix%s", prefix)
+	exp := fmt.Sprintf("^%s", prefix)
 	return regexp.MustCompile(exp)
 }
