@@ -51,7 +51,7 @@ func resourceWebAccessPolicy_collection(userID1 string, rand int) string {
 	resource "luminate_web_application" "new-application-collection" {
 	 site_id = "${luminate_site.new-site-collection.id}"
 	 collection_id = "${luminate_collection.new-collection.id}"
-	 name = "tfAccApplicationAccessPolicyCollection%d"
+	 name = "tfAccAppAccessPolicyCollection%d"
 	 internal_address = "http://127.0.0.1:8080"
 	 depends_on = [luminate_collection_site_link.new-collection-site-link]
 	}
