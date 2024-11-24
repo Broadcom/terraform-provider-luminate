@@ -278,3 +278,8 @@ func createRegExpForNamePrefix(prefix string) *regexp.Regexp {
 	exp := fmt.Sprintf("^%s", prefix)
 	return regexp.MustCompile(exp)
 }
+
+func createRegExpForNameIncludes(substring string) *regexp.Regexp {
+	exp := fmt.Sprintf("%s", substring)
+	return regexp.MustCompile(exp)
+}
