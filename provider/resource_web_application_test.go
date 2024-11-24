@@ -75,13 +75,13 @@ func TestAccLuminateApplication(t *testing.T) {
 			{
 				Config: testAccWebApplication_with_collection(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceCollectionTest, "name", "tfAccApplicationWithCollection"),
+					resource.TestMatchResourceAttr(resourceCollectionTest, "name", createRegExpForNamePrefix("tfAccApplicationWithCollection")),
 				),
 			},
 			{
 				Config: testAccWebApplication_minimal(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceTest, "name", "tfAccApplication"),
+					resource.TestMatchResourceAttr(resourceTest, "name", createRegExpForNamePrefix("tfAccApplication")),
 					resource.TestCheckResourceAttr(resourceTest, "visible", "true"),
 					resource.TestCheckResourceAttr(resourceTest, "notification_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceTest, "internal_address", "http://127.0.0.1:8080"),
@@ -93,7 +93,7 @@ func TestAccLuminateApplication(t *testing.T) {
 			{
 				Config: testAccWebApplication_options(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceTest, "name", "tfAccApplicationUpd"),
+					resource.TestMatchResourceAttr(resourceTest, "name", createRegExpForNamePrefix("tfAccApplicationUpd")),
 					resource.TestCheckResourceAttr(resourceTest, "internal_address", "http://127.0.0.1:80"),
 					resource.TestCheckResourceAttr(resourceTest, "collection_id", utils.DefaultCollection),
 					resource.TestCheckResourceAttr(resourceTest, "external_address", fmt.Sprintf("https://tfaccapplication.%s", testAccDomain)),
