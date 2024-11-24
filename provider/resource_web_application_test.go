@@ -55,7 +55,7 @@ func testAccWebApplication_with_collection(rand int) string {
 	resource "luminate_web_application" "new-collection-application" {
 		site_id = "${luminate_site.new-site.id}"
 		collection_id = "${luminate_collection.new-collection.id}"
-		name = "tfAccApplicationWithCollection%d"
+		name = "tfAccApplicationWithCollection%d" 
 		internal_address = "http://127.0.0.1:80"
 		custom_root_path = "/testAcc"
 
