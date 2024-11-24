@@ -220,6 +220,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 			{
 				Config: resourceWebAccessPolicy_disabled(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_disabled")),
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
@@ -227,7 +228,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 			{
 				Config: resourceWebAccessPolicy_enabled_not_specified(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled_not_specified"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_enabled_not_specified")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
@@ -235,7 +236,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				Config:  resourceWebAccessPolicy_conditions_specified(userID1, 100+rand.Intn(100)),
 				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_conditions_specified")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.0", "127.0.0.1/24"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.1", "1.1.1.1/16"),
@@ -247,7 +248,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 			{
 				Config: resourceWebAccessPolicy_conditions_specified_update(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_conditions_specified")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.0", "127.0.0.1/24"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.1", "1.1.1.1/16"),
@@ -259,7 +260,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 			{
 				Config: resourceWebAccessPolicy_validators_specified(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_validators_specified"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_validators_specified")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "validators.0.mfa", "true"),
 				),
@@ -267,7 +268,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 			{
 				Config: resourceWebAccessPolicy_collection(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceWebAccessPolicy_collection"),
+					resource.TestMatchResourceAttr(resourceNameCollection, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_collection")),
 				),
 			},
 		},
