@@ -221,7 +221,6 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				Config: resourceWebAccessPolicy_disabled(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_disabled")),
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
 			},
