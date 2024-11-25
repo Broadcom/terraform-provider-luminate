@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"math/rand"
 	"os"
+	"regexp"
 	"testing"
 )
 
@@ -22,18 +23,18 @@ func resourceWebAccessPolicy_enabled(groupName,
 	}
 	resource "luminate_web_application" "new-application" {
 	 site_id = "${luminate_site.new-site.id}"
-	 name = "tfAccApplicationAccessPolicy"
+	 name = "tfAccApplicationAccessPolicy%d"
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
 		enabled = "true"
-		name =  "resourceWebAccessPolicy_enabled"
+		name =  "resourceWebAccessPolicy_enabled%d"
 		identity_provider_id = "local"
 
 		user_ids = ["%s","%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
 		group_ids = ["${data.luminate_group.my-groups.group_ids.0}"]
-	}`, groupName, rand, userID1, userID2)
+	}`, groupName, rand, rand, rand, userID1, userID2)
 }
 
 func resourceWebAccessPolicy_collection(userID1 string, rand int) string {
@@ -51,20 +52,20 @@ func resourceWebAccessPolicy_collection(userID1 string, rand int) string {
 	resource "luminate_web_application" "new-application-collection" {
 	 site_id = "${luminate_site.new-site-collection.id}"
 	 collection_id = "${luminate_collection.new-collection.id}"
-	 name = "tfAccApplicationAccessPolicyCollection"
+	 name = "tfAccAppAccessPolicyCollection%d"
 	 internal_address = "http://127.0.0.1:8080"
 	 depends_on = [luminate_collection_site_link.new-collection-site-link]
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy-collection" {
 		enabled = "true"
-		name =  "resourceWebAccessPolicy_collection"
+		name =  "resourceWebAccessPolicy_collection%d"
 	 	collection_id = "${luminate_collection.new-collection.id}"
 		identity_provider_id = "local"
 
 		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application-collection.id}"]
 	 	depends_on = [luminate_collection_site_link.new-collection-site-link]
-	}`, rand, rand, userID1)
+	}`, rand, rand, rand, rand, userID1)
 }
 
 func resourceWebAccessPolicy_disabled(userID1 string, rand int) string {
@@ -79,12 +80,12 @@ func resourceWebAccessPolicy_disabled(userID1 string, rand int) string {
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
 		enabled = "false"
-  		name =  "resourceWebAccessPolicy_disabled"
+  		name =  "resourceWebAccessPolicy_disabled%d"
 		identity_provider_id = "local"
 
   		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
-	}`, rand, rand, userID1)
+	}`, rand, rand, rand, userID1)
 }
 
 func resourceWebAccessPolicy_enabled_not_specified(userID1 string, rand int) string {
@@ -98,12 +99,12 @@ func resourceWebAccessPolicy_enabled_not_specified(userID1 string, rand int) str
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
-  		name =  "resourceWebAccessPolicy_enabled_not_specified"
+  		name =  "resourceWebAccessPolicy_enabled_not_specified%d"
 		identity_provider_id = "local"
 
   		user_ids = ["%s"]
   		applications = ["${luminate_web_application.new-application.id}"]
-	}`, rand, rand, userID1)
+	}`, rand, rand, rand, userID1)
 }
 
 func resourceWebAccessPolicy_conditions_specified(userID1 string, rand int) string {
@@ -117,7 +118,7 @@ func resourceWebAccessPolicy_conditions_specified(userID1 string, rand int) stri
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
-  		name =  "resourceWebAccessPolicy_conditions_specified"
+  		name =  "resourceWebAccessPolicy_conditions_specified%d"
 		identity_provider_id = "local"
 
   		user_ids = ["%s"]
@@ -134,7 +135,7 @@ func resourceWebAccessPolicy_conditions_specified(userID1 string, rand int) stri
   		}
 
 	}
-`, rand, rand, userID1)
+`, rand, rand, rand, userID1)
 }
 
 func resourceWebAccessPolicy_conditions_specified_update(userID1 string, rand int) string {
@@ -148,7 +149,7 @@ func resourceWebAccessPolicy_conditions_specified_update(userID1 string, rand in
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
-		name =  "resourceWebAccessPolicy_conditions_specified"
+		name =  "resourceWebAccessPolicy_conditions_specified%d"
 		identity_provider_id = "local"
 	
 		user_ids = ["%s"]
@@ -164,7 +165,7 @@ func resourceWebAccessPolicy_conditions_specified_update(userID1 string, rand in
 			}
 		}
 
-	}`, rand, rand, userID1)
+	}`, rand, rand, rand, userID1)
 }
 
 func resourceWebAccessPolicy_validators_specified(userID1 string, rand int) string {
@@ -178,7 +179,7 @@ func resourceWebAccessPolicy_validators_specified(userID1 string, rand int) stri
 	 internal_address = "http://127.0.0.1:8080"
 	}
 	resource "luminate_web_access_policy" "new-web-access-policy" {
-  		name =  "resourceWebAccessPolicy_validators_specified"
+  		name =  "resourceWebAccessPolicy_validators_specified%d"
 		identity_provider_id = "local"
 	
   		user_ids = ["%s"]
@@ -186,7 +187,7 @@ func resourceWebAccessPolicy_validators_specified(userID1 string, rand int) stri
 		validators {
 			mfa = true
 		}
-	}`, rand, rand, userID1)
+	}`, rand, rand, rand, userID1)
 }
 
 func TestAccLuminateWebAccessPolicy(t *testing.T) {
@@ -212,21 +213,21 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 			{
 				Config: resourceWebAccessPolicy_enabled(groupName, userID1, userID2, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_enabled")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
 				Config: resourceWebAccessPolicy_disabled(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_disabled"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_disabled")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
 			},
 			{
 				Config: resourceWebAccessPolicy_enabled_not_specified(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_enabled_not_specified"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_enabled_not_specified")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
@@ -234,7 +235,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 				Config:  resourceWebAccessPolicy_conditions_specified(userID1, 100+rand.Intn(100)),
 				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_conditions_specified")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.0", "127.0.0.1/24"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.1", "1.1.1.1/16"),
@@ -246,7 +247,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 			{
 				Config: resourceWebAccessPolicy_conditions_specified_update(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_conditions_specified"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_conditions_specified")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.0", "127.0.0.1/24"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.1", "1.1.1.1/16"),
@@ -258,7 +259,7 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 			{
 				Config: resourceWebAccessPolicy_validators_specified(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceWebAccessPolicy_validators_specified"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_validators_specified")),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "validators.0.mfa", "true"),
 				),
@@ -266,9 +267,19 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 			{
 				Config: resourceWebAccessPolicy_collection(userID1, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceWebAccessPolicy_collection"),
+					resource.TestMatchResourceAttr(resourceNameCollection, "name", createRegExpForNamePrefix("resourceWebAccessPolicy_collection")),
 				),
 			},
 		},
 	})
+}
+
+func createRegExpForNamePrefix(prefix string) *regexp.Regexp {
+	exp := fmt.Sprintf("^%s", prefix)
+	return regexp.MustCompile(exp)
+}
+
+func createRegExpForNameIncludes(substring string) *regexp.Regexp {
+	exp := fmt.Sprintf("%s", substring)
+	return regexp.MustCompile(exp)
 }
