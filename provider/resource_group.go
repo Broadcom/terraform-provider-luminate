@@ -64,12 +64,13 @@ func resourceReadGroup(ctx context.Context, d *schema.ResourceData, m interface{
 		return diag.FromErr(errors.New("invalid client"))
 	}
 	groupID := d.Id()
-	_, err := client.Groups.GetGroup(groupID, idpID)
+	group, err := client.Groups.GetGroup(groupID, idpID)
 	if err != nil {
 		log.Println(fmt.Sprintf("[Error] failed Reading Group %s in idp %s with error: %s", groupID, idpID, err.Error()))
 		return diag.FromErr(err)
 	}
-
+	d.Set("identity_provider_id", group.IdentityProviderId)
+	d.Set("name", group.Name)
 	return nil
 }
 
