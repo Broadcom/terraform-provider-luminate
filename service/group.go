@@ -92,8 +92,7 @@ func (g *GroupAPI) CheckAssignedUser(groupId string, userId string) (bool, error
 
 func (g *GroupAPI) GetGroup(groupID string, IDPID string) (*dto.Group, error) {
 	group, resp, err := g.cli.GroupsApi.GetGroup(context.Background(), IDPID, groupID)
-
-	if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 403) {
+	if resp != nil && resp.StatusCode == 404 {
 		return nil, nil
 	}
 	if err != nil {
@@ -109,6 +108,10 @@ func (g *GroupAPI) CreateGroup(idpid string, groupName string) (*dto.Group, erro
 	groupsDto := &sdk.Group{Name: groupName}
 	body := sdk.GroupsApiCreateGroupOpts{Body: optional.NewInterface(groupsDto)}
 	group, resp, err := g.cli.GroupsApi.CreateGroup(context.Background(), idpid, &body)
+	if err != nil {
+		return nil, err
+	}
+
 	if resp != nil {
 		if resp.StatusCode != 201 {
 			errMsg := fmt.Sprintf("received bad status code for creating group. Status Code: %d, group name %s",
@@ -116,7 +119,7 @@ func (g *GroupAPI) CreateGroup(idpid string, groupName string) (*dto.Group, erro
 			return nil, errors.New(errMsg)
 		}
 	} else {
-		return nil, errors.New("received empty response from the server for creating group ")
+		return nil, errors.New("received empty response from the server for creating group")
 	}
 	log.Printf("[DEBUG] - Done Creating Group")
 	groupDto := convertGroupToDTO(group)

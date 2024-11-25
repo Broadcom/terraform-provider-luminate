@@ -6,9 +6,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-const testGroupCreate_minimal = `
+const testGroupCreate = `
 resource "luminate_resources_group" "new-group" {
-	name = "testGroup7"
+	name = "testGroup"
+	identity_provider_id = "local"
 }
 `
 
@@ -20,12 +21,9 @@ func TestGroupCreate(t *testing.T) {
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:  testGroupCreate_minimal,
-				Destroy: false,
-
+				Config: testGroupCreate,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testGroup7"),
-					resource.TestCheckResourceAttr(resourceName, "name", "testGroup7"),
+					resource.TestCheckResourceAttr(resourceName, "name", "testGroup"),
 				),
 			},
 		},

@@ -11,36 +11,33 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func CommonUserDataSchema() map[string]*schema.Schema {
-	return map[string]*schema.Schema{
-		"identity_provider_id": {
-			Type:         schema.TypeString,
-			Description:  "The identity provider id",
-			Required:     true,
-			ValidateFunc: validation.NoZeroValues,
-		},
-		"users": {
-			Type:        schema.TypeList,
-			Description: "list of users to include as part of this policy",
-			Required:    true,
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: utils.ValidateEmail,
-			},
-		},
-		"user_ids": {
-			Type: schema.TypeList,
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.NoZeroValues,
-			},
-			Computed: true,
-		},
-	}
-}
 func LuminateDataSourceUsers() *schema.Resource {
 	return &schema.Resource{
-		Schema:      CommonUserDataSchema(),
+		Schema: map[string]*schema.Schema{
+			"identity_provider_id": {
+				Type:         schema.TypeString,
+				Description:  "The identity provider id",
+				Required:     true,
+				ValidateFunc: validation.NoZeroValues,
+			},
+			"users": {
+				Type:        schema.TypeList,
+				Description: "list of users to include as part of this policy",
+				Required:    true,
+				Elem: &schema.Schema{
+					Type:         schema.TypeString,
+					ValidateFunc: utils.ValidateEmail,
+				},
+			},
+			"user_ids": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type:         schema.TypeString,
+					ValidateFunc: validation.NoZeroValues,
+				},
+				Computed: true,
+			},
+		},
 		ReadContext: resourceReadUsers,
 	}
 }
