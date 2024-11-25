@@ -1,6 +1,10 @@
 package provider
 
 import (
+	"fmt"
+	"math/rand"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -8,17 +12,17 @@ import (
 
 const resourceSshAccessPolicy_enabled = `
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicySSH"
+		name = "tfAccSiteAccessPolicySSH<RANDOM_PLACEHOLDER>"
 	}
 	
 	resource "luminate_ssh_application" "new-ssh-application" {
 		site_id = "${luminate_site.new-site.id}"
-		name = "tfAccSSHUpd"
+		name = "tfAccSSHUpd<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.5"
 	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
 		enabled = "true"
-		name =  "resourceSshAccessPolicy_enabled"
+		name =  "resourceSshAccessPolicy_enabled<RANDOM_PLACEHOLDER>"
 		identity_provider_id = "local"
 
 		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
@@ -34,17 +38,17 @@ const resourceSshAccessPolicy_enabled = `
 
 const resourceSshAccessPolicy_disabled = `
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicySSH"
+		name = "tfAccSiteAccessPolicySSH<RANDOM_PLACEHOLDER>"
 	}
 	
 	resource "luminate_ssh_application" "new-ssh-application" {
 		site_id = "${luminate_site.new-site.id}"
-		name = "tfAccSSHUpd"
+		name = "tfAccSSHUpd<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.5"
 	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
 		enabled = "false"
-  		name =  "resourceSshAccessPolicy_disabled"
+  		name =  "resourceSshAccessPolicy_disabled<RANDOM_PLACEHOLDER>"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
@@ -58,12 +62,12 @@ const resourceSshAccessPolicy_disabled = `
 
 const resourceSshAccessPolicy_enabled_not_specified = `
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicySSH"
+		name = "tfAccSiteAccessPolicySSH<RANDOM_PLACEHOLDER>"
 	}
 	
 	resource "luminate_ssh_application" "new-ssh-application" {
 		site_id = "${luminate_site.new-site.id}"
-		name = "tfAccSSHUpd"
+		name = "tfAccSSHUpd<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.5"
 	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
@@ -81,12 +85,12 @@ const resourceSshAccessPolicy_enabled_not_specified = `
 
 const resourceSshAccessPolicy_optional_not_specified = `
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicySSH"
+		name = "tfAccSiteAccessPolicySSH<RANDOM_PLACEHOLDER>"
 	}
 	
 	resource "luminate_ssh_application" "new-ssh-application" {
 		site_id = "${luminate_site.new-site.id}"
-		name = "tfAccSSHUpd"
+		name = "tfAccSSHUpd<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.5"
 	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
@@ -103,12 +107,12 @@ const resourceSshAccessPolicy_optional_not_specified = `
 
 const resourceSshAccessPolicy_conditions_specified = `
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicySSH"
+		name = "tfAccSiteAccessPolicySSH<RANDOM_PLACEHOLDER>"
 	}
 	
 	resource "luminate_ssh_application" "new-ssh-application" {
 		site_id = "${luminate_site.new-site.id}"
-		name = "tfAccSSHUpd"
+		name = "tfAccSSHUpd<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.5"
 	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
@@ -130,12 +134,12 @@ const resourceSshAccessPolicy_conditions_specified = `
 
 const resourceSshAccessPolicy_validators_specified = `
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicySSH"
+		name = "tfAccSiteAccessPolicySSH<RANDOM_PLACEHOLDER>"
 	}
 	
 	resource "luminate_ssh_application" "new-ssh-application" {
 		site_id = "${luminate_site.new-site.id}"
-		name = "tfAccSSHUpd"
+		name = "tfAccSSHUpd<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.5"
 	}
 	resource "luminate_ssh_access_policy" "new-ssh-access-policy" {
@@ -166,7 +170,7 @@ const resourceSshAccessPolicy_Collection = `
 	}
 	resource "luminate_ssh_application" "new-ssh-application-collection" {
 		site_id = "${luminate_site.new-site-collection.id}"
-		name = "tfAccSSHCollection"
+		name = "tfAccSSHCollection<RANDOM_PLACEHOLDER>"
       	collection_id = "${luminate_collection.new-collection.id}"
 		internal_address = "tcp://127.0.0.5"
         depends_on = [luminate_collection_site_link.new-collection-site-link]
@@ -192,15 +196,16 @@ const resourceSshAccessPolicy_Collection = `
 func TestAccLuminateSshAccessPolicy(t *testing.T) {
 	resourceName := "luminate_ssh_access_policy.new-ssh-access-policy"
 	resourceNameCollection := "luminate_ssh_access_policy.new-ssh-access-policy-collection"
+	randNum := 100 + rand.Intn(100)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: resourceSshAccessPolicy_enabled,
+				Config: strings.ReplaceAll(resourceSshAccessPolicy_enabled, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_enabled"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("resourceSshAccessPolicy_enabled%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "accounts.0", "ubuntu"),
 					resource.TestCheckResourceAttr(resourceName, "accounts.1", "ec2-user"),
@@ -211,16 +216,16 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceSshAccessPolicy_disabled,
+				Config: strings.ReplaceAll(resourceSshAccessPolicy_disabled, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_disabled"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("resourceSshAccessPolicy_disabled%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "accounts.0", "ubuntu"),
 					resource.TestCheckResourceAttr(resourceName, "accounts.1", "ec2-user"),
 				),
 			},
 			{
-				Config: resourceSshAccessPolicy_enabled_not_specified,
+				Config: strings.ReplaceAll(resourceSshAccessPolicy_enabled_not_specified, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_enabled_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "accounts.0", "ubuntu"),
@@ -228,7 +233,7 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceSshAccessPolicy_optional_not_specified,
+				Config: strings.ReplaceAll(resourceSshAccessPolicy_optional_not_specified, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_optional_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -238,7 +243,7 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceSshAccessPolicy_conditions_specified,
+				Config: strings.ReplaceAll(resourceSshAccessPolicy_conditions_specified, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_conditions_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -250,7 +255,7 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceSshAccessPolicy_validators_specified,
+				Config: strings.ReplaceAll(resourceSshAccessPolicy_validators_specified, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceSshAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -260,7 +265,7 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceSshAccessPolicy_Collection,
+				Config: strings.ReplaceAll(resourceSshAccessPolicy_Collection, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceSshAccessPolicy_Collection"),
 				),

@@ -1,17 +1,20 @@
 package provider
 
 import (
+	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-const resourceTcpAccessPolicy_enabled = `
+func resourceTcpAccessPolicy_enabled(rand int) string {
+	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicyTCP"
+		name = "tfAccSiteAccessPolicyTCP%d"
 	}
 	resource "luminate_tcp_application" "new-tcp-application" {
-	  name = "tfAccTCPAccessPolicy"
+	  name = "tfAccTCPAccessPolicy%d"
 	  site_id = "${luminate_site.new-site.id}"
 	  target {
 		address = "127.0.0.1"
@@ -29,14 +32,17 @@ const resourceTcpAccessPolicy_enabled = `
 		allow_temporary_token = "true"
 		allow_public_key = "true"
 	}
-`
+`, rand, rand)
+}
 
-const resourceTcpAccessPolicy_disabled = `
+func resourceTcpAccessPolicy_disabled(rand int) string {
+	return fmt.Sprintf(
+		`
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicyTCP"
+		name = "tfAccSiteAccessPolicyTCP%d"
 	}
 	resource "luminate_tcp_application" "new-tcp-application" {
-	  name = "tfAccTCPAccessPolicy"
+	  name = "tfAccTCPAccessPolicy%d"
 	  site_id = "${luminate_site.new-site.id}"
 	  target {
 		address = "127.0.0.1"
@@ -51,15 +57,17 @@ const resourceTcpAccessPolicy_disabled = `
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
-	}
-`
+	} `, rand, rand)
+}
 
-const resourceTcpAccessPolicy_enabled_not_specified = `
+func resourceTcpAccessPolicy_enabled_not_specified(rand int) string {
+	return fmt.Sprintf(
+		`
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicyTCP"
+		name = "tfAccSiteAccessPolicyTCP%d"
 	}
 	resource "luminate_tcp_application" "new-tcp-application" {
-	  name = "tfAccTCPAccessPolicy"
+	  name = "tfAccTCPAccessPolicy%d"
 	  site_id = "${luminate_site.new-site.id}"
 	  target {
 		address = "127.0.0.1"
@@ -74,14 +82,17 @@ const resourceTcpAccessPolicy_enabled_not_specified = `
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 	}
-`
+`, rand, rand)
+}
 
-const resourceTcpAccessPolicy_optional_not_specified = `
+func resourceTcpAccessPolicy_optional_not_specified(rand int) string {
+	return fmt.Sprintf(
+		`
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicyTCP"
+		name = "tfAccSiteAccessPolicyTCP%d"
 	}
 	resource "luminate_tcp_application" "new-tcp-application" {
-	  name = "tfAccTCPAccessPolicy"
+	  name = "tfAccTCPAccessPolicy%d"
 	  site_id = "${luminate_site.new-site.id}"
 	  target {
 		address = "127.0.0.1"
@@ -97,14 +108,17 @@ const resourceTcpAccessPolicy_optional_not_specified = `
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 	}
-`
+`, rand, rand)
+}
 
-const resourceTcpAccessPolicy_conditions_specified = `
+func resourceTcpAccessPolicy_conditions_specified(rand int) string {
+	return fmt.Sprintf(
+		`
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicyTCP"
+		name = "tfAccSiteAccessPolicyTCP%d"
 	}
 	resource "luminate_tcp_application" "new-tcp-application" {
-	  name = "tfAccTCPAccessPolicy"
+	  name = "tfAccTCPAccessPolicy%d"
 	  site_id = "${luminate_site.new-site.id}"
 	  target {
 		address = "127.0.0.1"
@@ -124,15 +138,17 @@ const resourceTcpAccessPolicy_conditions_specified = `
     		location = ["Wallis and Futuna"]
   		}
 
-	}
-`
+	}`, rand, rand)
+}
 
-const resourceTcpAccessPolicy_validators_specified = `
+func resourceTcpAccessPolicy_validators_specified(rand int) string {
+	return fmt.Sprintf(
+		`
 	resource "luminate_site" "new-site" {
-		name = "tfAccSiteAccessPolicyTCP"
+		name = "tfAccSiteAccessPolicyTCP%d"
 	}
 	resource "luminate_tcp_application" "new-tcp-application" {
-	  name = "tfAccTCPAccessPolicy"
+	  name = "tfAccTCPAccessPolicy%d"
 	  site_id = "${luminate_site.new-site.id}"
 	  target {
 		address = "127.0.0.1"
@@ -151,21 +167,24 @@ const resourceTcpAccessPolicy_validators_specified = `
 			web_verification = true
 		}
 	}
-`
+`, rand, rand)
+}
 
-const resourceTCPAccessPolicy_collection = `
+func resourceTCPAccessPolicy_collection(rand int) string {
+	return fmt.Sprintf(
+		`
 	resource "luminate_site" "new-site-collection" {
-	   name = "tfAccSiteAccessPolicyCollection"
+	   name = "tfAccSiteAccessPolicyCollection%d"
 	}
 	resource "luminate_collection" "new-collection" {
-		name = "tfAccCollectionForApp"
+		name = "tfAccCollectionForApp%d"
 	}
 	resource "luminate_collection_site_link" "new-collection-site-link" {
 		site_id = "${luminate_site.new-site-collection.id}"
 		collection_ids = sort(["${luminate_collection.new-collection.id}"])
 	}
 	resource "luminate_tcp_application" "new-tcp-application-collection" {
-	  name = "tfAccTCPAccessPolicyCollection"
+	  name = "tfAccTCPAccessPolicyCollection%d"
 	  site_id = "${luminate_site.new-site-collection.id}"
       collection_id = "${luminate_collection.new-collection.id}"
 	  target {
@@ -191,7 +210,8 @@ const resourceTCPAccessPolicy_collection = `
 
 		depends_on = [luminate_collection_site_link.new-collection-site-link]
 	}
-`
+`, rand, rand, rand)
+}
 
 func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 	resourceName := "luminate_tcp_access_policy.new-tcp-access-policy"
@@ -202,7 +222,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 		ProviderFactories: newTestAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: resourceTcpAccessPolicy_enabled,
+				Config: resourceTcpAccessPolicy_enabled(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -211,21 +231,21 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_disabled,
+				Config: resourceTcpAccessPolicy_disabled(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_enabled_not_specified,
+				Config: resourceTcpAccessPolicy_enabled_not_specified(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_enabled_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_optional_not_specified,
+				Config: resourceTcpAccessPolicy_optional_not_specified(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_optional_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -234,7 +254,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_conditions_specified,
+				Config: resourceTcpAccessPolicy_conditions_specified(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_conditions_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -244,7 +264,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_validators_specified,
+				Config: resourceTcpAccessPolicy_validators_specified(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -252,7 +272,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceTCPAccessPolicy_collection,
+				Config: resourceTCPAccessPolicy_collection(100 + rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceTcpAccessPolicy_collection"),
 				),
