@@ -1507,3 +1507,6 @@ In addition to arguments above, the following attributes are exported:
 - **last_accessed** (String)
 - **created_on** (String)
 - **modified_on** (String)
+
+#### Confluence page
+https://fireglass.atlassian.net/wiki/x/dICL1
