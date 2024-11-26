@@ -91,60 +91,37 @@ func (g *GroupAPI) CheckAssignedUser(groupId string, userId string) (bool, error
 }
 
 func (g *GroupAPI) GetGroup(groupID string, IDPID string) (*dto.Group, error) {
-	group, resp, err := g.cli.GroupsApi.GetGroup(context.Background(), IDPID, groupID)
-	if resp != nil && resp.StatusCode == 404 {
-		return nil, nil
-	}
+	group, _, err := g.cli.GroupsApi.GetGroup(context.Background(), IDPID, groupID)
 	if err != nil {
 		return nil, utils.ParseSwaggerError(err)
 	}
-	groupDto := convertGroupToDTO(group)
 
-	return &groupDto, nil
+	return convertGroupToDTO(group), nil
 }
 
 // CreateGroup create Group
 func (g *GroupAPI) CreateGroup(idpid string, groupName string) (*dto.Group, error) {
 	groupsDto := &sdk.Group{Name: groupName}
 	body := sdk.GroupsApiCreateGroupOpts{Body: optional.NewInterface(groupsDto)}
-	group, resp, err := g.cli.GroupsApi.CreateGroup(context.Background(), idpid, &body)
+	group, _, err := g.cli.GroupsApi.CreateGroup(context.Background(), idpid, &body)
 	if err != nil {
 		return nil, utils.ParseSwaggerError(err)
 	}
 
-	if resp != nil {
-		if resp.StatusCode != 201 {
-			errMsg := fmt.Sprintf("received bad status code for creating group. Status Code: %d, group name %s",
-				resp.StatusCode, groupName)
-			return nil, errors.New(errMsg)
-		}
-	} else {
-		return nil, errors.New("received empty response from the server for creating group")
-	}
-	log.Printf("[DEBUG] - Done Creating Group")
-	groupDto := convertGroupToDTO(group)
-	return &groupDto, nil
+	log.Printf("[DEBUG] - Done Creating Group with name %s", groupName)
+	return convertGroupToDTO(group), nil
 }
 
 func (g *GroupAPI) DeleteGroup(idpid string, groupID string) error {
-	resp, err := g.cli.GroupsApi.DeleteGroup(context.Background(), idpid, groupID)
+	_, err := g.cli.GroupsApi.DeleteGroup(context.Background(), idpid, groupID)
 	if err != nil {
-		return err
-	}
-	if resp != nil {
-		if resp.StatusCode != 204 {
-			errMsg := fmt.Sprintf("received bad status code for deleting group. Status Code: %d, group ID %s",
-				resp.StatusCode, groupID)
-			return errors.New(errMsg)
-		}
-	} else {
-		return errors.New("received empty response from the server for deleting group ")
+		return utils.ParseSwaggerError(err)
 	}
 	return nil
 }
 
-func convertGroupToDTO(group sdk.Group) dto.Group {
-	return dto.Group{
+func convertGroupToDTO(group sdk.Group) *dto.Group {
+	return &dto.Group{
 		Name:               group.Name,
 		ID:                 group.Id,
 		IdentityProviderId: group.IdentityProviderId,

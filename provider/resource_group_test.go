@@ -2,19 +2,23 @@ package provider
 
 import (
 	"fmt"
+	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+const GroupNameRandomPartSize = 7
+
 func testGroupCreate(idpID string) string {
+	randomGroupName := "testGroup" + utils.GenerateRandomString(GroupNameRandomPartSize)
 	return fmt.Sprintf(`
     resource "luminate_resources_group" "new-group" {
-	name = "testGroup"
+	name = "%s"
 	identity_provider_id = "%s"
 		}
-	`, idpID)
+	`, randomGroupName, idpID)
 }
 
 func TestGroupCreate(t *testing.T) {
@@ -32,7 +36,7 @@ func TestGroupCreate(t *testing.T) {
 			{
 				Config: testGroupCreate(idpID),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "testGroup"),
+					resource.TestMatchResourceAttr(resourceName, "name", createRegExpForNamePrefix("testGroup")),
 				),
 			},
 		},
