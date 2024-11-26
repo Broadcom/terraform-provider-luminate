@@ -96,11 +96,11 @@ func (g *GroupAPI) GetGroup(groupID string, IDPID string) (*dto.Group, error) {
 		return nil, nil
 	}
 	if err != nil {
-		return nil, err
+		return nil, utils.ParseSwaggerError(err)
 	}
 	groupDto := convertGroupToDTO(group)
 
-	return &groupDto, err
+	return &groupDto, nil
 }
 
 // CreateGroup create Group
@@ -109,7 +109,7 @@ func (g *GroupAPI) CreateGroup(idpid string, groupName string) (*dto.Group, erro
 	body := sdk.GroupsApiCreateGroupOpts{Body: optional.NewInterface(groupsDto)}
 	group, resp, err := g.cli.GroupsApi.CreateGroup(context.Background(), idpid, &body)
 	if err != nil {
-		return nil, err
+		return nil, utils.ParseSwaggerError(err)
 	}
 
 	if resp != nil {
@@ -123,7 +123,7 @@ func (g *GroupAPI) CreateGroup(idpid string, groupName string) (*dto.Group, erro
 	}
 	log.Printf("[DEBUG] - Done Creating Group")
 	groupDto := convertGroupToDTO(group)
-	return &groupDto, err
+	return &groupDto, nil
 }
 
 func (g *GroupAPI) DeleteGroup(idpid string, groupID string) error {
@@ -133,7 +133,7 @@ func (g *GroupAPI) DeleteGroup(idpid string, groupID string) error {
 	}
 	if resp != nil {
 		if resp.StatusCode != 204 {
-			errMsg := fmt.Sprintf("received bad status code for creating group. Status Code: %d, group ID %s",
+			errMsg := fmt.Sprintf("received bad status code for deleting group. Status Code: %d, group ID %s",
 				resp.StatusCode, groupID)
 			return errors.New(errMsg)
 		}

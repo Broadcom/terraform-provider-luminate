@@ -22,6 +22,7 @@ func TestGroupCreate(t *testing.T) {
 	var idpID string
 	if idpID = os.Getenv("TEST_IDP_ID"); idpID == "" {
 		t.Skip("won't fail since not merged to AT yet")
+		// todo when AT is ready enable error & remove skip
 		//t.Error("stopping TestGroupCreate no idpID provided")
 	}
 	resource.Test(t, resource.TestCase{
