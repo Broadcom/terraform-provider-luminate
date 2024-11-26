@@ -1,12 +1,17 @@
 package utils
 
 import (
+	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"crypto/md5"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/utils"
 	"github.com/asaskevich/govalidator"
+	"github.com/pkg/errors"
 	"io"
+	"log"
+	"math/rand"
 	"regexp"
+	"time"
 )
 
 const (
@@ -17,6 +22,7 @@ const (
 	DefaultCollection      = "7cef2ccc-ed3e-4812-9ef2-b986c5dac2a5"
 	RootCollection         = "6b21619f-f505-41ec-af1b-09350be40000"
 	DefaultRDPPort         = "3389"
+	CharSet                = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
 
 func StringMD5(in string) string {
@@ -208,4 +214,20 @@ func ExtractIPAndPort(ipString string) (string, string) {
 	}
 
 	return ip, port
+}
+
+func ParseSwaggerError(err error) error {
+	e := err.(sdk.GenericSwaggerError)
+	model := e.Model().(sdk.ModelApiResponse)
+	log.Println(model.Status)
+	return errors.Wrap(err, model.Message)
+}
+
+func GenerateRandomString(length int) string {
+	rand.Seed(time.Now().UnixNano())
+	result := make([]byte, length)
+	for i := 0; i < length; i++ {
+		result[i] = CharSet[rand.Intn(len(CharSet))]
+	}
+	return string(result)
 }
