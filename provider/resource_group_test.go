@@ -23,6 +23,7 @@ func testGroupCreate(idpID string) string {
 
 func TestGroupCreate(t *testing.T) {
 	resourceName := "luminate_resources_group.new-group"
+
 	var idpID string
 	if idpID = os.Getenv("TEST_IDP_ID"); idpID == "" {
 		t.Error("stopping TestGroupCreate no idpID provided")
