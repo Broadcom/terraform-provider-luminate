@@ -67,7 +67,16 @@ testacc_no_serial:
 	export TEST_USER_ID="${TEST_USER_ID}" && \
 	export TEST_USER_ID2="${TEST_USER_ID2}" && \
 	export TEST_SITE_REGION="${TEST_SITE_REGION}" && \
-	go_list_results=$$(go list ./... | grep -v 'serial_tests') && $(GOTEST) -p 1 -v $$go_list_results
+	go_list_results=$$(go list ./... | grep -v 'serial_tests\|wss_tests') && $(GOTEST) -p 1 -v $$go_list_results
+
+testacc_wss:
+	export LUMINATE_API_ENDPOINT="${LUMINATE_API_ENDPOINT}" && \
+	export LUMINATE_API_CLIENT_ID="${LUMINATE_API_CLIENT_ID}" && \
+	export LUMINATE_API_CLIENT_SECRET="${LUMINATE_API_CLIENT_SECRET}" && \
+	export TF_ACC=1 && \
+	export TF_LOG=ERROR && \
+	export  RUN_WSS_TESTS=true && \
+    $(GOTEST) -p 1 -v  ./provider/wss_tests
 
 darwin_arm64:
 	mkdir -p release || true

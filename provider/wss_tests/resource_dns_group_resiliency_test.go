@@ -1,8 +1,9 @@
-package provider
+package wss_tests
 
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -19,6 +20,10 @@ var testDNSGroupResiliency = fmt.Sprintf(`resource "luminate_dns_group_resilienc
 `, "somedomain<RANDOM_PLACEHOLDER>.com")
 
 func TestAccLuminateDNSGroupResiliency(t *testing.T) {
+	runWSSTests := os.Getenv("RUN_WSS_TESTS")
+	if runWSSTests != "true" {
+		t.Skip("no wss tests needed")
+	}
 	resourceName := "luminate_dns_group_resiliency.new-dns-group"
 	randNum := 100 + rand.Intn(100)
 
