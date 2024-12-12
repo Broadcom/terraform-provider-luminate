@@ -1,4 +1,4 @@
-~~# **Terraform provider luminate**
+# **Terraform provider luminate**
 
 
 #### Latest Binaries  
@@ -1578,3 +1578,6 @@ The following arguments are supported:
 -   **sendNotifications -** (Required) Indicates if notification are enabled
 -   **domainSuffixes -** (Required) List of domain suffixes
 
+
+#### Confluence page
+https://fireglass.atlassian.net/wiki/x/dICL1
