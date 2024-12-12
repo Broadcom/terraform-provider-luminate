@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"io"
 	"log"
+	"math/rand"
 	"regexp"
 )
 
@@ -20,6 +21,7 @@ const (
 	DefaultCollection      = "7cef2ccc-ed3e-4812-9ef2-b986c5dac2a5"
 	RootCollection         = "6b21619f-f505-41ec-af1b-09350be40000"
 	DefaultRDPPort         = "3389"
+	CharSet                = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
 
 func StringMD5(in string) string {
@@ -218,4 +220,13 @@ func ParseSwaggerError(err error) error {
 	model := e.Model().(sdk.ModelApiResponse)
 	log.Println(model.Status)
 	return errors.Wrap(err, model.Message)
+}
+
+func GenerateRandomString(length int) string {
+	rand.Seed(time.Now().UnixNano())
+	result := make([]byte, length)
+	for i := 0; i < length; i++ {
+		result[i] = CharSet[rand.Intn(len(CharSet))]
+	}
+	return string(result)
 }

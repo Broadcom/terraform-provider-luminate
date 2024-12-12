@@ -49,6 +49,7 @@ func Provider() *schema.Provider {
 			"luminate_tenant_role":            LuminateTenantRole(),
 			"luminate_collection_role":        LuminateCollectionRole(),
 			"luminate_site_role":              LuminateSiteRole(),
+			"luminate_resources_group":        LuminateGroup(),
 			"luminate_dns_group_resiliency":   LuminateDNSGroupResiliency(),
 			"luminate_dns_server_resiliency":  LuminateDNSServerResiliency(),
 		},

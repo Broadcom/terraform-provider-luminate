@@ -4,9 +4,11 @@ import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"fmt"
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
+	"log"
 )
 
 type GroupAPI struct {
@@ -85,5 +87,43 @@ func (g *GroupAPI) CheckAssignedUser(groupId string, userId string) (bool, error
 
 		// next page
 		offset = offset + perPage
+	}
+}
+
+func (g *GroupAPI) GetGroup(groupID string, IDPID string) (*dto.Group, error) {
+	group, _, err := g.cli.GroupsApi.GetGroup(context.Background(), IDPID, groupID)
+	if err != nil {
+		return nil, utils.ParseSwaggerError(err)
+	}
+
+	return convertGroupToDTO(group), nil
+}
+
+// CreateGroup create Group
+func (g *GroupAPI) CreateGroup(idpid string, groupName string) (*dto.Group, error) {
+	groupsDto := &sdk.Group{Name: groupName}
+	body := sdk.GroupsApiCreateGroupOpts{Body: optional.NewInterface(groupsDto)}
+	group, _, err := g.cli.GroupsApi.CreateGroup(context.Background(), idpid, &body)
+	if err != nil {
+		return nil, utils.ParseSwaggerError(err)
+	}
+
+	log.Printf("[DEBUG] - Done Creating Group with name %s", groupName)
+	return convertGroupToDTO(group), nil
+}
+
+func (g *GroupAPI) DeleteGroup(idpid string, groupID string) error {
+	_, err := g.cli.GroupsApi.DeleteGroup(context.Background(), idpid, groupID)
+	if err != nil {
+		return utils.ParseSwaggerError(err)
+	}
+	return nil
+}
+
+func convertGroupToDTO(group sdk.Group) *dto.Group {
+	return &dto.Group{
+		Name:               group.Name,
+		ID:                 group.Id,
+		IdentityProviderId: group.IdentityProviderId,
 	}
 }
