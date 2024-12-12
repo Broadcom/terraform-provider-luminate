@@ -78,8 +78,6 @@ testacc_wss:
 	export TF_LOG=ERROR && \
 	export  RUN_WSS_TESTS=true && \
     $(GOTEST) -p 1 -v  ./provider/wss_tests
-	export TEST_IDP_ID="${TEST_IDP_ID}" && \
-	go_list_results=$$(go list ./... | grep -v 'serial_tests') && $(GOTEST) -p 1 -v $$go_list_results
 
 darwin_arm64:
 	mkdir -p release || true
