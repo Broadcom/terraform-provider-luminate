@@ -1,4 +1,4 @@
-~~# **Terraform provider luminate**
+# **Terraform provider luminate**
 
 
 #### Latest Binaries  
