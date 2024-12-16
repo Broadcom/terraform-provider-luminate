@@ -28,6 +28,8 @@ bitbucket.org/accezz-io/api-documentation v0.0.0-20241126132601-15a5d1300974 h1:
 bitbucket.org/accezz-io/api-documentation v0.0.0-20241126132601-15a5d1300974/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20241126153734-0bb95af80cbc h1:p3lcaq6livp8ffDoyQGWFDsZbFRbXp0qIZqz5e9TkJ8=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20241126153734-0bb95af80cbc/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20241201215359-754c3a6ef846 h1:e6kZGY6LVWuPeNTC0GgfgPsd/CQuiiKA7npMNKRuJX4=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20241201215359-754c3a6ef846/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 github.com/Microsoft/go-winio v0.5.2 h1:a9IhgEQBCUEk6QCdml9CiJGhAws+YwffDHEMp1VMrpA=
 github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 h1:wPbRQzjjwFc0ih8puEVAOFGELsn1zoIIYdxvML7mDxA=
 github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8/go.mod h1:I0gYDMZ6Z5GRU7l58bNFSkPTFN6Yl12dsUlAZ8xy98g=
