@@ -19,6 +19,7 @@ func testAccResourceGroupUsers(groupName string, username string) string {
 				identity_provider_id = "local"
 				users = ["%s"]
 			}
+
 			
 			resource "luminate_group_user" "new_group_membership" {
 				group_id = "${data.luminate_group.my-groups.group_ids.0}"

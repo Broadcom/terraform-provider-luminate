@@ -266,3 +266,71 @@ func EntityDTOToEntityModel(entities []DirectoryEntity) []sdk.DirectoryEntity {
 	}
 	return directoryEntities
 }
+
+type DNSGroupInputDTO struct {
+	Name             string
+	IsEnabled        bool          `json:"isEnabled"`
+	DomainSuffixes   []interface{} `json:"domainSuffixes"`
+	SendNotification bool          `json:"sendNotification"`
+}
+
+type DNSGroupOutputDTO struct {
+	ID                  string
+	Name                string
+	DomainSuffixes      []string `json:"domainSuffixes"`
+	SendNotification    bool     `json:"sendNotification"`
+	Status              string
+	ServerInUse         string `json:"serverInUsed"`
+	ActiveServerAddress string
+	Servers             []string
+	IsEnabled           bool `json:"isEnabled"`
+}
+
+type DNSServerInputDTO struct {
+	Name            string
+	InternalAddress string
+	SiteID          string
+	GroupID         string
+}
+
+type DNSServerOutputDTO struct {
+	GroupID         string
+	ID              string
+	SiteID          string
+	Name            string
+	InternalAddress string
+	HealthStatus    string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+}
+
+type EnableDisableDNSGroupDTO struct {
+	Enable   bool
+	GroupIDs []string
+}
+
+func ConvertDnsGroupOutputTODTO(dto sdk.DnsGroupOutput) *DNSGroupOutputDTO {
+	return &DNSGroupOutputDTO{
+		ID:                  dto.Id,
+		Name:                dto.Name,
+		DomainSuffixes:      dto.DomainSuffixes,
+		SendNotification:    dto.SendNotifications,
+		Status:              dto.Status,
+		ServerInUse:         dto.ServerInUsed,
+		ActiveServerAddress: dto.ActiveServerAddress,
+		Servers:             dto.Servers,
+	}
+}
+
+func ConvertDnsServerTODTO(dto sdk.DnsServerOutput) *DNSServerOutputDTO {
+	return &DNSServerOutputDTO{
+		GroupID:         dto.GroupId,
+		ID:              dto.Id,
+		SiteID:          dto.SiteId,
+		Name:            dto.Name,
+		InternalAddress: dto.InternalAddress,
+		HealthStatus:    dto.HealthStatus,
+		CreatedAt:       dto.CreatedAt,
+		UpdatedAt:       dto.UpdatedAt,
+	}
+}
