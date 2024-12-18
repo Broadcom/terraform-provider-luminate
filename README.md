@@ -49,7 +49,7 @@
 [Identities resources](#identities-resources)
 - [Resource: luminate_group_user](#resource-luminate_group_user)
 
-[Dns Resiliency resources](#identities-resources)
+[Dns Resiliency resources](#DNS-Resiliency-resources)
 - [Resource: luminate_dns_group_resiliency](#resource-luminate_dns_resiliency_group)
 - [Resource: luminate_dns_server_resiliency](#resource-luminate_dns_resiliency_server)
 
