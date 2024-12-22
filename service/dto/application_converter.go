@@ -204,10 +204,6 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			}
 			applicationSDKDTO.MultipleSegmentSettings = &multipleSegmentSettings
 		}
-	case "dns":
-		applicationSDKDTO.DnsSettings = &sdk.DnsServerData{
-			DomainSuffixes: applicationServiceDTO.DnsSettings.DomainSuffixes,
-		}
 	}
 
 	return applicationSDKDTO
@@ -253,8 +249,6 @@ func GetApplicationType(appType string) sdk.ApplicationType {
 		return sdk.RDP_ApplicationType
 	case "segment":
 		return sdk.SEGMENT_ApplicationType
-	case "dns":
-		return sdk.DNS_ApplicationType
 	}
 	return ""
 }
@@ -273,9 +267,6 @@ func GetApplicationTypeString(appType sdk.ApplicationType) string {
 		return "rdp"
 	case sdk.SEGMENT_ApplicationType:
 		return "segment"
-	case sdk.DNS_ApplicationType:
-		return "dns"
-	}
 	return ""
 }
 
