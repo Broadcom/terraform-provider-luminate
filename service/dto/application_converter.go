@@ -267,6 +267,7 @@ func GetApplicationTypeString(appType sdk.ApplicationType) string {
 		return "rdp"
 	case sdk.SEGMENT_ApplicationType:
 		return "segment"
+	}
 	return ""
 }
 
