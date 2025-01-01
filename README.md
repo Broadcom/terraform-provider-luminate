@@ -1,4 +1,4 @@
-# **Terraform provider luminate**
+# **Symantec ZTNA Terraform provider luminate**
 
 
 #### Latest Binaries  
@@ -16,7 +16,7 @@
 #### Documentation
 
 [Basic configuration and usage](#basic-configuration-and-usage)
-- [Provider configuration](#provider-configuration)
+- [Provider configuration](#provider-configuration) 
 - [API Endpoint](#api-endpoint)
 - [Authentication](#authentication)
 - [Usage Example](#provider-usage-example)
@@ -64,7 +64,7 @@
 Basic configuration and usage
 ==========
 
-Broadcom secure access cloud terraform provider is used to create and
+Broadcom Symantec ZTNA terraform provider is used to create and
 manage resources supported by Secure access cloud platform.
 
 Provider configuration
@@ -209,7 +209,7 @@ terraform 0.12upgrade
 Re­­­source: luminate_site
 ----------
 
-Provides secure access cloud site resource
+Provides Symantec ZTNA site resource
 
 ­­­
 
@@ -262,7 +262,7 @@ $ terraform import luminate_site.new-site site-id
 Re­­­source: luminate_connector
 ------------
 
-Provides secure access cloud connector resource
+Provides Symantec ZTNA connector resource
 
 ­­­
 
@@ -1183,7 +1183,7 @@ The following arguments are supported:
 Resource: luminate_group_user
 ----------
 
-Provides secure access cloud group_user resource
+Provides Symantec ZTNA group_user resource
 
 ­­­
 
@@ -1218,7 +1218,7 @@ The following arguments are supported:
 Resource: luminate_aws_integration
 ----------
 
-Provides secure access cloud aws_integration resource
+Provides Symantec ZTNA aws_integration resource
 
 ­
 #### Example Usage
@@ -1249,7 +1249,7 @@ In addition to arguments above, the following attributes are exported:
 Resource: luminate_aws_integration
 ----------
 
-Provides secure access cloud aws_integration resource
+Provides Symantec ZTNA aws_integration resource
 
 ­
 #### Example Usage
@@ -1337,7 +1337,7 @@ The following arguments are supported:
 Re­­­source: luminate_DNS_server
 ------------
 
-Provides secure access cloud DNS server
+Provides Symantec ZTNA DNS server
 
 #### Example Usage
 ```
