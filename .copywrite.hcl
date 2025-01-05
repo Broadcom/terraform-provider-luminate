@@ -12,8 +12,9 @@ project {
     "utils/**/*",
     "build-scripts/**/*",
     ".goreleaser.yml",
-
-    # Release Engineering tooling configuration
     ".release/*.hcl",
+    "service/utils/**/*",
+    "service/roundtripper/**/*",
+    "service/dto/**/*",
   ]
 }

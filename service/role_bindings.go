@@ -1,3 +1,6 @@
+// Copyright (c) Symantec ZTNA
+// SPDX-License-Identifier: MPL-2.0
+
 package service
 
 import (
