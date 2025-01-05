@@ -1,0 +1,33 @@
+schema_version = 1
+
+project {
+  license        = "MPL-2.0"
+  copyright_year = 2025
+  copyright_holder = "Symantec ZTNA"
+
+
+  header_ignore = [
+    # changie tooling configuration and CHANGELOG entries (prose)
+    "*_test.go"
+    ".changes/unreleased/*.yaml",
+    ".changie.yaml",
+
+    # examples used within documentation (prose)
+    "examples/**",
+
+    # GitHub issue template configuration
+    ".github/ISSUE_TEMPLATE/*.yml",
+
+    # GitHub Actions workflow-specific configurations
+    ".github/labeler-*.yml",
+
+    # golangci-lint tooling configuration
+    ".golangci.yml",
+
+    # GoReleaser tooling configuration
+    ".goreleaser.yml",
+
+    # Release Engineering tooling configuration
+    ".release/*.hcl",
+  ]
+}
