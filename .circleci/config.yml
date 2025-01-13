@@ -99,10 +99,3 @@ workflows:
           filters:
             branches:
               ignore: master
-      - release:
-          context: terraform-release
-          filters:
-            branches:
-              only: master
-          requires:
-            - test
