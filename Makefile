@@ -11,7 +11,7 @@ BINARY_NAME=terraform-provider-luminate
 
 GO111MODULE=on
 
-all: linux darwin windows darwin_arm64 checksum
+all: linux darwin windows darwin_arm64 checksum sign
 
 linux:
 	mkdir -p release || true
@@ -91,3 +91,6 @@ darwin_arm64:
 
 generate-docs:
 	cd tools; go generate ./...
+
+sign:
+	gpg --detach-sign --output release/terraform-provider-$(NAME)_$(VERSION)_SHA256SUMS.sig release/terraform-provider-$(NAME)_$(VERSION)_SHA256SUMS
