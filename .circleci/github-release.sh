@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=$(cat VERSION)
+VERSION="v$(cat VERSION)"
 
 GITHUB_BASE_URL="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
 
