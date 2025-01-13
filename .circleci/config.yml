@@ -72,10 +72,10 @@ jobs:
       - checkout
       - setup-ssh-key
       - run:
-          name: Install GPG
-          command: |
-           sudo apt-get update
-           sudo apt-get install -y gnupg
+        name: Install GPG
+        command: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg
       - run: make
   release:
     docker:
@@ -94,8 +94,21 @@ workflows:
     jobs:
       - validate:
           context: terraform-release
+      - test:
+          context: terraform-acceptance
+          requires:
+            - validate
       - build:
           context: terraform-release
           filters:
             branches:
               ignore: master
+          requires:
+            - test
+      - release:
+          context: terraform-release
+          filters:
+            branches:
+              only: master
+          requires:
+            - test
