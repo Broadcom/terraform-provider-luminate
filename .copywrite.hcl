@@ -3,7 +3,7 @@ schema_version = 1
 project {
   license        = "MPL-2.0"
   copyright_year = 2025
-  copyright_holder = "Symantec ZTNA"
+  copyright_holder = "Broadcom Inc."
 
 
   header_ignore = [
