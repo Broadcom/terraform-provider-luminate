@@ -33,4 +33,4 @@ data "luminate_user" "my-users" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `user_ids` (List of String)
+- `user_ids` (List of String) list of users to include as part of this policy

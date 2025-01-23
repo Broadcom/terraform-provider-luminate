@@ -18,7 +18,7 @@ func LuminateDataSourceAwsIntegration() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"integration_name": {
 				Type:         schema.TypeString,
-				Description:  "The aws integration name as configured in Luminate portal",
+				Description:  "The aws integration name as configured in Symantec ZTNA portal",
 				Required:     true,
 				ValidateFunc: utils.ValidateString,
 			},

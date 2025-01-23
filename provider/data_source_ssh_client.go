@@ -18,8 +18,9 @@ func LuminateDataSourceSshClient() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "ID is the id for this ssh-client",
+				Computed:    true,
 			},
 			"name": {
 				Type:         schema.TypeString,
@@ -28,28 +29,34 @@ func LuminateDataSourceSshClient() *schema.Resource {
 				Description:  "ssh-client to retrieve",
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "ssh-client's description",
+				Computed:    true,
 			},
 			"key_size": {
-				Type:     schema.TypeInt,
-				Computed: true,
+				Type:        schema.TypeInt,
+				Description: "The size of the key for the ssh-client",
+				Computed:    true,
 			},
 			"created_on": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "creation date of the ssh-client",
+				Computed:    true,
 			},
 			"modified_on": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "last the ssh-client been modified",
+				Computed:    true,
 			},
 			"last_accessed": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "last time the ssh-client logged in",
+				Computed:    true,
 			},
 			"expires": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "the time the ssh-client key expired",
+				Computed:    true,
 			},
 		},
 		ReadContext: resourceReadSshClient,

@@ -33,15 +33,17 @@ func LuminateTCPApplication() *schema.Resource {
 					ValidateFunc: utils.ValidateString,
 				},
 				"ports": {
-					Type:     schema.TypeList,
-					Required: true,
+					Type:        schema.TypeList,
+					Description: "TCP Ports that will be available for access.",
+					Required:    true,
 					Elem: &schema.Schema{
 						Type: schema.TypeInt,
 					},
 				},
 				"port_mapping": {
-					Type:     schema.TypeList,
-					Optional: true,
+					Type:        schema.TypeList,
+					Description: "Local ports auto generated for the user's access command",
+					Optional:    true,
 					Elem: &schema.Schema{
 						Type: schema.TypeInt,
 					},

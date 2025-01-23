@@ -26,7 +26,7 @@ data "luminate_aws_integration" "my-integration" {
 
 ### Required
 
-- `integration_name` (String) The aws integration name as configured in Luminate portal
+- `integration_name` (String) The aws integration name as configured in Symantec ZTNA portal
 
 ### Read-Only
 

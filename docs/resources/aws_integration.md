@@ -89,11 +89,11 @@ resource "luminate_aws_integration_bind" "new-integration-bind" {
 
 ### Required
 
-- `integration_name` (String) The aws integration name as configured in Luminate portal
+- `integration_name` (String) The aws integration name as configured in Symantec ZTNA portal
 
 ### Read-Only
 
 - `aws_external_id` (String) The aws external id
 - `id` (String) The ID of this resource.
 - `integration_id` (String) The aws integration id
-- `luminate_aws_account_id` (String) The Luminate aws account id
+- `luminate_aws_account_id` (String) The Symantec ZTNA aws account id

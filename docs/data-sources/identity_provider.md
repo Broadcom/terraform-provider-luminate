@@ -26,9 +26,9 @@ data "luminate_identity_provider" "my-identity-provider" {
 
 ### Required
 
-- `identity_provider_name` (String) The identity provider name as configured in Luminate portal, if not specified local idp will be taken
+- `identity_provider_name` (String) The identity provider name as configured in Symantec ZTNA portal, if not specified local idp will be taken
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `identity_provider_id` (String)
+- `identity_provider_id` (String) A unique identifier of this Identity Provider

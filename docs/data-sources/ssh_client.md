@@ -30,10 +30,10 @@ data "luminate_ssh_client" "my-ssh-client" {
 
 ### Read-Only
 
-- `created_on` (String)
-- `description` (String)
-- `expires` (String)
-- `id` (String) The ID of this resource.
-- `key_size` (Number)
-- `last_accessed` (String)
-- `modified_on` (String)
+- `created_on` (String) creation date of the ssh-client
+- `description` (String) ssh-client's description
+- `expires` (String) the time the ssh-client key expired
+- `id` (String) ID is the id for this ssh-client
+- `key_size` (Number) The size of the key for the ssh-client
+- `last_accessed` (String) last time the ssh-client logged in
+- `modified_on` (String) last the ssh-client been modified

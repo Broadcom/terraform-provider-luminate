@@ -57,6 +57,6 @@ resource "luminate_web_application" "new-web-application" {
 
 ### Read-Only
 
-- `external_address` (String)
+- `external_address` (String) The application effective DNS address that exposes the application
 - `id` (String) The ID of this resource.
-- `luminate_address` (String)
+- `luminate_address` (String) Application DNS address using Symantec ZTNA subdomain (i.e., testapp.acme.luminatesec.com)

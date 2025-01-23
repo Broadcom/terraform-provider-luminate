@@ -1,14 +1,13 @@
 Basic configuration and usage
 ==========
 
-Broadcom secure access cloud terraform provider is used to create and
-manage resources supported by Secure access cloud platform.
+Symantec ZTNA terraform provider is used to create and
+manage resources supported by Symantec ZTNA platform.
 
 Provider configuration
 -----------
 
-To use the provider it must first be configured to access Secure access
-cloud management API.
+To use the provider it must first be configured to access Symantec ZTNA management API.
 
 #### Example Usage
 
@@ -24,8 +23,7 @@ provider "luminate" {
 API Endpoint
 ------
 
-The API endpoint address is based on the tenant name in Secure access
-cloud
+The API endpoint address is based on the tenant name in Symantec ZTNA
 
 The format is as follows:
 ```
