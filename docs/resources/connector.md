@@ -30,10 +30,10 @@ resource "luminate_connector" "connector" {
 
 - `name` (String) A descriptive name of the Connector
 - `site_id` (String) Site to bind the connector to
-- `type` (String) The deployment type of the host running the Luminate connector
+- `type` (String) The deployment type of the host running the Symantec ZTNA connector
 
 ### Read-Only
 
-- `command` (String) Command for deploying Luminate connector
+- `command` (String) Command for deploying Symantec ZTNA connector
 - `id` (String) The ID of this resource.
-- `otp` (String) One time password for running Luminate connector
+- `otp` (String) One time password for running Symantec ZTNA connector

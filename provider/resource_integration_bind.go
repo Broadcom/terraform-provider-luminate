@@ -21,7 +21,7 @@ func LuminateAWSIntegrationBind() *schema.Resource {
 			"integration_name": {
 
 				Type:         schema.TypeString,
-				Description:  "The aws integration name as configured in Luminate portal",
+				Description:  "The aws integration name as configured in Symantec ZTNA portal",
 				Required:     true,
 				ValidateFunc: utils.ValidateString,
 			},
@@ -39,7 +39,7 @@ func LuminateAWSIntegrationBind() *schema.Resource {
 			},
 			"luminate_aws_account_id": {
 				Type:         schema.TypeString,
-				Description:  "The Luminate aws account id",
+				Description:  "The Symantec ZTNA aws account id",
 				Required:     true,
 				ValidateFunc: utils.ValidateString,
 			},

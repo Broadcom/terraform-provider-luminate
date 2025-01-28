@@ -34,8 +34,8 @@ resource "luminate_aws_integration_bind" "new-integration-bind" {
 - `aws_external_id` (String) The aws external id
 - `aws_role_arn` (String) The aws role arn
 - `integration_id` (String) The aws integration id
-- `integration_name` (String) The aws integration name as configured in Luminate portal
-- `luminate_aws_account_id` (String) The Luminate aws account id
+- `integration_name` (String) The aws integration name as configured in Symantec ZTNA portal
+- `luminate_aws_account_id` (String) The Symantec ZTNA aws account id
 - `regions` (List of String) regions
 
 ### Read-Only
