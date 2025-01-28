@@ -19,7 +19,7 @@ func LuminateAssignRoleBaseSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"role_type": {
 			Type:         schema.TypeString,
-			Description:  "The tenant role type TenantAdmin / TenantViewer",
+			Description:  "The tenant role type e.g. TenantAdmin",
 			Required:     true,
 			ValidateFunc: utils.ValidateString,
 			ForceNew:     true,

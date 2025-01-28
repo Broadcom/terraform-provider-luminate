@@ -33,7 +33,7 @@ resource "luminate_site_role" "site-editor" {
 - `entity_id` (String) The entity id to which this role is assigned.
 - `entity_type` (String) The type of entity
 - `identity_provider_id` (String) The identity provider id
-- `role_type` (String) The tenant role type TenantAdmin / TenantViewer
+- `role_type` (String) The tenant role type e.g. TenantAdmin
 - `site_id` (String) The site id to which this role is assigned to.
 
 ### Read-Only
