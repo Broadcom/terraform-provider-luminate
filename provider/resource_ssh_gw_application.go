@@ -64,8 +64,9 @@ func LuminateSshGwApplication() *schema.Resource {
 	}
 
 	sshGwSchema["segment_id"] = &schema.Schema{
-		Type:     schema.TypeString,
-		Computed: true,
+		Type:        schema.TypeString,
+		Description: "the identifier of the segment application",
+		Computed:    true,
 	}
 
 	return &schema.Resource{

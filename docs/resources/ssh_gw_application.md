@@ -58,7 +58,7 @@ resource "luminate_ssh_gw_application" "new-sshgw-access" {
 - `external_address` (String) The application effective DNS address that exposes the application
 - `id` (String) The ID of this resource.
 - `luminate_address` (String) Application DNS address using Symantec ZTNA subdomain (i.e., testapp.acme.luminatesec.com)
-- `segment_id` (String)
+- `segment_id` (String) the identifier of the segment application
 
 <a id="nestedblock--vpc"></a>
 ### Nested Schema for `vpc`

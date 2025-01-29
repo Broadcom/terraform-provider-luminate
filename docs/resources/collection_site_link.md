@@ -27,7 +27,7 @@ resource "luminate_collection_site_link" "new-collection-site-link" {
 
 ### Required
 
-- `collection_ids` (List of String)
+- `collection_ids` (List of String) Collection IDs
 - `site_id` (String) Site ID
 
 ### Read-Only

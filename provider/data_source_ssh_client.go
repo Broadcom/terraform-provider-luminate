@@ -45,7 +45,7 @@ func LuminateDataSourceSshClient() *schema.Resource {
 			},
 			"modified_on": {
 				Type:        schema.TypeString,
-				Description: "last the ssh-client been modified",
+				Description: "last time the ssh-client was modified",
 				Computed:    true,
 			},
 			"last_accessed": {

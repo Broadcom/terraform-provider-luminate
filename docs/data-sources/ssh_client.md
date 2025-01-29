@@ -36,4 +36,4 @@ data "luminate_ssh_client" "my-ssh-client" {
 - `id` (String) ID is the id for this ssh-client
 - `key_size` (Number) The size of the key for the ssh-client
 - `last_accessed` (String) last time the ssh-client logged in
-- `modified_on` (String) last the ssh-client been modified
+- `modified_on` (String) last time the ssh-client was modified

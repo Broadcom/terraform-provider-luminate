@@ -36,8 +36,9 @@ func LuminateDNSGroupResiliency() *schema.Resource {
 		Description:  "Indicates if group is enabled",
 	}
 	dnsGroupSchema["domain_suffixes"] = &schema.Schema{
-		Type:     schema.TypeList,
-		Required: true,
+		Type:        schema.TypeList,
+		Required:    true,
+		Description: "list of the domain suffix",
 		Elem: &schema.Schema{
 			Type:         schema.TypeString,
 			ValidateFunc: utils.ValidateString,

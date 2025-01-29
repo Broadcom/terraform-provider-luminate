@@ -39,7 +39,7 @@ data "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
 
 ### Required
 
-- `domain_suffixes` (List of String)
+- `domain_suffixes` (List of String) list of the domain suffix
 - `name` (String) The name of DNS group
 - `send_notifications` (Boolean) Indicates whether notifications should be sent to admin
 
