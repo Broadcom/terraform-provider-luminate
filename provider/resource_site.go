@@ -3,13 +3,17 @@ package provider
 import (
 	"context"
 	"errors"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"log"
-
+	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"log"
+)
+
+const (
+	FieldAuthenticationMode = "authentication_mode"
 )
 
 func LuminateSite() *schema.Resource {
@@ -27,6 +31,13 @@ func LuminateSite() *schema.Resource {
 				Computed:     true,
 				Description:  "Site connectivity region",
 				ValidateFunc: utils.ValidateString,
+			},
+			FieldAuthenticationMode: {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      dto.SiteAuthenticationModeConnector,
+				Description:  "Site authentication mode",
+				ValidateFunc: validateAuthenticationMode,
 			},
 			"mute_health_notification": {
 				Type:         schema.TypeBool,
@@ -77,6 +88,23 @@ func LuminateSite() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
+}
+
+func validateAuthenticationMode(v interface{}, k string) (ws []string, es []error) {
+	var errs []error
+	var warns []string
+	mode, ok := v.(string)
+	if !ok {
+		errs = append(errs, fmt.Errorf("expected type to be string"))
+		return warns, errs
+	}
+
+	if !utils.StringInSlice(dto.ValidAuthenticationModes, mode) {
+		errs = append(errs, fmt.Errorf("authentication mode must be one of %v", dto.ValidAuthenticationModes))
+		return warns, errs
+	}
+
+	return warns, errs
 }
 
 func resourceCreateSite(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -166,10 +194,11 @@ func resourceDeleteSite(ctx context.Context, d *schema.ResourceData, m interface
 
 func extractSiteFields(d *schema.ResourceData) *dto.Site {
 	site := dto.Site{
-		Name:       d.Get("name").(string),
-		Region:     d.Get("region").(string),
-		MuteHealth: d.Get("mute_health_notification").(bool),
-		K8SVolume:  d.Get("kubernetes_persistent_volume_name").(string),
+		Name:               d.Get("name").(string),
+		Region:             d.Get("region").(string),
+		AuthenticationMode: dto.SiteAuthenticationMode(d.Get(FieldAuthenticationMode).(string)),
+		MuteHealth:         d.Get("mute_health_notification").(bool),
+		K8SVolume:          d.Get("kubernetes_persistent_volume_name").(string),
 	}
 
 	k, ok := d.Get("kerberos").(*schema.Set)
@@ -189,6 +218,7 @@ func extractSiteFields(d *schema.ResourceData) *dto.Site {
 func setSiteFields(d *schema.ResourceData, site *dto.Site) {
 	d.Set("name", site.Name)
 	d.Set("region", site.Region)
+	d.Set(FieldAuthenticationMode, site.AuthenticationMode)
 	d.Set("mute_health_notification", site.MuteHealth)
 	d.Set("kubernetes_persistent_volume_name", site.K8SVolume)
 
