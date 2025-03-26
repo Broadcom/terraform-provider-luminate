@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	sdkSchema "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -20,57 +19,25 @@ type LuminateFrameworkProvider struct {
 	primaryProvider *sdkSchema.Provider
 }
 
-func ConvertSchemaAttributes(primarySchema map[string]*sdkSchema.Schema) map[string]schema.Attribute {
-	frameworkSchema := make(map[string]schema.Attribute)
-
-	for key, attr := range primarySchema {
-		switch attr.Type {
-		case sdkSchema.TypeString:
-			frameworkSchema[key] = schema.StringAttribute{
-				Required: attr.Required,
-				Optional: attr.Optional,
-			}
-		case sdkSchema.TypeInt:
-			frameworkSchema[key] = schema.Int64Attribute{
-				Required: attr.Required,
-				Optional: attr.Optional,
-			}
-		case sdkSchema.TypeBool:
-			frameworkSchema[key] = schema.BoolAttribute{
-				Required: attr.Required,
-				Optional: attr.Optional,
-			}
-		case sdkSchema.TypeList:
-			frameworkSchema[key] = schema.ListAttribute{
-				ElementType: types.StringType,
-				Required:    attr.Required,
-				Optional:    attr.Optional,
-			}
-		case sdkSchema.TypeSet:
-			frameworkSchema[key] = schema.SetAttribute{
-				ElementType: types.StringType, // Might not be correct
-				Required:    attr.Required,
-				Optional:    attr.Optional,
-			}
-		case sdkSchema.TypeMap:
-			frameworkSchema[key] = schema.MapAttribute{
-				ElementType: types.StringType, // Might not be correct
-				Required:    attr.Required,
-				Optional:    attr.Optional,
-			}
-		}
-	}
-
-	return frameworkSchema
-}
-
 func (provider *LuminateFrameworkProvider) Metadata(ctx context.Context, request provider.MetadataRequest, response *provider.MetadataResponse) {
 }
 
 func (provider *LuminateFrameworkProvider) Schema(ctx context.Context, request provider.SchemaRequest, response *provider.SchemaResponse) {
+	// Provider schemas must be identical across providers
+	// Must be identical to terraform-provider-luminate/provider/provider.go schema
 	response.Schema = schema.Schema{
-		Attributes: ConvertSchemaAttributes(provider.primaryProvider.Schema),
-		Blocks:     make(map[string]schema.Block),
+		Attributes: map[string]schema.Attribute{
+			"api_endpoint": schema.StringAttribute{
+				Required: true,
+			},
+			"api_client_id": schema.StringAttribute{
+				Required: true,
+			},
+			"api_client_secret": schema.StringAttribute{
+				Required: true,
+			},
+		},
+		Blocks: make(map[string]schema.Block),
 	}
 }
 
