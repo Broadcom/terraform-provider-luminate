@@ -2,21 +2,16 @@ package wss_tests
 
 import (
 	"github.com/Broadcom/terraform-provider-luminate/provider"
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"os"
 	"testing"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var newTestAccProviders map[string]func() (*schema.Provider, error)
-var testAccProvider *schema.Provider
+var testAccProtocol6Providers map[string]func() (tfprotov6.ProviderServer, error)
 
 func init() {
-	testAccProvider = provider.Provider()
-	newTestAccProviders = make(map[string]func() (*schema.Provider, error))
-	newTestAccProviders["luminate"] = func() (*schema.Provider, error) {
-		return testAccProvider, nil
-	}
+	testAccProtocol6Providers = test_utils.CreateProtoV6ProviderFactories(provider.Provider())
 }
 
 func TestProvider(t *testing.T) {

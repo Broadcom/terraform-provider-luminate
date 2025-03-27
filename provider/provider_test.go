@@ -1,35 +1,18 @@
 package provider
 
 import (
-	"context"
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
 	"os"
 	"strings"
 	"testing"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var testAccProviders map[string]*schema.Provider
 var testAccProtocol6Providers map[string]func() (tfprotov6.ProviderServer, error)
-var testAccProvider *schema.Provider
 var testAccDomain string
 
 func init() {
-	testAccProvider = Provider()
-	testAccProviders = map[string]*schema.Provider{
-		"luminate": testAccProvider,
-	}
-
-	testAccProtocol6Providers = map[string]func() (tfprotov6.ProviderServer, error){
-		"luminate": func() (tfprotov6.ProviderServer, error) {
-			return tf5to6server.UpgradeServer(
-				context.Background(),
-				testAccProvider.GRPCProvider,
-			)
-		},
-	}
+	testAccProtocol6Providers = test_utils.CreateProtoV6ProviderFactories(Provider())
 }
 
 func TestProvider(t *testing.T) {
