@@ -2,6 +2,8 @@ package provider
 
 import (
 	"context"
+	"os"
+
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -11,19 +13,16 @@ func Provider() *schema.Provider {
 	p := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"api_endpoint": {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("LUMINATE_API_ENDPOINT", nil),
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"api_client_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("LUMINATE_API_CLIENT_ID", nil),
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"api_client_secret": {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("LUMINATE_API_CLIENT_SECRET", nil),
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
@@ -66,11 +65,29 @@ func Provider() *schema.Provider {
 
 func configure() func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		apiEndpoint := d.Get("api_endpoint").(string)
-		apiClient := d.Get("api_client_id").(string)
-		apiSecret := d.Get("api_client_secret").(string)
+		// Due to the migration with terraform-plugin-framework (using the mux package)
+		// We need make sure the providers' schema is identical
+		// terraform-plugin-framework doesn't allow using "Default" values for "Required" fields
+		// Therefore, we set the fields as optional and enforce the "Required" under the configure method
+
+		apiEndpoint := getProviderField(d, "api_endpoint", "LUMINATE_API_ENDPOINT")
+		apiClient := getProviderField(d, "api_client_id", "LUMINATE_API_CLIENT_ID")
+		apiSecret := getProviderField(d, "api_client_secret", "LUMINATE_API_CLIENT_SECRET")
+
+		if apiEndpoint == "" || apiClient == "" || apiSecret == "" {
+			return nil, diag.Errorf("API endpoint, client id, secret are required")
+		}
 
 		cli := service.NewClient(apiClient, apiSecret, apiEndpoint)
 		return cli, nil
 	}
+}
+
+func getProviderField(d *schema.ResourceData, key, envName string) string {
+	resourceValue := d.Get(key).(string)
+	if resourceValue != "" {
+		return resourceValue
+	}
+
+	return os.Getenv(envName)
 }

@@ -28,13 +28,13 @@ func (provider *LuminateFrameworkProvider) Schema(ctx context.Context, request p
 	response.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"api_endpoint": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"api_client_id": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 			"api_client_secret": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 		},
 		Blocks: make(map[string]schema.Block),
