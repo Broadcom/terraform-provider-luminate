@@ -20,6 +20,7 @@ type LuminateFrameworkProvider struct {
 }
 
 func (provider *LuminateFrameworkProvider) Metadata(ctx context.Context, request provider.MetadataRequest, response *provider.MetadataResponse) {
+	response.TypeName = "luminate"
 }
 
 func (provider *LuminateFrameworkProvider) Schema(ctx context.Context, request provider.SchemaRequest, response *provider.SchemaResponse) {
