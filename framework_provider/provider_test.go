@@ -1,12 +1,11 @@
-package provider
+package framework_provider
 
 import (
+	"github.com/Broadcom/terraform-provider-luminate/provider"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"os"
 	"strings"
 	"testing"
-
-	"github.com/Broadcom/terraform-provider-luminate/framework_provider"
-	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 )
 
 var testAccProtocol6Providers map[string]func() (tfprotov6.ProviderServer, error)
@@ -15,19 +14,13 @@ var testAccDomain string
 func init() {
 	testAccProtocol6Providers = map[string]func() (tfprotov6.ProviderServer, error){
 		"luminate": func() (tfprotov6.ProviderServer, error) {
-			providerServer, err := framework_provider.CreateProviderServer(Provider())
+			providerServer, err := CreateProviderServer(provider.Provider())
 			if err != nil {
 				return nil, err
 			}
 
 			return providerServer(), nil
 		},
-	}
-}
-
-func TestProvider(t *testing.T) {
-	if err := Provider().InternalValidate(); err != nil {
-		t.Fatalf("err: %s", err)
 	}
 }
 

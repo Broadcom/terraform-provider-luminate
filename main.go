@@ -1,15 +1,9 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6/tf6server"
 	"log"
-
-	"github.com/hashicorp/terraform-plugin-framework/providerserver"
-	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
-	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 
 	luminateFrameworkProvider "github.com/Broadcom/terraform-provider-luminate/framework_provider"
 	luminateSdkProvider "github.com/Broadcom/terraform-provider-luminate/provider"
@@ -24,29 +18,13 @@ func main() {
 		opts = append(opts, tf6server.WithManagedDebug())
 	}
 
-	ctx := context.Background()
 	sdkProvider := luminateSdkProvider.Provider()
-	upgradedSdkProvider, err := tf5to6server.UpgradeServer(
-		ctx,
-		sdkProvider.GRPCProvider,
-	)
+	providerServer, err := luminateFrameworkProvider.CreateProviderServer(sdkProvider)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
-	providers := []func() tfprotov6.ProviderServer{
-		func() tfprotov6.ProviderServer {
-			return upgradedSdkProvider
-		},
-		providerserver.NewProtocol6(luminateFrameworkProvider.NewLuminateFrameworkProvider(sdkProvider)),
-	}
-
-	muxServer, err := tf6muxserver.NewMuxServer(ctx, providers...)
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-
-	err = tf6server.Serve("broadcom.com/broadcom/luminate", muxServer.ProviderServer, opts...)
+	err = tf6server.Serve("broadcom.com/broadcom/luminate", providerServer, opts...)
 
 	if err != nil {
 		log.Fatalln(err.Error())
