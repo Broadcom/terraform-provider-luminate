@@ -29,8 +29,8 @@ func TestAccLuminateTenantRole(t *testing.T) {
 		t.Error("stopping TestAccLuminateTenantRole no user id provided")
 	}
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: newTestAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
 				Config: testTenantRole(userID),

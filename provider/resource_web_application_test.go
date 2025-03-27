@@ -69,8 +69,8 @@ func TestAccLuminateApplication(t *testing.T) {
 	resourceTest := "luminate_web_application.new-application"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: newTestAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccWebApplication_with_collection(100 + rand.Intn(100)),

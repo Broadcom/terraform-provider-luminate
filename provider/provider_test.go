@@ -1,6 +1,9 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
+	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
 	"os"
 	"strings"
 	"testing"
@@ -9,7 +12,7 @@ import (
 )
 
 var testAccProviders map[string]*schema.Provider
-var newTestAccProviders map[string]func() (*schema.Provider, error)
+var testAccProtocol6Providers map[string]func() (tfprotov6.ProviderServer, error)
 var testAccProvider *schema.Provider
 var testAccDomain string
 
@@ -18,9 +21,14 @@ func init() {
 	testAccProviders = map[string]*schema.Provider{
 		"luminate": testAccProvider,
 	}
-	newTestAccProviders = make(map[string]func() (*schema.Provider, error))
-	newTestAccProviders["luminate"] = func() (*schema.Provider, error) {
-		return testAccProvider, nil
+
+	testAccProtocol6Providers = map[string]func() (tfprotov6.ProviderServer, error){
+		"luminate": func() (tfprotov6.ProviderServer, error) {
+			return tf5to6server.UpgradeServer(
+				context.Background(),
+				testAccProvider.GRPCProvider,
+			)
+		},
 	}
 }
 

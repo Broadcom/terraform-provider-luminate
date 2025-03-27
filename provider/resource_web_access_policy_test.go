@@ -207,8 +207,8 @@ func TestAccLuminateWebAccessPolicy(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: newTestAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
 				Config: resourceWebAccessPolicy_enabled(groupName, userID1, userID2, 100+rand.Intn(100)),
