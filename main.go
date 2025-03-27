@@ -27,7 +27,7 @@ func main() {
 	ctx := context.Background()
 	sdkProvider := luminateSdkProvider.Provider()
 	upgradedSdkProvider, err := tf5to6server.UpgradeServer(
-		context.Background(),
+		ctx,
 		sdkProvider.GRPCProvider,
 	)
 	if err != nil {
