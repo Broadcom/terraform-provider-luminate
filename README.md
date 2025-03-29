@@ -279,6 +279,72 @@ In addition to arguments above, the following attributes are exported:
 $ terraform import luminate_site.new-site site-id
 ```
 
+Re­­­source: luminate_site_registration_key
+----------
+
+Provides secure access cloud site registration key ephemeral resource
+
+­­­
+
+#### Example Usage
+
+```
+variable "rotate" {
+  description = "Enable service account access token generation"
+  type        = bool
+  default     = false
+}
+
+ephemeral "luminate_site_registration_key" "new_site_registration_key" {
+  site_id = luminate_site.new-site.id
+  revoke_existing_key_immediately = true
+  rotate = var.rotate
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+- **rotate** (boolean) (Required) Choose if we want to perform a rotation
+
+- **site_id** (String) (Required) The ID of the site
+
+- **revoke_existing_key_immediately** (boolean) (Required) Choose if we want to revoke existing keys immediately
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+- **token** - the token can be used during the terraform run only to other resources' fields that are marked as "write-only" 
+
+#### Example of token usage
+
+##### K8s
+```
+resource "kubernetes_secret" "example" {  
+  metadata {
+    name = "my-secret"
+  }
+
+  data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
+
+  data_wo_revision = 2
+}
+```
+
+##### AWS
+```
+resource "aws_secretsmanager_secret" "example_secret" {
+  name = "my-secret"
+}
+
+resource "aws_secretsmanager_secret_version" "example_version" {
+  secret_id     = aws_secretsmanager_secret.example_secret.id
+  secret_string_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_string_wo_version = 2
+}
+```
+
 Re­­­source: luminate_connector
 ------------
 
