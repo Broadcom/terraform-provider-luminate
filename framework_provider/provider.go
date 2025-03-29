@@ -63,7 +63,9 @@ func (provider *LuminateFrameworkProvider) DataSources(ctx context.Context) []fu
 }
 
 func (provider *LuminateFrameworkProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
-	return nil
+	return []func() ephemeral.EphemeralResource{
+		NewSiteRegistrationKeyEphemeralResource(),
+	}
 }
 
 func (provider *LuminateFrameworkProvider) Resources(ctx context.Context) []func() resource.Resource {
