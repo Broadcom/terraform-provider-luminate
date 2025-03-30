@@ -24,6 +24,7 @@
 
 [Core resources](#core-resources)
 - [Resource: luminate_site](#resource-luminate_site)
+- [Resource: luminate_site_registration_key](#resource-luminate_site_registration_key)
 - [Resource: luminate_connector](#resource-luminate_connector)
 
 [Application Resources](#application-resources)
@@ -281,10 +282,18 @@ $ terraform import luminate_site.new-site site-id
 
 Re­­­source: luminate_site_registration_key
 ----------
-
 Provides secure access cloud site registration key ephemeral resource
-
 ­­­
+
+**NOTE:** 
+    
+    1. Ephemeral resources can be used only for Terraform versions > 1.10
+
+    2. The key generation logic can be run during "terraform plan",
+       in order to avoid this and prevent changes to the state during plan mode,
+       we recommend using a terrafrom variable with default value `false` that will be used by the `rotate` field.
+       For the following example when you wish you to rotate a site registration key, you can simply run:
+       `terraform apply -var="rotate=true"`
 
 #### Example Usage
 
@@ -315,11 +324,18 @@ The following arguments are supported:
 
 In addition to arguments above, the following attributes are exported:
 
-- **token** - the token can be used during the terraform run only to other resources' fields that are marked as "write-only" 
+- **token** - The token can be used during the terraform run only in other resources' fields that are marked as "write-only" 
+
+**NOTE:** write-only fields can be used only for Terraform versions > 1.11
 
 #### Example of token usage
 
-##### K8s
+<details>
+
+<summary>K8s Secret</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1#data_wo-2)
+
 ```
 resource "kubernetes_secret" "example" {  
   metadata {
@@ -328,11 +344,18 @@ resource "kubernetes_secret" "example" {
 
   data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
 
-  data_wo_revision = 2
+  data_wo_revision = 2 # This should be increased manully in order for to the token to be saved
 }
 ```
 
-##### AWS
+</details>
+
+<details>
+
+<summary>AWS Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version#secret_string_wo-1)
+
 ```
 resource "aws_secretsmanager_secret" "example_secret" {
   name = "my-secret"
@@ -341,9 +364,32 @@ resource "aws_secretsmanager_secret" "example_secret" {
 resource "aws_secretsmanager_secret_version" "example_version" {
   secret_id     = aws_secretsmanager_secret.example_secret.id
   secret_string_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
-  secret_string_wo_version = 2
+  secret_string_wo_version = 2 # This should be increased manully in order for to the token to be saved
 }
 ```
+
+</details>
+
+<details>
+
+<summary>GCP Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret_version#example-usage---secret-version-basic-write-only)
+
+```
+resource "google_secret_manager_secret" "example_secret" {
+  secret_id = "my-secret"
+}
+
+
+resource "google_secret_manager_secret_version" "secret-version-basic-write-only" {
+  secret = google_secret_manager_secret.example_secret.id
+  secret_data_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_data_wo_version = 2 # This should be increased manully in order for to the token to be saved
+}
+```
+
+</details>
 
 Re­­­source: luminate_connector
 ------------
