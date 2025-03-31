@@ -131,6 +131,24 @@ type Conditions struct {
 	UnmanagedDevice Device
 }
 
+type ActivityRule struct {
+	Action     string
+	Conditions *RuleConditions
+}
+
+type RuleConditions struct {
+	FileDownloaded bool
+	FileUploaded   bool
+	UriAccessed    bool
+	HttpCommand    bool
+	Arguments      *RuleConditionArguments
+}
+
+type RuleConditionArguments struct {
+	UriList  []string
+	Commands []string
+}
+
 const (
 	IpUuid           = "IP_LIST"
 	SharedIpListUuid = "SHARED_IP_LIST"
@@ -153,7 +171,26 @@ const (
 	UnmanagedDeviceCondition               = "IS_NOT_WSS_IP"
 )
 
-type AccessPolicy struct {
+const (
+	FileDownloadedCondition = "FILE_DOWNLOADED"
+	FileUploadedCondition   = "FILE_UPLOADED"
+	URICondition            = "URI_CONDITION"
+	HTTPCommandCondition    = "METHOD_CONDITION"
+)
+
+const (
+	URIListRuleConditionArgument     = "URI_LIST"
+	HTTPCommandRuleConditionArgument = "HTTP_METHODS"
+)
+
+const (
+	AllowAction          = "ALLOW"
+	BlockAction          = "BLOCK"
+	BlockUserAction      = "BLOCK_USER"
+	DisconnectUserAction = "DISCONNECT_USER"
+)
+
+type Policy struct {
 	TargetProtocol    string
 	Id                string
 	Enabled           bool
@@ -161,12 +198,22 @@ type AccessPolicy struct {
 	Name              string
 	DirectoryEntities []DirectoryEntity
 	Applications      []string
-	Conditions        *Conditions
-	Validators        *Validators
-	RdpSettings       *PolicyRdpSettings
-	SshSettings       *PolicySshSettings
-	TcpSettings       *PolicyTcpSettings
 	CollectionID      string
+	Conditions        *Conditions
+}
+
+type AccessPolicy struct {
+	Policy
+	//ACCESS
+	Validators  *Validators
+	RdpSettings *PolicyRdpSettings
+	SshSettings *PolicySshSettings
+	TcpSettings *PolicyTcpSettings
+}
+
+type ActivityPolicy struct {
+	Policy
+	ActivityRules []ActivityRule
 }
 
 type DirectoryEntity struct {
@@ -263,6 +310,20 @@ func EntityDTOToEntityModel(entities []DirectoryEntity) []sdk.DirectoryEntity {
 				Type_:                ToModelType(directoryEntity.EntityType),
 			})
 		}
+	}
+	return directoryEntities
+}
+
+func EntityModelEntityDTO(directoryEntitiesDTO []sdk.DirectoryEntity) []DirectoryEntity {
+	var directoryEntities []DirectoryEntity
+	for _, directoryEntityDto := range directoryEntitiesDTO {
+		directoryEntities = append(directoryEntities, DirectoryEntity{
+			IdentifierInProvider: directoryEntityDto.IdentifierInProvider,
+			IdentityProviderId:   directoryEntityDto.IdentityProviderId,
+			DisplayName:          directoryEntityDto.DisplayName,
+			IdentityProviderType: ConvertIdentityProviderTypeToString(directoryEntityDto.IdentityProviderType),
+			EntityType:           FromModelType(*directoryEntityDto.Type_),
+		})
 	}
 	return directoryEntities
 }

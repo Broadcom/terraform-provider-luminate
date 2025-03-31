@@ -130,6 +130,8 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 		})
 	}
 
+	conditionsDto = ToFilterConditions(accessPolicy.Conditions)
+
 	if accessPolicy.RdpSettings != nil {
 		rdpSettingsDto = &sdk.PolicyRdpSettings{
 			LongTermPassword: accessPolicy.RdpSettings.LongTermPassword,
@@ -165,43 +167,6 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 		}
 	}
 
-	if accessPolicy.Conditions != nil {
-		if accessPolicy.Conditions.SourceIp != nil {
-			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
-				ConditionDefinitionId: IpCondition,
-				Arguments: map[string][]string{
-					IpUuid:           accessPolicy.Conditions.SourceIp,
-					SharedIpListUuid: accessPolicy.Conditions.SharedIpList,
-				},
-			})
-		}
-
-		if accessPolicy.Conditions.Location != nil {
-			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
-				ConditionDefinitionId: LocationRestrictionCondition,
-				Arguments: map[string][]string{
-					CountriesUuid: accessPolicy.Conditions.Location,
-				},
-			})
-		}
-
-		if hasDeviceArgument(accessPolicy.Conditions.ManagedDevice) {
-			managedArgumentsMap := getDeviceArguments(accessPolicy.Conditions.ManagedDevice)
-			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
-				ConditionDefinitionId: ManagedDeviceCondition,
-				Arguments:             managedArgumentsMap,
-			})
-		}
-
-		if hasDeviceArgument(accessPolicy.Conditions.UnmanagedDevice) {
-			unmanagedArgumentsMap := getDeviceArguments(accessPolicy.Conditions.UnmanagedDevice)
-			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
-				ConditionDefinitionId: UnmanagedDeviceCondition,
-				Arguments:             unmanagedArgumentsMap,
-			})
-		}
-	}
-
 	accessPolicyDto := sdk.PolicyAccess{
 		Type_:             &accessPolicyType,
 		TargetProtocol:    ToTargetProtocol(accessPolicy.TargetProtocol),
@@ -220,6 +185,47 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	}
 
 	return accessPolicyDto
+}
+
+func ToFilterConditions(conditions *Conditions) []sdk.PolicyCondition {
+	var conditionsDto []sdk.PolicyCondition
+	if conditions != nil {
+		if conditions.SourceIp != nil {
+			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
+				ConditionDefinitionId: IpCondition,
+				Arguments: map[string][]string{
+					IpUuid:           conditions.SourceIp,
+					SharedIpListUuid: conditions.SharedIpList,
+				},
+			})
+		}
+
+		if conditions.Location != nil {
+			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
+				ConditionDefinitionId: LocationRestrictionCondition,
+				Arguments: map[string][]string{
+					CountriesUuid: conditions.Location,
+				},
+			})
+		}
+
+		if hasDeviceArgument(conditions.ManagedDevice) {
+			managedArgumentsMap := getDeviceArguments(conditions.ManagedDevice)
+			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
+				ConditionDefinitionId: ManagedDeviceCondition,
+				Arguments:             managedArgumentsMap,
+			})
+		}
+
+		if hasDeviceArgument(conditions.UnmanagedDevice) {
+			unmanagedArgumentsMap := getDeviceArguments(conditions.UnmanagedDevice)
+			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
+				ConditionDefinitionId: UnmanagedDeviceCondition,
+				Arguments:             unmanagedArgumentsMap,
+			})
+		}
+	}
+	return conditionsDto
 }
 
 func getDeviceArguments(deviceArg Device) map[string][]string {
@@ -266,15 +272,9 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 		applications = append(applications, applicationsDto.Id)
 	}
 
-	for _, directoryEntityDto := range accessPolicyDto.DirectoryEntities {
-		directoryEntity = append(directoryEntity, DirectoryEntity{
-			IdentifierInProvider: directoryEntityDto.IdentifierInProvider,
-			IdentityProviderId:   directoryEntityDto.IdentityProviderId,
-			DisplayName:          directoryEntityDto.DisplayName,
-			IdentityProviderType: ConvertIdentityProviderTypeToString(directoryEntityDto.IdentityProviderType),
-			EntityType:           FromModelType(*directoryEntityDto.Type_),
-		})
-	}
+	directoryEntity = EntityModelEntityDTO(accessPolicyDto.DirectoryEntities)
+
+	conditions = FromFilterConditions(accessPolicyDto.FilterConditions)
 
 	if accessPolicyDto.RdpSettings != nil {
 		rdpSetting = &PolicyRdpSettings{
@@ -307,10 +307,31 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 		}
 	}
 
-	if accessPolicyDto.FilterConditions != nil && len(accessPolicyDto.FilterConditions) > 0 {
+	return &AccessPolicy{
+		Policy: Policy{
+			TargetProtocol:    FromTargetProtocol(*accessPolicyDto.TargetProtocol),
+			CollectionID:      accessPolicyDto.CollectionId,
+			Id:                accessPolicyDto.Id,
+			Enabled:           accessPolicyDto.Enabled,
+			CreatedAt:         accessPolicyDto.CreatedAt,
+			Name:              accessPolicyDto.Name,
+			DirectoryEntities: directoryEntity,
+			Applications:      applications,
+			Conditions:        conditions,
+		},
+		Validators:  validators,
+		RdpSettings: rdpSetting,
+		SshSettings: sshSetting,
+		TcpSettings: tcpSetting,
+	}
+}
+
+func FromFilterConditions(filterConditions []sdk.PolicyCondition) *Conditions {
+	var conditions *Conditions
+	if filterConditions != nil && len(filterConditions) > 0 {
 		conditions = &Conditions{}
 
-		for _, filterCondition := range accessPolicyDto.FilterConditions {
+		for _, filterCondition := range filterConditions {
 			if filterCondition.ConditionDefinitionId == IpCondition {
 				for _, ipCondition := range filterCondition.Arguments[IpUuid] {
 					conditions.SourceIp = append(conditions.SourceIp, ipCondition)
@@ -348,20 +369,5 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 
 		}
 	}
-
-	return &AccessPolicy{
-		TargetProtocol:    FromTargetProtocol(*accessPolicyDto.TargetProtocol),
-		CollectionID:      accessPolicyDto.CollectionId,
-		Id:                accessPolicyDto.Id,
-		Enabled:           accessPolicyDto.Enabled,
-		CreatedAt:         accessPolicyDto.CreatedAt,
-		Name:              accessPolicyDto.Name,
-		DirectoryEntities: directoryEntity,
-		Applications:      applications,
-		Validators:        validators,
-		Conditions:        conditions,
-		RdpSettings:       rdpSetting,
-		SshSettings:       sshSetting,
-		TcpSettings:       tcpSetting,
-	}
+	return conditions
 }

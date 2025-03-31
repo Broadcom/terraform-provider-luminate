@@ -317,13 +317,15 @@ func extractAccessPolicyBaseFields(d *schema.ResourceData) *dto.AccessPolicy {
 	conditions = extractConditions(d)
 
 	return &dto.AccessPolicy{
-		Enabled:           enabled,
-		Name:              name,
-		DirectoryEntities: directoryEntity,
-		Applications:      applicationIds,
-		Validators:        validators,
-		Conditions:        conditions,
-		CollectionID:      collectionID,
+		Policy: dto.Policy{
+			Enabled:           enabled,
+			Name:              name,
+			DirectoryEntities: directoryEntity,
+			Applications:      applicationIds,
+			Conditions:        conditions,
+			CollectionID:      collectionID,
+		},
+		Validators: validators,
 	}
 }
 

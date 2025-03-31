@@ -100,9 +100,11 @@ func TestToModalType(t *testing.T) {
 func TestConvertToDto(t *testing.T) {
 	// given
 	accessPolicy := &AccessPolicy{
-		Enabled: true,
-
-		Name: "my policy",
+		Policy: Policy{
+			Enabled:      true,
+			Name:         "my policy",
+			Applications: []string{uuid.New().String()},
+		},
 
 		Validators: &Validators{
 			WebVerification: true,
@@ -124,8 +126,6 @@ func TestConvertToDto(t *testing.T) {
 			AcceptTemporaryToken: true,
 			AcceptCertificate:    true,
 		},
-
-		Applications: []string{uuid.New().String()},
 	}
 
 	// when
