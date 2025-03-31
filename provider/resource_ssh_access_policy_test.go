@@ -199,8 +199,8 @@ func TestAccLuminateSshAccessPolicy(t *testing.T) {
 	randNum := 100 + rand.Intn(100)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: newTestAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
 				Config: strings.ReplaceAll(resourceSshAccessPolicy_enabled, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),

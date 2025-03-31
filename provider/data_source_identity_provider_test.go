@@ -16,8 +16,8 @@ func TestAccLuminateDataSourceIdentityProvider(t *testing.T) {
 	resourceName := "data.luminate_identity_provider.my-identity-provider"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: newTestAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceIdentityProvider,

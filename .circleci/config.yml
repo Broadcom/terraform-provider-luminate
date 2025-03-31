@@ -51,14 +51,14 @@ commands:
 jobs:
   validate:
     docker:
-      - image: cimg/go:1.19
+      - image: cimg/go:1.24
     steps:
       - checkout
       - validate-release-version-was-incremented
       - persist-env
   test:
     docker:
-      - image: cimg/go:1.19
+      - image: cimg/go:1.24
     steps:
       - attach-env
       - checkout
@@ -66,7 +66,7 @@ jobs:
       - run: make testacc
   build:
     docker:
-      - image: cimg/go:1.19
+      - image: cimg/go:1.24
     steps:
       - attach-env
       - checkout
@@ -74,7 +74,7 @@ jobs:
       - run: make
   release:
     docker:
-      - image: cimg/go:1.19
+      - image: cimg/go:1.24
     steps:
       - attach-env
       - check-skip

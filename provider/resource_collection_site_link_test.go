@@ -14,8 +14,8 @@ func TestAccLuminateCollectionSiteLink(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 	randNum := 100 + rand.Intn(100)
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
 				Config:  testAccResourceCollectionSiteCreate("tfAccCollection", randNum),
