@@ -213,6 +213,7 @@ type AccessPolicy struct {
 
 type ActivityPolicy struct {
 	Policy
+	//ACTIVITY
 	ActivityRules []ActivityRule
 }
 

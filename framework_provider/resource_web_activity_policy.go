@@ -246,21 +246,6 @@ func (w *WebActivityPolicyResource) Update(ctx context.Context, request resource
 	response.Diagnostics.Append(response.State.Set(ctx, model)...)
 }
 
-func (w *WebActivityPolicyResource) readWebActivityPolicy(ctx context.Context, policyID string) (*WebActivityPolicyResourceModel, diag.Diagnostics) {
-	var diags diag.Diagnostics
-	activityPolicy, err := w.client.ActivityPolicies.GetActivityPolicy(policyID)
-	if err != nil {
-		diags.AddError("Service Error", fmt.Sprintf("Unable to read web activity policy, got error: %s", err))
-		return nil, diags
-	}
-
-	model, diags := extractActivityPolicyModel(ctx, activityPolicy)
-	if diags != nil && diags.HasError() {
-		return nil, diags
-	}
-	return model, nil
-}
-
 func (w *WebActivityPolicyResource) Delete(ctx context.Context, request resource.DeleteRequest, response *resource.DeleteResponse) {
 	var data WebActivityPolicyResourceModel
 
@@ -276,6 +261,21 @@ func (w *WebActivityPolicyResource) Delete(ctx context.Context, request resource
 		response.Diagnostics.AddError("Service Error", fmt.Sprintf("Unable to delete web activity policy, got error: %s", err))
 		return
 	}
+}
+
+func (w *WebActivityPolicyResource) readWebActivityPolicy(ctx context.Context, policyID string) (*WebActivityPolicyResourceModel, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	activityPolicy, err := w.client.ActivityPolicies.GetActivityPolicy(policyID)
+	if err != nil {
+		diags.AddError("Service Error", fmt.Sprintf("Unable to read web activity policy, got error: %s", err))
+		return nil, diags
+	}
+
+	model, diags := extractActivityPolicyModel(ctx, activityPolicy)
+	if diags != nil && diags.HasError() {
+		return nil, diags
+	}
+	return model, nil
 }
 
 func extractActivityPolicyDTO(ctx context.Context, webActivityModel *WebActivityPolicyResourceModel) (*dto.ActivityPolicy, diag.Diagnostics) {

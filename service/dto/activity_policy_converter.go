@@ -68,7 +68,8 @@ func FromActivityPolicyDto(activityPolicyDto sdk.PolicyActivity) *ActivityPolicy
 			Name:              activityPolicyDto.Name,
 			DirectoryEntities: directoryEntity,
 			Applications:      applications,
-			Conditions:        conditions},
+			Conditions:        conditions,
+		},
 		ActivityRules: activityRules,
 	}
 	return activityPolicy
