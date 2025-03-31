@@ -24,7 +24,6 @@
 
 [Core resources](#core-resources)
 - [Resource: luminate_site](#resource-luminate_site)
-- [Resource: luminate_site_registration_key](#resource-luminate_site_registration_key)
 - [Resource: luminate_connector](#resource-luminate_connector)
 
 [Application Resources](#application-resources)
@@ -68,6 +67,9 @@
 - [Data source: luminate_shared_object](#data-source-luminate_shared_object)
 - [Data source: luminate_aws_integration](#data-source-luminate_aws_integration)
 - [Data source: luminate_ssh_client](#data-source-luminate_ssh_client)
+
+[Emphemeral Resources](#emphemeral-resources)
+- [Emphemeral Resource: luminate_site_registration_key](#emphemeral-resource-luminate_site_registration_key)
 
 Basic configuration and usage
 ==========
@@ -279,117 +281,6 @@ In addition to arguments above, the following attributes are exported:
 ```
 $ terraform import luminate_site.new-site site-id
 ```
-
-Re­­­source: luminate_site_registration_key
-----------
-Provides secure access cloud site registration key ephemeral resource
-­­­
-
-**NOTE:** 
-    
-    1. Ephemeral resources can be used only for Terraform versions > 1.10
-
-    2. The key generation logic can be run during "terraform plan",
-       in order to avoid this and prevent changes to the state during plan mode,
-       we recommend using a terrafrom variable with default value `false` that will be used by the `rotate` field.
-       For the following example when you wish you to rotate a site registration key, you can simply run:
-       `terraform apply -var="rotate=true"`
-
-#### Example Usage
-
-```
-variable "rotate" {
-  description = "Enable service account access token generation"
-  type        = bool
-  default     = false
-}
-
-ephemeral "luminate_site_registration_key" "new_site_registration_key" {
-  site_id = luminate_site.new-site.id
-  revoke_existing_key_immediately = true
-  rotate = var.rotate
-}
-```
-#### Argument Reference
-
-The following arguments are supported:
-
-- **rotate** (boolean) (Required) Choose if we want to perform a rotation
-
-- **site_id** (String) (Required) The ID of the site
-
-- **revoke_existing_key_immediately** (boolean) (Required) Choose if we want to revoke existing keys immediately
-
-#### Attribute Reference
-
-In addition to arguments above, the following attributes are exported:
-
-- **token** - The token can be used during the terraform run only in other resources' fields that are marked as "write-only" 
-
-**NOTE:** write-only fields can be used only for Terraform versions > 1.11
-
-#### Example of token usage
-
-<details>
-
-<summary>K8s Secret</summary>
-
-[Documentation](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1#data_wo-2)
-
-```
-resource "kubernetes_secret" "example" {  
-  metadata {
-    name = "my-secret"
-  }
-
-  data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
-
-  data_wo_revision = 2 # This should be increased manully in order for to the token to be saved
-}
-```
-
-</details>
-
-<details>
-
-<summary>AWS Secret Manager</summary>
-
-[Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version#secret_string_wo-1)
-
-```
-resource "aws_secretsmanager_secret" "example_secret" {
-  name = "my-secret"
-}
-
-resource "aws_secretsmanager_secret_version" "example_version" {
-  secret_id     = aws_secretsmanager_secret.example_secret.id
-  secret_string_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
-  secret_string_wo_version = 2 # This should be increased manully in order for to the token to be saved
-}
-```
-
-</details>
-
-<details>
-
-<summary>GCP Secret Manager</summary>
-
-[Documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret_version#example-usage---secret-version-basic-write-only)
-
-```
-resource "google_secret_manager_secret" "example_secret" {
-  secret_id = "my-secret"
-}
-
-
-resource "google_secret_manager_secret_version" "secret-version-basic-write-only" {
-  secret = google_secret_manager_secret.example_secret.id
-  secret_data_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
-  secret_data_wo_version = 2 # This should be increased manully in order for to the token to be saved
-}
-```
-
-</details>
 
 Re­­­source: luminate_connector
 ------------
@@ -1886,6 +1777,191 @@ In addition to arguments above, the following attributes are exported:
 - **last_accessed** (String)
 - **created_on** (String)
 - **modified_on** (String)
+
+# DNS Resiliency resources
+
+Resource: luminate_dns_server_resiliency
+----------
+
+Provides CRUD of dns resiliency servers
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_site" "new-site" {
+	name = "tfAccSite"
+}
+
+resource "luminate_dns_group_resiliency" "new-dns-group" {
+	name = "testDNSGroupResiliency"
+	sendNotifications = true
+	domainSuffixes = ["somedomain.com"]
+}
+
+data "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
+    name = "testDNSServerResiliency"
+	site_id = "${luminate_site.new-site.id}"
+	group_id = "${luminate_dns_group_resiliency.new-dns-group.id}"
+	internal_address = "udp://20.0.0.1:63"
+}
+
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **group_id -** (Required) Group id
+-   **name -** (Required) Dns Server name
+-   **site_id -** (Required) Associated Site id
+-   **internal_address -** (Required) Dns server address 
+
+
+Resource: luminate_dns_group_resiliency
+----------
+
+Provides crud of dns resiliency groups
+
+­­­
+
+#### Example Usage
+
+```
+
+resource "luminate_dns_group_resiliency" "new-dns-group" {
+	name = "testDNSGroupResiliency"
+	sendNotifications = true
+	domainSuffixes = ["somedomain.com"]
+}
+
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) Dns Group name
+-   **sendNotifications -** (Required) Indicates if notification are enabled
+-   **domainSuffixes -** (Required) List of domain suffixes
+
+Emphemeral resources
+==========
+
+Emphemeral Resource: luminate_site_registration_key
+-----------
+
+Provides secure access cloud site registration key ephemeral resource
+­­­
+
+**NOTE:**
+
+    1. Ephemeral resources can be used only for Terraform versions > 1.10
+
+    2. The key generation logic can be run during "terraform plan",
+       in order to avoid this and prevent changes to the state during plan mode,
+       we recommend using a terrafrom variable with default value `false` that will be used by the `rotate` field.
+       For the following example when you wish you to rotate a site registration key, you can simply run:
+       `terraform apply -var="rotate=true"`
+
+#### Example Usage
+
+```
+terraform apply -var="rotate=true"
+```
+
+```
+variable "rotate" {
+  description = "Enable service account access token generation"
+  type        = bool
+  default     = false
+}
+
+ephemeral "luminate_site_registration_key" "new_site_registration_key" {
+  site_id = luminate_site.new-site.id
+  revoke_existing_key_immediately = true
+  rotate = var.rotate
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+- **rotate** (boolean) (Required) Choose if we want to perform a rotation
+
+- **site_id** (String) (Required) The ID of the site
+
+- **revoke_existing_key_immediately** (boolean) (Required) Choose if we want to revoke existing keys immediately
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+- **token** - The token can be used during the terraform run only in other resources' fields that are marked as "write-only"
+
+**NOTE:** write-only fields can be used only for Terraform versions > 1.11
+
+#### Example of token usage
+
+<details>
+
+<summary>K8s Secret</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1#data_wo-2)
+
+```
+resource "kubernetes_secret" "example" {  
+  metadata {
+    name = "my-secret"
+  }
+
+  data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
+
+  data_wo_revision = 2 # This should be increased manually in order for to the token to be saved
+}
+```
+
+</details>
+
+<details>
+
+<summary>AWS Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version#secret_string_wo-1)
+
+```
+resource "aws_secretsmanager_secret" "example_secret" {
+  name = "my-secret"
+}
+
+resource "aws_secretsmanager_secret_version" "example_version" {
+  secret_id     = aws_secretsmanager_secret.example_secret.id
+  secret_string_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_string_wo_version = 2 # This should be increased manually in order for to the token to be saved
+}
+```
+
+</details>
+
+<details>
+
+<summary>GCP Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret_version#example-usage---secret-version-basic-write-only)
+
+```
+resource "google_secret_manager_secret" "example_secret" {
+  secret_id = "my-secret"
+}
+
+
+resource "google_secret_manager_secret_version" "secret-version-basic-write-only" {
+  secret = google_secret_manager_secret.example_secret.id
+  secret_data_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_data_wo_version = 2 # This should be increased manually in order for to the token to be saved
+}
+```
+
+</details>
 
 #### Confluence page
 https://fireglass.atlassian.net/wiki/x/dICL1
