@@ -1474,7 +1474,7 @@ data "luminate_collection" "my-collection" {
 
 The following arguments are supported:
 
--   **name -** (Required) The name of the collectio
+-   **name -** (Required) The name of the collection
 
 #### Attribute Reference
 
