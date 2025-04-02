@@ -142,36 +142,15 @@ func (w *WebActivityPolicyResource) Create(ctx context.Context, request resource
 
 	policy, diags := extractActivityPolicyDTO(ctx, &data)
 
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
 
-	for i := range policy.DirectoryEntities {
-		resolvedIdentityProviderType, err := w.client.IdentityProviders.GetIdentityProviderTypeById(policy.DirectoryEntities[i].IdentityProviderId)
-		if err != nil {
-			response.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s, got error: %s", policy.DirectoryEntities[i].IdentityProviderId, err))
-			return
-		}
-		policy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
-
-		// Get Display Name for User/Group by ID
-		var resolvedDisplayName string
-		switch strings.ToLower(policy.DirectoryEntities[i].EntityType) {
-		case "user":
-			resolvedDisplayName, err = w.client.IdentityProviders.GetUserDisplayNameTypeById(policy.DirectoryEntities[i].IdentityProviderId, policy.DirectoryEntities[i].IdentifierInProvider)
-		case "group":
-			resolvedDisplayName, err = w.client.IdentityProviders.GetGroupDisplayNameTypeById(policy.DirectoryEntities[i].IdentityProviderId, policy.DirectoryEntities[i].IdentifierInProvider)
-		default:
-			response.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to lookup displayName - unknown entity type \"%s\"", policy.DirectoryEntities[i].EntityType))
-			return
-		}
-
-		if err != nil {
-			response.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to lookup displayName for entity type %s with identifier id %s on Identity Provider ID %s", policy.DirectoryEntities[i].EntityType, policy.DirectoryEntities[i].IdentifierInProvider, policy.DirectoryEntities[i].IdentityProviderId))
-			return
-		}
-		policy.DirectoryEntities[i].DisplayName = resolvedDisplayName
+	diags = w.enrichDirectoryEntities(policy)
+	if diags.HasError() {
+		response.Diagnostics.Append(diags...)
+		return
 	}
 
 	createdPolicy, err := w.client.ActivityPolicies.CreateActivityPolicy(policy)
@@ -183,7 +162,7 @@ func (w *WebActivityPolicyResource) Create(ctx context.Context, request resource
 	tflog.Trace(ctx, "created a web activity policy resource ID="+createdPolicy.Id)
 
 	model, diags := w.readWebActivityPolicy(ctx, createdPolicy.Id)
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
@@ -208,7 +187,7 @@ func (w *WebActivityPolicyResource) Read(ctx context.Context, request resource.R
 	}
 
 	model, diags := w.readWebActivityPolicy(ctx, data.ID.ValueString())
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
@@ -247,18 +226,15 @@ func (w *WebActivityPolicyResource) Update(ctx context.Context, request resource
 
 	policy, diags := extractActivityPolicyDTO(ctx, &data)
 
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
 
-	for i := range policy.DirectoryEntities {
-		resolvedIdentityProviderType, err := w.client.IdentityProviders.GetIdentityProviderTypeById(policy.DirectoryEntities[i].IdentityProviderId)
-		if err != nil {
-			response.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s, got error: %s", policy.DirectoryEntities[i].IdentityProviderId, err))
-			return
-		}
-		policy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
+	diags = w.enrichDirectoryEntities(policy)
+	if diags.HasError() {
+		response.Diagnostics.Append(diags...)
+		return
 	}
 
 	updatedPolicy, err := w.client.ActivityPolicies.UpdateActivityPolicy(policy)
@@ -268,7 +244,7 @@ func (w *WebActivityPolicyResource) Update(ctx context.Context, request resource
 	}
 
 	model, diags := w.readWebActivityPolicy(ctx, updatedPolicy.Id)
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		response.Diagnostics.Append(diags...)
 		return
 	}
@@ -310,25 +286,57 @@ func (w *WebActivityPolicyResource) readWebActivityPolicy(ctx context.Context, p
 	}
 
 	if activityPolicy == nil {
-		return nil, nil
+		diags.AddWarning("Service Warning", "Web activity policy could not be retrieved")
+		return nil, diags
 	}
 
 	model, diags := extractActivityPolicyModel(ctx, activityPolicy)
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		return nil, diags
 	}
 	return model, nil
 }
 
+func (w *WebActivityPolicyResource) enrichDirectoryEntities(policy *dto.ActivityPolicy) diag.Diagnostics {
+	var diags diag.Diagnostics
+	for i := range policy.DirectoryEntities {
+		resolvedIdentityProviderType, err := w.client.IdentityProviders.GetIdentityProviderTypeById(policy.DirectoryEntities[i].IdentityProviderId)
+		if err != nil {
+			diags.AddError("Client Error", fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s, got error: %s", policy.DirectoryEntities[i].IdentityProviderId, err))
+			return diags
+		}
+		policy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
+
+		// Get Display Name for User/Group by ID
+		var resolvedDisplayName string
+		switch strings.ToLower(policy.DirectoryEntities[i].EntityType) {
+		case "user":
+			resolvedDisplayName, err = w.client.IdentityProviders.GetUserDisplayNameTypeById(policy.DirectoryEntities[i].IdentityProviderId, policy.DirectoryEntities[i].IdentifierInProvider)
+		case "group":
+			resolvedDisplayName, err = w.client.IdentityProviders.GetGroupDisplayNameTypeById(policy.DirectoryEntities[i].IdentityProviderId, policy.DirectoryEntities[i].IdentifierInProvider)
+		default:
+			diags.AddError("Client Error", fmt.Sprintf("Failed to lookup displayName - unknown entity type \"%s\"", policy.DirectoryEntities[i].EntityType))
+			return diags
+		}
+
+		if err != nil {
+			diags.AddError("Client Error", fmt.Sprintf("Failed to lookup displayName for entity type %s with identifier id %s on Identity Provider ID %s", policy.DirectoryEntities[i].EntityType, policy.DirectoryEntities[i].IdentifierInProvider, policy.DirectoryEntities[i].IdentityProviderId))
+			return diags
+		}
+		policy.DirectoryEntities[i].DisplayName = resolvedDisplayName
+	}
+	return diags
+}
+
 func extractActivityPolicyDTO(ctx context.Context, webActivityModel *WebActivityPolicyResourceModel) (*dto.ActivityPolicy, diag.Diagnostics) {
 	policy, diags := convertBaseModelToPolicy(ctx, &webActivityModel.BasePolicyResourceModel)
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		return nil, diags
 	}
 	policy.TargetProtocol = "HTTP"
 
 	activityRules, diags := extractActivityRules(ctx, webActivityModel)
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		return nil, diags
 	}
 
@@ -341,12 +349,12 @@ func extractActivityPolicyDTO(ctx context.Context, webActivityModel *WebActivity
 
 func extractActivityPolicyModel(ctx context.Context, activityPolicy *dto.ActivityPolicy) (*WebActivityPolicyResourceModel, diag.Diagnostics) {
 	policyModel, diags := convertPolicyToBaseModel(ctx, &activityPolicy.Policy)
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		return nil, diags
 	}
 
 	activityPolicyModelRules, diags := flattenActivityRules(ctx, activityPolicy.ActivityRules)
-	if diags != nil && diags.HasError() {
+	if diags.HasError() {
 		return nil, diags
 	}
 
