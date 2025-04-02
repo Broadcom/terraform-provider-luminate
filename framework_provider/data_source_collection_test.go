@@ -16,7 +16,7 @@ resource "luminate_collection" "new_collection_<RANDOM_PLACEHOLDER>" {
 }
 
 data "luminate_collection" "collection_<RANDOM_PLACEHOLDER>" {
-	name = luminate_collection.name
+	name = luminate_collection.new_collection_<RANDOM_PLACEHOLDER>.name
 }
 `
 
