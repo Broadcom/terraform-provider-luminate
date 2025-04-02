@@ -15,10 +15,8 @@ import (
 	"strings"
 )
 
-func NewWebActivityPolicyResource() func() resource.Resource {
-	return func() resource.Resource {
-		return &WebActivityPolicyResource{}
-	}
+func NewWebActivityPolicyResource() resource.Resource {
+	return &WebActivityPolicyResource{}
 }
 
 type WebActivityPolicyResource struct {
@@ -203,6 +201,7 @@ func (w *WebActivityPolicyResource) Read(ctx context.Context, request resource.R
 }
 
 func (w *WebActivityPolicyResource) Update(ctx context.Context, request resource.UpdateRequest, response *resource.UpdateResponse) {
+	var currentData WebActivityPolicyResourceModel
 	var data WebActivityPolicyResourceModel
 
 	// Read Terraform plan data into the model
@@ -211,6 +210,15 @@ func (w *WebActivityPolicyResource) Update(ctx context.Context, request resource
 	if response.Diagnostics.HasError() {
 		return
 	}
+
+	// Read Terraform plan data into the model
+	response.Diagnostics.Append(request.State.Get(ctx, &currentData)...)
+
+	if response.Diagnostics.HasError() {
+		return
+	}
+
+	data.ID = currentData.ID
 
 	policy, diags := extractActivityPolicyDTO(ctx, &data)
 
@@ -426,25 +434,21 @@ func extractRuleArguments(ctx context.Context, condition types.Object) (*dto.Rul
 }
 
 func flattenActivityRules(ctx context.Context, activityRules []dto.ActivityRule) (types.List, diag.Diagnostics) {
+	emptyRules := types.ListNull(types.ObjectType{AttrTypes: activityRuleAttributeTypes()})
 	if len(activityRules) == 0 {
-		return types.ListNull(types.ObjectType{AttrTypes: activityRuleAttributeTypes()}), nil
+		return emptyRules, nil
 	}
 
 	ruleObjects := make([]types.Object, len(activityRules))
 	for i, rule := range activityRules {
 		ruleObject, ruleDiags := flattenActivityRule(ctx, rule)
 		if ruleDiags.HasError() {
-			return types.ListNull(types.ObjectType{AttrTypes: activityRuleAttributeTypes()}), ruleDiags
+			return emptyRules, ruleDiags
 		}
 		ruleObjects[i] = ruleObject
 	}
 
-	rulesList, listDiags := types.ListValueFrom(ctx, types.ObjectType{AttrTypes: activityRuleAttributeTypes()}, ruleObjects)
-	if listDiags.HasError() {
-		return types.ListNull(types.ObjectType{AttrTypes: activityRuleAttributeTypes()}), listDiags
-	}
-
-	return rulesList, nil
+	return types.ListValueFrom(ctx, types.ObjectType{AttrTypes: activityRuleAttributeTypes()}, ruleObjects)
 }
 
 func flattenActivityRule(ctx context.Context, activityRule dto.ActivityRule) (types.Object, diag.Diagnostics) {
@@ -483,25 +487,38 @@ func flattenRuleConditions(ctx context.Context, conditions *dto.RuleConditions) 
 }
 
 func flattenRuleArguments(ctx context.Context, arguments *dto.RuleConditionArguments) (types.Object, diag.Diagnostics) {
-	argumentsAttributes := make(map[string]attr.Value)
+	emptyRuleArguments := types.ObjectNull(conditionsArgumentsAttributeTypes())
 
 	if arguments == nil {
-		return types.ObjectNull(ruleArgumentsAttributeTypes()), nil
+		return emptyRuleArguments, nil
 	}
 
-	uriList, uriListDiags := types.ListValueFrom(ctx, types.StringType, arguments.UriList)
-	if uriListDiags.HasError() {
-		return types.ObjectNull(ruleArgumentsAttributeTypes()), uriListDiags
-	}
-	argumentsAttributes["uri_list"] = uriList
+	if len(arguments.UriList) == 0 && len(arguments.Commands) == 0 {
+		return emptyRuleArguments, nil
 
-	commands, commandsDiags := types.ListValueFrom(ctx, types.StringType, arguments.Commands)
-	if commandsDiags.HasError() {
-		return types.ObjectNull(ruleArgumentsAttributeTypes()), commandsDiags
 	}
-	argumentsAttributes["commands"] = commands
 
-	return types.ObjectValue(ruleArgumentsAttributeTypes(), argumentsAttributes)
+	argumentsAttributes := make(map[string]attr.Value)
+
+	argumentsAttributes["uri_list"] = types.ListNull(types.StringType)
+	if len(arguments.UriList) > 0 {
+		uriList, uriListDiags := types.ListValueFrom(ctx, types.StringType, arguments.UriList)
+		if uriListDiags.HasError() {
+			return emptyRuleArguments, uriListDiags
+		}
+		argumentsAttributes["uri_list"] = uriList
+	}
+
+	argumentsAttributes["commands"] = types.ListNull(types.StringType)
+	if len(arguments.Commands) > 0 {
+		commands, commandsDiags := types.ListValueFrom(ctx, types.StringType, arguments.Commands)
+		if commandsDiags.HasError() {
+			return emptyRuleArguments, commandsDiags
+		}
+		argumentsAttributes["commands"] = commands
+	}
+
+	return types.ObjectValue(conditionsArgumentsAttributeTypes(), argumentsAttributes)
 }
 
 func activityRuleAttributeTypes() map[string]attr.Type {
@@ -517,11 +534,11 @@ func ruleConditionsAttributeTypes() map[string]attr.Type {
 		"file_uploaded":   types.BoolType,
 		"uri_accessed":    types.BoolType,
 		"http_command":    types.BoolType,
-		"arguments":       types.ObjectType{AttrTypes: ruleArgumentsAttributeTypes()},
+		"arguments":       types.ObjectType{AttrTypes: conditionsArgumentsAttributeTypes()},
 	}
 }
 
-func ruleArgumentsAttributeTypes() map[string]attr.Type {
+func conditionsArgumentsAttributeTypes() map[string]attr.Type {
 	return map[string]attr.Type{
 		"uri_list": types.ListType{ElemType: types.StringType},
 		"commands": types.ListType{ElemType: types.StringType},

@@ -65,7 +65,7 @@ func (provider *LuminateFrameworkProvider) EphemeralResources(ctx context.Contex
 
 func (provider *LuminateFrameworkProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewWebActivityPolicyResource(),
+		NewWebActivityPolicyResource,
 	}
 }
 

@@ -142,13 +142,12 @@ func convertPolicyToBaseModel(ctx context.Context, policy *dto.Policy) (*BasePol
 	}
 	policyResourceModel.Applications = applications
 
-	if policy.Conditions != nil {
-		conditions, conditionDiags := flattenConditions(ctx, policy.Conditions)
-		if conditionDiags != nil && conditionDiags.HasError() {
-			return nil, conditionDiags
-		}
-		policyResourceModel.Conditions = conditions
+	conditions, conditionDiags := flattenConditions(ctx, policy.Conditions)
+	if conditionDiags != nil && conditionDiags.HasError() {
+		return nil, conditionDiags
 	}
+	policyResourceModel.Conditions = conditions
+
 	if len(policy.DirectoryEntities) > 0 {
 		groupIDs := make([]types.String, 0)
 		userIDs := make([]types.String, 0)
@@ -165,18 +164,23 @@ func convertPolicyToBaseModel(ctx context.Context, policy *dto.Policy) (*BasePol
 			policyResourceModel.IdentityProviderID = types.StringValue(policy.DirectoryEntities[0].IdentityProviderId)
 		}
 
-		groupsIDsList, groupIDsDiagnostics := types.ListValueFrom(ctx, types.StringType, groupIDs)
-		if groupIDsDiagnostics.HasError() {
-			return nil, groupIDsDiagnostics
+		policyResourceModel.GroupIDs = types.ListNull(types.StringType)
+		if len(groupIDs) > 0 {
+			groupsIDsList, groupIDsDiagnostics := types.ListValueFrom(ctx, types.StringType, groupIDs)
+			if groupIDsDiagnostics.HasError() {
+				return nil, groupIDsDiagnostics
+			}
+			policyResourceModel.GroupIDs = groupsIDsList
 		}
 
-		policyResourceModel.GroupIDs = groupsIDsList
-		userIDsList, userIDsDiagnostics := types.ListValueFrom(ctx, types.StringType, userIDs)
-		if userIDsDiagnostics.HasError() {
-			return nil, userIDsDiagnostics
+		policyResourceModel.UserIDs = types.ListNull(types.StringType)
+		if len(userIDs) > 0 {
+			userIDsList, userIDsDiagnostics := types.ListValueFrom(ctx, types.StringType, userIDs)
+			if userIDsDiagnostics.HasError() {
+				return nil, userIDsDiagnostics
+			}
+			policyResourceModel.UserIDs = userIDsList
 		}
-
-		policyResourceModel.UserIDs = userIDsList
 	}
 	return policyResourceModel, nil
 }
@@ -236,61 +240,64 @@ func convertBaseModelToPolicy(ctx context.Context, policyModel *BasePolicyResour
 }
 
 func flattenConditions(ctx context.Context, conditions *dto.Conditions) (types.Object, diag.Diagnostics) {
-	result := types.ObjectNull(map[string]attr.Type{
-		"location":         types.ListType{ElemType: types.StringType},
-		"source_ip":        types.ListType{ElemType: types.StringType},
-		"managed_device":   types.ObjectType{AttrTypes: managedDeviceAttributeTypes()},
-		"unmanaged_device": types.ObjectType{AttrTypes: managedDeviceAttributeTypes()},
-	})
+	emptyConditions := types.ObjectNull(getConditionAttributesTypes())
 	if conditions == nil {
-		return result, nil
+		return emptyConditions, nil
 	}
 	conditionAttributes := map[string]attr.Value{}
 
+	containsCondition := false
+
 	// Location
+	conditionAttributes["location"] = types.ListNull(types.StringType)
 	if len(conditions.Location) > 0 {
 		locationList, diags := types.ListValueFrom(ctx, types.StringType, conditions.Location)
 		if diags.HasError() {
-			return result, diags
+			return emptyConditions, diags
 		}
 		conditionAttributes["location"] = locationList
-	} else {
-		conditionAttributes["location"] = types.ListNull(types.StringType)
+		containsCondition = true
 	}
 
 	// Source IP
+	conditionAttributes["source_ip"] = types.ListNull(types.StringType)
 	if len(conditions.SourceIp) > 0 {
 		sourceIpList, _ := types.ListValueFrom(ctx, types.StringType, conditions.SourceIp)
 		conditionAttributes["source_ip"] = sourceIpList
-	} else {
-		conditionAttributes["source_ip"] = types.ListNull(types.StringType)
+		containsCondition = true
 	}
 
 	// Managed Device
+	conditionAttributes["managed_device"] = types.ObjectNull(managedDeviceAttributeTypes())
 	if hasDeviceCondition(conditions.ManagedDevice) {
 		managedDevice := flattenManagedDevice(conditions.ManagedDevice)
 		conditionAttributes["managed_device"] = managedDevice
-	} else {
-		conditionAttributes["managed_device"] = types.ObjectNull(managedDeviceAttributeTypes())
+		containsCondition = true
 	}
 
 	// Unmanaged Device
+	conditionAttributes["unmanaged_device"] = types.ObjectNull(managedDeviceAttributeTypes())
 	if hasDeviceCondition(conditions.UnmanagedDevice) {
 		unmanagedDevice := flattenManagedDevice(conditions.UnmanagedDevice)
 		conditionAttributes["unmanaged_device"] = unmanagedDevice
-	} else {
-		conditionAttributes["unmanaged_device"] = types.ObjectNull(managedDeviceAttributeTypes())
+		containsCondition = true
 	}
 
+	if !containsCondition {
+		return emptyConditions, nil
+	}
+
+	return types.ObjectValue(getConditionAttributesTypes(), conditionAttributes)
+}
+
+func getConditionAttributesTypes() map[string]attr.Type {
 	conditionTypes := map[string]attr.Type{
 		"location":         types.ListType{ElemType: types.StringType},
 		"source_ip":        types.ListType{ElemType: types.StringType},
 		"managed_device":   types.ObjectType{AttrTypes: managedDeviceAttributeTypes()},
 		"unmanaged_device": types.ObjectType{AttrTypes: managedDeviceAttributeTypes()},
 	}
-
-	result, diags := types.ObjectValue(conditionTypes, conditionAttributes)
-	return result, diags
+	return conditionTypes
 }
 
 func convertToStringTypeSlice(slice []string) []types.String {
