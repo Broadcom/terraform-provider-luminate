@@ -3,7 +3,6 @@ package framework_provider
 import (
 	"context"
 	"fmt"
-	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -109,25 +108,6 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 		MarkdownDescription: "Web activity policy resource",
 		Attributes:          policyAttributes,
 	}
-}
-
-func (r *WebActivityPolicyResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	// Prevent panic if the provider has not been configured.
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*service.LuminateService)
-
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *service.LuminateService, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-
-		return
-	}
-	r.client = client
 }
 
 func (w *WebActivityPolicyResource) Create(ctx context.Context, request resource.CreateRequest, response *resource.CreateResponse) {
