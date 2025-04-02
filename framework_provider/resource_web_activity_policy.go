@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"strings"
@@ -29,7 +31,7 @@ type WebActivityPolicyResourceModel struct {
 }
 
 func (w *WebActivityPolicyResource) Metadata(ctx context.Context, request resource.MetadataRequest, response *resource.MetadataResponse) {
-	response.TypeName = "luminate_web_activity_policy"
+	response.TypeName = request.ProviderTypeName + "_web_activity_policy"
 }
 
 func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource.SchemaRequest, response *resource.SchemaResponse) {
@@ -42,6 +44,13 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 				"action": schema.StringAttribute{
 					Required:    true,
 					Description: "the action to apply for this rule condition.",
+					Validators: []validator.String{
+						stringvalidator.OneOf(
+							dto.BlockAction,
+							dto.BlockUserAction,
+							dto.DisconnectUserAction,
+						),
+					},
 				},
 				"conditions": schema.SingleNestedAttribute{
 					Optional:    true,
@@ -73,16 +82,19 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 						},
 						"arguments": schema.SingleNestedAttribute{
 							Optional:    true,
+							Computed:    true,
 							Description: "the rule conditions arguments if required per enabled condition",
 							Attributes: map[string]schema.Attribute{
 								"uri_list": schema.ListAttribute{
 									Description: "the list of URI to apply URI Accessed rule condition.",
 									Optional:    true,
+									Computed:    true,
 									ElementType: types.StringType,
 								},
 								"commands": schema.ListAttribute{
 									Description: "the HTTP commands to apply HTTP Command rule condition.",
 									Optional:    true,
+									Computed:    true,
 									ElementType: types.StringType,
 								},
 							},

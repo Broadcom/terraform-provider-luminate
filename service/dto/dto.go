@@ -184,7 +184,6 @@ const (
 )
 
 const (
-	AllowAction          = "ALLOW"
 	BlockAction          = "BLOCK"
 	BlockUserAction      = "BLOCK_USER"
 	DisconnectUserAction = "DISCONNECT_USER"

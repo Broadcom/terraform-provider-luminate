@@ -65,6 +65,12 @@ func resourceWebActivityPolicy_enabled(groupName,
 						uri_list = ["/admin", "/users"]
 					}
 				}
+			},
+			{
+				action = "DISCONNECT_USER"
+				conditions = {
+					file_uploaded = true
+				}
 			}
 		]
 
@@ -249,6 +255,8 @@ func TestAccLuminateResourceWebActivityPolicyConditionsSpecifiedWithUpdate(t *te
 					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.uri_accessed", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.arguments.uri_list.0", "/admin"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.arguments.uri_list.1", "/users"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.action", "DISCONNECT_USER"),
+					resource.TestCheckResourceAttr(resourceName, "rules.1.conditions.file_uploaded", "true"),
 				),
 			},
 			{
