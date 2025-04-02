@@ -188,6 +188,11 @@ func (w *WebActivityPolicyResource) Create(ctx context.Context, request resource
 		return
 	}
 
+	if model == nil {
+		response.Diagnostics.AddError("Service Error", "Failed to get web activity policy")
+		return
+	}
+
 	// Save data into Terraform state
 	response.Diagnostics.Append(response.State.Set(ctx, model)...)
 }
@@ -208,6 +213,13 @@ func (w *WebActivityPolicyResource) Read(ctx context.Context, request resource.R
 		return
 	}
 
+	// if remove from state if it does not exist
+	if model == nil {
+		response.Diagnostics.AddWarning("Service Warning", "Web activity policy does not exist, removing from state")
+		response.State.RemoveResource(ctx)
+		return
+	}
+
 	// Save updated data into Terraform state
 	response.Diagnostics.Append(response.State.Set(ctx, model)...)
 }
@@ -223,13 +235,14 @@ func (w *WebActivityPolicyResource) Update(ctx context.Context, request resource
 		return
 	}
 
-	// Read Terraform plan data into the model
+	// Read Terraform state data into the model
 	response.Diagnostics.Append(request.State.Get(ctx, &currentData)...)
 
 	if response.Diagnostics.HasError() {
 		return
 	}
 
+	// Use the ID from the state
 	data.ID = currentData.ID
 
 	policy, diags := extractActivityPolicyDTO(ctx, &data)
@@ -257,6 +270,11 @@ func (w *WebActivityPolicyResource) Update(ctx context.Context, request resource
 	model, diags := w.readWebActivityPolicy(ctx, updatedPolicy.Id)
 	if diags != nil && diags.HasError() {
 		response.Diagnostics.Append(diags...)
+		return
+	}
+
+	if model == nil {
+		response.Diagnostics.AddError("Service Error", "Failed to get web activity policy")
 		return
 	}
 
@@ -289,6 +307,10 @@ func (w *WebActivityPolicyResource) readWebActivityPolicy(ctx context.Context, p
 	if err != nil {
 		diags.AddError("Service Error", fmt.Sprintf("Unable to read web activity policy, got error: %s", err))
 		return nil, diags
+	}
+
+	if activityPolicy == nil {
+		return nil, nil
 	}
 
 	model, diags := extractActivityPolicyModel(ctx, activityPolicy)
