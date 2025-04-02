@@ -111,14 +111,20 @@ func CreatePolicyBaseSchemaAttributes() map[string]schema.Attribute {
 						"opswat": schema.BoolAttribute{
 							Description: "Indicate whatever to restrict access to Opswat MetaAccess",
 							Optional:    true,
+							Computed:    true,
+							Default:     booldefault.StaticBool(false),
 						},
 						"symantec_cloudsoc": schema.BoolAttribute{
 							Description: "Indicate whatever to restrict access to symantec cloudsoc",
 							Optional:    true,
+							Computed:    true,
+							Default:     booldefault.StaticBool(false),
 						},
 						"symantec_web_security_service": schema.BoolAttribute{
 							Description: "Indicate whatever to restrict access to symantec web security service",
 							Optional:    true,
+							Computed:    true,
+							Default:     booldefault.StaticBool(false),
 						},
 					},
 				},
@@ -133,6 +139,7 @@ func convertPolicyToBaseModel(ctx context.Context, policy *dto.Policy) (*BasePol
 		Enabled:      types.BoolValue(policy.Enabled),
 		Name:         types.StringValue(policy.Name),
 		CollectionID: types.StringValue(policy.CollectionID),
+		GroupIDs:     types.ListNull(types.StringType),
 	}
 
 	appIDs := convertToStringTypeSlice(policy.Applications)
@@ -147,6 +154,9 @@ func convertPolicyToBaseModel(ctx context.Context, policy *dto.Policy) (*BasePol
 		return nil, conditionDiags
 	}
 	policyResourceModel.Conditions = conditions
+
+	policyResourceModel.GroupIDs = types.ListNull(types.StringType)
+	policyResourceModel.UserIDs = types.ListNull(types.StringType)
 
 	if len(policy.DirectoryEntities) > 0 {
 		groupIDs := make([]types.String, 0)
@@ -164,7 +174,6 @@ func convertPolicyToBaseModel(ctx context.Context, policy *dto.Policy) (*BasePol
 			policyResourceModel.IdentityProviderID = types.StringValue(policy.DirectoryEntities[0].IdentityProviderId)
 		}
 
-		policyResourceModel.GroupIDs = types.ListNull(types.StringType)
 		if len(groupIDs) > 0 {
 			groupsIDsList, groupIDsDiagnostics := types.ListValueFrom(ctx, types.StringType, groupIDs)
 			if groupIDsDiagnostics.HasError() {
@@ -173,7 +182,6 @@ func convertPolicyToBaseModel(ctx context.Context, policy *dto.Policy) (*BasePol
 			policyResourceModel.GroupIDs = groupsIDsList
 		}
 
-		policyResourceModel.UserIDs = types.ListNull(types.StringType)
 		if len(userIDs) > 0 {
 			userIDsList, userIDsDiagnostics := types.ListValueFrom(ctx, types.StringType, userIDs)
 			if userIDsDiagnostics.HasError() {

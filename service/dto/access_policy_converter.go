@@ -354,15 +354,27 @@ func FromFilterConditions(filterConditions []sdk.PolicyCondition) *Conditions {
 				for _, deviceCondition := range filterCondition.Arguments[Authentication] {
 
 					if ManagedDeviceOpswatConditionArgument == deviceCondition {
-						conditions.ManagedDevice.OpswatMetaAccess = true
+						if filterCondition.ConditionDefinitionId == ManagedDeviceCondition {
+							conditions.ManagedDevice.OpswatMetaAccess = true
+						} else if filterCondition.ConditionDefinitionId == UnmanagedDeviceCondition {
+							conditions.UnmanagedDevice.OpswatMetaAccess = true
+						}
 					}
 
 					if ManagedDeviceCloudSocConditionArgument == deviceCondition {
-						conditions.ManagedDevice.SymantecCloudSoc = true
+						if filterCondition.ConditionDefinitionId == ManagedDeviceCondition {
+							conditions.ManagedDevice.SymantecCloudSoc = true
+						} else if filterCondition.ConditionDefinitionId == UnmanagedDeviceCondition {
+							conditions.UnmanagedDevice.SymantecCloudSoc = true
+						}
 					}
 
 					if ManagedDeviceWssConditionArgument == deviceCondition {
-						conditions.ManagedDevice.SymantecWebSecurityService = true
+						if filterCondition.ConditionDefinitionId == ManagedDeviceCondition {
+							conditions.ManagedDevice.SymantecWebSecurityService = true
+						} else if filterCondition.ConditionDefinitionId == UnmanagedDeviceCondition {
+							conditions.UnmanagedDevice.SymantecWebSecurityService = true
+						}
 					}
 				}
 			}

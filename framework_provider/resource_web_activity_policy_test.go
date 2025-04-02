@@ -9,6 +9,31 @@ import (
 	"testing"
 )
 
+func resourceWebActivityPolicy_minimal(rand int) string {
+	return fmt.Sprintf(`
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteActivityPolicy%d"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationActivityPolicy%d"
+	 internal_address = "http://127.0.0.1:8080"
+	}
+	resource "luminate_web_activity_policy" "new-web-activity-policy" {
+		name =  "resourceWebActivityPolicy_minimal%d"
+		applications = ["${luminate_web_application.new-application.id}"]
+
+		rules = [
+			{
+				action = "BLOCK"
+				conditions = {
+					file_uploaded = true
+				}
+			}
+		]
+	}`, rand, rand, rand)
+}
+
 func resourceWebActivityPolicy_enabled(groupName,
 	userID1,
 	userID2 string,
@@ -177,6 +202,10 @@ func resourceWebActivityPolicy_conditions_specified_update(userID1 string, rand 
 				opswat = false
 				symantec_web_security_service = true
 			}
+
+			unmanaged_device = {
+				symantec_web_security_service = true
+			}
 		}
 
 		rules = [
@@ -202,6 +231,15 @@ func TestAccLuminateResourceWebActivityPolicyConditionsSpecifiedWithUpdate(t *te
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
+			{
+				Config: resourceWebActivityPolicy_minimal(100 + rand.Intn(100)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestMatchResourceAttr(resourceName, "name", utils.CreateRegExpForNamePrefix("resourceWebActivityPolicy_minimal")),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "BLOCK"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.file_uploaded", "true"),
+				),
+			},
 			{
 				Config: resourceWebActivityPolicy_enabled(groupName, userID1, userID2, 100+rand.Intn(100)),
 				Check: resource.ComposeTestCheckFunc(
@@ -259,6 +297,7 @@ func TestAccLuminateResourceWebActivityPolicyConditionsSpecifiedWithUpdate(t *te
 					resource.TestCheckResourceAttr(resourceName, "conditions.location.0", "Canada"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.managed_device.opswat", "false"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.managed_device.symantec_web_security_service", "true"),
+					resource.TestCheckResourceAttr(resourceName, "conditions.unmanaged_device.symantec_web_security_service", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "BLOCK_USER"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.uri_accessed", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.arguments.uri_list.0", "/admin"),
