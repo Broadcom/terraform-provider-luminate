@@ -2,7 +2,9 @@ package utils
 
 import (
 	"bytes"
+	"fmt"
 	"io"
+	"regexp"
 )
 
 func ConvertReaderToString(body io.ReadCloser) (string, error) {
@@ -14,4 +16,9 @@ func ConvertReaderToString(body io.ReadCloser) (string, error) {
 	}
 
 	return buf.String(), err
+}
+
+func CreateRegExpForNamePrefix(prefix string) *regexp.Regexp {
+	exp := fmt.Sprintf("^%s", prefix)
+	return regexp.MustCompile(exp)
 }

@@ -17,6 +17,7 @@ type LuminateService struct {
 	Connectors        *ConnectorsAPI
 	Applications      *ApplicationAPI
 	AccessPolicies    *AccessPolicyAPI
+	ActivityPolicies  *ActivityPolicyAPI
 	Users             *UserAPI ``
 	Groups            *GroupAPI
 	IdentityProviders *IdentityProviderAPI
@@ -61,6 +62,7 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	lumSvc.CollectionAPI = NewCollectionAPI(lumSvc.cli)
 	lumSvc.Applications = NewApplicationAPI(lumSvc.cli)
 	lumSvc.AccessPolicies = NewAccessPolicyAPI(lumSvc.cli)
+	lumSvc.ActivityPolicies = NewActivityPolicyAPI(lumSvc.cli)
 	lumSvc.Users = NewUserAPI(lumSvc.cli)
 	lumSvc.Groups = NewGroupAPI(lumSvc.cli)
 	lumSvc.IdentityProviders = NewIdentityProviderAPI(lumSvc.cli)
