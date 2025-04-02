@@ -20,7 +20,7 @@ type LuminateCollectionDataSource struct {
 }
 
 type CollectionDataSourceModel struct {
-	Id   types.String `tfsdk:"id"`
+	ID   types.String `tfsdk:"id"`
 	Name types.String `tfsdk:"name"`
 }
 
@@ -59,7 +59,8 @@ func (d *LuminateCollectionDataSource) Read(ctx context.Context, req datasource.
 		return
 	}
 
-	data.Id = types.StringValue(collection.ID.String())
+	data.ID = types.StringValue(collection.ID.String())
+	data.Name = types.StringValue(collection.Name)
 	tflog.Trace(ctx, "read a data source")
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

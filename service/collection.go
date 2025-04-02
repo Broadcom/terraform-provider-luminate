@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
+	"github.com/pkg/errors"
 )
 
 type CollectionAPI struct {
@@ -83,7 +84,11 @@ func (c *CollectionAPI) GetCollectionByName(name string) (*dto.Collection, error
 	}
 	collections, _, err := c.cli.CollectionsApi.ListCollections(context.Background(), &opts)
 	if err != nil {
-		return nil, err
+		var genErr sdk.GenericSwaggerError
+		if errors.As(err, &genErr) {
+			return nil, errors.Wrapf(err, "failed listing collection with name %s with body error: %s", name, string(genErr.Body()))
+		}
+		return nil, errors.Wrapf(err, "failed listing collection with name %s", name)
 	}
 	if collections.NumberOfElements < 1 {
 		return nil, fmt.Errorf("collection with the name %s does not exist", name)
