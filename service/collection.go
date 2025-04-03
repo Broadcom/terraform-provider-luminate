@@ -3,7 +3,10 @@ package service
 import (
 	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
+	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/antihax/optional"
+	"github.com/pkg/errors"
 )
 
 type CollectionAPI struct {
@@ -68,6 +71,29 @@ func (c *CollectionAPI) GetCollection(collectionID string) (*dto.Collection, err
 		return nil, err
 	}
 	collectionDTO, err := dto.ConvertCollectionToDTO(&collection)
+	if err != nil {
+		return nil, err
+	}
+	return collectionDTO, err
+}
+
+// GetCollectionByName get collection by name
+func (c *CollectionAPI) GetCollectionByName(name string) (*dto.Collection, error) {
+	opts := sdk.CollectionsApiListCollectionsOpts{
+		Name: optional.NewString(name),
+	}
+	collections, _, err := c.cli.CollectionsApi.ListCollections(context.Background(), &opts)
+	if err != nil {
+		var genErr sdk.GenericSwaggerError
+		if errors.As(err, &genErr) {
+			return nil, errors.Wrapf(err, "failed listing collection with name %s with body error: %s", name, string(genErr.Body()))
+		}
+		return nil, errors.Wrapf(err, "failed listing collection with name %s", name)
+	}
+	if collections.NumberOfElements < 1 {
+		return nil, fmt.Errorf("collection with the name %s does not exist", name)
+	}
+	collectionDTO, err := dto.ConvertCollectionToDTO(&collections.Content[0])
 	if err != nil {
 		return nil, err
 	}

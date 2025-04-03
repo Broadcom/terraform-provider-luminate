@@ -56,7 +56,9 @@ func (provider *LuminateFrameworkProvider) Configure(ctx context.Context, reques
 }
 
 func (provider *LuminateFrameworkProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return nil
+	return []func() datasource.DataSource{
+		NewLuminateCollectionDataSource(),
+	}
 }
 
 func (provider *LuminateFrameworkProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {

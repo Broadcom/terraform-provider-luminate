@@ -57,6 +57,7 @@
 - [Data Source: luminate_identity_provider](#data-Source: luminate_identity_provider)
 - [Data Source: luminate_user](#data-Source: luminate_user)
 - [Data Source: luminate_group](#data-Source: luminate_group)
+- [Data Source: luminate_collection](#data-Source: luminate_collection)
 - [Data Source: luminate_aws_integration](#data-Source: luminate_aws_integration)
 - [Data Source: luminate_ssh_client](#data-Source: luminate_ssh_client)
 
@@ -1454,6 +1455,32 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **group_ids** - list of retrieved groups ids
+
+Data Source: luminate_collection
+-------------
+
+Use this resource to get an existing collection
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_collection" "my-collection" {
+  name = "my-collection-name"
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) The name of the collection
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - retrieved collection id
 
 Data source: luminate_aws_integration
 ------------
