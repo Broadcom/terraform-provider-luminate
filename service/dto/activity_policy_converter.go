@@ -77,7 +77,8 @@ func FromActivityPolicyDto(activityPolicyDto sdk.PolicyActivity) *ActivityPolicy
 
 func FromPolicyRulesContainers(policyRules []sdk.PolicyRule) []ActivityRule {
 	var activityRules []ActivityRule
-	if policyRules != nil && len(policyRules) > 0 {
+	if policyRules != nil {
+		activityRules = make([]ActivityRule, 0, len(policyRules))
 		for _, policyRule := range policyRules {
 			if policyRule.Conditions != nil && len(policyRule.Conditions) > 0 {
 				ruleConditions := RuleConditions{Arguments: &RuleConditionArguments{}}
@@ -120,7 +121,7 @@ func FromPolicyRulesContainers(policyRules []sdk.PolicyRule) []ActivityRule {
 
 func ToPolicyRulesContainers(activityRules []ActivityRule) []sdk.PolicyRule {
 	var policyRules []sdk.PolicyRule
-	if activityRules != nil && len(activityRules) > 0 {
+	if activityRules != nil {
 		policyRules = make([]sdk.PolicyRule, 0, len(activityRules))
 		for _, activityRule := range activityRules {
 			if activityRule.Conditions == nil || activityRule.Action == "" {
