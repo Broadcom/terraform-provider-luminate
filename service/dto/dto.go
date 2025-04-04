@@ -7,14 +7,34 @@ import (
 )
 
 type Site struct {
-	ID               string
-	Name             string
-	MuteHealth       bool
-	K8SVolume        string
-	Kerberos         *SiteKerberosConfig
-	Connectors       []Connector
-	CountCollections int32
-	Region           string
+	ID                 string
+	Name               string
+	MuteHealth         bool
+	K8SVolume          string
+	Kerberos           *SiteKerberosConfig
+	Connectors         []Connector
+	CountCollections   int32
+	Region             string
+	AuthenticationMode SiteAuthenticationMode
+}
+
+type SiteAuthenticationMode string
+
+const (
+	SiteAuthenticationModeConnector = "connector"
+	SiteAuthenticationModeSite      = "site"
+)
+
+var ValidAuthenticationModes = []string{SiteAuthenticationModeConnector, SiteAuthenticationModeSite}
+
+type SiteRegistrationKeyRotateRequest struct {
+	SiteID            string
+	RevokeImmediately bool
+}
+
+type GeneratedSiteRegistrationKey struct {
+	ID  string
+	Key string
 }
 
 type SiteKerberosConfig struct {
