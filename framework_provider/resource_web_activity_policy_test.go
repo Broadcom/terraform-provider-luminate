@@ -80,6 +80,46 @@ func resourceWebActivityPolicy_enabled(groupName,
 	}`, groupName, rand, rand, rand, userID1, userID2)
 }
 
+func resourceWebActivityPolicy_collection(userID1 string, rand int) string {
+	return fmt.Sprintf(`
+	resource "luminate_site" "new-site-collection" {
+	   name = "tfAccSiteActivityPolicyCollection%d"
+	}
+	resource "luminate_collection" "new-collection" {
+		name = "tfAccCollectionForAppCollection%d"
+	}
+	resource "luminate_collection_site_link" "new-collection-site-link" {
+		site_id = "${luminate_site.new-site-collection.id}"
+		collection_ids = sort(["${luminate_collection.new-collection.id}"])
+	}
+	resource "luminate_web_application" "new-application-collection" {
+	 site_id = "${luminate_site.new-site-collection.id}"
+	 collection_id = "${luminate_collection.new-collection.id}"
+	 name = "tfAccAppActivityPolicyCollection%d"
+	 internal_address = "http://127.0.0.1:8080"
+	 depends_on = [luminate_collection_site_link.new-collection-site-link]
+	}
+	resource "luminate_web_activity_policy" "new-web-activity-policy-collection" {
+		enabled = "true"
+		name =  "resourceWebActivityPolicy_collection%d"
+	 	collection_id = "${luminate_collection.new-collection.id}"
+		identity_provider_id = "local"
+
+		rules = [
+			{
+				action = "BLOCK"
+				conditions = {
+					file_uploaded = true
+				}
+			}
+		]
+
+		user_ids = ["%s"]
+  		applications = ["${luminate_web_application.new-application-collection.id}"]
+	 	depends_on = [luminate_collection_site_link.new-collection-site-link]
+	}`, rand, rand, rand, rand, userID1)
+}
+
 func resourceWebActivityPolicy_disabled(userID1 string, rand int) string {
 	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
@@ -310,6 +350,27 @@ func TestAccLuminateResourceWebActivityPolicyConditionsSpecifiedWithUpdate(t *te
 					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.uri_accessed", "true"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.arguments.uri_list.0", "/admin"),
 					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.arguments.uri_list.1", "/users"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccLuminateResourceWebActivityPolicyWithCollection(t *testing.T) {
+	resourceName := "luminate_web_activity_policy.new-web-activity-policy-collection"
+	userID1, _, _ := getUsersAndGroupsFromEnvVars(t)
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
+		Steps: []resource.TestStep{
+			{
+				Config: resourceWebActivityPolicy_collection(userID1, 100+rand.Intn(100)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestMatchResourceAttr(resourceName, "name", utils.CreateRegExpForNamePrefix("resourceWebActivityPolicy_collection")),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.action", "BLOCK"),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.conditions.file_uploaded", "true"),
 				),
 			},
 		},

@@ -64,6 +64,7 @@ func CreatePolicyBaseSchemaAttributes() map[string]schema.Attribute {
 		},
 		"collection_id": schema.StringAttribute{
 			Description: "Collection ID to which the policy will be assigned",
+			Optional:    true,
 			Computed:    true,
 		},
 		"conditions": schema.SingleNestedAttribute{
