@@ -1083,28 +1083,28 @@ resource "luminate_web_activity_policy" "new-web-activity-policy" {
       symantec_cloudsoc = true
       symantec_web_security_service = false
     }
-    
-    rules = [
-              {
-                action = "BLOCK_USER"
-                conditions = {
-                  uri_accessed = true
-                  http_command = true
-                  arguments = {
-                    uri_list = ["/admin", "/users"]
-                    commands = ["GET", "POST"]
-                  }
-                }
-              },
-              {
-                action = "DISCONNECT_USER"
-                conditions = {
-                  file_uploaded = true
-                  file_downloaded = true
+  }
+  
+  rules = [
+            {
+              action = "BLOCK_USER"
+              conditions = {
+                uri_accessed = true
+                http_command = true
+                arguments = {
+                  uri_list = ["/admin", "/users"]
+                  commands = ["GET", "POST"]
                 }
               }
-            ]
-  }
+            },
+            {
+              action = "DISCONNECT_USER"
+              conditions = {
+                file_uploaded = true
+                file_downloaded = true
+              }
+            }
+         ]
 }
 ```
 #### Argument Reference
@@ -1151,13 +1151,13 @@ The following arguments are supported:
             -   **arguments** (Optional) - The arguments for the enabled
                 conditions, required only if related conditions are enabled
 
-                -   **uri_list** (Optional) - The URI List argument
+                -   **uri_list** (Optional) - The URI List argument, 
                     required for the URI Accessed condition if enabled
                 
-                -   **commands** (Optional) - The Commands argument 
+                -   **commands** (Optional) - The Commands argument, 
                     required for the HTTP Command condition if enabled
                 
-                
+
 -   **conditions** - (Optional)
 
     -   **location** - (Optional) - location based condition, specify
@@ -1190,7 +1190,7 @@ In addition to arguments above, the following attributes are exported:
 #### Import
 
 ```
-$ terraform import luminate_web_access_policy.new-web-access-policy  policy_id
+$ terraform import luminate_web_activity_policy.new-web-activity-policy  policy_id
 ```
 
 Collection resources
