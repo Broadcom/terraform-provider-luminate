@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -15,6 +16,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"strings"
 )
+
+// Ensure provider resource satisfies framework interfaces.
+var _ resource.Resource = &WebActivityPolicyResource{}
+var _ resource.ResourceWithImportState = &WebActivityPolicyResource{}
 
 func NewWebActivityPolicyResource() resource.Resource {
 	return &WebActivityPolicyResource{}
@@ -31,6 +36,10 @@ type WebActivityPolicyResourceModel struct {
 
 func (w *WebActivityPolicyResource) Metadata(ctx context.Context, request resource.MetadataRequest, response *resource.MetadataResponse) {
 	response.TypeName = request.ProviderTypeName + "_web_activity_policy"
+}
+
+func (r *WebActivityPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
 func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource.SchemaRequest, response *resource.SchemaResponse) {
