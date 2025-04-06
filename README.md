@@ -1067,7 +1067,7 @@ Provides Secure access cloud HTTP activity policy
 
 ```
 resource "luminate_web_activity_policy" "new-web-activity-policy" {
-  name =  "my-web-access-policy"
+  name =  "my-web-activity-policy"
 
   identity_provider_id = "identity_provider_id"
   user_ids = ["user1_id", "user2_id"]
@@ -1166,19 +1166,19 @@ The following arguments are supported:
         the allowed CIDR for this policy.
 
     -   **managed_device** - (Optional) Indicate whatever to restrict
-        access to managed devices only
+        policy to managed devices only
 
         -   **opswat** - (Optional) Indicate whatever to restrict
-            access to Opswat MetaAccess
+            policy to Opswat MetaAccess
 
         -   **symantec_cloudsoc** - (Optional) Indicate whatever to
-            restrict access to symantec cloudsoc
+            restrict policy to symantec cloudsoc
 
         -   **symantec_web_security_service** - (Optional) Indicate
-            whatever to restrict access to symantec web security service
+            whatever to restrict policy to symantec web security service
 
     -   **unmanaged_device** - (Optional) Indicate whatever to
-        restrict access to unmanaged devices only
+        restrict policy to unmanaged devices only
 
 #### Attribute Reference
 
