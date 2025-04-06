@@ -38,6 +38,7 @@
 - [Resource: luminate_ssh_access_policy](#resource-luminate_ssh_access_policy)
 - [Resource: luminate_web_access_policy](#resource-luminate_web_access_policy)
 - [Resource: luminate_tcp_access_policy](#resource-luminate_tcp_access_policy)
+- [Resource: luminate_web_activity_policy](#resource-luminate_web_activity_policy)
 
 [Collection resources](#collection-resources)
 - [Resource: luminate_collection](#resource-luminate_collection)
@@ -893,7 +894,7 @@ $ terraform import luminate_ssh_access_policy.new-ssh-access-policy  policy_id
 Re­­­source: luminate_web_access_policy
 ---------
 
-Provides Secure access cloud SSH access policy
+Provides Secure access cloud HTTP access policy
 
 ­­­
 
@@ -941,10 +942,7 @@ The following arguments are supported:
 
 -   **applications** - (Required) The applications to which this policy
     applies.
-
--   **accounts** - (Required) SSH/Unix accounts with which IDP entities
-    and/or Luminate local users can access the SSH Server
-
+- 
 -   **validators** - (Optional)
 
     -   **mfa** - (Optional) Specifies whether to carry out mfa (multi-factor authentication) validation.
@@ -1056,6 +1054,143 @@ In addition to arguments above, the following attributes are exported:
 
 ```
 $ terraform import luminate_tcp_access_policy.new-tcp-access-policy  policy_id
+```
+
+Re­­­source: luminate_web_activity_policy
+---------
+
+Provides Secure access cloud HTTP activity policy
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_web_activity_policy" "new-web-activity-policy" {
+  name =  "my-web-access-policy"
+
+  identity_provider_id = "identity_provider_id"
+  user_ids = ["user1_id", "user2_id"]
+  group_ids = ["group1_id", "group2_id"]
+
+  applications = ["application1_id","application2_id"]
+  
+  conditions = {
+    source_ip = ["127.0.0.1/24", "1.1.1.1/16", "8.8.8.8/24"]
+    location = ["Wallis and Futuna"]
+
+    managed_device = {
+      symantec_cloudsoc = true
+      symantec_web_security_service = false
+    }
+    
+    rules = [
+              {
+                action = "BLOCK_USER"
+                conditions = {
+                  uri_accessed = true
+                  http_command = true
+                  arguments = {
+                    uri_list = ["/admin", "/users"]
+                    commands = ["GET", "POST"]
+                  }
+                }
+              },
+              {
+                action = "DISCONNECT_USER"
+                conditions = {
+                  file_uploaded = true
+                  file_downloaded = true
+                }
+              }
+            ]
+  }
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the policy
+
+-   **enabled -** (Optional) Indicates whether this policy is enabled.
+
+-   **identity_provider_id -** (Optional) The identity provider id
+
+-   **user_ids -** (Optional) The user entities to which this policy
+    applies.
+
+-   **group_ids -** (Optional) The group entities to which this policy
+    applies.
+
+-   **applications** - (Required) The applications to which this policy
+    applies.
+
+-   **rules** - (Required) The constraints on the actions to perform
+    upon user web activity (array of nested rule objects)
+
+    -   **rule** - Activity rule object
+
+        -   **action** (Required) - The action to apply, allowed values: 
+            "BLOCK", "BLOCK_USER", "DISCONNECT_USER"
+        
+        -   **conditions** (Required) - The conditions to apply the action
+
+            -   **file_downloaded** (Optional) Indicate whether File 
+                Downloaded condition is enabled
+            
+            -   **file_uploaded** (Optional) Indicate whether File
+                Uploaded condition is enabled
+
+            -   **uri_accessed** (Optional) Indicate whether URI Access
+                condition is enabled, requires the URI List argument
+
+            -   **http_command** (Optional) Indicate whether HTTP Command
+                condition is enabled, requires the Commands argument
+
+            -   **arguments** (Optional) - The arguments for the enabled
+                conditions, required only if related conditions are enabled
+
+                -   **uri_list** (Optional) - The URI List argument
+                    required for the URI Accessed condition if enabled
+                
+                -   **commands** (Optional) - The Commands argument 
+                    required for the HTTP Command condition if enabled
+                
+                
+-   **conditions** - (Optional)
+
+    -   **location** - (Optional) - location based condition, specify
+        the list of accepted locations.
+
+    -   **source_ip** - (Optional) - source ip based condition, specify
+        the allowed CIDR for this policy.
+
+    -   **managed_device** - (Optional) Indicate whatever to restrict
+        access to managed devices only
+
+        -   **opswat** - (Optional) Indicate whatever to restrict
+            access to Opswat MetaAccess
+
+        -   **symantec_cloudsoc** - (Optional) Indicate whatever to
+            restrict access to symantec cloudsoc
+
+        -   **symantec_web_security_service** - (Optional) Indicate
+            whatever to restrict access to symantec web security service
+
+    -   **unmanaged_device** - (Optional) Indicate whatever to
+        restrict access to unmanaged devices only
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the policy
+
+#### Import
+
+```
+$ terraform import luminate_web_access_policy.new-web-access-policy  policy_id
 ```
 
 Collection resources
