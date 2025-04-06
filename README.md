@@ -1080,7 +1080,6 @@ resource "luminate_web_activity_policy" "new-web-activity-policy" {
     location = ["Wallis and Futuna"]
 
     managed_device = {
-      symantec_cloudsoc = true
       symantec_web_security_service = false
     }
   }
