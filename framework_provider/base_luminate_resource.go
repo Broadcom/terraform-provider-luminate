@@ -1,6 +1,7 @@
 package framework_provider
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
@@ -11,7 +12,7 @@ type BaseLuminateResource struct {
 	client *service.LuminateService
 }
 
-func (r *BaseLuminateResource) Configure(_, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
+func (r *BaseLuminateResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
 	if request.ProviderData == nil {
 		return
 	}
