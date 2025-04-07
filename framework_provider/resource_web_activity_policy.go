@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -47,6 +48,9 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 
 	policyAttributes["rules"] = schema.ListNestedAttribute{
 		Required: true,
+		Validators: []validator.List{
+			listvalidator.SizeAtLeast(1),
+		},
 		NestedObject: schema.NestedAttributeObject{
 			Attributes: map[string]schema.Attribute{
 				"action": schema.StringAttribute{
