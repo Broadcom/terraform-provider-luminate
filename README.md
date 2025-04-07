@@ -16,6 +16,7 @@
 #### Documentation
 
 [Basic configuration and usage](#basic-configuration-and-usage)
+- [Terraform Requirements](#terraform-requirements)
 - [Provider configuration](#provider-configuration)
 - [API Endpoint](#api-endpoint)
 - [Authentication](#authentication)
@@ -61,12 +62,24 @@
 - [Data Source: luminate_aws_integration](#data-Source: luminate_aws_integration)
 - [Data Source: luminate_ssh_client](#data-Source: luminate_ssh_client)
 
-
 Basic configuration and usage
 ==========
 
 Broadcom secure access cloud terraform provider is used to create and
 manage resources supported by Secure access cloud platform.
+
+
+Terraform Requirements
+-----------
+
+The provider uses [Terraform Protocol Version 6](https://developer.hashicorp.com/terraform/plugin/terraform-plugin-protocol#protocol-version-6)
+
+and uses the tf5to6server package to translate from Protocol Version 5 to 6
+([Package Compatibility](https://developer.hashicorp.com/terraform/plugin/mux/translating-protocol-version-5-to-6#compatibility))
+
+Therefore, in order to work with the provider starting from release 1.2.0,
+
+it requires Terraform CLI version 1.1.5 and later.
 
 Provider configuration
 -----------
