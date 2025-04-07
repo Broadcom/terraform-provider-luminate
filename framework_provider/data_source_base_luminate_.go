@@ -1,17 +1,18 @@
 package framework_provider
 
 import (
+	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-type BaseLuminateResource struct {
+type BaseLuminateDataSource struct {
 	client *service.LuminateService
 }
 
-func (r *BaseLuminateResource) Configure(_, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
+func (r *BaseLuminateDataSource) Configure(ctx context.Context, request datasource.ConfigureRequest, response *datasource.ConfigureResponse) {
 	if request.ProviderData == nil {
 		return
 	}
