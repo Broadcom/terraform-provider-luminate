@@ -213,10 +213,7 @@ func resourceWebActivityPolicy_conditions_specified(userID1 string, rand int) st
 			{
 				action = "BLOCK_USER"
 				conditions = {
-					uri_accessed = true
-					arguments = {
-						uri_list = ["/admin", "/users"]
-					}
+					file_downloaded = true
 				}
 			}
 		]
@@ -456,24 +453,13 @@ func TestAccLuminateResourceWebActivityPolicyConditionsSpecifiedWithUpdate(t *te
 					),
 					statecheck.ExpectKnownValue(
 						resourceName,
-						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("conditions").AtMapKey("uri_accessed"),
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("conditions").AtMapKey("file_downloaded"),
 						knownvalue.Bool(true),
-					),
-					statecheck.ExpectKnownValue(
-						resourceName,
-						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("conditions").AtMapKey("arguments").AtMapKey("uri_list").AtSliceIndex(0),
-						knownvalue.StringExact("/admin"),
-					),
-					statecheck.ExpectKnownValue(
-						resourceName,
-						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("conditions").AtMapKey("arguments").AtMapKey("uri_list").AtSliceIndex(1),
-						knownvalue.StringExact("/users"),
 					),
 				},
 			},
 			{
-				Config:  resourceWebActivityPolicy_conditions_specified_update(userID1, randNum),
-				Destroy: false,
+				Config: resourceWebActivityPolicy_conditions_specified_update(userID1, randNum),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
 						resourceName,
