@@ -16,6 +16,7 @@
 #### Documentation
 
 [Basic configuration and usage](#basic-configuration-and-usage)
+- [Terraform Requirements](#terraform-requirements)
 - [Provider configuration](#provider-configuration)
 - [API Endpoint](#api-endpoint)
 - [Authentication](#authentication)
