@@ -1126,7 +1126,7 @@ The following arguments are supported:
     applies.
 
 -   **rules** - (Required) The constraints on the actions to perform
-    upon user web activity (array of nested rule objects)
+    upon user web activity (non-empty array of nested rule objects)
 
     -   **rule** - Activity rule object
 
