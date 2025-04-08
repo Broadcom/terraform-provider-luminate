@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/pkg/errors"
 	"strings"
 )
 
@@ -140,9 +141,9 @@ func (w *WebActivityPolicyResource) Create(ctx context.Context, request resource
 		return
 	}
 
-	diags = w.enrichDirectoryEntities(policy)
-	if diags.HasError() {
-		response.Diagnostics.Append(diags...)
+	err := w.enrichDirectoryEntities(policy)
+	if err != nil {
+		response.Diagnostics.AddError("Service error", fmt.Sprintf("Could not enrich policy directory entities, got error: %s\"", err))
 		return
 	}
 
@@ -224,9 +225,9 @@ func (w *WebActivityPolicyResource) Update(ctx context.Context, request resource
 		return
 	}
 
-	diags = w.enrichDirectoryEntities(policy)
-	if diags.HasError() {
-		response.Diagnostics.Append(diags...)
+	err := w.enrichDirectoryEntities(policy)
+	if err != nil {
+		response.Diagnostics.AddError("Service error", fmt.Sprintf("Could not enrich policy directory entities, got error: %s\"", err))
 		return
 	}
 
@@ -290,13 +291,11 @@ func (w *WebActivityPolicyResource) readWebActivityPolicy(ctx context.Context, p
 	return model, nil
 }
 
-func (w *WebActivityPolicyResource) enrichDirectoryEntities(policy *dto.ActivityPolicy) diag.Diagnostics {
-	var diags diag.Diagnostics
+func (w *WebActivityPolicyResource) enrichDirectoryEntities(policy *dto.ActivityPolicy) error {
 	for i := range policy.DirectoryEntities {
 		resolvedIdentityProviderType, err := w.client.IdentityProviders.GetIdentityProviderTypeById(policy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			diags.AddError("Client Error", fmt.Sprintf("Failed to lookup identity provider type for identity provider id %s, got error: %s", policy.DirectoryEntities[i].IdentityProviderId, err))
-			return diags
+			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s, got error: %s", policy.DirectoryEntities[i].IdentityProviderId)
 		}
 		policy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 
@@ -308,17 +307,16 @@ func (w *WebActivityPolicyResource) enrichDirectoryEntities(policy *dto.Activity
 		case "group":
 			resolvedDisplayName, err = w.client.IdentityProviders.GetGroupDisplayNameTypeById(policy.DirectoryEntities[i].IdentityProviderId, policy.DirectoryEntities[i].IdentifierInProvider)
 		default:
-			diags.AddError("Client Error", fmt.Sprintf("Failed to lookup displayName - unknown entity type \"%s\"", policy.DirectoryEntities[i].EntityType))
-			return diags
+			return errors.New(fmt.Sprintf("Failed to lookup displayName - unknown entity type \"%s\"", policy.DirectoryEntities[i].EntityType))
 		}
 
 		if err != nil {
-			diags.AddError("Client Error", fmt.Sprintf("Failed to lookup displayName for entity type %s with identifier id %s on Identity Provider ID %s", policy.DirectoryEntities[i].EntityType, policy.DirectoryEntities[i].IdentifierInProvider, policy.DirectoryEntities[i].IdentityProviderId))
-			return diags
+			return errors.Wrapf(err, "Failed to lookup displayName for entity type %s with identifier id %s on Identity Provider ID %s",
+				policy.DirectoryEntities[i].EntityType, policy.DirectoryEntities[i].IdentifierInProvider, policy.DirectoryEntities[i].IdentityProviderId)
 		}
 		policy.DirectoryEntities[i].DisplayName = resolvedDisplayName
 	}
-	return diags
+	return nil
 }
 
 func extractActivityPolicyDTO(ctx context.Context, webActivityModel *WebActivityPolicyResourceModel) (*dto.ActivityPolicy, diag.Diagnostics) {
