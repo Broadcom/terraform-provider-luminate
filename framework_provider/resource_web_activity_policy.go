@@ -295,7 +295,7 @@ func (w *WebActivityPolicyResource) enrichDirectoryEntities(policy *dto.Activity
 	for i := range policy.DirectoryEntities {
 		resolvedIdentityProviderType, err := w.client.IdentityProviders.GetIdentityProviderTypeById(policy.DirectoryEntities[i].IdentityProviderId)
 		if err != nil {
-			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider id %s, got error: %s", policy.DirectoryEntities[i].IdentityProviderId)
+			return errors.Wrapf(err, "Failed to lookup identity provider type for identity provider ID %s", policy.DirectoryEntities[i].IdentityProviderId)
 		}
 		policy.DirectoryEntities[i].IdentityProviderType = dto.ConvertIdentityProviderTypeToString(resolvedIdentityProviderType)
 
