@@ -64,13 +64,14 @@ func (provider *LuminateFrameworkProvider) DataSources(ctx context.Context) []fu
 
 func (provider *LuminateFrameworkProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
 	return []func() ephemeral.EphemeralResource{
-		NewSiteRegistrationKeyEphemeralResource(),
+		NewSiteRegistrationKeyEphemeralResource,
 	}
 }
 
 func (provider *LuminateFrameworkProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewWebActivityPolicyResource,
+		NewSiteRegistrationKeyVersionResource,
 	}
 }
 

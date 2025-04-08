@@ -15,15 +15,13 @@ type SiteRegistrationKeyEphemeralResource struct {
 type SiteRegistrationKeyEphemeralResourceModel struct {
 	ID                          types.String `tfsdk:"id"`
 	SiteID                      types.String `tfsdk:"site_id"`
-	Token                       types.String `tfsdk:"token"`
+	VersionID                   types.Int64  `tfsdk:"version_id"`
 	RevokeExistingKeyImminently types.Bool   `tfsdk:"revoke_existing_key_immediately"`
-	Rotate                      types.Bool   `tfsdk:"rotate"`
+	Token                       types.String `tfsdk:"token"`
 }
 
-func NewSiteRegistrationKeyEphemeralResource() func() ephemeral.EphemeralResource {
-	return func() ephemeral.EphemeralResource {
-		return &SiteRegistrationKeyEphemeralResource{}
-	}
+func NewSiteRegistrationKeyEphemeralResource() ephemeral.EphemeralResource {
+	return &SiteRegistrationKeyEphemeralResource{}
 }
 
 func (r *SiteRegistrationKeyEphemeralResource) Metadata(ctx context.Context, request ephemeral.MetadataRequest, response *ephemeral.MetadataResponse) {
@@ -41,6 +39,10 @@ func (r *SiteRegistrationKeyEphemeralResource) Schema(ctx context.Context, reque
 				Required:    true,
 				Description: "The site ID we want to associate with this registration key",
 			},
+			"version_id": schema.Int64Attribute{
+				Required:    true,
+				Description: "The version number of the site registration key used by external secrets",
+			},
 			"revoke_existing_key_immediately": schema.BoolAttribute{
 				Required:    true,
 				Description: "A field to state if the existing registration key should be revoked immediately or be given a 72 hours expiration time",
@@ -49,10 +51,6 @@ func (r *SiteRegistrationKeyEphemeralResource) Schema(ctx context.Context, reque
 				Computed:    true,
 				Sensitive:   true,
 				Description: "The secret key that can be used in order to create Connectors",
-			},
-			"rotate": schema.BoolAttribute{
-				Required:    true,
-				Description: "A boolean to decide if a rotation should happened",
 			},
 		},
 	}
@@ -63,12 +61,6 @@ func (r *SiteRegistrationKeyEphemeralResource) Open(ctx context.Context, request
 
 	response.Diagnostics.Append(request.Config.Get(ctx, &data)...)
 	if response.Diagnostics.HasError() {
-		return
-	}
-
-	if !data.Rotate.ValueBool() {
-		data.Token = types.StringValue("")
-		response.Diagnostics.Append(response.Result.Set(ctx, &data)...)
 		return
 	}
 
