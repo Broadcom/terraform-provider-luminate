@@ -202,7 +202,7 @@ func (w *WebActivityPolicyResource) Read(ctx context.Context, request resource.R
 
 	// if remove from state if it does not exist
 	if model == nil {
-		response.Diagnostics.AddWarning("Service Warning", "Web activity policy does not exist, removing from state")
+		tflog.Trace(ctx, "Web activity policy does not exist, removing from state")
 		response.State.RemoveResource(ctx)
 		return
 	}
@@ -294,7 +294,7 @@ func (w *WebActivityPolicyResource) readWebActivityPolicy(ctx context.Context, p
 	}
 
 	if activityPolicy == nil {
-		diags.AddWarning("Service Warning", "Web activity policy could not be retrieved")
+		tflog.Trace(ctx, "Web activity policy could not be retrieved")
 		return nil, diags
 	}
 
