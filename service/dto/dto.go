@@ -132,8 +132,9 @@ type Conditions struct {
 }
 
 type ActivityRule struct {
-	Action     string
-	Conditions *RuleConditions
+	Action             string
+	Conditions         *RuleConditions
+	IsolationProfileID string
 }
 
 type RuleConditions struct {
@@ -154,6 +155,8 @@ const (
 	SharedIpListUuid = "SHARED_IP_LIST"
 	CountriesUuid    = "COUNTRIES"
 	Authentication   = "AUTHENTICATION"
+	OpswatGroups     = "OPSWAT_GROUPS"
+	IsolationProfile = "ISOLATION_PROFILE"
 )
 
 const (
@@ -187,6 +190,7 @@ const (
 	BlockAction          = "BLOCK"
 	BlockUserAction      = "BLOCK_USER"
 	DisconnectUserAction = "DISCONNECT_USER"
+	WebIsolationAction   = "WEB_ISOLATION"
 )
 
 type Policy struct {
@@ -213,7 +217,8 @@ type AccessPolicy struct {
 type ActivityPolicy struct {
 	Policy
 	//ACTIVITY
-	ActivityRules []ActivityRule
+	ActivityRules   []ActivityRule
+	EnableIsolation bool
 }
 
 type DirectoryEntity struct {
@@ -394,4 +399,17 @@ func ConvertDnsServerTODTO(dto sdk.DnsServerOutput) *DNSServerOutputDTO {
 		CreatedAt:       dto.CreatedAt,
 		UpdatedAt:       dto.UpdatedAt,
 	}
+}
+
+type SharedObjectDTO struct {
+	ID        string
+	Name      string
+	Type      string
+	Values    []interface{}
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type SharedObjectValue struct {
+	Value interface{}
 }

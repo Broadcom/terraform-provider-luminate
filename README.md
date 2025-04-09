@@ -1132,7 +1132,7 @@ The following arguments are supported:
     -   **rule** - Activity rule object
 
         -   **action** (Required) - The action to apply, allowed values: 
-            "BLOCK", "BLOCK_USER", "DISCONNECT_USER"
+            "BLOCK", "BLOCK_USER", "DISCONNECT_USER", "WEB_ISOLATION"
         
         -   **conditions** (Required) - The conditions to apply the action
 
@@ -1615,6 +1615,36 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **id** - retrieved collection id
+
+Data Source: luminate_shared_object
+-------------
+
+Use this resource to get an existing shared object
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_shared_object" "my-shared_object" {
+  name = "my-shared-object"
+  type = "IP_LIST"
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) The name of the shared object
+
+-   **type -** (Required) The type of the shared object 
+    supported types: "IP_LIST", "OPSWAT_GROUPS", "ISOLATION_PROFILE"
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - retrieved shared object id
 
 Data source: luminate_aws_integration
 ------------
