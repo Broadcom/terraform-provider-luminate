@@ -1749,6 +1749,10 @@ The following arguments are supported:
 Emphemeral resources
 ==========
 
+**NOTE:**
+
+    Ephemeral resources require Terraform CLI versions > 1.10
+
 Emphemeral Resource: luminate_site_registration_key
 -----------
 Provides secure access cloud site registration key ephemeral resource
@@ -1758,10 +1762,8 @@ Read more [here](https://api.luminate.io/#tag/Site-Registration-Keys)
 
 **NOTE:**
 
-    1. Ephemeral resources require Terraform CLI versions > 1.10
-
-    2. The `version` field should reference `version` field from a `luminate_site_registration_key_version` resource.
-       This is required in order to prevent token generation during "Plan" phase.
+    The `version` field should reference `version` field from a `luminate_site_registration_key_version` resource.
+    This is required in order to prevent token generation during "Plan" phase.
 
 
 #### Argument Reference
