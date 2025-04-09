@@ -28,7 +28,12 @@ func (api *SharedObjectAPI) ListSharedObjects(sort string, size float64, page fl
 	}
 	sharedObjectsPage, _, err := api.cli.SharedObjectsApi.ListSharedObjects(context.Background(), options)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to list shared objects")
+		var genErr sdk.GenericSwaggerError
+		if errors.As(err, &genErr) {
+			return nil, errors.Wrapf(err, "failed listing shared objects with filter %s and type %s with body error: %s",
+				filter, objectType, string(genErr.Body()))
+		}
+		return nil, errors.Wrapf(err, "failed listing shared objects with filter %s and type %s", filter, objectType)
 	}
 
 	sharedObjects := make([]dto.SharedObjectDTO, 0, len(sharedObjectsPage.Content))
