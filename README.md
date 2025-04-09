@@ -88,7 +88,9 @@ and uses the tf5to6server package to translate from Protocol Version 5 to 6
 
 Therefore, in order to work with the provider starting from release 1.2.0,
 
-it requires Terraform CLI version 1.1.5 and later.
+it requires Terraform CLI version 1.1.5 or later.
+
+In order to use any of the [Emphemeral Resources](#emphemeral-resources), Terraform CLI version 1.11 or later is required.
 
 Provider configuration
 -----------
@@ -1858,37 +1860,29 @@ Provides secure access cloud site registration key ephemeral resource
     1. Ephemeral resources can be used only for Terraform versions > 1.10
 
     2. The key generation logic can be run during "terraform plan",
-       in order to avoid this and prevent changes to the state during plan mode,
-       we recommend using a terrafrom variable with default value `false` that will be used by the `rotate` field.
-       For the following example when you wish you to rotate a site registration key, you can simply run:
-       `terraform apply -var="rotate=true"`
+       in order to avoid this and prevent changes to the backend system during plan phase,
+       we added a `version_id` that should always get an "unknown" value during plan phase,
+       this can be done by using the `luminate_site_registration_key_version` resource.
 
 #### Example Usage
 
 ```
-terraform apply -var="rotate=true"
-```
-
-```
-variable "rotate" {
-  description = "Enable service account access token generation"
-  type        = bool
-  default     = false
+resource "luminate_site_registration_key_version" "new_site_registration_key_version" {
 }
 
 ephemeral "luminate_site_registration_key" "new_site_registration_key" {
   site_id = luminate_site.new-site.id
+  version_id = luminate_site_registration_key_version.new_site_registration_key_version.version
   revoke_existing_key_immediately = true
-  rotate = var.rotate
 }
 ```
 #### Argument Reference
 
 The following arguments are supported:
 
-- **rotate** (boolean) (Required) Choose if we want to perform a rotation
-
 - **site_id** (String) (Required) The ID of the site
+
+- **version_id** (Int64) (Required) This should always be a value unknown during "Plan" phase (We use `luminate_site_registration_key_version` to achieve this)
 
 - **revoke_existing_key_immediately** (boolean) (Required) Choose if we want to revoke existing keys immediately
 
@@ -1896,7 +1890,7 @@ The following arguments are supported:
 
 In addition to arguments above, the following attributes are exported:
 
-- **token** - The token can be used during the terraform run only in other resources' fields that are marked as "write-only"
+- **token** - The token can be used during the terraform run only in other resources' fields that are not saved to state (such as "write-only" or fields in other ephemeral resources)
 
 **NOTE:** write-only fields can be used only for Terraform versions > 1.11
 
@@ -1916,7 +1910,7 @@ resource "kubernetes_secret" "example" {
 
   data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
 
-  data_wo_revision = 2 # This should be increased manually in order for to the token to be saved
+  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
 }
 ```
 
@@ -1936,7 +1930,7 @@ resource "aws_secretsmanager_secret" "example_secret" {
 resource "aws_secretsmanager_secret_version" "example_version" {
   secret_id     = aws_secretsmanager_secret.example_secret.id
   secret_string_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
-  secret_string_wo_version = 2 # This should be increased manually in order for to the token to be saved
+  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
 }
 ```
 
@@ -1957,7 +1951,7 @@ resource "google_secret_manager_secret" "example_secret" {
 resource "google_secret_manager_secret_version" "secret-version-basic-write-only" {
   secret = google_secret_manager_secret.example_secret.id
   secret_data_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
-  secret_data_wo_version = 2 # This should be increased manually in order for to the token to be saved
+  secret_data_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
 }
 ```
 
