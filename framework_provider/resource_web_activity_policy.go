@@ -34,6 +34,7 @@ type WebActivityPolicyResource struct {
 type WebActivityPolicyResourceModel struct {
 	BasePolicyResourceModel
 	EnableIsolation types.Bool `tfsdk:"enable_isolation"`
+	EnableWhiteList types.Bool `tfsdk:"enable_whitelist"`
 	Rules           types.List `tfsdk:"rules"`
 }
 
@@ -55,6 +56,13 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 		Description: "Indicates whether Web isolation is enabled in this activity policy",
 	}
 
+	policyAttributes["enable_whitelist"] = schema.BoolAttribute{
+		Optional:    true,
+		Computed:    true,
+		Default:     booldefault.StaticBool(false),
+		Description: "Indicates whether Whitelist for Allow Rules is enabled in this activity policy",
+	}
+
 	policyAttributes["rules"] = schema.ListNestedAttribute{
 		Required: true,
 		Validators: []validator.List{
@@ -67,10 +75,12 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 					Description: "the action to apply for this rule condition.",
 					Validators: []validator.String{
 						stringvalidator.OneOf(
+							dto.AllowAction,
 							dto.BlockAction,
 							dto.BlockUserAction,
 							dto.DisconnectUserAction,
 							dto.WebIsolationAction,
+							dto.DLPCloudDetectionAction,
 						),
 					},
 				},
@@ -127,6 +137,11 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 					Optional:    true,
 					Computed:    true,
 					Description: "the web isolation profile to apply for this rule if web isolation action is selected.",
+				},
+				"dlp_filter_id": schema.StringAttribute{
+					Optional:    true,
+					Computed:    true,
+					Description: "the DLP application detection ID, must be provided with a selected CDS action (DLP Cloud Detector).",
 				},
 			},
 		},
@@ -348,6 +363,7 @@ func extractActivityPolicyDTO(ctx context.Context, webActivityModel *WebActivity
 		Policy:          *policy,
 		ActivityRules:   activityRules,
 		EnableIsolation: webActivityModel.EnableIsolation.ValueBool(),
+		EnableWhiteList: webActivityModel.EnableWhiteList.ValueBool(),
 	}
 	return webActivityPolicy, nil
 }
@@ -367,6 +383,7 @@ func extractActivityPolicyModel(ctx context.Context, activityPolicy *dto.Activit
 		BasePolicyResourceModel: *policyModel,
 		Rules:                   activityPolicyModelRules,
 		EnableIsolation:         types.BoolValue(activityPolicy.EnableIsolation),
+		EnableWhiteList:         types.BoolValue(activityPolicy.EnableWhiteList),
 	}
 	return webActivityPolicyModel, nil
 }
@@ -401,6 +418,12 @@ func extractActivityRules(ctx context.Context, webActivityModel *WebActivityPoli
 			isolationProfileID = isolationProfileIdValue.(types.String).ValueString()
 		}
 
+		var dlpFilterID string
+		dlpFilterIdValue, ok := rule.Attributes()["dlp_filter_id"]
+		if ok && !dlpFilterIdValue.IsNull() && !dlpFilterIdValue.IsUnknown() {
+			dlpFilterID = dlpFilterIdValue.(types.String).ValueString()
+		}
+
 		conditions, diagnostics := extractRuleConditions(ctx, rule)
 		if diagnostics != nil && diagnostics.HasError() {
 			return nil, diagnostics
@@ -410,6 +433,7 @@ func extractActivityRules(ctx context.Context, webActivityModel *WebActivityPoli
 			Action:             action,
 			Conditions:         conditions,
 			IsolationProfileID: isolationProfileID,
+			DLPFilterID:        dlpFilterID,
 		}
 		activityRules = append(activityRules, activityRule)
 	}
@@ -511,8 +535,8 @@ func flattenActivityRule(ctx context.Context, activityRule dto.ActivityRule) (ty
 	ruleAttributes := make(map[string]attr.Value)
 
 	ruleAttributes["action"] = types.StringValue(activityRule.Action)
-
 	ruleAttributes["isolation_profile_id"] = types.StringValue(activityRule.IsolationProfileID)
+	ruleAttributes["dlp_filter_id"] = types.StringValue(activityRule.DLPFilterID)
 
 	conditions, conditionsDiags := flattenRuleConditions(ctx, activityRule.Conditions)
 	if conditionsDiags.HasError() {
@@ -583,6 +607,7 @@ func activityRuleAttributeTypes() map[string]attr.Type {
 	return map[string]attr.Type{
 		"action":               types.StringType,
 		"isolation_profile_id": types.StringType,
+		"dlp_filter_id":        types.StringType,
 		"conditions":           types.ObjectType{AttrTypes: ruleConditionsAttributeTypes()},
 	}
 }

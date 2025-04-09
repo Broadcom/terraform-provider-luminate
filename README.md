@@ -51,6 +51,10 @@
 [Identities resources](#identities-resources)
 - [Resource: luminate_group_user](#resource-luminate_group_user)
 
+[Integration resources](#integration-resources)
+- [Resource: luminate_aws_integration](#resource-luminate_aws_integration)
+- [Resource: luminate_aws_integration_bind](#resource-luminate_aws_integration_bind)
+
 [Dns Resiliency resources](#DNS-Resiliency-resources)
 - [Resource: luminate_dns_group_resiliency](#resource-luminate_dns_group_resiliency)
 - [Resource: luminate_dns_server_resiliency](#resource-luminate_dns_server_resiliency)
@@ -1140,14 +1144,31 @@ The following arguments are supported:
 -   **applications** - (Required) The applications to which this policy
     applies.
 
+-   **enable_isolation -** (Optional) Indicates whether web isolation 
+    is enabled in this policy. 
+    Required for using "WEB_ISOLATION" rule action.
+
+-   **enable_whitelist -** (Optional) Indicates whether Allow rules
+    whitelist is enabled in this policy. 
+    Required for using "ALLOW" rule action.
+
 -   **rules** - (Required) The constraints on the actions to perform
     upon user web activity (non-empty list of nested rule objects)
 
     -   **rule** - Activity rule object
 
         -   **action** (Required) - The action to apply, allowed values: 
-            "BLOCK", "BLOCK_USER", "DISCONNECT_USER", "WEB_ISOLATION"
-        
+            "ALLOW", "BLOCK", "BLOCK_USER", "DISCONNECT_USER", 
+            "WEB_ISOLATION", "CDS"
+
+        -   **isolation_profile_id** (Optional) - The web isolation profile 
+            ID to apply, required with "WEB_ISOLATION" action if selected.
+            The isolation profile shared object could be retrieved using 
+            luminate_shared_object data source with type "ISOLATION_PROFILE"
+
+        -   **dlp_filter_id** (Optional) - The DLP application detection ID.
+            Required for using "CDS" action ID (DLP Cloud Detector)
+
         -   **conditions** (Required) - The conditions to apply the action
 
             -   **file_downloaded** (Optional) Indicate whether File 
@@ -1393,12 +1414,10 @@ In addition to arguments above, the following attributes are exported:
 -   **aws_external_id -** the integration AWS external ID
 
 
-# Integration Bind resource
-
-Resource: luminate_aws_integration
+Resource: luminate_aws_integration_bind
 ----------
 
-Provides secure access cloud aws_integration resource
+Provides secure access cloud aws_integration_bind resource
 
 ­
 #### Example Usage
@@ -1482,39 +1501,6 @@ The following arguments are supported:
 -   **luminate_aws_account_id -** (Required) luminate AWS account ID
 -   **aws_external_id -** (Required) integration AWS external ID 
 -   **regions -** (Required) regions to add
-
-Re­­­source: luminate_DNS_server
-------------
-
-Provides secure access cloud DNS server
-
-#### Example Usage
-```
-resource "luminate_site" "new-site" {
-	name = "tfAccSite"
-}
-resource "luminate_dns_server" "new-dns" {
-	site_id = "${luminate_site.new-site.id}"
-	name = "testDNS"
-	internal_address = "udp://10.0.0.1:53"
-	dns_settings {
-		domain_suffixes = ["company.com"]
-	}
-}
-```
-
-#### Argument Reference
-
-The following arguments are supported:
-
--   **name -** (Required) name of the connector
-
--   **site_id -** (Required) site id to attach the connector
-
--   **internal_address** - (Required) Internal address of the
-    application, accessible by connector
--   **dns_settings** [domain_suffixes] - (Required) The domain suffix
-
 
 # DNS Resiliency resources
 

@@ -135,6 +135,7 @@ type ActivityRule struct {
 	Action             string
 	Conditions         *RuleConditions
 	IsolationProfileID string
+	DLPFilterID        string
 }
 
 type RuleConditions struct {
@@ -187,10 +188,12 @@ const (
 )
 
 const (
-	BlockAction          = "BLOCK"
-	BlockUserAction      = "BLOCK_USER"
-	DisconnectUserAction = "DISCONNECT_USER"
-	WebIsolationAction   = "WEB_ISOLATION"
+	AllowAction             = "ALLOW"
+	BlockAction             = "BLOCK"
+	BlockUserAction         = "BLOCK_USER"
+	DisconnectUserAction    = "DISCONNECT_USER"
+	WebIsolationAction      = "WEB_ISOLATION"
+	DLPCloudDetectionAction = "CDS"
 )
 
 type Policy struct {
@@ -219,6 +222,7 @@ type ActivityPolicy struct {
 	//ACTIVITY
 	ActivityRules   []ActivityRule
 	EnableIsolation bool
+	EnableWhiteList bool
 }
 
 type DirectoryEntity struct {
