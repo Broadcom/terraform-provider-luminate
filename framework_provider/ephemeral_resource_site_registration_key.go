@@ -15,7 +15,7 @@ type SiteRegistrationKeyEphemeralResource struct {
 type SiteRegistrationKeyEphemeralResourceModel struct {
 	ID                          types.String `tfsdk:"id"`
 	SiteID                      types.String `tfsdk:"site_id"`
-	VersionID                   types.Int64  `tfsdk:"version_id"`
+	Version                     types.Int64  `tfsdk:"version"`
 	RevokeExistingKeyImminently types.Bool   `tfsdk:"revoke_existing_key_immediately"`
 	Token                       types.String `tfsdk:"token"`
 }
@@ -39,7 +39,7 @@ func (r *SiteRegistrationKeyEphemeralResource) Schema(ctx context.Context, reque
 				Required:    true,
 				Description: "The site ID we want to associate with this registration key",
 			},
-			"version_id": schema.Int64Attribute{
+			"version": schema.Int64Attribute{
 				Required:    true,
 				Description: "The version number of the site registration key used by external secrets",
 			},
