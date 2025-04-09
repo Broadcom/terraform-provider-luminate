@@ -29,7 +29,7 @@ func (r *SiteRegistrationKeyVersionResource) Schema(ctx context.Context, request
 		Attributes: map[string]schema.Attribute{
 			"version": schema.Int64Attribute{
 				Computed:    true,
-				Description: "The version number of the site registration key used by external secrets",
+				Description: "Random based timestamp-generated version number of the site registration key used by external secrets",
 			},
 		},
 	}

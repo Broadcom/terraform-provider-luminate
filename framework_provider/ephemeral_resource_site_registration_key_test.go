@@ -14,10 +14,13 @@ resource "luminate_site" "new_site_<RANDOM_PLACEHOLDER>" {
   	authentication_mode = "site"
 }
 
+resource "luminate_site_registration_key_version" "site_registration_key_version" {
+}
+
 ephemeral "luminate_site_registration_key" "new_site_registration_key" {
 	site_id = luminate_site.new_site_<RANDOM_PLACEHOLDER>.id
+	version_id = luminate_site_registration_key_version.site_registration_key_version.version
 	revoke_existing_key_immediately = true
-	rotate = true
 }
 `
 
@@ -29,7 +32,8 @@ func TestAccLuminateSiteRegistrationKey(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
-				Config: strings.ReplaceAll(testAccEphemeralResourceSiteRegistrationKeyTemplate, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
+				Config:             strings.ReplaceAll(testAccEphemeralResourceSiteRegistrationKeyTemplate, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
