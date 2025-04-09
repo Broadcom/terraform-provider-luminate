@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
+	"github.com/pkg/errors"
 	"log"
 )
 
@@ -27,7 +28,11 @@ func (api *ActivityPolicyAPI) CreateActivityPolicy(activityPolicy *dto.ActivityP
 		if *entity.Type_ == sdk.GROUP_EntityType {
 			group, _, err := api.cli.GroupsApi.GetGroup(ctx, entity.IdentityProviderId, entity.IdentifierInProvider)
 			if err != nil {
-				return nil, err
+				var genErr sdk.GenericSwaggerError
+				if errors.As(err, &genErr) {
+					return nil, errors.Wrapf(err, "failed getting group with body error: %s", string(genErr.Body()))
+				}
+				return nil, errors.Wrapf(err, "failed getting group")
 			}
 			activityPolicyDto.DirectoryEntities[i].DisplayName = group.Name
 		}
@@ -35,7 +40,12 @@ func (api *ActivityPolicyAPI) CreateActivityPolicy(activityPolicy *dto.ActivityP
 	body := sdk.AccessAndActivityPoliciesApiCreatePolicyOpts{Body: optional.NewInterface(activityPolicyDto)}
 	createdActivityPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.CreatePolicy(ctx, &body)
 	if err != nil {
-		return nil, err
+		var genErr sdk.GenericSwaggerError
+		if errors.As(err, &genErr) {
+			return nil, errors.Wrapf(err, "failed creating activity policy with name %s with body error: %s",
+				activityPolicy.Name, string(genErr.Body()))
+		}
+		return nil, errors.Wrapf(err, "failed creating activity policy with name %s", activityPolicy.Name)
 	}
 
 	createdActivityPolicyDto, err := api.convertActivityPolicyAsMapToActivityPolicyDto(createdActivityPolicyDtoAsMap)
@@ -51,7 +61,12 @@ func (api *ActivityPolicyAPI) UpdateActivityPolicy(activityPolicy *dto.ActivityP
 	body := sdk.AccessAndActivityPoliciesApiUpdatePolicyOpts{Body: optional.NewInterface(activityPolicyDto)}
 	updatedActivityPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.UpdatePolicy(context.Background(), activityPolicy.Id, &body)
 	if err != nil {
-		return nil, err
+		var genErr sdk.GenericSwaggerError
+		if errors.As(err, &genErr) {
+			return nil, errors.Wrapf(err, "failed updating activity policy with ID %s with body error: %s",
+				activityPolicy.Id, string(genErr.Body()))
+		}
+		return nil, errors.Wrapf(err, "failed updating activity policy with ID %s", activityPolicy.Id)
 	}
 
 	updatedActivityPolicyDto, err := api.convertActivityPolicyAsMapToActivityPolicyDto(updatedActivityPolicyDtoAsMap)
@@ -83,7 +98,12 @@ func (api *ActivityPolicyAPI) GetActivityPolicy(policyId string) (*dto.ActivityP
 func (api *ActivityPolicyAPI) DeleteActivityPolicy(policyId string) error {
 	_, err := api.cli.AccessAndActivityPoliciesApi.DeletePolicy(context.Background(), policyId)
 	if err != nil {
-		return err
+		var genErr sdk.GenericSwaggerError
+		if errors.As(err, &genErr) {
+			return errors.Wrapf(err, "failed deleting activity policy with ID %s with body error: %s",
+				policyId, string(genErr.Body()))
+		}
+		return errors.Wrapf(err, "failed deleting activity policy with ID %s", policyId)
 	}
 
 	return nil
