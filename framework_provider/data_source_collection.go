@@ -9,6 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
+// Ensure provider resource satisfies framework interfaces.
+var _ datasource.DataSource = &LuminateCollectionDataSource{}
+
 func NewLuminateCollectionDataSource() func() datasource.DataSource {
 	return func() datasource.DataSource {
 		return &LuminateCollectionDataSource{}
