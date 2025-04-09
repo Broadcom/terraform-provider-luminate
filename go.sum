@@ -10,6 +10,8 @@ bitbucket.org/accezz-io/api-documentation v0.0.0-20250409082733-efb43253b38a h1:
 bitbucket.org/accezz-io/api-documentation v0.0.0-20250409082733-efb43253b38a/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20250409140758-c39456eea94a h1:9Xy6yZlGhx5yuRKBLBo2IkBWdQy4SnXnK3N24TgVeWo=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20250409140758-c39456eea94a/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250409172312-b461f408c3d5 h1:Z9rwxcBIrCQyjVr7JEdE7jgRRZuzPsffcO2P4IzAqAg=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250409172312-b461f408c3d5/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 dario.cat/mergo v1.0.0 h1:AGCNq9Evsj31mOgNPcLyXc+4PNABt905YmuqPYYpBWk=
 dario.cat/mergo v1.0.0/go.mod h1:uNxQE+84aUszobStD9th8a29P2fMDhsBdgRYvZOxGmk=
 github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migciow=

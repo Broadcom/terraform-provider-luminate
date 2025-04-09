@@ -1146,11 +1146,11 @@ The following arguments are supported:
 
 -   **enable_isolation -** (Optional) Indicates whether web isolation 
     is enabled in this policy. 
-    Required for using "WEB_ISOLATION" rule action.
+    Required for using the "WEB_ISOLATION" rule action.
 
 -   **enable_whitelist -** (Optional) Indicates whether Allow rules
     whitelist is enabled in this policy. 
-    Required for using "ALLOW" rule action.
+    Required for using the "ALLOW" rule action.
 
 -   **rules** - (Required) The constraints on the actions to perform
     upon user web activity (non-empty list of nested rule objects)
