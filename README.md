@@ -1871,7 +1871,7 @@ In addition to arguments above, the following attributes are exported:
 
 - **token** - The token can be used during the terraform run only in other resources' fields that are not saved to state (such as "write-only" or fields in other ephemeral resources)
 
-**NOTE:** write-only fields can be used only in Terraform CLI versions > 1.11
+**NOTE:** [write-only fields](https://developer.hashicorp.com/terraform/language/resources/ephemeral/write-only) can be used only in Terraform CLI versions > 1.11
 
 #### Example Usage
 
