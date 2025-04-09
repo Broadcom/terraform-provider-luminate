@@ -90,7 +90,7 @@ Therefore, in order to work with the provider starting from release 1.2.0,
 
 it requires Terraform CLI version 1.1.5 or later.
 
-In order to use any of the [Emphemeral Resources](#emphemeral-resources), Terraform CLI version 1.11 or later is required.
+In order to use [Emphemeral Resources](#emphemeral-resources), Terraform CLI version 1.11 or later is required.
 
 Provider configuration
 -----------
@@ -1827,17 +1827,6 @@ Provides crud of dns resiliency groups
 
 ­­­
 
-#### Example Usage
-
-```
-
-resource "luminate_dns_group_resiliency" "new-dns-group" {
-	name = "testDNSGroupResiliency"
-	sendNotifications = true
-	domainSuffixes = ["somedomain.com"]
-}
-
-```
 #### Argument Reference
 
 The following arguments are supported:
@@ -1851,38 +1840,26 @@ Emphemeral resources
 
 Emphemeral Resource: luminate_site_registration_key
 -----------
-
 Provides secure access cloud site registration key ephemeral resource
 ­­­
 
+Read more [here](https://api.luminate.io/#tag/Site-Registration-Keys)
+
 **NOTE:**
 
-    1. Ephemeral resources can be used only for Terraform versions > 1.10
+    1. Ephemeral resources require Terraform CLI versions > 1.10
 
-    2. The key generation logic can be run during "terraform plan",
-       in order to avoid this and prevent changes to the backend system during plan phase,
-       we added a `version_id` that should always get an "unknown" value during plan phase,
-       this can be done by using the `luminate_site_registration_key_version` resource.
+    2. The `version` field should reference `version` field from a `luminate_site_registration_key_version` resource.
+       This is required in order to prevent token generation during "Plan" phase.
 
-#### Example Usage
 
-```
-resource "luminate_site_registration_key_version" "new_site_registration_key_version" {
-}
-
-ephemeral "luminate_site_registration_key" "new_site_registration_key" {
-  site_id = luminate_site.new-site.id
-  version_id = luminate_site_registration_key_version.new_site_registration_key_version.version
-  revoke_existing_key_immediately = true
-}
-```
 #### Argument Reference
 
 The following arguments are supported:
 
 - **site_id** (String) (Required) The ID of the site
 
-- **version_id** (Int64) (Required) This should always be a value unknown during "Plan" phase (We use `luminate_site_registration_key_version` to achieve this)
+- **version** (Int64) (Required) This should always be a value unknown during "Plan" phase (We use `luminate_site_registration_key_version` to achieve this)
 
 - **revoke_existing_key_immediately** (boolean) (Required) Choose if we want to revoke existing keys immediately
 
@@ -1892,9 +1869,22 @@ In addition to arguments above, the following attributes are exported:
 
 - **token** - The token can be used during the terraform run only in other resources' fields that are not saved to state (such as "write-only" or fields in other ephemeral resources)
 
-**NOTE:** write-only fields can be used only for Terraform versions > 1.11
+**NOTE:** write-only fields can be used only in Terraform CLI versions > 1.11
 
-#### Example of token usage
+#### Example Usage
+
+```
+resource "luminate_site_registration_key_version" "new_site_registration_key_version" {
+}
+
+ephemeral "luminate_site_registration_key" "new_site_registration_key" {
+  site_id = luminate_site.new-site.id
+  version = luminate_site_registration_key_version.new_site_registration_key_version.version
+  revoke_existing_key_immediately = true
+}
+```
+
+#### Various Examples of token usage
 
 <details>
 
