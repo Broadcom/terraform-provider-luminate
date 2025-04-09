@@ -19,6 +19,28 @@ func NewSiteAPI(client *sdk.APIClient) *SiteAPI {
 	}
 }
 
+func AuthenticationModeFromSDK(authenticationMode sdk.SiteAuthenticationMode) dto.SiteAuthenticationMode {
+	switch authenticationMode {
+	case sdk.CONNECTOR_SiteAuthenticationMode:
+		return dto.SiteAuthenticationModeConnector
+	case sdk.SITE_SiteAuthenticationMode:
+		return dto.SiteAuthenticationModeSite
+	}
+
+	return ""
+}
+
+func AuthenticationModeFromDto(ct dto.SiteAuthenticationMode) sdk.SiteAuthenticationMode {
+	switch ct {
+	case dto.SiteAuthenticationModeConnector:
+		return sdk.CONNECTOR_SiteAuthenticationMode
+	case dto.SiteAuthenticationModeSite:
+		return sdk.SITE_SiteAuthenticationMode
+	}
+
+	return ""
+}
+
 func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 	s, resp, err := api.cli.SitesApi.GetSite(context.Background(), SiteID)
 	if resp != nil && (resp.StatusCode == 403 || resp.StatusCode == 404) {
@@ -29,13 +51,18 @@ func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 		return nil, err
 	}
 
+	if s.AuthenticationMode == nil {
+		return nil, nil
+	}
+
 	site := dto.Site{
-		ID:               s.Id,
-		Name:             s.Name,
-		Region:           s.Region,
-		MuteHealth:       s.MuteHealthNotification,
-		K8SVolume:        s.KubernetesPersistentVolumeName,
-		CountCollections: s.CountCollections,
+		ID:                 s.Id,
+		Name:               s.Name,
+		Region:             s.Region,
+		AuthenticationMode: AuthenticationModeFromSDK(*s.AuthenticationMode),
+		MuteHealth:         s.MuteHealthNotification,
+		K8SVolume:          s.KubernetesPersistentVolumeName,
+		CountCollections:   s.CountCollections,
 	}
 
 	if s.KerberosConfiguration != nil {
@@ -60,13 +87,14 @@ func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 }
 
 func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
-
+	authenticationMode := AuthenticationModeFromDto(site.AuthenticationMode)
 	newSite := sdk.Site{
 		Name:                           site.Name,
 		Region:                         site.Region,
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
 		CountCollections:               site.CountCollections,
+		AuthenticationMode:             &authenticationMode,
 	}
 
 	if site.Kerberos != nil {
@@ -100,12 +128,13 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 }
 
 func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error) {
-
+	authenticationMode := AuthenticationModeFromDto(site.AuthenticationMode)
 	updateSite := sdk.Site{
 		Name:                           site.Name,
 		Region:                         site.Region,
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
+		AuthenticationMode:             &authenticationMode, //This can't be changed, but we should let the server return the error in case it's a new value
 	}
 
 	if site.Kerberos != nil {
