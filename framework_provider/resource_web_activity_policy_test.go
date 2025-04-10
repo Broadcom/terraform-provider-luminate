@@ -182,6 +182,35 @@ func resourceWebActivityPolicy_enabled_not_specified(userID1 string, rand int) s
 	}`, rand, rand, rand, userID1)
 }
 
+func resourceWebActivityPolicy_whitelist_allow_rules_specified(userID1 string, rand int) string {
+	return fmt.Sprintf(`
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteActivityPolicy%d"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationActivityPolicy%d"
+	 internal_address = "http://127.0.0.1:8080"
+	}
+	resource "luminate_web_activity_policy" "new-web-activity-policy" {
+  		name =  "tfAccWebActivityPolicy_whitelist_allow_rules_specified%d"
+		identity_provider_id = "local"
+		enabled = true
+		enable_whitelist = true
+		rules = [
+			{
+				action = "ALLOW"
+				conditions = {
+					file_downloaded = true
+				}
+			}
+		]
+
+  		user_ids = ["%s"]
+  		applications = ["${luminate_web_application.new-application.id}"]
+	}`, rand, rand, rand, userID1)
+}
+
 func resourceWebActivityPolicy_conditions_specified(userID1 string, rand int) string {
 	return fmt.Sprintf(`
 	resource "luminate_site" "new-site" {
@@ -399,6 +428,36 @@ func TestAccLuminateResourceWebActivityPolicyConditionsSpecifiedWithUpdate(t *te
 						resourceName,
 						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action"),
 						knownvalue.StringExact("BLOCK_USER"),
+					),
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("conditions").AtMapKey("file_downloaded"),
+						knownvalue.Bool(true),
+					),
+				},
+			},
+			{
+				Config: resourceWebActivityPolicy_whitelist_allow_rules_specified(userID1, randNum),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("name"),
+						knownvalue.StringExact(fmt.Sprintf("tfAccWebActivityPolicy_whitelist_allow_rules_specified%d", randNum)),
+					),
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("enabled"),
+						knownvalue.Bool(true),
+					),
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("enable_whitelist"),
+						knownvalue.Bool(true),
+					),
+					statecheck.ExpectKnownValue(
+						resourceName,
+						tfjsonpath.New("rules").AtSliceIndex(0).AtMapKey("action"),
+						knownvalue.StringExact("ALLOW"),
 					),
 					statecheck.ExpectKnownValue(
 						resourceName,

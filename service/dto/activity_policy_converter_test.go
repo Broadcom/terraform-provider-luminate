@@ -167,6 +167,53 @@ func TestFromPolicyRulesContainers(t *testing.T) {
 			},
 		},
 		{
+			name: "Web Isolation and DLP actions conditions",
+			policyRules: []sdk.PolicyRule{
+				{
+					ActionId: DLPCloudDetectionAction,
+					Conditions: []sdk.PolicyCondition{
+						{
+							ConditionDefinitionId: FileDownloadedCondition,
+							Arguments:             map[string][]string{},
+						},
+					},
+					DlpFilterId: "6fd0a892-8b70-471a-9dd7-bf374b07451f",
+				},
+				{
+					ActionId: IsolationProfile,
+					Conditions: []sdk.PolicyCondition{
+						{
+							ConditionDefinitionId: URICondition,
+							Arguments: map[string][]string{
+								URIListRuleConditionArgument: {"uri1"},
+							},
+						},
+					},
+					IsolationProfileId: "571136d7-7bb7-45bc-b039-6e9eea0cc430",
+				},
+			},
+			expectedRules: []ActivityRule{
+				{
+					Action: DLPCloudDetectionAction,
+					Conditions: &RuleConditions{
+						FileDownloaded: true,
+						Arguments:      &RuleConditionArguments{},
+					},
+					DLPFilterID: "6fd0a892-8b70-471a-9dd7-bf374b07451f",
+				},
+				{
+					Action: IsolationProfile,
+					Conditions: &RuleConditions{
+						UriAccessed: true,
+						Arguments: &RuleConditionArguments{
+							UriList: []string{"uri1"},
+						},
+					},
+					IsolationProfileID: "571136d7-7bb7-45bc-b039-6e9eea0cc430",
+				},
+			},
+		},
+		{
 			name: "Rule with no conditions",
 			policyRules: []sdk.PolicyRule{
 				{
@@ -340,6 +387,53 @@ func TestToPolicyRulesContainers(t *testing.T) {
 							},
 						},
 					},
+				},
+			},
+		},
+		{
+			name: "Web Isolation and DLP actions conditions",
+			activityRules: []ActivityRule{
+				{
+					Action: DLPCloudDetectionAction,
+					Conditions: &RuleConditions{
+						FileDownloaded: true,
+						Arguments:      &RuleConditionArguments{},
+					},
+					DLPFilterID: "6fd0a892-8b70-471a-9dd7-bf374b07451f",
+				},
+				{
+					Action: IsolationProfile,
+					Conditions: &RuleConditions{
+						UriAccessed: true,
+						Arguments: &RuleConditionArguments{
+							UriList: []string{"uri1"},
+						},
+					},
+					IsolationProfileID: "571136d7-7bb7-45bc-b039-6e9eea0cc430",
+				},
+			},
+			expectedRules: []sdk.PolicyRule{
+				{
+					ActionId: DLPCloudDetectionAction,
+					Conditions: []sdk.PolicyCondition{
+						{
+							ConditionDefinitionId: FileDownloadedCondition,
+							Arguments:             map[string][]string{},
+						},
+					},
+					DlpFilterId: "6fd0a892-8b70-471a-9dd7-bf374b07451f",
+				},
+				{
+					ActionId: IsolationProfile,
+					Conditions: []sdk.PolicyCondition{
+						{
+							ConditionDefinitionId: URICondition,
+							Arguments: map[string][]string{
+								URIListRuleConditionArgument: {"uri1"},
+							},
+						},
+					},
+					IsolationProfileId: "571136d7-7bb7-45bc-b039-6e9eea0cc430",
 				},
 			},
 		},

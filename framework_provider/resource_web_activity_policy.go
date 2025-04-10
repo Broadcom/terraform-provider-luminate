@@ -33,7 +33,9 @@ type WebActivityPolicyResource struct {
 
 type WebActivityPolicyResourceModel struct {
 	BasePolicyResourceModel
-	Rules types.List `tfsdk:"rules"`
+	EnableIsolation types.Bool `tfsdk:"enable_isolation"`
+	EnableWhiteList types.Bool `tfsdk:"enable_whitelist"`
+	Rules           types.List `tfsdk:"rules"`
 }
 
 func (w *WebActivityPolicyResource) Metadata(ctx context.Context, request resource.MetadataRequest, response *resource.MetadataResponse) {
@@ -47,6 +49,20 @@ func (r *WebActivityPolicyResource) ImportState(ctx context.Context, req resourc
 func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource.SchemaRequest, response *resource.SchemaResponse) {
 	policyAttributes := CreatePolicyBaseSchemaAttributes()
 
+	policyAttributes["enable_isolation"] = schema.BoolAttribute{
+		Optional:    true,
+		Computed:    true,
+		Default:     booldefault.StaticBool(false),
+		Description: "Indicates whether Web isolation is enabled in this activity policy",
+	}
+
+	policyAttributes["enable_whitelist"] = schema.BoolAttribute{
+		Optional:    true,
+		Computed:    true,
+		Default:     booldefault.StaticBool(false),
+		Description: "Indicates whether Whitelist for Allow Rules is enabled in this activity policy",
+	}
+
 	policyAttributes["rules"] = schema.ListNestedAttribute{
 		Required: true,
 		Validators: []validator.List{
@@ -59,9 +75,12 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 					Description: "the action to apply for this rule condition.",
 					Validators: []validator.String{
 						stringvalidator.OneOf(
+							dto.AllowAction,
 							dto.BlockAction,
 							dto.BlockUserAction,
 							dto.DisconnectUserAction,
+							dto.WebIsolationAction,
+							dto.DLPCloudDetectionAction,
 						),
 					},
 				},
@@ -113,6 +132,16 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 							},
 						},
 					},
+				},
+				"isolation_profile_id": schema.StringAttribute{
+					Optional:    true,
+					Computed:    true,
+					Description: "the web isolation profile to apply for this rule if web isolation action is selected.",
+				},
+				"dlp_filter_id": schema.StringAttribute{
+					Optional:    true,
+					Computed:    true,
+					Description: "the DLP application detection ID, must be provided with a selected CDS action (DLP Cloud Detector).",
 				},
 			},
 		},
@@ -325,15 +354,16 @@ func extractActivityPolicyDTO(ctx context.Context, webActivityModel *WebActivity
 		return nil, diags
 	}
 	policy.TargetProtocol = "HTTP"
-
 	activityRules, diags := extractActivityRules(ctx, webActivityModel)
 	if diags.HasError() {
 		return nil, diags
 	}
 
 	webActivityPolicy := &dto.ActivityPolicy{
-		Policy:        *policy,
-		ActivityRules: activityRules,
+		Policy:          *policy,
+		ActivityRules:   activityRules,
+		EnableIsolation: webActivityModel.EnableIsolation.ValueBool(),
+		EnableWhiteList: webActivityModel.EnableWhiteList.ValueBool(),
 	}
 	return webActivityPolicy, nil
 }
@@ -352,6 +382,8 @@ func extractActivityPolicyModel(ctx context.Context, activityPolicy *dto.Activit
 	webActivityPolicyModel := &WebActivityPolicyResourceModel{
 		BasePolicyResourceModel: *policyModel,
 		Rules:                   activityPolicyModelRules,
+		EnableIsolation:         types.BoolValue(activityPolicy.EnableIsolation),
+		EnableWhiteList:         types.BoolValue(activityPolicy.EnableWhiteList),
 	}
 	return webActivityPolicyModel, nil
 }
@@ -379,14 +411,29 @@ func extractActivityRules(ctx context.Context, webActivityModel *WebActivityPoli
 		}
 		action := actionValue.(types.String).ValueString()
 
+		// Extract Isolation Profile
+		var isolationProfileID string
+		isolationProfileIdValue, ok := rule.Attributes()["isolation_profile_id"]
+		if ok && !isolationProfileIdValue.IsNull() && !isolationProfileIdValue.IsUnknown() {
+			isolationProfileID = isolationProfileIdValue.(types.String).ValueString()
+		}
+
+		var dlpFilterID string
+		dlpFilterIdValue, ok := rule.Attributes()["dlp_filter_id"]
+		if ok && !dlpFilterIdValue.IsNull() && !dlpFilterIdValue.IsUnknown() {
+			dlpFilterID = dlpFilterIdValue.(types.String).ValueString()
+		}
+
 		conditions, diagnostics := extractRuleConditions(ctx, rule)
 		if diagnostics != nil && diagnostics.HasError() {
 			return nil, diagnostics
 		}
 
 		activityRule := dto.ActivityRule{
-			Action:     action,
-			Conditions: conditions,
+			Action:             action,
+			Conditions:         conditions,
+			IsolationProfileID: isolationProfileID,
+			DLPFilterID:        dlpFilterID,
 		}
 		activityRules = append(activityRules, activityRule)
 	}
@@ -488,6 +535,8 @@ func flattenActivityRule(ctx context.Context, activityRule dto.ActivityRule) (ty
 	ruleAttributes := make(map[string]attr.Value)
 
 	ruleAttributes["action"] = types.StringValue(activityRule.Action)
+	ruleAttributes["isolation_profile_id"] = types.StringValue(activityRule.IsolationProfileID)
+	ruleAttributes["dlp_filter_id"] = types.StringValue(activityRule.DLPFilterID)
 
 	conditions, conditionsDiags := flattenRuleConditions(ctx, activityRule.Conditions)
 	if conditionsDiags.HasError() {
@@ -556,8 +605,10 @@ func flattenRuleArguments(ctx context.Context, arguments *dto.RuleConditionArgum
 
 func activityRuleAttributeTypes() map[string]attr.Type {
 	return map[string]attr.Type{
-		"action":     types.StringType,
-		"conditions": types.ObjectType{AttrTypes: ruleConditionsAttributeTypes()},
+		"action":               types.StringType,
+		"isolation_profile_id": types.StringType,
+		"dlp_filter_id":        types.StringType,
+		"conditions":           types.ObjectType{AttrTypes: ruleConditionsAttributeTypes()},
 	}
 }
 
