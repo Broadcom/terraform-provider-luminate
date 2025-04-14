@@ -1,5 +1,17 @@
 bitbucket.org/accezz-io/api-documentation v0.0.0-20241222063251-69be9b7f42df h1:OvD9L6UpxUqMH4BKA9AKSNHr8B9grdm86sQ+1CfJN6A=
 bitbucket.org/accezz-io/api-documentation v0.0.0-20241222063251-69be9b7f42df/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250407083818-5406074cedf1 h1:x33DLordjSaioCC/lymrqkAI8qrwRxhPIVcpllKhZMU=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250407083818-5406074cedf1/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250408125441-b9c1753d53db h1:wIDurfQMm+Dmpwhcl8eybumsA/ogyqdooeTt6i7Si2Y=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250408125441-b9c1753d53db/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250408131645-7d665955accd h1:gaVbr0q7QRx3wxYCxG3ed07+sab5L36Zgt/xdrTfv0k=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250408131645-7d665955accd/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250409082733-efb43253b38a h1:nN8KF5etsT6f+rv0j/Zm5lwVlWII783VITRu59ymfxA=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250409082733-efb43253b38a/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250409140758-c39456eea94a h1:9Xy6yZlGhx5yuRKBLBo2IkBWdQy4SnXnK3N24TgVeWo=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250409140758-c39456eea94a/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250409172312-b461f408c3d5 h1:Z9rwxcBIrCQyjVr7JEdE7jgRRZuzPsffcO2P4IzAqAg=
+bitbucket.org/accezz-io/api-documentation v0.0.0-20250409172312-b461f408c3d5/go.mod h1:AjCLJsit6AdZDoS090ci0s3W/6LRjU+UxgEonbYwTIw=
 dario.cat/mergo v1.0.0 h1:AGCNq9Evsj31mOgNPcLyXc+4PNABt905YmuqPYYpBWk=
 dario.cat/mergo v1.0.0/go.mod h1:uNxQE+84aUszobStD9th8a29P2fMDhsBdgRYvZOxGmk=
 github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migciow=

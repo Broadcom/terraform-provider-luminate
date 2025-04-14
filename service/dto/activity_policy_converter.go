@@ -37,6 +37,8 @@ func ToActivityPolicyDto(activityPolicy *ActivityPolicy) sdk.PolicyActivity {
 		Applications:      applications,
 		FilterConditions:  conditionsDto,
 		Containers:        policyRules,
+		IsIsolation:       activityPolicy.EnableIsolation,
+		IsWhitelist:       activityPolicy.EnableWhiteList,
 	}
 
 	return activityPolicyDto
@@ -70,7 +72,9 @@ func FromActivityPolicyDto(activityPolicyDto sdk.PolicyActivity) *ActivityPolicy
 			Applications:      applications,
 			Conditions:        conditions,
 		},
-		ActivityRules: activityRules,
+		ActivityRules:   activityRules,
+		EnableIsolation: activityPolicyDto.IsIsolation,
+		EnableWhiteList: activityPolicyDto.IsWhitelist,
 	}
 	return activityPolicy
 }
@@ -109,8 +113,10 @@ func FromPolicyRulesContainers(policyRules []sdk.PolicyRule) []ActivityRule {
 					}
 				}
 				activityRule := ActivityRule{
-					Action:     policyRule.ActionId,
-					Conditions: &ruleConditions,
+					Action:             policyRule.ActionId,
+					Conditions:         &ruleConditions,
+					IsolationProfileID: policyRule.IsolationProfileId,
+					DLPFilterID:        policyRule.DlpFilterId,
 				}
 				activityRules = append(activityRules, activityRule)
 			}
@@ -128,7 +134,9 @@ func ToPolicyRulesContainers(activityRules []ActivityRule) []sdk.PolicyRule {
 				continue
 			}
 			policyRule := sdk.PolicyRule{
-				ActionId: activityRule.Action,
+				ActionId:           activityRule.Action,
+				IsolationProfileId: activityRule.IsolationProfileID,
+				DlpFilterId:        activityRule.DLPFilterID,
 			}
 			if activityRule.Conditions.FileDownloaded {
 				condition := sdk.PolicyCondition{

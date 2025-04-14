@@ -51,17 +51,22 @@
 [Identities resources](#identities-resources)
 - [Resource: luminate_group_user](#resource-luminate_group_user)
 
+[Integration resources](#integration-resources)
+- [Resource: luminate_aws_integration](#resource-luminate_aws_integration)
+- [Resource: luminate_aws_integration_bind](#resource-luminate_aws_integration_bind)
+
 [Dns Resiliency resources](#DNS-Resiliency-resources)
-- [Resource: luminate_dns_group_resiliency](#resource-luminate_dns_resiliency_group)
-- [Resource: luminate_dns_server_resiliency](#resource-luminate_dns_resiliency_server)
+- [Resource: luminate_dns_group_resiliency](#resource-luminate_dns_group_resiliency)
+- [Resource: luminate_dns_server_resiliency](#resource-luminate_dns_server_resiliency)
 
 [Data sources](#data-sources)
-- [Data Source: luminate_identity_provider](#data-Source: luminate_identity_provider)
-- [Data Source: luminate_user](#data-Source: luminate_user)
-- [Data Source: luminate_group](#data-Source: luminate_group)
-- [Data Source: luminate_collection](#data-Source: luminate_collection)
-- [Data Source: luminate_aws_integration](#data-Source: luminate_aws_integration)
-- [Data Source: luminate_ssh_client](#data-Source: luminate_ssh_client)
+- [Data source: luminate_identity_provider](#data-source-luminate_identity_provider)
+- [Data source: luminate_user](#data-source-luminate_user)
+- [Data source: luminate_group](#data-source-luminate_group)
+- [Data source: luminate_collection](#data-source-luminate_collection)
+- [Data source: luminate_shared_object](#data-source-luminate_shared_object)
+- [Data source: luminate_aws_integration](#data-source-luminate_aws_integration)
+- [Data source: luminate_ssh_client](#data-source-luminate_ssh_client)
 
 Basic configuration and usage
 ==========
@@ -1139,14 +1144,31 @@ The following arguments are supported:
 -   **applications** - (Required) The applications to which this policy
     applies.
 
+-   **enable_isolation -** (Optional) Indicates whether web isolation 
+    is enabled in this policy. 
+    Required for using the "WEB_ISOLATION" rule action.
+
+-   **enable_whitelist -** (Optional) Indicates whether Allow rules
+    whitelist is enabled in this policy. 
+    Required for using the "ALLOW" rule action.
+
 -   **rules** - (Required) The constraints on the actions to perform
     upon user web activity (non-empty list of nested rule objects)
 
     -   **rule** - Activity rule object
 
         -   **action** (Required) - The action to apply, allowed values: 
-            "BLOCK", "BLOCK_USER", "DISCONNECT_USER"
-        
+            "ALLOW", "BLOCK", "BLOCK_USER", "DISCONNECT_USER", 
+            "WEB_ISOLATION", "CDS"
+
+        -   **isolation_profile_id** (Optional) - The web isolation profile 
+            ID to apply, required with "WEB_ISOLATION" action if selected.
+            The isolation profile shared object could be retrieved using 
+            luminate_shared_object data source with type "ISOLATION_PROFILE"
+
+        -   **dlp_filter_id** (Optional) - The DLP application detection ID.
+            Required for using "CDS" action ID (DLP Cloud Detector)
+
         -   **conditions** (Required) - The conditions to apply the action
 
             -   **file_downloaded** (Optional) Indicate whether File 
@@ -1392,12 +1414,10 @@ In addition to arguments above, the following attributes are exported:
 -   **aws_external_id -** the integration AWS external ID
 
 
-# Integration Bind resource
-
-Resource: luminate_aws_integration
+Resource: luminate_aws_integration_bind
 ----------
 
-Provides secure access cloud aws_integration resource
+Provides secure access cloud aws_integration_bind resource
 
 ­
 #### Example Usage
@@ -1482,37 +1502,71 @@ The following arguments are supported:
 -   **aws_external_id -** (Required) integration AWS external ID 
 -   **regions -** (Required) regions to add
 
-Re­­­source: luminate_DNS_server
-------------
+# DNS Resiliency resources
 
-Provides secure access cloud DNS server
+Resource: luminate_dns_server_resiliency
+----------
+
+Provides CRUD of dns resiliency servers
+
+­­­
 
 #### Example Usage
+
 ```
 resource "luminate_site" "new-site" {
 	name = "tfAccSite"
 }
-resource "luminate_dns_server" "new-dns" {
-	site_id = "${luminate_site.new-site.id}"
-	name = "testDNS"
-	internal_address = "udp://10.0.0.1:53"
-	dns_settings {
-		domain_suffixes = ["company.com"]
-	}
-}
-```
 
+resource "luminate_dns_group_resiliency" "new-dns-group" {
+	name = "testDNSGroupResiliency"
+	sendNotifications = true
+	domainSuffixes = ["somedomain.com"]
+}
+
+data "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
+    name = "testDNSServerResiliency"
+	site_id = "${luminate_site.new-site.id}"
+	group_id = "${luminate_dns_group_resiliency.new-dns-group.id}"
+	internal_address = "udp://20.0.0.1:63"
+}
+
+```
 #### Argument Reference
 
 The following arguments are supported:
 
--   **name -** (Required) name of the connector
+-   **group_id -** (Required) Group id
+-   **name -** (Required) Dns Server name
+-   **site_id -** (Required) Associated Site id
+-   **internal_address -** (Required) Dns server address
 
--   **site_id -** (Required) site id to attach the connector
 
--   **internal_address** - (Required) Internal address of the
-    application, accessible by connector
--   **dns_settings** [domain_suffixes] - (Required) The domain suffix
+Resource: luminate_dns_group_resiliency
+----------
+
+Provides crud of dns resiliency groups
+
+­­­
+
+#### Example Usage
+
+```
+
+resource "luminate_dns_group_resiliency" "new-dns-group" {
+	name = "testDNSGroupResiliency"
+	sendNotifications = true
+	domainSuffixes = ["somedomain.com"]
+}
+
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) Dns Group name
+-   **sendNotifications -** (Required) Indicates if notification are enabled
+-   **domainSuffixes -** (Required) List of domain suffixes
 
 
 Data sources
@@ -1545,6 +1599,7 @@ In addition to arguments above, the following attributes are exported:
 
 -   **identity_provider_id** - id of the identity provider
 
+
 Data Source: luminate_user
 -------------
 
@@ -1573,6 +1628,7 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **user_ids** - list of retrieved users ids
+
 
 Data source: luminate_group
 -----------
@@ -1603,6 +1659,7 @@ In addition to arguments above, the following attributes are exported:
 
 -   **group_ids** - list of retrieved groups ids
 
+
 Data Source: luminate_collection
 -------------
 
@@ -1628,6 +1685,38 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **id** - retrieved collection id
+
+
+Data Source: luminate_shared_object
+-------------
+
+Use this resource to get an existing shared object
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_shared_object" "my-shared_object" {
+  name = "my-shared-object"
+  type = "IP_LIST"
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) The name of the shared object
+
+-   **type -** (Required) The type of the shared object 
+    supported types: "IP_LIST", "OPSWAT_GROUPS", "ISOLATION_PROFILE"
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - retrieved shared object id
+
 
 Data source: luminate_aws_integration
 ------------
@@ -1685,73 +1774,6 @@ In addition to arguments above, the following attributes are exported:
 - **last_accessed** (String)
 - **created_on** (String)
 - **modified_on** (String)
-
-# DNS Resiliency resources
-
-Resource: luminate_dns_server_resiliency
-----------
-
-Provides CRUD of dns resiliency servers
-
-­­­
-
-#### Example Usage
-
-```
-resource "luminate_site" "new-site" {
-	name = "tfAccSite"
-}
-
-resource "luminate_dns_group_resiliency" "new-dns-group" {
-	name = "testDNSGroupResiliency"
-	sendNotifications = true
-	domainSuffixes = ["somedomain.com"]
-}
-
-data "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
-    name = "testDNSServerResiliency"
-	site_id = "${luminate_site.new-site.id}"
-	group_id = "${luminate_dns_group_resiliency.new-dns-group.id}"
-	internal_address = "udp://20.0.0.1:63"
-}
-
-```
-#### Argument Reference
-
-The following arguments are supported:
-
--   **group_id -** (Required) Group id
--   **name -** (Required) Dns Server name
--   **site_id -** (Required) Associated Site id
--   **internal_address -** (Required) Dns server address 
-
-
-Resource: luminate_dns_group_resiliency
-----------
-
-Provides crud of dns resiliency groups
-
-­­­
-
-#### Example Usage
-
-```
-
-resource "luminate_dns_group_resiliency" "new-dns-group" {
-	name = "testDNSGroupResiliency"
-	sendNotifications = true
-	domainSuffixes = ["somedomain.com"]
-}
-
-```
-#### Argument Reference
-
-The following arguments are supported:
-
--   **name -** (Required) Dns Group name
--   **sendNotifications -** (Required) Indicates if notification are enabled
--   **domainSuffixes -** (Required) List of domain suffixes
-
 
 #### Confluence page
 https://fireglass.atlassian.net/wiki/x/dICL1
