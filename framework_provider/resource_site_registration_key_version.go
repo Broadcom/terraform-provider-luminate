@@ -59,7 +59,7 @@ func (r *SiteRegistrationKeyVersionResource) Read(ctx context.Context, request r
 }
 
 func (r *SiteRegistrationKeyVersionResource) Update(ctx context.Context, request resource.UpdateRequest, response *resource.UpdateResponse) {
-
+	response.Diagnostics.AddError("Update Not Supported", "Update is not supported for this resource")
 }
 
 func (r *SiteRegistrationKeyVersionResource) Delete(ctx context.Context, request resource.DeleteRequest, response *resource.DeleteResponse) {
