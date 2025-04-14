@@ -1808,7 +1808,17 @@ The following arguments are supported:
 
 - **version** (Int64) (Required) This should always be a value unknown during "Plan" phase (We use `luminate_site_registration_key_version` to achieve this)
 
-- **revoke_existing_key_immediately** (boolean) (Required) Choose if we want to revoke existing keys immediately
+- **revoke_existing_key_immediately** (boolean) (Required)
+
+  true: → 
+
+  All existing keys are deleted.
+
+  false: → 
+
+  The current primary key becomes temporarily active (72-hour expiration).
+
+  If there's an existing temporarily active key already, it will be deleted.
 
 #### Attribute Reference
 
