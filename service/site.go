@@ -52,7 +52,7 @@ func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 	}
 
 	if s.AuthenticationMode == nil {
-		return nil, nil
+		return nil, errors.New("site authentication mode is not set")
 	}
 
 	site := dto.Site{

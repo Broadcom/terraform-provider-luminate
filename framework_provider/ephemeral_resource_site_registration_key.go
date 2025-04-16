@@ -13,11 +13,11 @@ type SiteRegistrationKeyEphemeralResource struct {
 }
 
 type SiteRegistrationKeyEphemeralResourceModel struct {
-	ID                          types.String `tfsdk:"id"`
-	SiteID                      types.String `tfsdk:"site_id"`
-	Version                     types.Int64  `tfsdk:"version"`
-	RevokeExistingKeyImminently types.Bool   `tfsdk:"revoke_existing_key_immediately"`
-	Token                       types.String `tfsdk:"token"`
+	ID                           types.String `tfsdk:"id"`
+	SiteID                       types.String `tfsdk:"site_id"`
+	Version                      types.Int64  `tfsdk:"version"`
+	RevokeExistingKeyImmediately types.Bool   `tfsdk:"revoke_existing_key_immediately"`
+	Token                        types.String `tfsdk:"token"`
 }
 
 func NewSiteRegistrationKeyEphemeralResource() ephemeral.EphemeralResource {
@@ -66,7 +66,7 @@ func (r *SiteRegistrationKeyEphemeralResource) Open(ctx context.Context, request
 
 	rotateRequest := dto.SiteRegistrationKeyRotateRequest{
 		SiteID:            data.SiteID.ValueString(),
-		RevokeImmediately: data.RevokeExistingKeyImminently.ValueBool(),
+		RevokeImmediately: data.RevokeExistingKeyImmediately.ValueBool(),
 	}
 
 	generatedKey, err := r.client.SitesRegistrationKeys.RotateRegistrationKey(ctx, rotateRequest)
