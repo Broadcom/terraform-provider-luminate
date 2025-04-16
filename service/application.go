@@ -156,6 +156,10 @@ func (api *ApplicationAPI) linkSiteToDefaultCollectionIfNeeded(siteID string) er
 		return err
 	}
 
+	if site == nil {
+		return errors.New("site not found")
+	}
+
 	if site.CountCollections != 0 {
 		return nil
 	}
