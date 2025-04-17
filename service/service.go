@@ -13,19 +13,20 @@ type LuminateService struct {
 	cli              *sdk.APIClient
 	TenantBaseDomain string
 
-	Sites             *SiteAPI
-	Connectors        *ConnectorsAPI
-	Applications      *ApplicationAPI
-	AccessPolicies    *AccessPolicyAPI
+	Sites                 *SiteAPI
+	SitesRegistrationKeys *SitesRegistrationKeysAPI
+	Connectors            *ConnectorsAPI
+	Applications          *ApplicationAPI
+	AccessPolicies        *AccessPolicyAPI
 	ActivityPolicies  *ActivityPolicyAPI
-	Users             *UserAPI ``
-	Groups            *GroupAPI
-	IdentityProviders *IdentityProviderAPI
-	IntegrationAPI    *IntegrationAPI
-	SshClientApi      *SshClientAPI
-	CollectionAPI     *CollectionAPI
-	RoleBindingsAPI   *RoleBindingsAPI
-	DNSResiliencyAPI  *DNSResiliencyAPI
+	Users                 *UserAPI ``
+	Groups                *GroupAPI
+	IdentityProviders     *IdentityProviderAPI
+	IntegrationAPI        *IntegrationAPI
+	SshClientApi          *SshClientAPI
+	CollectionAPI         *CollectionAPI
+	RoleBindingsAPI       *RoleBindingsAPI
+	DNSResiliencyAPI      *DNSResiliencyAPI
 	SharedObjectAPI   *SharedObjectAPI
 }
 
@@ -59,6 +60,7 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	})
 
 	lumSvc.Sites = NewSiteAPI(lumSvc.cli)
+	lumSvc.SitesRegistrationKeys = NewSitesRegistrationKeysAPI(lumSvc.cli)
 	lumSvc.Connectors = NewConnectorsAPI(lumSvc.cli)
 	lumSvc.CollectionAPI = NewCollectionAPI(lumSvc.cli)
 	lumSvc.Applications = NewApplicationAPI(lumSvc.cli)

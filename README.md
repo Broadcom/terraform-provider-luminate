@@ -68,6 +68,9 @@
 - [Data source: luminate_aws_integration](#data-source-luminate_aws_integration)
 - [Data source: luminate_ssh_client](#data-source-luminate_ssh_client)
 
+[Emphemeral Resources](#emphemeral-resources)
+- [Emphemeral Resource: luminate_site_registration_key](#emphemeral-resource-luminate_site_registration_key)
+
 Basic configuration and usage
 ==========
 
@@ -85,7 +88,9 @@ and uses the tf5to6server package to translate from Protocol Version 5 to 6
 
 Therefore, in order to work with the provider starting from release 1.2.0,
 
-it requires Terraform CLI version 1.1.5 and later.
+it requires Terraform CLI version 1.1.5 or later.
+
+In order to use [Emphemeral Resources](#emphemeral-resources), Terraform CLI version 1.11 or later is required.
 
 Provider configuration
 -----------
@@ -1774,6 +1779,130 @@ In addition to arguments above, the following attributes are exported:
 - **last_accessed** (String)
 - **created_on** (String)
 - **modified_on** (String)
+
+Emphemeral resources
+==========
+
+**NOTE:**
+
+    Ephemeral resources require Terraform CLI versions > 1.10
+
+Emphemeral Resource: luminate_site_registration_key
+-----------
+Provides secure access cloud site registration key ephemeral resource
+­­­
+
+Read more [here](https://api.luminate.io/#tag/Site-Registration-Keys)
+
+**NOTE:**
+
+    The `version` field should reference `version` field from a `luminate_site_registration_key_version` resource.
+    This is required in order to prevent token generation during "Plan" phase.
+
+
+#### Argument Reference
+
+The following arguments are supported:
+
+- **site_id** (String) (Required) The ID of the site
+
+- **version** (Int64) (Required) This should always be a value unknown during "Plan" phase (We use `luminate_site_registration_key_version` to achieve this)
+
+- **revoke_existing_key_immediately** (boolean) (Required)
+
+  true: → 
+
+  All existing keys are deleted.
+
+  false: → 
+
+  The current primary key becomes temporarily active (72-hour expiration).
+
+  If there's an existing temporarily active key already, it will be deleted.
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+- **token** - The token can be used during the terraform run only in other resources' fields that are not saved to state (such as "write-only" or fields in other ephemeral resources)
+
+**NOTE:** [write-only fields](https://developer.hashicorp.com/terraform/language/resources/ephemeral/write-only) can be used only in Terraform CLI versions > 1.11
+
+#### Example Usage
+
+```
+resource "luminate_site_registration_key_version" "new_site_registration_key_version" {
+}
+
+ephemeral "luminate_site_registration_key" "new_site_registration_key" {
+  site_id = luminate_site.new-site.id
+  version = luminate_site_registration_key_version.new_site_registration_key_version.version
+  revoke_existing_key_immediately = true
+}
+```
+
+#### Various Examples of token usage
+
+<details>
+
+<summary>K8s Secret</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1#data_wo-2)
+
+```
+resource "kubernetes_secret" "example" {  
+  metadata {
+    name = "my-secret"
+  }
+
+  data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
+
+  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+}
+```
+
+</details>
+
+<details>
+
+<summary>AWS Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version#secret_string_wo-1)
+
+```
+resource "aws_secretsmanager_secret" "example_secret" {
+  name = "my-secret"
+}
+
+resource "aws_secretsmanager_secret_version" "example_version" {
+  secret_id     = aws_secretsmanager_secret.example_secret.id
+  secret_string_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+}
+```
+
+</details>
+
+<details>
+
+<summary>GCP Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret_version#example-usage---secret-version-basic-write-only)
+
+```
+resource "google_secret_manager_secret" "example_secret" {
+  secret_id = "my-secret"
+}
+
+
+resource "google_secret_manager_secret_version" "secret-version-basic-write-only" {
+  secret = google_secret_manager_secret.example_secret.id
+  secret_data_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_data_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+}
+```
+
+</details>
 
 #### Confluence page
 https://fireglass.atlassian.net/wiki/x/dICL1
