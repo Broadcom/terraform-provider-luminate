@@ -136,7 +136,7 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 				"isolation_profile_id": schema.StringAttribute{
 					Optional:    true,
 					Computed:    true,
-					Description: "the web isolation profile to apply for this rule if web isolation action is selected.",
+					Description: "the web isolation profile to apply for this rule if WEB_ISOLATION action is selected.",
 				},
 				"dlp_filter_id": schema.StringAttribute{
 					Optional:    true,

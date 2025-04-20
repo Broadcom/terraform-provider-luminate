@@ -172,9 +172,9 @@ type RuleConditionArguments struct {
 }
 
 const (
-	IpUuid           = "IP_LIST"
-	SharedIpListUuid = "SHARED_IP_LIST"
-	CountriesUuid    = "COUNTRIES"
+	IpList           = "IP_LIST"
+	SharedIpList     = "SHARED_IP_LIST"
+	Countries        = "COUNTRIES"
 	Authentication   = "AUTHENTICATION"
 	OpswatGroups     = "OPSWAT_GROUPS"
 	IsolationProfile = "ISOLATION_PROFILE"

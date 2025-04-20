@@ -194,8 +194,8 @@ func ToFilterConditions(conditions *Conditions) []sdk.PolicyCondition {
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: IpCondition,
 				Arguments: map[string][]string{
-					IpUuid:           conditions.SourceIp,
-					SharedIpListUuid: conditions.SharedIpList,
+					IpList:       conditions.SourceIp,
+					SharedIpList: conditions.SharedIpList,
 				},
 			})
 		}
@@ -204,7 +204,7 @@ func ToFilterConditions(conditions *Conditions) []sdk.PolicyCondition {
 			conditionsDto = append(conditionsDto, sdk.PolicyCondition{
 				ConditionDefinitionId: LocationRestrictionCondition,
 				Arguments: map[string][]string{
-					CountriesUuid: conditions.Location,
+					Countries: conditions.Location,
 				},
 			})
 		}
@@ -333,19 +333,19 @@ func FromFilterConditions(filterConditions []sdk.PolicyCondition) *Conditions {
 
 		for _, filterCondition := range filterConditions {
 			if filterCondition.ConditionDefinitionId == IpCondition {
-				for _, ipCondition := range filterCondition.Arguments[IpUuid] {
+				for _, ipCondition := range filterCondition.Arguments[IpList] {
 					conditions.SourceIp = append(conditions.SourceIp, ipCondition)
 				}
 
-				if _, ok := filterCondition.Arguments[SharedIpListUuid]; ok {
-					for _, sharedIpListCondition := range filterCondition.Arguments[SharedIpListUuid] {
+				if _, ok := filterCondition.Arguments[SharedIpList]; ok {
+					for _, sharedIpListCondition := range filterCondition.Arguments[SharedIpList] {
 						conditions.SharedIpList = append(conditions.SharedIpList, sharedIpListCondition)
 					}
 				}
 			}
 
 			if filterCondition.ConditionDefinitionId == LocationRestrictionCondition {
-				for _, locationCondition := range filterCondition.Arguments[CountriesUuid] {
+				for _, locationCondition := range filterCondition.Arguments[Countries] {
 					conditions.Location = append(conditions.Location, locationCondition)
 				}
 			}

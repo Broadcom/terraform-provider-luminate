@@ -53,7 +53,7 @@ func (d *LuminateSharedObjectDataSource) Schema(ctx context.Context, _ datasourc
 				Required:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
-						dto.IpUuid,
+						dto.IpList,
 						dto.IsolationProfile,
 						dto.OpswatGroups,
 					),
@@ -80,6 +80,8 @@ func (d *LuminateSharedObjectDataSource) Read(ctx context.Context, req datasourc
 		resp.Diagnostics.AddError("Client Error", "Shared object not found")
 		return
 	}
+
+	// returning only the first shared object since it is unique per name and type mandatory fields
 	data.ID = types.StringValue(sharedObjects[0].ID)
 	data.Name = types.StringValue(sharedObjects[0].Name)
 	data.Type = types.StringValue(sharedObjects[0].Type)
