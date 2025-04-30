@@ -106,6 +106,8 @@ func ConvertIdentityProviderTypeToEnum(idpType string) (sdk.IdentityProviderType
 		return sdk.GAPPS_IdentityProviderType, nil
 	case "onelogin":
 		return sdk.ONELOGIN_IdentityProviderType, nil
+	case "generic-saml":
+		return sdk.GENERIC_SAML_IdentityProviderType, nil
 	}
 	return "", errors.New("Failed to locate matching provider type")
 }
