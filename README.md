@@ -3,12 +3,12 @@
 
 #### Latest Binaries  
 
-| Platform    |                                                                                                                                                                           |
-|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Linux       | [terraform-provider-luminate-linux.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-linux.zip)           |
-| MacOS Intel | [terraform-provider-luminate-darwin.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-darwin.zip)         |
-| MacOS M1    | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate- darwin_arm64.zip) |
-| Windows     | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-windows.zip) <br/> |
+| Platform    |                                                                                                                                                                               |
+|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Linux       | [terraform-provider-luminate-linux.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-linux.zip)               |
+| MacOS Intel | [terraform-provider-luminate-darwin.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-darwin.zip)             |
+| MacOS M1    | [terraform-provider-luminate-darwin_arm64.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-darwin_arm64.zip) |
+| Windows     | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-windows.zip) <br/>     |
 
 [![CircleCI](https://circleci.com/gh/Broadcom/terraform-provider-luminate/tree/master.svg?style=shield)](https://circleci.com/gh/Broadcom/terraform-provider-luminate)  
 ---
@@ -16,6 +16,7 @@
 #### Documentation
 
 [Basic configuration and usage](#basic-configuration-and-usage)
+- [Terraform Requirements](#terraform-requirements)
 - [Provider configuration](#provider-configuration)
 - [API Endpoint](#api-endpoint)
 - [Authentication](#authentication)
@@ -38,6 +39,7 @@
 - [Resource: luminate_ssh_access_policy](#resource-luminate_ssh_access_policy)
 - [Resource: luminate_web_access_policy](#resource-luminate_web_access_policy)
 - [Resource: luminate_tcp_access_policy](#resource-luminate_tcp_access_policy)
+- [Resource: luminate_web_activity_policy](#resource-luminate_web_activity_policy)
 
 [Collection resources](#collection-resources)
 - [Resource: luminate_collection](#resource-luminate_collection)
@@ -49,23 +51,46 @@
 [Identities resources](#identities-resources)
 - [Resource: luminate_group_user](#resource-luminate_group_user)
 
+[Integration resources](#integration-resources)
+- [Resource: luminate_aws_integration](#resource-luminate_aws_integration)
+- [Resource: luminate_aws_integration_bind](#resource-luminate_aws_integration_bind)
+
 [Dns Resiliency resources](#DNS-Resiliency-resources)
-- [Resource: luminate_dns_group_resiliency](#resource-luminate_dns_resiliency_group)
-- [Resource: luminate_dns_server_resiliency](#resource-luminate_dns_resiliency_server)
+- [Resource: luminate_dns_group_resiliency](#resource-luminate_dns_group_resiliency)
+- [Resource: luminate_dns_server_resiliency](#resource-luminate_dns_server_resiliency)
 
 [Data sources](#data-sources)
-- [Data Source: luminate_identity_provider](#data-Source: luminate_identity_provider)
-- [Data Source: luminate_user](#data-Source: luminate_user)
-- [Data Source: luminate_group](#data-Source: luminate_group)
-- [Data Source: luminate_aws_integration](#data-Source: luminate_aws_integration)
-- [Data Source: luminate_ssh_client](#data-Source: luminate_ssh_client)
+- [Data source: luminate_identity_provider](#data-source-luminate_identity_provider)
+- [Data source: luminate_user](#data-source-luminate_user)
+- [Data source: luminate_group](#data-source-luminate_group)
+- [Data source: luminate_collection](#data-source-luminate_collection)
+- [Data source: luminate_shared_object](#data-source-luminate_shared_object)
+- [Data source: luminate_aws_integration](#data-source-luminate_aws_integration)
+- [Data source: luminate_ssh_client](#data-source-luminate_ssh_client)
 
+[Emphemeral Resources](#emphemeral-resources)
+- [Emphemeral Resource: luminate_site_registration_key](#emphemeral-resource-luminate_site_registration_key)
 
 Basic configuration and usage
 ==========
 
 Broadcom secure access cloud terraform provider is used to create and
 manage resources supported by Secure access cloud platform.
+
+
+Terraform Requirements
+-----------
+
+The provider uses [Terraform Protocol Version 6](https://developer.hashicorp.com/terraform/plugin/terraform-plugin-protocol#protocol-version-6)
+
+and uses the tf5to6server package to translate from Protocol Version 5 to 6
+([Package Compatibility](https://developer.hashicorp.com/terraform/plugin/mux/translating-protocol-version-5-to-6#compatibility))
+
+Therefore, in order to work with the provider starting from release 1.2.0,
+
+it requires Terraform CLI version 1.1.5 or later.
+
+In order to use [Emphemeral Resources](#emphemeral-resources), Terraform CLI version 1.11 or later is required.
 
 Provider configuration
 -----------
@@ -893,7 +918,7 @@ $ terraform import luminate_ssh_access_policy.new-ssh-access-policy  policy_id
 Re­­­source: luminate_web_access_policy
 ---------
 
-Provides Secure access cloud SSH access policy
+Provides Secure access cloud HTTP access policy
 
 ­­­
 
@@ -941,10 +966,7 @@ The following arguments are supported:
 
 -   **applications** - (Required) The applications to which this policy
     applies.
-
--   **accounts** - (Required) SSH/Unix accounts with which IDP entities
-    and/or Luminate local users can access the SSH Server
-
+- 
 -   **validators** - (Optional)
 
     -   **mfa** - (Optional) Specifies whether to carry out mfa (multi-factor authentication) validation.
@@ -1056,6 +1078,159 @@ In addition to arguments above, the following attributes are exported:
 
 ```
 $ terraform import luminate_tcp_access_policy.new-tcp-access-policy  policy_id
+```
+
+Re­­­source: luminate_web_activity_policy
+---------
+
+Provides Secure access cloud HTTP activity policy
+
+­­­
+
+#### Example Usage
+
+```
+resource "luminate_web_activity_policy" "new-web-activity-policy" {
+  name =  "my-web-activity-policy"
+
+  identity_provider_id = "identity_provider_id"
+  user_ids = ["user1_id", "user2_id"]
+  group_ids = ["group1_id", "group2_id"]
+
+  applications = ["application1_id","application2_id"]
+  
+  conditions = {
+    source_ip = ["127.0.0.1/24", "1.1.1.1/16", "8.8.8.8/24"]
+    location = ["Wallis and Futuna"]
+
+    managed_device = {
+      symantec_web_security_service = false
+    }
+  }
+  
+  rules = [
+            {
+              action = "BLOCK_USER"
+              conditions = {
+                uri_accessed = true
+                http_command = true
+                arguments = {
+                  uri_list = ["/admin", "/users"]
+                  commands = ["GET", "POST"]
+                }
+              }
+            },
+            {
+              action = "DISCONNECT_USER"
+              conditions = {
+                file_uploaded = true
+                file_downloaded = true
+              }
+            }
+         ]
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) name of the policy
+
+-   **enabled -** (Optional) Indicates whether this policy is enabled.
+
+-   **identity_provider_id -** (Optional) The identity provider id
+
+-   **user_ids -** (Optional) The user entities to which this policy
+    applies.
+
+-   **group_ids -** (Optional) The group entities to which this policy
+    applies.
+
+-   **applications** - (Required) The applications to which this policy
+    applies.
+
+-   **enable_isolation -** (Optional) Indicates whether web isolation 
+    is enabled in this policy. 
+    Required for using the "WEB_ISOLATION" rule action.
+
+-   **enable_whitelist -** (Optional) Indicates whether Allow rules
+    whitelist is enabled in this policy. 
+    Required for using the "ALLOW" rule action.
+
+-   **rules** - (Required) The constraints on the actions to perform
+    upon user web activity (non-empty list of nested rule objects)
+
+    -   **rule** - Activity rule object
+
+        -   **action** (Required) - The action to apply, allowed values: 
+            "ALLOW", "BLOCK", "BLOCK_USER", "DISCONNECT_USER", 
+            "WEB_ISOLATION", "CDS"
+
+        -   **isolation_profile_id** (Optional) - The web isolation profile 
+            ID to apply, required with "WEB_ISOLATION" action if selected.
+            The isolation profile shared object could be retrieved using 
+            luminate_shared_object data source with type "ISOLATION_PROFILE"
+
+        -   **dlp_filter_id** (Optional) - The DLP application detection ID.
+            Required for using "CDS" action ID (DLP Cloud Detector)
+
+        -   **conditions** (Required) - The conditions to apply the action
+
+            -   **file_downloaded** (Optional) Indicate whether File 
+                Downloaded condition is enabled
+            
+            -   **file_uploaded** (Optional) Indicate whether File
+                Uploaded condition is enabled
+
+            -   **uri_accessed** (Optional) Indicate whether URI Access
+                condition is enabled, requires the URI List argument
+
+            -   **http_command** (Optional) Indicate whether HTTP Command
+                condition is enabled, requires the Commands argument
+
+            -   **arguments** (Optional) - The arguments for the enabled
+                conditions, required only if related conditions are enabled
+
+                -   **uri_list** (Optional) - The URI List argument, 
+                    required for the URI Accessed condition if enabled
+                
+                -   **commands** (Optional) - The Commands argument, 
+                    required for the HTTP Command condition if enabled
+                
+
+-   **conditions** - (Optional)
+
+    -   **location** - (Optional) - location based condition, specify
+        the list of accepted locations.
+
+    -   **source_ip** - (Optional) - source ip based condition, specify
+        the allowed CIDR for this policy.
+
+    -   **managed_device** - (Optional) Indicate whatever to restrict
+        policy to managed devices only
+
+        -   **opswat** - (Optional) Indicate whatever to restrict
+            policy to Opswat MetaAccess
+
+        -   **symantec_cloudsoc** - (Optional) Indicate whatever to
+            restrict policy to symantec cloudsoc
+
+        -   **symantec_web_security_service** - (Optional) Indicate
+            whatever to restrict policy to symantec web security service
+
+    -   **unmanaged_device** - (Optional) Indicate whatever to
+        restrict policy to unmanaged devices only
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - id of the policy
+
+#### Import
+
+```
+$ terraform import luminate_web_activity_policy.new-web-activity-policy  policy_id
 ```
 
 Collection resources
@@ -1244,12 +1419,10 @@ In addition to arguments above, the following attributes are exported:
 -   **aws_external_id -** the integration AWS external ID
 
 
-# Integration Bind resource
-
-Resource: luminate_aws_integration
+Resource: luminate_aws_integration_bind
 ----------
 
-Provides secure access cloud aws_integration resource
+Provides secure access cloud aws_integration_bind resource
 
 ­
 #### Example Usage
@@ -1334,37 +1507,71 @@ The following arguments are supported:
 -   **aws_external_id -** (Required) integration AWS external ID 
 -   **regions -** (Required) regions to add
 
-Re­­­source: luminate_DNS_server
-------------
+# DNS Resiliency resources
 
-Provides secure access cloud DNS server
+Resource: luminate_dns_server_resiliency
+----------
+
+Provides CRUD of dns resiliency servers
+
+­­­
 
 #### Example Usage
+
 ```
 resource "luminate_site" "new-site" {
 	name = "tfAccSite"
 }
-resource "luminate_dns_server" "new-dns" {
-	site_id = "${luminate_site.new-site.id}"
-	name = "testDNS"
-	internal_address = "udp://10.0.0.1:53"
-	dns_settings {
-		domain_suffixes = ["company.com"]
-	}
-}
-```
 
+resource "luminate_dns_group_resiliency" "new-dns-group" {
+	name = "testDNSGroupResiliency"
+	sendNotifications = true
+	domainSuffixes = ["somedomain.com"]
+}
+
+data "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
+    name = "testDNSServerResiliency"
+	site_id = "${luminate_site.new-site.id}"
+	group_id = "${luminate_dns_group_resiliency.new-dns-group.id}"
+	internal_address = "udp://20.0.0.1:63"
+}
+
+```
 #### Argument Reference
 
 The following arguments are supported:
 
--   **name -** (Required) name of the connector
+-   **group_id -** (Required) Group id
+-   **name -** (Required) Dns Server name
+-   **site_id -** (Required) Associated Site id
+-   **internal_address -** (Required) Dns server address
 
--   **site_id -** (Required) site id to attach the connector
 
--   **internal_address** - (Required) Internal address of the
-    application, accessible by connector
--   **dns_settings** [domain_suffixes] - (Required) The domain suffix
+Resource: luminate_dns_group_resiliency
+----------
+
+Provides crud of dns resiliency groups
+
+­­­
+
+#### Example Usage
+
+```
+
+resource "luminate_dns_group_resiliency" "new-dns-group" {
+	name = "testDNSGroupResiliency"
+	sendNotifications = true
+	domainSuffixes = ["somedomain.com"]
+}
+
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) Dns Group name
+-   **sendNotifications -** (Required) Indicates if notification are enabled
+-   **domainSuffixes -** (Required) List of domain suffixes
 
 
 Data sources
@@ -1397,6 +1604,7 @@ In addition to arguments above, the following attributes are exported:
 
 -   **identity_provider_id** - id of the identity provider
 
+
 Data Source: luminate_user
 -------------
 
@@ -1426,6 +1634,7 @@ In addition to arguments above, the following attributes are exported:
 
 -   **user_ids** - list of retrieved users ids
 
+
 Data source: luminate_group
 -----------
 
@@ -1454,6 +1663,65 @@ The following arguments are supported:
 In addition to arguments above, the following attributes are exported:
 
 -   **group_ids** - list of retrieved groups ids
+
+
+Data Source: luminate_collection
+-------------
+
+Use this resource to get an existing collection
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_collection" "my-collection" {
+  name = "my-collection-name"
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) The name of the collection
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - retrieved collection id
+
+
+Data Source: luminate_shared_object
+-------------
+
+Use this resource to get an existing shared object
+
+­­­
+
+#### Example Usage
+
+```
+data "luminate_shared_object" "my-shared_object" {
+  name = "my-shared-object"
+  type = "IP_LIST"
+}
+```
+#### Argument Reference
+
+The following arguments are supported:
+
+-   **name -** (Required) The name of the shared object
+
+-   **type -** (Required) The type of the shared object 
+    supported types: "IP_LIST", "OPSWAT_GROUPS", "ISOLATION_PROFILE"
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+-   **id** - retrieved shared object id
+
 
 Data source: luminate_aws_integration
 ------------
@@ -1512,72 +1780,129 @@ In addition to arguments above, the following attributes are exported:
 - **created_on** (String)
 - **modified_on** (String)
 
-# DNS Resiliency resources
+Emphemeral resources
+==========
 
-Resource: luminate_dns_server_resiliency
-----------
+**NOTE:**
 
-Provides CRUD of dns resiliency servers
+    Ephemeral resources require Terraform CLI versions > 1.10
 
+Emphemeral Resource: luminate_site_registration_key
+-----------
+Provides secure access cloud site registration key ephemeral resource
 ­­­
 
-#### Example Usage
+Read more [here](https://api.luminate.io/#tag/Site-Registration-Keys)
 
-```
-resource "luminate_site" "new-site" {
-	name = "tfAccSite"
-}
+**NOTE:**
 
-resource "luminate_dns_group_resiliency" "new-dns-group" {
-	name = "testDNSGroupResiliency"
-	sendNotifications = true
-	domainSuffixes = ["somedomain.com"]
-}
+    The `version` field should reference `version` field from a `luminate_site_registration_key_version` resource.
+    This is required in order to prevent token generation during "Plan" phase.
 
-data "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
-    name = "testDNSServerResiliency"
-	site_id = "${luminate_site.new-site.id}"
-	group_id = "${luminate_dns_group_resiliency.new-dns-group.id}"
-	internal_address = "udp://20.0.0.1:63"
-}
 
-```
 #### Argument Reference
 
 The following arguments are supported:
 
--   **group_id -** (Required) Group id
--   **name -** (Required) Dns Server name
--   **site_id -** (Required) Associated Site id
--   **internal_address -** (Required) Dns server address 
+- **site_id** (String) (Required) The ID of the site
 
+- **version** (Int64) (Required) This should always be a value unknown during "Plan" phase (We use `luminate_site_registration_key_version` to achieve this)
 
-Resource: luminate_dns_group_resiliency
-----------
+- **revoke_existing_key_immediately** (boolean) (Required)
 
-Provides crud of dns resiliency groups
+  true: → 
 
-­­­
+  All existing keys are deleted.
+
+  false: → 
+
+  The current primary key becomes temporarily active (72-hour expiration).
+
+  If there's an existing temporarily active key already, it will be deleted.
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+- **token** - The token can be used during the terraform run only in other resources' fields that are not saved to state (such as "write-only" or fields in other ephemeral resources)
+
+**NOTE:** [write-only fields](https://developer.hashicorp.com/terraform/language/resources/ephemeral/write-only) can be used only in Terraform CLI versions > 1.11
 
 #### Example Usage
 
 ```
-
-resource "luminate_dns_group_resiliency" "new-dns-group" {
-	name = "testDNSGroupResiliency"
-	sendNotifications = true
-	domainSuffixes = ["somedomain.com"]
+resource "luminate_site_registration_key_version" "new_site_registration_key_version" {
 }
 
+ephemeral "luminate_site_registration_key" "new_site_registration_key" {
+  site_id = luminate_site.new-site.id
+  version = luminate_site_registration_key_version.new_site_registration_key_version.version
+  revoke_existing_key_immediately = true
+}
 ```
-#### Argument Reference
 
-The following arguments are supported:
+#### Various Examples of token usage
 
--   **name -** (Required) Dns Group name
--   **sendNotifications -** (Required) Indicates if notification are enabled
--   **domainSuffixes -** (Required) List of domain suffixes
+<details>
 
+<summary>K8s Secret</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1#data_wo-2)
+
+```
+resource "kubernetes_secret" "example" {  
+  metadata {
+    name = "my-secret"
+  }
+
+  data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
+
+  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+}
+```
+
+</details>
+
+<details>
+
+<summary>AWS Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version#secret_string_wo-1)
+
+```
+resource "aws_secretsmanager_secret" "example_secret" {
+  name = "my-secret"
+}
+
+resource "aws_secretsmanager_secret_version" "example_version" {
+  secret_id     = aws_secretsmanager_secret.example_secret.id
+  secret_string_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+}
+```
+
+</details>
+
+<details>
+
+<summary>GCP Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret_version#example-usage---secret-version-basic-write-only)
+
+```
+resource "google_secret_manager_secret" "example_secret" {
+  secret_id = "my-secret"
+}
+
+
+resource "google_secret_manager_secret_version" "secret-version-basic-write-only" {
+  secret = google_secret_manager_secret.example_secret.id
+  secret_data_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_data_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+}
+```
+
+</details>
 
 #### Confluence page
 https://fireglass.atlassian.net/wiki/x/dICL1

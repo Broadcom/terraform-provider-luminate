@@ -16,18 +16,21 @@ type LuminateService struct {
 	cli              *sdk.APIClient
 	TenantBaseDomain string
 
-	Sites             *SiteAPI
-	Connectors        *ConnectorsAPI
-	Applications      *ApplicationAPI
-	AccessPolicies    *AccessPolicyAPI
-	Users             *UserAPI ``
-	Groups            *GroupAPI
-	IdentityProviders *IdentityProviderAPI
-	IntegrationAPI    *IntegrationAPI
-	SshClientApi      *SshClientAPI
-	CollectionAPI     *CollectionAPI
-	RoleBindingsAPI   *RoleBindingsAPI
-	DNSResiliencyAPI  *DNSResiliencyAPI
+	Sites                 *SiteAPI
+	SitesRegistrationKeys *SitesRegistrationKeysAPI
+	Connectors            *ConnectorsAPI
+	Applications          *ApplicationAPI
+	AccessPolicies        *AccessPolicyAPI
+	ActivityPolicies  *ActivityPolicyAPI
+	Users                 *UserAPI ``
+	Groups                *GroupAPI
+	IdentityProviders     *IdentityProviderAPI
+	IntegrationAPI        *IntegrationAPI
+	SshClientApi          *SshClientAPI
+	CollectionAPI         *CollectionAPI
+	RoleBindingsAPI       *RoleBindingsAPI
+	DNSResiliencyAPI      *DNSResiliencyAPI
+	SharedObjectAPI   *SharedObjectAPI
 }
 
 const (
@@ -60,10 +63,12 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	})
 
 	lumSvc.Sites = NewSiteAPI(lumSvc.cli)
+	lumSvc.SitesRegistrationKeys = NewSitesRegistrationKeysAPI(lumSvc.cli)
 	lumSvc.Connectors = NewConnectorsAPI(lumSvc.cli)
 	lumSvc.CollectionAPI = NewCollectionAPI(lumSvc.cli)
 	lumSvc.Applications = NewApplicationAPI(lumSvc.cli)
 	lumSvc.AccessPolicies = NewAccessPolicyAPI(lumSvc.cli)
+	lumSvc.ActivityPolicies = NewActivityPolicyAPI(lumSvc.cli)
 	lumSvc.Users = NewUserAPI(lumSvc.cli)
 	lumSvc.Groups = NewGroupAPI(lumSvc.cli)
 	lumSvc.IdentityProviders = NewIdentityProviderAPI(lumSvc.cli)
@@ -71,6 +76,7 @@ func NewClient(ClientID string, ClientSecret string, Endpoint string) *LuminateS
 	lumSvc.SshClientApi = NewSshClientAPI(lumSvc.cli)
 	lumSvc.RoleBindingsAPI = NewRoleBindingsAPI(lumSvc.cli)
 	lumSvc.DNSResiliencyAPI = NewDNSResiliencyAPI(lumSvc.cli)
+	lumSvc.SharedObjectAPI = NewSharedObjectAPI(lumSvc.cli)
 
 	return &lumSvc
 }

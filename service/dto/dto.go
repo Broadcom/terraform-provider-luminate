@@ -7,14 +7,34 @@ import (
 )
 
 type Site struct {
-	ID               string
-	Name             string
-	MuteHealth       bool
-	K8SVolume        string
-	Kerberos         *SiteKerberosConfig
-	Connectors       []Connector
-	CountCollections int32
-	Region           string
+	ID                 string
+	Name               string
+	MuteHealth         bool
+	K8SVolume          string
+	Kerberos           *SiteKerberosConfig
+	Connectors         []Connector
+	CountCollections   int32
+	Region             string
+	AuthenticationMode SiteAuthenticationMode
+}
+
+type SiteAuthenticationMode string
+
+const (
+	SiteAuthenticationModeConnector = "connector"
+	SiteAuthenticationModeSite      = "site"
+)
+
+var ValidAuthenticationModes = []string{SiteAuthenticationModeConnector, SiteAuthenticationModeSite}
+
+type SiteRegistrationKeyRotateRequest struct {
+	SiteID            string
+	RevokeImmediately bool
+}
+
+type GeneratedSiteRegistrationKey struct {
+	ID  string
+	Key string
 }
 
 type SiteKerberosConfig struct {
@@ -131,11 +151,33 @@ type Conditions struct {
 	UnmanagedDevice Device
 }
 
+type ActivityRule struct {
+	Action             string
+	Conditions         *RuleConditions
+	IsolationProfileID string
+	DLPFilterID        string
+}
+
+type RuleConditions struct {
+	FileDownloaded bool
+	FileUploaded   bool
+	UriAccessed    bool
+	HttpCommand    bool
+	Arguments      *RuleConditionArguments
+}
+
+type RuleConditionArguments struct {
+	UriList  []string
+	Commands []string
+}
+
 const (
-	IpUuid           = "IP_LIST"
-	SharedIpListUuid = "SHARED_IP_LIST"
-	CountriesUuid    = "COUNTRIES"
+	IpList           = "IP_LIST"
+	SharedIpList     = "SHARED_IP_LIST"
+	Countries        = "COUNTRIES"
 	Authentication   = "AUTHENTICATION"
+	OpswatGroups     = "OPSWAT_GROUPS"
+	IsolationProfile = "ISOLATION_PROFILE"
 )
 
 const (
@@ -153,7 +195,28 @@ const (
 	UnmanagedDeviceCondition               = "IS_NOT_WSS_IP"
 )
 
-type AccessPolicy struct {
+const (
+	FileDownloadedCondition = "FILE_DOWNLOADED"
+	FileUploadedCondition   = "FILE_UPLOADED"
+	URICondition            = "URI_CONDITION"
+	HTTPCommandCondition    = "METHOD_CONDITION"
+)
+
+const (
+	URIListRuleConditionArgument     = "URI_LIST"
+	HTTPCommandRuleConditionArgument = "HTTP_METHODS"
+)
+
+const (
+	AllowAction             = "ALLOW"
+	BlockAction             = "BLOCK"
+	BlockUserAction         = "BLOCK_USER"
+	DisconnectUserAction    = "DISCONNECT_USER"
+	WebIsolationAction      = "WEB_ISOLATION"
+	DLPCloudDetectionAction = "CDS"
+)
+
+type Policy struct {
 	TargetProtocol    string
 	Id                string
 	Enabled           bool
@@ -161,12 +224,25 @@ type AccessPolicy struct {
 	Name              string
 	DirectoryEntities []DirectoryEntity
 	Applications      []string
-	Conditions        *Conditions
-	Validators        *Validators
-	RdpSettings       *PolicyRdpSettings
-	SshSettings       *PolicySshSettings
-	TcpSettings       *PolicyTcpSettings
 	CollectionID      string
+	Conditions        *Conditions
+}
+
+type AccessPolicy struct {
+	Policy
+	//ACCESS
+	Validators  *Validators
+	RdpSettings *PolicyRdpSettings
+	SshSettings *PolicySshSettings
+	TcpSettings *PolicyTcpSettings
+}
+
+type ActivityPolicy struct {
+	Policy
+	//ACTIVITY
+	ActivityRules   []ActivityRule
+	EnableIsolation bool
+	EnableWhiteList bool
 }
 
 type DirectoryEntity struct {
@@ -267,6 +343,20 @@ func EntityDTOToEntityModel(entities []DirectoryEntity) []sdk.DirectoryEntity {
 	return directoryEntities
 }
 
+func EntityModelEntityDTO(directoryEntitiesDTO []sdk.DirectoryEntity) []DirectoryEntity {
+	var directoryEntities []DirectoryEntity
+	for _, directoryEntityDto := range directoryEntitiesDTO {
+		directoryEntities = append(directoryEntities, DirectoryEntity{
+			IdentifierInProvider: directoryEntityDto.IdentifierInProvider,
+			IdentityProviderId:   directoryEntityDto.IdentityProviderId,
+			DisplayName:          directoryEntityDto.DisplayName,
+			IdentityProviderType: ConvertIdentityProviderTypeToString(directoryEntityDto.IdentityProviderType),
+			EntityType:           FromModelType(*directoryEntityDto.Type_),
+		})
+	}
+	return directoryEntities
+}
+
 type DNSGroupInputDTO struct {
 	Name             string
 	IsEnabled        bool          `json:"isEnabled"`
@@ -333,4 +423,17 @@ func ConvertDnsServerTODTO(dto sdk.DnsServerOutput) *DNSServerOutputDTO {
 		CreatedAt:       dto.CreatedAt,
 		UpdatedAt:       dto.UpdatedAt,
 	}
+}
+
+type SharedObjectDTO struct {
+	ID        string
+	Name      string
+	Type      string
+	Values    []interface{}
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type SharedObjectValue struct {
+	Value interface{}
 }

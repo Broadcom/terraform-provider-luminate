@@ -5,22 +5,23 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/Broadcom/terraform-provider-luminate/framework_provider"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 )
 
-var testAccProviders map[string]*schema.Provider
-var newTestAccProviders map[string]func() (*schema.Provider, error)
-var testAccProvider *schema.Provider
+var testAccProtocol6Providers map[string]func() (tfprotov6.ProviderServer, error)
 var testAccDomain string
 
 func init() {
-	testAccProvider = Provider()
-	testAccProviders = map[string]*schema.Provider{
-		"luminate": testAccProvider,
-	}
-	newTestAccProviders = make(map[string]func() (*schema.Provider, error))
-	newTestAccProviders["luminate"] = func() (*schema.Provider, error) {
-		return testAccProvider, nil
+	testAccProtocol6Providers = map[string]func() (tfprotov6.ProviderServer, error){
+		"luminate": func() (tfprotov6.ProviderServer, error) {
+			providerServer, err := framework_provider.CreateProviderServer(Provider())
+			if err != nil {
+				return nil, err
+			}
+
+			return providerServer(), nil
+		},
 	}
 }
 

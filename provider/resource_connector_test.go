@@ -22,8 +22,8 @@ func TestAccLuminateConnector(t *testing.T) {
 	resourceName := "luminate_connector.new-connector"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: newTestAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnector,

@@ -218,8 +218,8 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 	resourceNameCollection := "luminate_tcp_access_policy.new-tcp-access-policy-collection"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: newTestAccProviders,
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
 				Config: resourceTcpAccessPolicy_enabled(100 + rand.Intn(100)),
