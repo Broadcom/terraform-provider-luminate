@@ -30,6 +30,7 @@ resource "luminate_site" "new-site" {
 
 ### Optional
 
+- `authentication_mode` (String) Site authentication mode
 - `kerberos` (Block List, Max: 1) (see [below for nested schema](#nestedblock--kerberos))
 - `kubernetes_persistent_volume_name` (String) Kubernetes persistent volume name
 - `mute_health_notification` (Boolean) Mute notifications if site is down
