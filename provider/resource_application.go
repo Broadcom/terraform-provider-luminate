@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -60,12 +63,14 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 			Description: "The application DNS subdomain.",
 		},
 		"external_address": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "The application effective DNS address that exposes the application",
+			Computed:    true,
 		},
 		"luminate_address": {
-			Type:     schema.TypeString,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "Application DNS address using Symantec ZTNA subdomain (i.e., testapp.acme.luminatesec.com)",
+			Computed:    true,
 		},
 	}
 }

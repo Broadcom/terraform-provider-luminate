@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -30,7 +33,8 @@ func LuminateDataSourceUsers() *schema.Resource {
 				},
 			},
 			"user_ids": {
-				Type: schema.TypeList,
+				Type:        schema.TypeList,
+				Description: "list of users to include as part of this policy",
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.NoZeroValues,
