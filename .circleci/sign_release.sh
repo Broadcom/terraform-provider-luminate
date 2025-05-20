@@ -81,8 +81,8 @@ echo "    DEBUG (script): Passphrase file: '${PASSPHRASE_FILE}'" # This is alrea
 echo "Executing GPG command..."
 echo "SCRIPT_DEBUG: Effective GNUPGHOME just before gpg command: '${GNUPGHOME:-<not set by scripts export>}'"
 echo "SCRIPT_DEBUG: GPG_KEY_OPT value: '${GPG_KEY_OPT}'"
-echo "SCRIPT_DEBUG: Passphrase file: '${PASSPHASE_FILE}'"
-echo "SCRIPT_DEBUG: Attempting to run: gpg --homedir \"${GNUPGHOME:-$HOME/.gnupg}\" --batch --yes --passphrase-file \"${PASSPHASE_FILE}\" --pinentry-mode loopback ${GPG_KEY_OPT} --output \"${SIGNATURE_FILE}\" --detach-sign \"${CHECKSUMS_FILE}\""
+echo "SCRIPT_DEBUG: Passphrase file: '${PASSPHRASE_FIL}'"
+echo "SCRIPT_DEBUG: Attempting to run: gpg --homedir \"${GNUPGHOME:-$HOME/.gnupg}\" --batch --yes --passphrase-file \"${PASSPHRASE_FIL}\" --pinentry-mode loopback ${GPG_KEY_OPT} --output \"${SIGNATURE_FILE}\" --detach-sign \"${CHECKSUMS_FILE}\""
 
 
 gpg --batch --yes --passphrase-file "${PASSPHRASE_FILE}" --pinentry-mode loopback ${GPG_KEY_OPT} --output "${SIGNATURE_FILE}" --detach-sign "${CHECKSUMS_FILE}"

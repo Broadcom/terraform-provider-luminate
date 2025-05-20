@@ -94,6 +94,12 @@ jobs:
             echo "Exported GNUPGHOME=${GNUPGHOME}"
             export GPG_HOME="${CI_GPG_HOME}"
             echo "Exported GPG_HOME=${GPG_HOME} for Makefile variables."
+            if [ -n "$GPG_SIGN_KEY_ID" ]; then
+             export GPG_SIGN_KEY="$GPG_SIGN_KEY_ID"
+             echo "Exported GPG_SIGN_KEY=${GPG_SIGN_KEY} for Makefile."
+            else
+              echo "Warning: GPG_SIGN_KEY_ID CI secret not found or empty."
+            fi
       - run:
           name: Run Release Build (make all)
           command: |
