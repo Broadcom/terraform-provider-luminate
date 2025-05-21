@@ -138,6 +138,8 @@ jobs:
             # The passphrase will be consumed by sign_release.sh
             echo "$GPG_PASSPHRASE" | make release
             echo "--- 'make release' Pipeline Finished ---"
+      - store_artifacts:
+          path: dist
 #     - run: bash .circleci/github-release.sh
 
 workflows:
