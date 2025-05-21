@@ -50,13 +50,6 @@ else
   exit 1
 fi
 
-# --- DEBUGGING AFTER SUCCESSFUL IMPORT ---
-echo "DEBUG: Listing secret keys in temporary keyring after import:"
-gpg --list-secret-keys --keyid-format LONG --homedir "${SCRIPT_TEMP_GPG_HOME}" || echo "Warning: Failed to list secret keys after import."
-echo "DEBUG: Listing contents of ${SCRIPT_TEMP_GPG_HOME} after successful import:"
-ls -laR "${SCRIPT_TEMP_GPG_HOME}"
-# --- END DEBUGGING ---
-
 # 3. Export environment variables that Make will use.
 # These are set in *this* shell environment, which will also run 'make'.
 export GNUPGHOME="${SCRIPT_TEMP_GPG_HOME}" # GPG commands will use this

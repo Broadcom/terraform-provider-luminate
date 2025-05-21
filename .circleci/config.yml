@@ -72,12 +72,14 @@ jobs:
       - checkout
       - setup-ssh-key
       - run: make build
+      - store_artifacts:
+          path: dist
   release:
     docker:
       - image: cimg/go:1.24
     steps:
       - attach-env
-#      - check-skip
+      - check-skip
       - checkout
       - setup-ssh-key
       - run:
@@ -85,7 +87,7 @@ jobs:
           command: bash ./.circleci/do_release.sh
       - store_artifacts:
           path: dist
-#     - run: bash .circleci/github-release.sh
+      - run: bash .circleci/github-release.sh
 
 workflows:
   version: 2
@@ -93,21 +95,21 @@ workflows:
     jobs:
       - validate:
           context: terraform-release
-#      - test:
-#          context: terraform-acceptance
-#          requires:
-#            - valijate
-#      - build:
-#          context: terraform-release
-#          filters:
-#            branches:
-#              ignore: master
-#          requires:
-#            - test
+      - test:
+          context: terraform-acceptance
+          requires:
+            - valijate
+      - build:
+          context: terraform-release
+          filters:
+            branches:
+              ignore: master
+          requires:
+            - test
       - release:
           context: terraform-release
-#          filters:
-#            branches:
-#              only: master
+          filters:
+            branches:
+              only: master
           requires:
-#            - test
+            - test
