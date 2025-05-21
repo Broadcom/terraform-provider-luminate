@@ -91,9 +91,9 @@ jobs:
             echo "DEBUG: GPG_PRIVATE_KEY_CONTENT received by CI:"
             echo "$GPG_PRIVATE_KEY_CONTENT" > /tmp/key_content_debug.txt
             echo "First 5 lines:"
-            head -n 5 /tmp/key_content_debug.txt
+            head -n 1 /tmp/key_content_debug.txt
             echo "Last 5 lines:"
-            tail -n 5 /tmp/key_content_debug.txt           
+            tail -n 1 /tmp/key_content_debug.txt           
             wc -l /tmp/key_content_debug.txt
             
             echo "Importing private GPG key from secret variable..."
