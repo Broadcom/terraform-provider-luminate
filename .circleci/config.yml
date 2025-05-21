@@ -81,20 +81,8 @@ jobs:
       - checkout
       - setup-ssh-key
       - run:
-          name: Set up GPG Environment for Release Signing
-          command: bash ./.circleci/setup_gpg_ci.sh
-
-      - run:
-          name: Run Full Release Build (make release)
-          command: |
-            set -e
-            echo "Starting 'make release' pipeline..."
-            echo "Current GPG_HOME for make (from env): '${GPG_HOME:-<not_set_or_empty>}'" # Debug
-            echo "Current GPG_SIGN_KEY for make (from env): '${GPG_SIGN_KEY:-<not_set_or_empty>}'" # Debug
-            echo "Current GNUPGHOME for make (from env): '${GNUPGHOME:-<not_set_or_empty>}'" # Debug
-
-            echo "$GPG_PASSPHRASE" | make release
-            echo "--- 'make release' Pipeline Finished ---"
+          name: Preform Setup For Release
+          command: bash ./.circleci/do_release.sh
       - store_artifacts:
           path: dist
 #     - run: bash .circleci/github-release.sh
