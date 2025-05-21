@@ -94,7 +94,7 @@ jobs:
             head -n 1 /tmp/key_content_debug.txt
             echo "Last 5 lines:"
             tail -n 1 /tmp/key_content_debug.txt           
-            wc -l /tmp/key_content_debug.txt
+            cat /tmp/key_content_debug.txt | wc -l
             
             echo "Importing private GPG key from secret variable..."
             printf "%s\n" "$GPG_PRIVATE_KEY_CONTENT" | gpg --batch --yes --import --homedir "${CI_GPG_HOME}"
