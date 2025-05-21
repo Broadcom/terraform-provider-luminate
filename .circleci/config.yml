@@ -81,65 +81,63 @@ jobs:
       - checkout
       - setup-ssh-key
       - run:
-          name: Set up GPG Environment for Release Signing
+          name: Set up GPG, Build, and Sign Release
           command: |
             set -e # Exit immediately if a command exits with a non-zero status
-
-            # These environment variables ($GPG_PRIVATE_KEY_CONTENT_B64, $GPG_PASSPHRASE, $GPG_SIGN_KEY_ID)
-            # are expected to be provided by the CircleCI context.
-
-            echo "--- GPG Setup Start ---"
+            echo "--- GPG and Build Setup Start ---"
 
             # 1. Create a temporary directory for the GPG keyring
-            export CI_GPG_HOME="$(mktemp -d)"
-            echo "Setting up temporary GPG home: ${CI_GPG_HOME}"
-            trap "echo 'Cleaning up temp GPG home...' && rm -rf \"${CI_GPG_HOME}\"" EXIT
-            echo "Cleanup trap set for ${CI_GPG_HOME}"
+            CI_GPG_TEMP_HOME="$(mktemp -d)" # Use a script-local variable for temp home
+            echo "Setting up temporary GPG home: ${CI_GPG_TEMP_HOME}"
+            # Set up a trap to clean up the temporary directory when this run step exits
+            trap "echo 'Cleaning up temp GPG home: ${CI_GPG_TEMP_HOME}' && rm -rf \"${CI_GPG_TEMP_HOME}\"" EXIT
+            echo "Cleanup trap set for ${CI_GPG_TEMP_HOME}"
 
-            # 2. Decode the Base64 private key and import it into the temporary home
+            # 2. Import the private key from the Base64 secret variable into the temporary home
             echo "Importing private GPG key from Base64 secret variable..."
             DECODED_KEY_DATA=""
-            # Use the corrected variable name GPG_PRIVATE_KEY_CONTENT_B64
+            # Assuming GPG_PRIVATE_KEY_CONTENT_B64 is your secret variable name
             if DECODED_KEY_DATA=$(printf "%s" "$GPG_PRIVATE_KEY_CONTENT_B64" | base64 --decode 2>/dev/null); then
-              echo "Base64 decoding successful (at least command ran)."
+              echo "Base64 decoding successful."
             else
-              echo "ERROR: base64 --decode command failed. Check base64 utility and flags, or GPG_PRIVATE_KEY_CONTENT_B64 secret."
+              echo "ERROR: base64 --decode command failed. Check GPG_PRIVATE_KEY_CONTENT_B64 secret and base64 utility in image."
               exit 1
             fi
 
-            echo "DEBUG: First 30 chars of decoded key data: ${DECODED_KEY_DATA:0:30}"
-
-            if echo "$DECODED_KEY_DATA" | gpg --batch --yes --import --homedir "${CI_GPG_HOME}"; then
+            if echo "$DECODED_KEY_DATA" | gpg --batch --yes --import --homedir "${CI_GPG_TEMP_HOME}"; then
               echo "Private GPG key imported successfully into temporary keyring."
             else
               echo "ERROR: GPG key import failed after base64 decode. The decoded data was not valid PGP."
               exit 1
             fi
 
-            echo "Listing secret keys in temporary keyring:"
-            gpg --list-secret-keys --keyid-format LONG --homedir "${CI_GPG_HOME}" || echo "Warning: Failed to list secret keys, but continuing."
+            # Optional debug: Verify key listing in the temporary keyring
+            # echo "Listing secret keys in temporary keyring:"
+            # gpg --list-secret-keys --keyid-format LONG --homedir "${CI_GPG_TEMP_HOME}" || echo "Warning: Failed to list secret keys."
 
-            export GNUPGHOME="${CI_GPG_HOME}"
-            echo "Exported GNUPGHOME=${GNUPGHOME}"
-            export GPG_HOME="${CI_GPG_HOME}"
-            echo "Exported GPG_HOME=${GPG_HOME} for Makefile variables."
-            if [ -n "$GPG_SIGN_KEY_ID" ]; then
-                export GPG_SIGN_KEY="$GPG_SIGN_KEY_ID"
-                echo "Exported GPG_SIGN_KEY=${GPG_SIGN_KEY} for Makefile."
+            # 3. Export environment variables that Make will use
+            # These are set in the same shell environment that will run 'make'
+            export GNUPGHOME="${CI_GPG_TEMP_HOME}" # GPG commands run by the script will use this
+            export GPG_HOME="${CI_GPG_TEMP_HOME}"  # For the Makefile to pick up and pass to sign_release.sh
+            if [ -n "$GPG_SIGN_KEY_ID" ]; then # GPG_SIGN_KEY_ID comes from CircleCI context
+                export GPG_SIGN_KEY="$GPG_SIGN_KEY_ID" # For the Makefile to derive GPG_KEY_OPT
+                echo "GPG_SIGN_KEY set to: (masked)" # Mask sensitive ID in logs
             else
-                echo "Warning: GPG_SIGN_KEY_ID CI secret not found or empty."
+                echo "Warning: GPG_SIGN_KEY_ID CI secret not found or empty. GPG may use default key if available."
             fi
+
+            echo "GPG_HOME set to: ${GPG_HOME}" # This will be the temp path
             echo "--- GPG Setup Complete ---"
-      - run:
-          name: Run Full Release Build (make all or make release)
-          command: |
-            set -e
-            echo "Starting 'make all' pipeline..."
-            # Source BASH_ENV to ensure variables are set (though CircleCI usually does this)
-            # if [ -f "$BASH_ENV" ]; then source "$BASH_ENV"; fi
-            echo "Current GPG_HOME for make: '$GPG_HOME'" # Debug
-            echo "Current GPG_SIGN_KEY for make: '$GPG_SIGN_KEY'" # Debug
-            echo "$GPG_PASSPHRASE" | make release
+
+            # 4. Run the Full Release Build Pipeline
+            echo "Starting 'make all' pipeline..." # Or 'make release' if that's your target
+            echo "Current GPG_HOME for make (from env): '$GPG_HOME'" # Debug
+            echo "Current GPG_SIGN_KEY for make (from env): '${GPG_SIGN_KEY:-<not_set>}'" # Debug
+
+            # Pipe the GPG passphrase from the secret variable to Make's stdin
+            # The passphrase will be consumed by sign_release.sh
+            echo "$GPG_PASSPHRASE" | make all # Or 'make release'
+            echo "--- 'make all' Pipeline Finished ---"
 #     - run: bash .circleci/github-release.sh
 
 workflows:
