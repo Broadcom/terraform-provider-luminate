@@ -82,7 +82,7 @@ jobs:
       - setup-ssh-key
       - run:
           name: Set up GPG Environment for Release Signing
-          command: ./.circleci/setup_gpg_ci.sh # Call the setup script
+          command: bash ./.circleci/setup_gpg_ci.sh
 
       - run:
           name: Run Full Release Build (make release)
