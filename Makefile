@@ -37,7 +37,9 @@ RELEASE_DIR=dist/$(VERSION)
 # Temporary directory to build raw binaries before zipping
 BIN_TMP_DIR=tmp/bin/$(VERSION)
 
-all: clean linux darwin_amd64 darwin_arm64 windows manifest sign
+build: clean linux darwin_amd64 darwin_arm64 windows manifest sign
+
+release: clean linux darwin_amd64 darwin_arm64 windows manifest sign
 	@echo "----------------------------------------------------"
 	@echo " Release assets prepared in: $(RELEASE_DIR)"
 	@echo " Files ready for hosting:"

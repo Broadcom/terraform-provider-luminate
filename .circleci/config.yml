@@ -71,7 +71,7 @@ jobs:
       - attach-env
       - checkout
       - setup-ssh-key
-      - run: make
+      - run: make build
   release:
     docker:
       - image: cimg/go:1.24
@@ -120,9 +120,9 @@ workflows:
             - validate
       - build:
           context: terraform-release
-#          filters:
-#            branches:
-#              ignore: master
+          filters:
+            branches:
+              ignore: master
           requires:
             - test
       - release:
