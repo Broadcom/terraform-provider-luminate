@@ -81,38 +81,61 @@ jobs:
       - checkout
       - setup-ssh-key
       - run:
-          name: Set up GPG Environment
+          name: Set up GPG Environment for Release Signing
           command: |
-            set -e
+            set -e # Exit immediately if a command exits with a non-zero status
+            echo "--- GPG Setup Start ---"
+
+            # 1. Create a temporary directory for the GPG keyring
             export CI_GPG_HOME="$(mktemp -d)"
             echo "Setting up temporary GPG home: ${CI_GPG_HOME}"
-            trap "..." EXIT
-            
-            echo "DEBUG: GPG_PRIVATE_KEY_CONTENT received by CI:"
-            echo "DEBUG: Line count of GPG_PRIVATE_KEY_CONTENT:"
-            printf "%s\n" "$GPG_PRIVATE_KEY_CONTENT" | wc -l
-            
-            # --- DEBUG: Check for PGP Block Markers ---
-            echo "DEBUG: Checking for PGP BEGIN marker in GPG_PRIVATE_KEY_CONTENT..."
-            if printf "%s\n" "$GPG_PRIVATE_KEY_CONTENT" | grep -q "BEGIN PGP PRIVATE KEY BLOCK"; then
-            echo "DEBUG: BEGIN marker FOUND."
+
+            # Set up a trap to clean up the temporary directory even if the job fails
+            # This ensures cleanup happens when *this run step* exits
+            trap "echo 'Cleaning up temp GPG home...' && rm -rf \"${CI_GPG_HOME}\"" EXIT # Use double quotes for trap command
+            echo "Cleanup trap set for ${CI_GPG_HOME}"
+
+            # 2. Decode the Base64 private key and import it into the temporary home
+            echo "Importing private GPG key from Base64 secret variable..."
+            # Decode the Base64 content from $GPG_PRIVATE_KEY_CONTENT_B64
+            # Then pipe the decoded ASCII-armored key to gpg --import
+            # Use --homedir to tell gpg to use the temporary directory
+            # --batch --yes prevents prompts
+            # Ensure the correct base64 decode command is used (GNU: --decode, macOS: -D)
+            # Assuming GNU base64 is available in the cimg/go image
+            if echo "$GPG_PRIVATE_KEY_CONTENT_B64" | base64 --decode | gpg --batch --yes --import --homedir "${CI_GPG_HOME}"; then
+              echo "Private GPG key imported successfully into temporary keyring."
             else
-            echo "DEBUG: BEGIN marker NOT FOUND."
+              echo "ERROR: GPG key import failed. Check GPG_PRIVATE_KEY_BASE64 secret and base64 decode command."
+              exit 1
             fi
-            
-            echo "Importing private GPG key from secret variable..."
-            printf "%s\n" "$GPG_PRIVATE_KEY_CONTENT" | gpg --batch --yes --import --homedir "${CI_GPG_HOME}"
-            echo "Private GPG key imported into temporary keyring."
+
+            # Optional debug: Verify key listing in the temporary keyring
+            echo "Listing secret keys in temporary keyring:"
+            gpg --list-secret-keys --keyid-format LONG --homedir "${CI_GPG_HOME}" || echo "Warning: Failed to list secret keys, but continuing."
+
+            # 3. Set GNUPGHOME environment variable for subsequent GPG commands
+            # This tells gpg (and gpg-agent if running) where to look for keyrings
+            # This is necessary for the sign_release.sh script which executes 'gpg'
             export GNUPGHOME="${CI_GPG_HOME}"
             echo "Exported GNUPGHOME=${GNUPGHOME}"
+
+            # 4. Set GPG_HOME environment variable for the Makefile
+            # This overrides the default GPG_HOME in your Makefile for this run.
+            # The Makefile passes this value as an argument to sign_release.sh.
             export GPG_HOME="${CI_GPG_HOME}"
             echo "Exported GPG_HOME=${GPG_HOME} for Makefile variables."
+
+            # 5. Set GPG_SIGN_KEY environment variable for the Makefile
+            # This overrides GPG_SIGN_KEY in Makefile, ensuring CI uses the intended key ID from secrets.
+            # The Makefile's $(eval GPG_KEY_OPT...) will then use this value.
             if [ -n "$GPG_SIGN_KEY_ID" ]; then
-             export GPG_SIGN_KEY="$GPG_SIGN_KEY_ID"
-             echo "Exported GPG_SIGN_KEY=${GPG_SIGN_KEY} for Makefile."
+                export GPG_SIGN_KEY="$GPG_SIGN_KEY_ID"
+                echo "Exported GPG_SIGN_KEY=${GPG_SIGN_KEY} for Makefile."
             else
-              echo "Warning: GPG_SIGN_KEY_ID CI secret not found or empty."
+                echo "Warning: GPG_SIGN_KEY_ID CI secret not found or empty. Makefile may use its default GPG_SIGN_KEY or fail if none is default."
             fi
+            echo "--- GPG Setup Complete ---"
       - run:
           name: Run Release Build (make all)
           command: |
