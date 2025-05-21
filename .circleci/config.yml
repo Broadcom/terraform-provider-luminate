@@ -92,6 +92,14 @@ jobs:
             echo "DEBUG: Line count of GPG_PRIVATE_KEY_CONTENT:"
             printf "%s\n" "$GPG_PRIVATE_KEY_CONTENT" | wc -l
             
+            # --- DEBUG: Check for PGP Block Markers ---
+            echo "DEBUG: Checking for PGP BEGIN marker in GPG_PRIVATE_KEY_CONTENT..."
+            if printf "%s\n" "$GPG_PRIVATE_KEY_CONTENT" | grep -q "BEGIN PGP PRIVATE KEY BLOCK"; then
+            echo "DEBUG: BEGIN marker FOUND."
+            else
+            echo "DEBUG: BEGIN marker NOT FOUND."
+            fi
+            
             echo "Importing private GPG key from secret variable..."
             printf "%s\n" "$GPG_PRIVATE_KEY_CONTENT" | gpg --batch --yes --import --homedir "${CI_GPG_HOME}"
             echo "Private GPG key imported into temporary keyring."
