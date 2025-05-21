@@ -88,7 +88,7 @@ jobs:
             echo "Setting up temporary GPG home: ${CI_GPG_HOME}"
             trap "echo 'Cleaning up temp GPG home...' && rm -rf \"${CI_GPG_HOME}\"" EXIT
             echo "Importing private GPG key from secret variable..."
-            echo "$GPG_PRIVATE_KEY_CONTENT" | gpg --batch --yes --import --homedir "${CI_GPG_HOME}"
+            printf "%s\n" "$GPG_PRIVATE_KEY_CONTENT" | gpg --batch --yes --import --homedir "${CI_GPG_HOME}"
             echo "Private GPG key imported into temporary keyring."
             export GNUPGHOME="${CI_GPG_HOME}"
             echo "Exported GNUPGHOME=${GNUPGHOME}"
