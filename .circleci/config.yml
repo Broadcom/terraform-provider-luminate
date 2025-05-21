@@ -98,7 +98,7 @@ workflows:
       - test:
           context: terraform-acceptance
           requires:
-            - valijate
+            - validate
       - build:
           context: terraform-release
           filters:
