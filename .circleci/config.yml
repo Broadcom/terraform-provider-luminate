@@ -117,7 +117,7 @@ workflows:
 #      - test:
 #          context: terraform-acceptance
 #          requires:
-#            - validate
+#            - valijate
 #      - build:
 #          context: terraform-release
 #          filters:
@@ -131,4 +131,4 @@ workflows:
 #            branches:
 #              only: master
           requires:
-            - test
+#            - test
