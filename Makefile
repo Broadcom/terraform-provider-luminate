@@ -120,10 +120,11 @@ checksums:
 $(eval GPG_KEY_OPT = $(if $(GPG_SIGN_KEY),--local-user $(GPG_SIGN_KEY)))
 
 sign: checksums $(CHECKSUMS_FILE_PATH)
-	@echo "--> Generating binary GPG signature ($(notdir $(SIGNATURE_FILE_PATH)))..."
+	@echo "--> Generating binary GPG signature ($(SIGNATURE_FILE_PATH))..."
 	set -x # Trace shell commands
+	@echo "MAKE_DEBUG: GPG_HOME before calling script: '$(GPG_HOME)'"
+	@echo "MAKE_DEBUG: GPG_KEY_OPT before calling script: '$(GPG_KEY_OPT)'"
 	# Call the signing script, passing required arguments
-	# Pass the passphrase to the script's stdin via pipe
 	# Arguments: 1=CHECKSUMS_FILE_PATH, 2=SIGNATURE_FILE_PATH, 3=GPG_KEY_OPT, 4=GPG_HOME
 	@./.circleci/sign_release.sh $(CHECKSUMS_FILE_PATH) $(SIGNATURE_FILE_PATH) "$(GPG_KEY_OPT)" "$(GPG_HOME)"
 	@echo "Binary GPG signature generated."
