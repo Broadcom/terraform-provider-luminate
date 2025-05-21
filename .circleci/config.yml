@@ -130,14 +130,14 @@ jobs:
             echo "--- GPG Setup Complete ---"
 
             # 4. Run the Full Release Build Pipeline
-            echo "Starting 'make all' pipeline..." # Or 'make release' if that's your target
+            echo "Starting 'make release' pipeline..." # Or 'make release' if that's your target
             echo "Current GPG_HOME for make (from env): '$GPG_HOME'" # Debug
             echo "Current GPG_SIGN_KEY for make (from env): '${GPG_SIGN_KEY:-<not_set>}'" # Debug
 
             # Pipe the GPG passphrase from the secret variable to Make's stdin
             # The passphrase will be consumed by sign_release.sh
-            echo "$GPG_PASSPHRASE" | make all # Or 'make release'
-            echo "--- 'make all' Pipeline Finished ---"
+            echo "$GPG_PASSPHRASE" | make release
+            echo "--- 'make release' Pipeline Finished ---"
 #     - run: bash .circleci/github-release.sh
 
 workflows:
