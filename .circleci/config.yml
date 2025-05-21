@@ -140,7 +140,7 @@ jobs:
           name: Run Release Build (make all)
           command: |
             set -e
-            echo "Starting 'make all' pipeline..."
+            echo "Starting 'make release' pipeline..."
             echo "$GPG_PASSPHRASE" | make all
 #      - run: bash .circleci/github-release.sh
 
