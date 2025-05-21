@@ -37,7 +37,7 @@ RELEASE_DIR=dist/$(VERSION)
 # Temporary directory to build raw binaries before zipping
 BIN_TMP_DIR=tmp/bin/$(VERSION)
 
-build: clean linux darwin_amd64 darwin_arm64 windows manifest sign
+build: clean linux darwin_amd64 darwin_arm64 windows
 
 release: clean linux darwin_amd64 darwin_arm64 windows manifest sign
 	@echo "----------------------------------------------------"
