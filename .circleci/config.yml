@@ -93,7 +93,7 @@ jobs:
 
             # 2. Import the private key from the secret variable into the temporary home
             echo "Importing private GPG key from Base64 secret variable..."
-            if echo "$GPG_PRIVATE_KEY_BASE64" | base64 --decode | gpg --batch --yes --import --homedir "${CI_GPG_TEMP_HOME}"; then
+            if echo "$GPG_PRIVATE_KEY_CONTENT_B64" | base64 --decode | gpg --batch --yes --import --homedir "${CI_GPG_TEMP_HOME}"; then
               echo "Private GPG key imported successfully."
             else
               echo "ERROR: GPG key import failed."
