@@ -86,7 +86,16 @@ jobs:
             set -e
             export CI_GPG_HOME="$(mktemp -d)"
             echo "Setting up temporary GPG home: ${CI_GPG_HOME}"
-            trap "echo 'Cleaning up temp GPG home...' && rm -rf \"${CI_GPG_HOME}\"" EXIT
+            trap "..." EXIT
+            
+            echo "DEBUG: GPG_PRIVATE_KEY_CONTENT received by CI:"
+            echo "$GPG_PRIVATE_KEY_CONTENT" > /tmp/key_content_debug.txt
+            echo "First 5 lines:"
+            head -n 5 /tmp/key_content_debug.txt
+            echo "Last 5 lines:"
+            tail -n 5 /tmp/key_content_debug.txt           
+            wc -l /tmp/key_content_debug.txt
+            
             echo "Importing private GPG key from secret variable..."
             printf "%s\n" "$GPG_PRIVATE_KEY_CONTENT" | gpg --batch --yes --import --homedir "${CI_GPG_HOME}"
             echo "Private GPG key imported into temporary keyring."
