@@ -141,7 +141,7 @@ jobs:
           command: |
             set -e
             echo "Starting 'make release' pipeline..."
-            echo "$GPG_PASSPHRASE" | make all
+            echo "$GPG_PASSPHRASE" | make release
 #      - run: bash .circleci/github-release.sh
 
 workflows:
