@@ -75,7 +75,7 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 			Attributes: map[string]schema.Attribute{
 				"action": schema.StringAttribute{
 					Required:    true,
-					Description: "the action to apply for this rule condition.",
+					Description: "The action to apply, allowed values: 'ALLOW', 'BLOCK', 'BLOCK_USER', 'DISCONNECT_USER', 'WEB_ISOLATION', 'CDS'",
 					Validators: []validator.String{
 						stringvalidator.OneOf(
 							dto.AllowAction,
