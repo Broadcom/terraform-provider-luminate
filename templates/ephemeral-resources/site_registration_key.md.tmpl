@@ -1,13 +1,13 @@
 ---
-page_title: "luminate_site_registration_key Ephemeral Resource - terraform-provider-luminate"
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
 subcategory: ""
 description: |-
-  
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
 ---
 
-# luminate_site_registration_key (Ephemeral Resource)
+# {{.Name}} ({{.Type}})
 
-
+{{ .Description | trimspace }}
 
 
 **NOTE:**
@@ -25,19 +25,7 @@ In addition to arguments above, the following attributes are exported:
 
 ## Example Usage
 
-```terraform
-# Copyright (c) Broadcom Inc.
-# SPDX-License-Identifier: MPL-2.0
-
-resource "luminate_site_registration_key_version" "new_site_registration_key_version" {
-}
-
-ephemeral "luminate_site_registration_key" "new_site_registration_key" {
-  site_id                         = luminate_site.new-site.id
-  version                         = luminate_site_registration_key_version.new_site_registration_key_version.version
-  revoke_existing_key_immediately = true
-}
-```
+{{ tffile (printf "examples/ephemeral-resources/%s/ephemeral-resource.tf" .Name)}}
 
 
 #### Various Examples of token usage
