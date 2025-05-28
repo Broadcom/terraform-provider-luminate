@@ -84,3 +84,6 @@ darwin_arm64:
 	mkdir -p release || true
 	export GOOS=darwin GOARCH=arm64; $(GOBUILD) -o $(OUTPUT_DIR)/darwin_arm64/$(BINARY_NAME) -v
 	zip -j release/$(BINARY_NAME)-darwin_arm64.zip $(OUTPUT_DIR)/darwin_arm64/*
+
+generate-docs:
+	cd tools; go generate ./...

@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -31,19 +34,19 @@ func LuminateConnector() *schema.Resource {
 			},
 			"type": {
 				Type:         schema.TypeString,
-				Description:  "The deployment type of the host running the Luminate connector",
+				Description:  "The deployment type of the host running the Symantec ZTNA connector",
 				Required:     true,
 				ValidateFunc: validateConnectorType,
 				ForceNew:     true,
 			},
 			"command": {
 				Type:        schema.TypeString,
-				Description: "Command for deploying Luminate connector",
+				Description: "Command for deploying Symantec ZTNA connector",
 				Computed:    true,
 			},
 			"otp": {
 				Type:        schema.TypeString,
-				Description: "One time password for running Luminate connector",
+				Description: "One time password for running Symantec ZTNA connector",
 				Computed:    true,
 			},
 		},
