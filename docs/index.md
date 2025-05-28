@@ -130,3 +130,9 @@ output "run-command" {
   value = luminate_connector.connector.command
 }
 ```
+
+
+Terraform Version Requirements
+-----------
+
+**NOTE:** [write-only fields](https://developer.hashicorp.com/terraform/language/resources/ephemeral/write-only) can be used only in Terraform CLI versions > 1.11
