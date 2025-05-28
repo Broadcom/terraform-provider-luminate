@@ -109,8 +109,8 @@ resource "google_secret_manager_secret_version" "secret-version-basic-write-only
 ### Required
 
 - `revoke_existing_key_immediately` (Boolean) A field to state if the existing registration key should be revoked immediately or be given a 72 hours expiration time (true: → All existing keys are deleted.)
-- `site_id` (String) The site ID we want to associate with this registration key - This should always be an unknown value during `plan` phase (We use `luminate_site_registration_key_version` to achieve this)
-- `version` (Number) The version number of the site registration key used by external secrets
+- `site_id` (String) The site ID we want to associate with this registration key
+- `version` (Number) The version number of the site registration key used by external secrets - This should always be an unknown value during `plan` phase (We use `luminate_site_registration_key_version` to achieve this)
 
 ### Read-Only
 

@@ -40,11 +40,11 @@ func (r *SiteRegistrationKeyEphemeralResource) Schema(ctx context.Context, reque
 			},
 			"site_id": schema.StringAttribute{
 				Required:    true,
-				Description: "The site ID we want to associate with this registration key - This should always be an unknown value during `plan` phase (We use `luminate_site_registration_key_version` to achieve this)",
+				Description: "The site ID we want to associate with this registration key",
 			},
 			"version": schema.Int64Attribute{
 				Required:    true,
-				Description: "The version number of the site registration key used by external secrets",
+				Description: "The version number of the site registration key used by external secrets - This should always be an unknown value during `plan` phase (We use `luminate_site_registration_key_version` to achieve this)",
 			},
 			"revoke_existing_key_immediately": schema.BoolAttribute{
 				Required:    true,
