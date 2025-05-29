@@ -71,7 +71,9 @@ jobs:
       - attach-env
       - checkout
       - setup-ssh-key
-      - run: make
+      - run: make build
+      - store_artifacts:
+          path: dist
   release:
     docker:
       - image: cimg/go:1.24
@@ -80,7 +82,11 @@ jobs:
       - check-skip
       - checkout
       - setup-ssh-key
-      - run: make
+      - run:
+          name: Preform Setup For Release
+          command: bash ./.circleci/do_release.sh
+      - store_artifacts:
+          path: dist
       - run: bash .circleci/github-release.sh
 
 workflows:

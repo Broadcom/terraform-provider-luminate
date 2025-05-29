@@ -5,3 +5,4 @@ release/
 terraform-provider-luminate
 .env
 local_test.go
+dist/
