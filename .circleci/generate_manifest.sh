@@ -94,10 +94,8 @@ for zip_file in "${zip_files[@]}"; do
   esac
   echo "      Matched OS: '${OS}', ARCH: '${ARCH}'"
 
-  PLATFORM_JSON=$(printf '    {\n      \"os\": \"%s\",\n      \"arch\": \"%s\",\n      \"filename\": \"%s\",\n      \"shasum\": \"%s\"\n    }' \
+  PLATFORM_JSON=$(printf '{\n      \"os\": \"%s\",\n      \"arch\": \"%s\",\n      \"filename\": \"%s\",\n      \"shasum\": \"%s\"\n    }' \
                     "$OS" "$ARCH" "$zip_file" "$ZIP_SHASUM")
-
-  # echo "$PLATFORM_JSON" # Uncomment to print full snippet
 
   # Add the JSON string to the shell array
   PLATFORMS+=("$PLATFORM_JSON")
@@ -108,27 +106,29 @@ done
 # Use stored original directory path for safety
 cd "$ORIG_DIR"
 
-# Create the platforms JSON array by joining the entries with commas
-PLATFORMS_JSON=$(IFS=,; echo "[ ${PLATFORMS[*]} ]")
+JOINED_CONTENT=""
+if [ ${#PLATFORMS[@]} -gt 0 ]; then
+        first=true
+        for item in "${PLATFORMS[@]}"; do
+            INDENTED_PLATFORM_OBJECT=$(echo "$item" | sed 's/^/    /')
+            if [ "$first" = true ]; then
+              JOINED_CONTENT+="$INDENTED_PLATFORM_OBJECT"
+              first=false
+            else
+              JOINED_CONTENT+=$(printf ",\n%s" "$INDENTED_PLATFORM_OBJECT")
+            fi
+        done
+fi
+
+PLATFORMS_JSON="  [
+  ${JOINED_CONTENT}
+    ]"
 
 echo "    Finished processing zip files. PLATFORMS array has ${#PLATFORMS[@]} elements."
 
 # --- Assemble Final JSON ---
 
 echo "    Assembling final JSON..."
-
-# Get the content of the platforms array joined by comma+newline
-PLATFORMS_JOINED="" # Initialize as empty
-
-if [ ${#PLATFORMS[@]} -gt 0 ]; then
-    # Use command substitution to capture the output of printf in a subshell
-    # where IFS is set, and assign it to PLATFORMS_JOINED in the parent shell.
-    PLATFORMS_JOINED=$(IFS=$',\n' printf "%s" "${PLATFORMS[*]}")
-fi
-
-# Debug: Print the joined platforms string
-# echo "PLATFORMS_JOINED string:"
-# echo "${PLATFORMS_JOINED}"
 
 # Use printf to assemble the final JSON structure
 # Output to the manifest file - Construct the full path here
@@ -139,15 +139,14 @@ MANIFEST_OUTPUT_PATH="${RELEASE_DIR}/${MANIFEST_FILENAME}" # Construct the full 
 # This controls overall indentation and comma placement.
 printf '{
   \"version\": \"%s\",
-  \"protocols\":  \"5.0\"],
+  \"protocols\":  [\"5.0\"],
   \"platforms\": [
-%s
+    %s
   ]
 }\n' \
-         "$VERSION" "$(IFS=,; printf "%s" "${PLATFORMS[*]}")" > "${MANIFEST_OUTPUT_PATH}"
+          "$VERSION_NO_V" "$PLATFORMS_JSON" > "${MANIFEST_OUTPUT_PATH}"
 
 
 echo "    Successfully created manifest file: ${MANIFEST_OUTPUT_PATH}"
 
 echo "Manifest JSON creation complete."
-

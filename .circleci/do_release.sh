@@ -66,7 +66,6 @@ echo "--- GPG Setup Complete ---"
 # 4. Run the Full Release Build Pipeline (Make)
 echo "Starting 'make release' pipeline..."
 echo "Current GPG_HOME for make (from env): '${GPG_HOME:-<not_set_or_empty>}'"
-echo "Current GPG_SIGN_KEY for make (from env): '${GPG_SIGN_KEY:-<not_set_or_empty>}'"
 echo "Current GNUPGHOME for make (from env): '${GNUPGHOME:-<not_set_or_empty>}'"
 
 # Pipe the GPG passphrase from the secret variable to Make's stdin
