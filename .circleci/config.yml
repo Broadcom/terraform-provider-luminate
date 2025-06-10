@@ -31,9 +31,12 @@ commands:
             build-scripts/setup-ssh-keys.sh
 
   install-jq:
-    name: Install jq
-    command: |
-      sudo apt-get update && sudo apt-get install -y || true
+    description: "Installs jq JSON processor, non-fatal."
+    steps:
+      - run:
+          name: Install jq
+          command: | 
+            sudo apt-get update && sudo apt-get install -y jq || true
 
   validate-release-version-was-incremented:
     steps:
