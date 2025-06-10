@@ -36,7 +36,8 @@ commands:
       - run:
           name: Install jq
           command: | 
-            sudo apt-get update && sudo apt-get install -y jq || true
+            sudo apt-get update && sudo apt-get install -y jq
+            jq --version
 
   validate-release-version-was-incremented:
     steps:
@@ -64,6 +65,14 @@ jobs:
       - checkout
       - validate-release-version-was-incremented
       - persist-env
+  test:
+    docker:
+      - image: cimg/go:1.24
+    steps:
+      - attach-env
+      - checkout
+      - setup-ssh-key
+      - run: make testacc
   build:
     docker:
       - image: cimg/go:1.24
@@ -94,10 +103,18 @@ workflows:
     jobs:
       - validate:
           context: terraform-release
+      - test:
+          context: terraform-acceptance
+          requires:
+            - validate
       - build:
           context: terraform-release
           filters:
             branches:
               ignore: master
+          requires:
+            - test
       - release:
           context: terraform-release
+          requires:
+            - test
