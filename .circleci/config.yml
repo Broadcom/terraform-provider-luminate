@@ -30,6 +30,11 @@ commands:
             chmod +x build-scripts/setup-ssh-keys.sh
             build-scripts/setup-ssh-keys.sh
 
+  install-jq:
+    name: Install jq
+    command: |
+      sudo apt-get update && sudo apt-get install -y || true
+
   validate-release-version-was-incremented:
     steps:
       - run:
@@ -71,6 +76,7 @@ jobs:
       - attach-env
       - checkout
       - setup-ssh-key
+      - install-jq
       - run: make build
       - store_artifacts:
           path: dist
@@ -87,7 +93,6 @@ jobs:
           command: bash ./.circleci/do_release.sh
       - store_artifacts:
           path: dist
-      - run: bash .circleci/github-release.sh
 
 workflows:
   version: 2
@@ -108,8 +113,5 @@ workflows:
             - test
       - release:
           context: terraform-release
-          filters:
-            branches:
-              only: master
           requires:
             - test

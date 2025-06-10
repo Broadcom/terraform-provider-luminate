@@ -120,9 +120,7 @@ if [ ${#PLATFORMS[@]} -gt 0 ]; then
         done
 fi
 
-PLATFORMS_JSON="  [
-  ${JOINED_CONTENT}
-    ]"
+PLATFORMS_JSON=" ${JOINED_CONTENT} "
 
 echo "    Finished processing zip files. PLATFORMS array has ${#PLATFORMS[@]} elements."
 
@@ -148,5 +146,18 @@ printf '{
 
 
 echo "    Successfully created manifest file: ${MANIFEST_OUTPUT_PATH}"
+
+if command -v jq > /dev/null 2>&1; then
+  echo "    Pretty-printing manifest file with jq..."
+  # Create a temporary file to avoid issues with in-place editing on some systems
+  jq . "${MANIFEST_OUTPUT_PATH}" > "${MANIFEST_OUTPUT_PATH}.tmp" && mv "${MANIFEST_OUTPUT_PATH}.tmp" "${MANIFEST_OUTPUT_PATH}"
+  if [ $? -eq 0 ]; then
+    echo "    Manifest file pretty-printed successfully."
+  else
+    echo "    Warning: jq command failed. Manifest might not be pretty-printed."
+  fi
+else
+  echo "    jq not found. Manifest file will be used as generated (might not be optimally pretty-printed)."
+fi
 
 echo "Manifest JSON creation complete."
