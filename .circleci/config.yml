@@ -57,6 +57,17 @@ commands:
 
             exit 0
 
+  terraform-release:
+    description: "Sets up and executes the release script."
+    steps:
+      - run:
+          name: Perform Setup For Release
+          command: |
+            set -e
+            echo "Setting execute permission for release script..."
+            chmod +x ./.circleci/do_release.sh
+            bash ./.circleci/do_release.sh
+
 jobs:
   validate:
     docker:
@@ -92,14 +103,8 @@ jobs:
       - check-skip
       - checkout
       - setup-ssh-key
-      - run:
-          name: Preform Setup For Release
-          command: |
-            set -e
-            echo "Setting execute permission for release script..."
-            chmod +x ./.circleci/do_release.sh
-            echo "Executing release script..."
-            bash ./.circleci/do_release.sh
+      - terraform-release
+      - run: bash .circleci/github-release.sh
       - store_artifacts:
           path: dist
 
