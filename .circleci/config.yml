@@ -101,9 +101,11 @@ jobs:
       - image: cimg/go:1.24
     steps:
       - attach-env
+      - check-skip
       - checkout
       - setup-ssh-key
       - terraform-release-setup
+      - run: bash .circleci/github-release.sh
       - store_artifacts:
           path: dist
 
@@ -113,15 +115,21 @@ workflows:
     jobs:
       - validate:
           context: terraform-release
-      - build:
-          context: terraform-release
+      - test:
+          context: terraform-acceptance
           requires:
             - validate
+      - build:
+          context: terraform-release
           filters:
             branches:
               ignore: master
+          requires:
+            - test
       - release:
           context: terraform-release
+          filters:
+            branches:
+              only: master
           requires:
-            - validate
-            - build
+            - test
