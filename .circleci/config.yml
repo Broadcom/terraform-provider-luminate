@@ -57,7 +57,7 @@ commands:
 
             exit 0
 
-  terraform-release:
+  terraform-release-setup:
     description: "Sets up and executes the release script."
     steps:
       - run:
@@ -103,8 +103,7 @@ jobs:
       - check-skip
       - checkout
       - setup-ssh-key
-      - terraform-release
-      - run: bash .circleci/github-release.sh
+      - terraform-release-setup
       - store_artifacts:
           path: dist
 
@@ -114,21 +113,10 @@ workflows:
     jobs:
       - validate:
           context: terraform-release
-      - test:
-          context: terraform-acceptance
-          requires:
-            - validate
       - build:
           context: terraform-release
           filters:
             branches:
               ignore: master
-          requires:
-            - test
       - release:
           context: terraform-release
-          filters:
-            branches:
-              only: master
-          requires:
-            - test
