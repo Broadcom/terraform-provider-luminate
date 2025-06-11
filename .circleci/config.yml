@@ -115,8 +115,13 @@ workflows:
           context: terraform-release
       - build:
           context: terraform-release
+          requires:
+            - validate
           filters:
             branches:
               ignore: master
       - release:
           context: terraform-release
+          requires:
+            - validate
+            - build
