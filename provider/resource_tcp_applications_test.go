@@ -39,7 +39,7 @@ resource "luminate_collection_site_link" "new-collection-site-link" {
 	collection_ids = sort(["${luminate_collection.new-collection.id}"])
 }
 resource "luminate_tcp_application" "new-tcp-application-collection" {
-  name = "tfAccTCPWithCollection"
+  name = "tfAccTCPWithCollection%d"
   site_id = "${luminate_site.new-site.id}"
   collection_id = "${luminate_collection.new-collection.id}"
   target {
@@ -48,7 +48,7 @@ resource "luminate_tcp_application" "new-tcp-application-collection" {
 	port_mapping = [80]	
   }
  depends_on = [luminate_collection_site_link.new-collection-site-link]
-} `, rand, rand)
+} `, rand, rand, rand)
 }
 
 func TestAccLuminateTCPApplication(t *testing.T) {
@@ -63,7 +63,7 @@ func TestAccLuminateTCPApplication(t *testing.T) {
 			{
 				Config: testAccTCPApplication_with_collection(randNum),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceNameCollection, "name", "tfAccTCPWithCollection")),
+					resource.TestCheckResourceAttr(resourceNameCollection, "name", fmt.Sprintf("tfAccTCPWithCollection%d", randNum))),
 			},
 			{
 				Config: testAccTCPApplication_minimal(randNum),
