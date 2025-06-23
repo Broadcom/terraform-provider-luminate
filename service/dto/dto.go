@@ -11,7 +11,6 @@ type Site struct {
 	Name               string
 	MuteHealth         bool
 	K8SVolume          string
-	Kerberos           *SiteKerberosConfig
 	Connectors         []Connector
 	CountCollections   int32
 	Region             string
@@ -35,12 +34,6 @@ type SiteRegistrationKeyRotateRequest struct {
 type GeneratedSiteRegistrationKey struct {
 	ID  string
 	Key string
-}
-
-type SiteKerberosConfig struct {
-	Domain     string
-	KDCAddress string
-	KeytabPair string
 }
 
 type Connector struct {

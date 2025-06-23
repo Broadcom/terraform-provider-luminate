@@ -31,7 +31,6 @@ resource "luminate_site" "new-site" {
 ### Optional
 
 - `authentication_mode` (String) Site authentication mode
-- `kerberos` (Block List, Max: 1) (see [below for nested schema](#nestedblock--kerberos))
 - `kubernetes_persistent_volume_name` (String) Kubernetes persistent volume name
 - `mute_health_notification` (Boolean) Mute notifications if site is down
 - `region` (String) Site connectivity region
@@ -39,12 +38,3 @@ resource "luminate_site" "new-site" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-<a id="nestedblock--kerberos"></a>
-### Nested Schema for `kerberos`
-
-Required:
-
-- `domain` (String) Active Directory domain name you want to SSO with.
-- `kdc_address` (String) The hostname of the primary domain controller/domain controller closest to the connector.
-- `keytab_pair` (String) The absolute path of the keytab file
