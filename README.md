@@ -259,20 +259,6 @@ The following arguments are supported:
 - **kubernetes_persistent_volume_name** (Optional) Kubernetes
     persistent volume name - only relevant if running on top kubernetes
 
-- **kerberos** - (Optional)
-
-    -   **domain** (Required) - Active Directory domain name you want
-        to SSO with.
-
-    -   **kdc_address** - (Required) - The hostname of the primary
-        domain controller.
-
-    -   **keytab_pair** - (Required) - The absolute path of the keytab
-        file
-
-  
-  **NOTE:** kerberos block is optional, but if specified all nested fields are required
-
 #### Attribute Reference
 
 In addition to arguments above, the following attributes are exported:

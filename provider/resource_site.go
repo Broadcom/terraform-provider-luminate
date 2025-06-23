@@ -55,33 +55,6 @@ func LuminateSite() *schema.Resource {
 				Description:  "Kubernetes persistent volume name",
 				ValidateFunc: utils.ValidateString,
 			},
-			"kerberos": {
-				Type:     schema.TypeList,
-				MaxItems: 1,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"domain": {
-							Type:         schema.TypeString,
-							Required:     true,
-							Description:  "Active Directory domain name you want to SSO with.",
-							ValidateFunc: utils.ValidateString,
-						},
-						"kdc_address": {
-							Type:         schema.TypeString,
-							Required:     true,
-							Description:  "The hostname of the primary domain controller/domain controller closest to the connector.",
-							ValidateFunc: utils.ValidateString,
-						},
-						"keytab_pair": {
-							Type:         schema.TypeString,
-							Required:     true,
-							Description:  "The absolute path of the keytab file",
-							ValidateFunc: utils.ValidateString,
-						},
-					},
-				},
-			},
 		},
 		CreateContext: resourceCreateSite,
 		ReadContext:   resourceReadSite,
@@ -204,17 +177,6 @@ func extractSiteFields(d *schema.ResourceData) *dto.Site {
 		K8SVolume:          d.Get("kubernetes_persistent_volume_name").(string),
 	}
 
-	k, ok := d.Get("kerberos").(*schema.Set)
-
-	if ok && len(k.List()) > 0 {
-		kerb := k.List()[0].(map[string]interface{})
-
-		site.Kerberos = &dto.SiteKerberosConfig{
-			Domain:     kerb["domain"].(string),
-			KDCAddress: kerb["kdc_address"].(string),
-			KeytabPair: kerb["keytab_pair"].(string),
-		}
-	}
 	return &site
 }
 
@@ -224,20 +186,4 @@ func setSiteFields(d *schema.ResourceData, site *dto.Site) {
 	d.Set(FieldAuthenticationMode, site.AuthenticationMode)
 	d.Set("mute_health_notification", site.MuteHealth)
 	d.Set("kubernetes_persistent_volume_name", site.K8SVolume)
-
-	if site.Kerberos != nil && site.Kerberos.Domain != "" {
-		d.Set("kerberos", flattenKerberosConfig(site.Kerberos))
-	}
-}
-
-func flattenKerberosConfig(config *dto.SiteKerberosConfig) []interface{} {
-	if config == nil {
-		return []interface{}{}
-	}
-	k := map[string]interface{}{
-		"domain":      config.Domain,
-		"kdc_address": config.KDCAddress,
-		"keytab_pair": config.KeytabPair,
-	}
-	return []interface{}{k}
 }

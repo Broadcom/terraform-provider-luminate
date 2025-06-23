@@ -26,10 +26,6 @@ func getTestSiteResourceConfigAndCheckFunc(region string, authenticationMode dto
 		resource.TestCheckResourceAttr(resourceName, "authentication_mode", string(authenticationMode)),
 		resource.TestCheckResourceAttr(resourceName, "mute_health_notification", "true"),
 		resource.TestCheckResourceAttr(resourceName, "kubernetes_persistent_volume_name", "K8SVolume"),
-		resource.TestCheckResourceAttr(resourceName, "kerberos.#", "1"),
-		resource.TestCheckResourceAttr(resourceName, "kerberos.0.domain", "domain.com"),
-		resource.TestCheckResourceAttr(resourceName, "kerberos.0.kdc_address", "kdc_address"),
-		resource.TestCheckResourceAttr(resourceName, "kerberos.0.keytab_pair", "keytab_pair"),
 	)
 
 	return config, check
@@ -44,11 +40,6 @@ func testAccResourceSite_options(region string, randNum int, authenticationMode 
   	authentication_mode = "%s"
 	mute_health_notification = "true"
 	kubernetes_persistent_volume_name = "K8SVolume"
-	kerberos {
-		domain = "domain.com"
-		kdc_address = "kdc_address"
-		keytab_pair = "keytab_pair"
-	}
 }`, resourceName, randNum, region, authenticationMode)
 }
 
@@ -74,7 +65,6 @@ func TestAccLuminateSite(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "mute_health_notification", "false"),
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_persistent_volume_name", ""),
 					resource.TestCheckResourceAttr(resourceName, "authentication_mode", dto.SiteAuthenticationModeConnector),
-					resource.TestCheckResourceAttr(resourceName, "kerberos.#", "0"),
 				),
 			},
 			{
