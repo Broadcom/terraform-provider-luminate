@@ -37,7 +37,7 @@ RELEASE_DIR=dist/$(VERSION)
 # Temporary directory to build raw binaries before zipping
 BIN_TMP_DIR=tmp/bin/$(VERSION)
 
-build: clean linux darwin_amd64 darwin_arm64 windows
+build: clean get_api_from_github linux darwin_amd64 darwin_arm64 windows
 
 release: clean linux darwin_amd64 darwin_arm64 windows manifest sign
 	@echo "----------------------------------------------------"
@@ -182,6 +182,15 @@ testacc_wss:
 	export  RUN_WSS_TESTS=true && \
     $(GOTEST) -p 1 -v  ./provider/wss_tests
 
+get_api_from_github:
+	mkdir -p ~/.ssh && \
+    echo “$BROADCOM_GITHUB_ACCESS_LUMINATE_PRIVATE_KEY” > ~/.ssh/id_rsa && \
+    echo "$BROADCOM_GITHUB_ACCESS_GITHUB_PRIVATE_KEY" > ~/.ssh/id_ed25519 && \
+    chmod -R 600 ~/.ssh && \
+    eval $(ssh-agent) && \
+    ssh-add -l ~/.ssh/id_rsa && \
+    ssh-add -l ~/.ssh/id_ed25519 && \
+    GIT_SSH_COMMAND='ssh -A -i ~/.ssh/id_ed25519 -o "IdentitiesOnly yes"' git clone git@broadcom-github@broadcom-github.ssh.luminate.luminatesite.com:SED/ztna-api-documentation.git
 
 generate-docs:
 	cd tools; go generate ./...
