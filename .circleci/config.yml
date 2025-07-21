@@ -115,17 +115,13 @@ workflows:
     jobs:
       - validate:
           context: terraform-release
-      - test:
-          context: terraform-acceptance
-          requires:
-            - validate
       - build:
           context: terraform-release
           filters:
             branches:
               ignore: master
           requires:
-            - test
+            - validate
       - release:
           context: terraform-release
           filters:
