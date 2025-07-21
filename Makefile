@@ -39,7 +39,7 @@ BIN_TMP_DIR=tmp/bin/$(VERSION)
 
 build: clean get_api_from_github linux darwin_amd64 darwin_arm64 windows
 
-release: clean linux darwin_amd64 darwin_arm64 windows manifest sign
+release: clean get_api_from_github linux darwin_amd64 darwin_arm64 windows manifest sign
 	@echo "----------------------------------------------------"
 	@echo " Release assets prepared in: $(RELEASE_DIR)"
 	@echo " Files ready for hosting:"
@@ -84,7 +84,6 @@ $(DARWIN_ARM64_BIN_TMP):
 	@echo "--> Building Darwin ARM64 binary ($(notdir $@))..."
 	@mkdir -p $(dir $@)
 	@GOOS=darwin GOARCH=arm64 $(GOBUILD) -o $@ .
-
 
 windows: $(WINDOWS_AMD64_BIN_TMP)
 	@echo "--> Zipping Windows AMD64 binary ($(notdir $(WINDOWS_AMD64_ZIP_PATH)))..."
@@ -145,6 +144,10 @@ testacc:
 	export TEST_USER_ID2="ed974d59-1941-4584-9336-2a9ed35043f2" && \
 	export TEST_SITE_REGION="us-west1" && \
 	export TEST_IDP_ID="0a0524a3-44ae-43b2-9d79-6cb018136b6e" && \
+	ls -lsh && \
+	echo "ls ./ztna-api-documentation" && \
+	ls -lsh ./ztna-api-documentation && \
+	cat ./go.mod && \
     $(GOTEST) -p 1 -v  ./...
 
 testacc_serial:
@@ -183,17 +186,8 @@ testacc_wss:
     $(GOTEST) -p 1 -v  ./provider/wss_tests
 
 get_api_from_github:
-	mkdir -p ~/.ssh && \
-	printf "%s\n" "$$BROADCOM_GITHUB_ACCESS_LUMINATE_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa; \
-	printf "%s\n" "$$BROADCOM_GITHUB_ACCESS_GITHUB_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519; \
-	sudo chmod -R 600 ~/.ssh && \
-    eval $(ssh-agent) && \
-    sudo ssh-add  ~/.ssh/id_rsa && \
-    sudo ssh-add  ~/.ssh/id_ed25519 && \
-    ssh-add -l
-	ssh-keyscan -t rsa broadcom-github.ssh.luminate.luminatesite.com >> ~/.ssh/known_hosts; \
-	echo "--> Cloning ztna-api-documentation repository..."; \
-    GIT_SSH_COMMAND='ssh -A -i ~/.ssh/id_ed25519 -o "IdentitiesOnly yes"' git clone git@broadcom-github@broadcom-github.ssh.luminate.luminatesite.com:SED/ztna-api-documentation.git
+	@echo "--> Executing script to set up GitHub access and clone API repo..."
+	@./.circleci/get_api_docs_from_github.sh
 
 generate-docs:
 	cd tools; go generate ./...

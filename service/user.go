@@ -4,10 +4,10 @@
 package service
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 type UserAPI struct {

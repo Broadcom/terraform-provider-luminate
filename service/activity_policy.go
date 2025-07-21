@@ -4,12 +4,12 @@
 package service
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"encoding/json"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 	"log"
 )
 

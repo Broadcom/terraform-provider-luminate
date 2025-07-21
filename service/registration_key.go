@@ -10,7 +10,7 @@ import (
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
 
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 type SitesRegistrationKeysAPI struct {

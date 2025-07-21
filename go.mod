@@ -1,7 +1,6 @@
 module github.com/Broadcom/terraform-provider-luminate
 
 require (
-	bitbucket.org/accezz-io/api-documentation v0.0.0-20250623103445-53ca22180b31
 	github.com/antihax/optional v1.0.0
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
 	github.com/google/uuid v1.6.0
@@ -14,6 +13,7 @@ require (
 	github.com/hashicorp/terraform-plugin-testing v1.12.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.3
+	github.gwd.broadcom.net/SED/ztna-api-documentation v0.0.0-20250717154358-deffcbb50bc1
 	golang.org/x/oauth2 v0.23.0
 	golang.org/x/time v0.3.0
 )
