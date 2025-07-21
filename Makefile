@@ -184,13 +184,15 @@ testacc_wss:
 
 get_api_from_github:
 	mkdir -p ~/.ssh && \
-    echo “$BROADCOM_GITHUB_ACCESS_LUMINATE_PRIVATE_KEY” > ~/.ssh/id_rsa && \
-    echo "$BROADCOM_GITHUB_ACCESS_GITHUB_PRIVATE_KEY" > ~/.ssh/id_ed25519 && \
+	printf "%s\n" "$$BROADCOM_GITHUB_ACCESS_LUMINATE_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa; \
+	printf "%s\n" "$$BROADCOM_GITHUB_ACCESS_GITHUB_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519; \
 	sudo chmod -R 600 ~/.ssh && \
     eval $(ssh-agent) && \
     sudo ssh-add  ~/.ssh/id_rsa && \
     sudo ssh-add  ~/.ssh/id_ed25519 && \
     ssh-add -l
+	ssh-keyscan -t rsa broadcom-github.ssh.luminate.luminatesite.com >> ~/.ssh/known_hosts; \
+	echo "--> Cloning ztna-api-documentation repository..."; \
     GIT_SSH_COMMAND='ssh -A -i ~/.ssh/id_ed25519 -o "IdentitiesOnly yes"' git clone git@broadcom-github@broadcom-github.ssh.luminate.luminatesite.com:SED/ztna-api-documentation.git
 
 generate-docs:
