@@ -144,10 +144,6 @@ testacc:
 	export TEST_USER_ID2="ed974d59-1941-4584-9336-2a9ed35043f2" && \
 	export TEST_SITE_REGION="us-west1" && \
 	export TEST_IDP_ID="0a0524a3-44ae-43b2-9d79-6cb018136b6e" && \
-	ls -lsh && \
-	echo "ls ./ztna-api-documentation" && \
-	ls -lsh ./ztna-api-documentation && \
-	cat ./go.mod && \
     $(GOTEST) -p 1 -v  ./...
 
 testacc_serial:
