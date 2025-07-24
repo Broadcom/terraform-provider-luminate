@@ -37,9 +37,9 @@ RELEASE_DIR=dist/$(VERSION)
 # Temporary directory to build raw binaries before zipping
 BIN_TMP_DIR=tmp/bin/$(VERSION)
 
-build: clean linux darwin_amd64 darwin_arm64 windows
+build: clean get_api_from_github linux darwin_amd64 darwin_arm64 windows
 
-release: clean linux darwin_amd64 darwin_arm64 windows manifest sign
+release: clean get_api_from_github linux darwin_amd64 darwin_arm64 windows manifest sign
 	@echo "----------------------------------------------------"
 	@echo " Release assets prepared in: $(RELEASE_DIR)"
 	@echo " Files ready for hosting:"
@@ -84,7 +84,6 @@ $(DARWIN_ARM64_BIN_TMP):
 	@echo "--> Building Darwin ARM64 binary ($(notdir $@))..."
 	@mkdir -p $(dir $@)
 	@GOOS=darwin GOARCH=arm64 $(GOBUILD) -o $@ .
-
 
 windows: $(WINDOWS_AMD64_BIN_TMP)
 	@echo "--> Zipping Windows AMD64 binary ($(notdir $(WINDOWS_AMD64_ZIP_PATH)))..."
@@ -182,6 +181,9 @@ testacc_wss:
 	export  RUN_WSS_TESTS=true && \
     $(GOTEST) -p 1 -v  ./provider/wss_tests
 
+get_api_from_github:
+	@echo "--> Executing script to set up GitHub access and clone API repo..."
+	@./.circleci/get_api_docs_from_github.sh
 
 generate-docs:
 	cd tools; go generate ./...

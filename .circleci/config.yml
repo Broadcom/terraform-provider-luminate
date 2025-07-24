@@ -84,6 +84,9 @@ jobs:
       - attach-env
       - checkout
       - setup-ssh-key
+      - run:
+          name: Configure Git for private Go modules
+          command: make get_api_from_github
       - run: make testacc
   build:
     docker:
@@ -116,7 +119,9 @@ workflows:
       - validate:
           context: terraform-release
       - test:
-          context: terraform-acceptance
+          context:
+            - terraform-acceptance
+            - terraform-release
           requires:
             - validate
       - build:

@@ -11,8 +11,8 @@ import (
 	"log"
 	"strings"
 
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
