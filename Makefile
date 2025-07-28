@@ -183,7 +183,7 @@ testacc_wss:
 
 get_api_from_github:
 	@echo "--> Executing script to set up GitHub access and clone API repo..."
-	@./.circleci/get_api_docs_from_github.sh
+	@./.circleci/get_api_docs_from_github.sh < /dev/null
 
 generate-docs:
 	cd tools; go generate ./...
