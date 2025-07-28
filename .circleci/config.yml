@@ -108,7 +108,6 @@ jobs:
       - checkout
       - setup-ssh-key
       - terraform-release-setup
-      - run: bash .circleci/github-release.sh
       - store_artifacts:
           path: dist
 
@@ -133,8 +132,5 @@ workflows:
             - test
       - release:
           context: terraform-release
-          filters:
-            branches:
-              only: master
           requires:
             - test
