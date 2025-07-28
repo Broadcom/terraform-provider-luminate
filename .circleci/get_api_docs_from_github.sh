@@ -55,6 +55,7 @@ git config --global url."git@github.gwd.broadcom.net:".insteadOf "https://github
 # 5. Start the ssh-agent in the background and add the keys to it.
 echo "--> Starting ssh-agent and adding keys..."
 eval "$(ssh-agent -s)"
+trap "echo 'Killing ssh-agent (PID: $SSH_AGENT_PID)...' && kill $SSH_AGENT_PID" EXIT
 ssh-add ~/.ssh/id_rsa
 ssh-add ~/.ssh/id_ed25519
 ssh-add -l
