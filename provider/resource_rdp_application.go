@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -57,8 +60,8 @@ func validateRdpSubType(v interface{}, k string) (ws []string, es []error) {
 	validTypes := []string{
 		string(sdk.SINGLE_MACHINE_ApplicationSubType),
 		string(sdk.MULTIPLE_MACHINES_ApplicationSubType),
-		string(utils.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType),
-		string(utils.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType),
+		string(sdk.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType),
+		string(sdk.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType),
 	}
 
 	if !utils.StringInSlice(validTypes, cType) {

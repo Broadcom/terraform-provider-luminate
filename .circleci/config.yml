@@ -30,6 +30,15 @@ commands:
             chmod +x build-scripts/setup-ssh-keys.sh
             build-scripts/setup-ssh-keys.sh
 
+  install-jq:
+    description: "Installs jq JSON processor, non-fatal."
+    steps:
+      - run:
+          name: Install jq
+          command: | 
+            sudo apt-get update && sudo apt-get install -y jq
+            jq --version
+
   validate-release-version-was-incremented:
     steps:
       - run:
@@ -48,6 +57,18 @@ commands:
 
             exit 0
 
+  terraform-release-setup:
+    description: "Sets up and executes the release script."
+    steps:
+      - run:
+          name: Perform Setup For Release
+          command: |
+            set -e
+            echo "Setting execute permission for release script..."
+            chmod +x ./.circleci/do_release.sh
+            chmod +x ./.circleci/sign_release.sh
+            bash ./.circleci/do_release.sh
+
 jobs:
   validate:
     docker:
@@ -63,6 +84,9 @@ jobs:
       - attach-env
       - checkout
       - setup-ssh-key
+      - run:
+          name: Configure Git for private Go modules
+          command: make get_api_from_github
       - run: make testacc
   build:
     docker:
@@ -71,17 +95,21 @@ jobs:
       - attach-env
       - checkout
       - setup-ssh-key
-      - run: make
+      - install-jq
+      - run: make build
+      - store_artifacts:
+          path: dist
   release:
     docker:
       - image: cimg/go:1.24
     steps:
       - attach-env
-      - check-skip
       - checkout
       - setup-ssh-key
-      - run: make
+      - terraform-release-setup
       - run: bash .circleci/github-release.sh
+      - store_artifacts:
+          path: dist
 
 workflows:
   version: 2
@@ -90,7 +118,9 @@ workflows:
       - validate:
           context: terraform-release
       - test:
-          context: terraform-acceptance
+          context:
+            - terraform-acceptance
+            - terraform-release
           requires:
             - validate
       - build:

@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -10,6 +13,7 @@ import (
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 func LuminateRdpAccessPolicy() *schema.Resource {
@@ -26,7 +30,7 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 	rdpSchema["target_protocol_subtype"] = &schema.Schema{
 		Type:         schema.TypeString,
 		Optional:     true,
-		Default:      utils.RDP_NATIVE_AccessType,
+		Default:      string(sdk.NATIVE_PolicyTargetProtocolSubType),
 		ValidateFunc: validateRdpTargetProtocolSubType,
 		Description:  "rdp policy target protocol sub type",
 	}
@@ -53,8 +57,8 @@ func validateRdpTargetProtocolSubType(v interface{}, k string) (ws []string, es 
 	}
 
 	validTypes := []string{
-		utils.RDP_NATIVE_AccessType,
-		utils.RDP_BROWSER_AccessType,
+		string(sdk.NATIVE_PolicyTargetProtocolSubType),
+		string(sdk.BROWSER_PolicyTargetProtocolSubType),
 	}
 
 	if !utils.StringInSlice(validTypes, cType) {

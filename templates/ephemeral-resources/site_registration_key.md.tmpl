@@ -1,0 +1,97 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+
+**NOTE:**
+
+    The `version` field should reference `version` field from a `luminate_site_registration_key_version` resource.
+    This is required in order to prevent token generation during "Plan" phase.
+
+#### Attribute Reference
+
+In addition to arguments above, the following attributes are exported:
+
+- **token** - The token can be used during the terraform run only in other resources' fields that are not saved to state (such as "write-only" or fields in other ephemeral resources)
+
+**NOTE:** [write-only fields](https://developer.hashicorp.com/terraform/language/resources/ephemeral/write-only) can be used only in Terraform CLI versions > 1.11
+
+## Example Usage
+
+{{ tffile (printf "examples/ephemeral-resources/%s/ephemeral-resource.tf" .Name)}}
+
+
+#### Various Examples of token usage
+
+<details>
+
+<summary>K8s Secret</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1#data_wo-2)
+
+```
+resource "kubernetes_secret" "example" {
+  metadata {
+    name = "my-secret"
+  }
+
+  data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
+
+  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+}
+```
+
+</details>
+
+<details>
+
+<summary>AWS Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version#secret_string_wo-1)
+
+```
+resource "aws_secretsmanager_secret" "example_secret" {
+  name = "my-secret"
+}
+
+resource "aws_secretsmanager_secret_version" "example_version" {
+  secret_id     = aws_secretsmanager_secret.example_secret.id
+  secret_string_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+}
+```
+
+</details>
+
+<details>
+
+<summary>GCP Secret Manager</summary>
+
+[Documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret_version#example-usage---secret-version-basic-write-only)
+
+```
+resource "google_secret_manager_secret" "example_secret" {
+  secret_id = "my-secret"
+}
+
+
+resource "google_secret_manager_secret_version" "secret-version-basic-write-only" {
+  secret = google_secret_manager_secret.example_secret.id
+  secret_data_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
+  secret_data_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+}
+```
+
+</details>
+
+{{ .SchemaMarkdown | trimspace }}
+
+#### Confluence page
+https://fireglass.atlassian.net/wiki/x/dICL1

@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -61,8 +64,9 @@ func LuminateSshGwApplication() *schema.Resource {
 	}
 
 	sshGwSchema["segment_id"] = &schema.Schema{
-		Type:     schema.TypeString,
-		Computed: true,
+		Type:        schema.TypeString,
+		Description: "the identifier of the segment application",
+		Computed:    true,
 	}
 
 	return &schema.Resource{

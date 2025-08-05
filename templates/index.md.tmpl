@@ -1,0 +1,66 @@
+Basic configuration and usage
+==========
+
+Symantec ZTNA terraform provider is used to create and
+manage resources supported by Symantec ZTNA platform.
+
+Provider configuration
+-----------
+
+To use the provider it must first be configured to access Symantec ZTNA management API.
+
+#### Example Usage
+
+{{tffile "examples/provider/provider.tf"}}
+
+API Endpoint
+------
+
+The API endpoint address is based on the tenant name in Symantec ZTNA
+
+The format is as follows:
+```
+api.<tenant_name>.luminatesec.com
+```
+For example:
+If the tenant name is "mycompany" the API endpoint address would be
+"api.mycompany.luminatesec.com"
+
+Authentication
+-------
+
+Authentication is done using an API Client credentials
+
+#### Authenticate using environment variables
+
+**shell**
+```
+$ export LUMINATE_API_CLIENT_ID=123456789
+$ export LUMINATE_API_CLIENT_SECRET=abcdefghijk
+```
+
+**main.<span></span>tf**
+
+{{tffile "examples/provider/provider.tf"}}
+
+#### Authenticate using the provider block
+
+{{tffile "examples/provider/provider_block_auth.tf"}}
+
+  **Warning:** storing credentials in terraform files is not recommended and may lead to a secret leak in case the file is committed to a public repository
+
+------
+
+Provider usage example
+-----------
+
+This will create a site with one connector, web application and access
+policy
+
+{{tffile "examples/provider/provider_full.tf"}}
+
+
+Terraform Version Requirements
+-----------
+
+**NOTE:** [write-only fields](https://developer.hashicorp.com/terraform/language/resources/ephemeral/write-only) can be used only in Terraform CLI versions > 1.11

@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -15,13 +18,14 @@ func LuminateDataSourceIdentityProvider() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"identity_provider_name": {
 				Type:         schema.TypeString,
-				Description:  "The identity provider name as configured in Luminate portal, if not specified local idp will be taken",
+				Description:  "The identity provider name as configured in Symantec ZTNA portal, if not specified local idp will be taken",
 				Required:     true,
 				ValidateFunc: utils.ValidateString,
 			},
 			"identity_provider_id": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "A unique identifier of this Identity Provider",
+				Computed:    true,
 			},
 		},
 		ReadContext: resourceReadIdentityProvider,

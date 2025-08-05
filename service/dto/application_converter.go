@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"github.com/Broadcom/terraform-provider-luminate/utils"
 	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 	"log"
 )
@@ -288,10 +287,10 @@ func GetApplicationSubType(appSubType string) sdk.ApplicationSubType {
 		return sdk.SEGMENT_RANGE_ApplicationSubType
 	case string(sdk.SEGMENT_SPECIFIC_IPS_ApplicationSubType):
 		return sdk.SEGMENT_SPECIFIC_IPS_ApplicationSubType
-	case string(utils.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType):
-		return utils.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType
-	case string(utils.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType):
-		return utils.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType
+	case string(sdk.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType):
+		return sdk.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType
+	case string(sdk.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType):
+		return sdk.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType
 	}
 	return ""
 }
