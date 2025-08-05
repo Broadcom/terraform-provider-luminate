@@ -210,15 +210,16 @@ const (
 )
 
 type Policy struct {
-	TargetProtocol    string
-	Id                string
-	Enabled           bool
-	CreatedAt         time.Time
-	Name              string
-	DirectoryEntities []DirectoryEntity
-	Applications      []string
-	CollectionID      string
-	Conditions        *Conditions
+	TargetProtocol        string
+	TargetProtocolSubtype string
+	Id                    string
+	Enabled               bool
+	CreatedAt             time.Time
+	Name                  string
+	DirectoryEntities     []DirectoryEntity
+	Applications          []string
+	CollectionID          string
+	Conditions            *Conditions
 }
 
 type AccessPolicy struct {
