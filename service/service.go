@@ -1,10 +1,10 @@
 package service
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/roundtripper"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 	"golang.org/x/oauth2/clientcredentials"
 	"strings"
 )
@@ -18,7 +18,7 @@ type LuminateService struct {
 	Connectors            *ConnectorsAPI
 	Applications          *ApplicationAPI
 	AccessPolicies        *AccessPolicyAPI
-	ActivityPolicies  *ActivityPolicyAPI
+	ActivityPolicies      *ActivityPolicyAPI
 	Users                 *UserAPI ``
 	Groups                *GroupAPI
 	IdentityProviders     *IdentityProviderAPI
@@ -27,7 +27,7 @@ type LuminateService struct {
 	CollectionAPI         *CollectionAPI
 	RoleBindingsAPI       *RoleBindingsAPI
 	DNSResiliencyAPI      *DNSResiliencyAPI
-	SharedObjectAPI   *SharedObjectAPI
+	SharedObjectAPI       *SharedObjectAPI
 }
 
 const (

@@ -1,7 +1,6 @@
 package framework_provider
 
 import (
-	swagger "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -9,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	swagger "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 type BasePolicyResource struct {

@@ -1,9 +1,9 @@
 package dto
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 	"testing"
 )
 

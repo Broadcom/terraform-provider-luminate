@@ -1,7 +1,7 @@
 package dto
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 func ToActivityPolicyDto(activityPolicy *ActivityPolicy) sdk.PolicyActivity {

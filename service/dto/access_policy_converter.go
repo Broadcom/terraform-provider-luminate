@@ -1,9 +1,9 @@
 package dto
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"errors"
 	"fmt"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 func FromTargetProtocol(targetProtocol sdk.PolicyTargetProtocol) string {

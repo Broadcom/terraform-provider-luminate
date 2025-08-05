@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/pkg/errors"
 
@@ -22,6 +23,14 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 		ValidateFunc: utils.ValidateBool,
 	}
 
+	rdpSchema["target_protocol_subtype"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		Default:      utils.RDP_NATIVE_AccessType,
+		ValidateFunc: validateRdpTargetProtocolSubType,
+		Description:  "rdp policy target protocol sub type",
+	}
+
 	return &schema.Resource{
 		Schema:        rdpSchema,
 		CreateContext: resourceCreateRdpAccessPolicy,
@@ -32,6 +41,26 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
+}
+
+func validateRdpTargetProtocolSubType(v interface{}, k string) (ws []string, es []error) {
+	var errs []error
+	var warns []string
+	cType, ok := v.(string)
+	if !ok {
+		errs = append(errs, fmt.Errorf("expected type to be string"))
+		return warns, errs
+	}
+
+	validTypes := []string{
+		utils.RDP_NATIVE_AccessType,
+		utils.RDP_BROWSER_AccessType,
+	}
+
+	if !utils.StringInSlice(validTypes, cType) {
+		errs = append(errs, fmt.Errorf("target_protocol_subtype must be one of %v", validTypes))
+	}
+	return warns, errs
 }
 
 func resourceCreateRdpAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -131,8 +160,10 @@ func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
 	accessPolicy := extractAccessPolicyBaseFields(d)
 
 	longTermPassword := d.Get("allow_long_term_password").(bool)
+	targetProtocolSubtype := d.Get("target_protocol_subtype").(string)
 
 	accessPolicy.TargetProtocol = "RDP"
+	accessPolicy.TargetProtocolSubtype = targetProtocolSubtype
 	accessPolicy.RdpSettings = &dto.PolicyRdpSettings{
 		LongTermPassword: longTermPassword,
 	}

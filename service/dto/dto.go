@@ -1,8 +1,8 @@
 package dto
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"github.com/google/uuid"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 	"time"
 )
 
@@ -217,15 +217,16 @@ const (
 )
 
 type Policy struct {
-	TargetProtocol    string
-	Id                string
-	Enabled           bool
-	CreatedAt         time.Time
-	Name              string
-	DirectoryEntities []DirectoryEntity
-	Applications      []string
-	CollectionID      string
-	Conditions        *Conditions
+	TargetProtocol        string
+	TargetProtocolSubtype string
+	Id                    string
+	Enabled               bool
+	CreatedAt             time.Time
+	Name                  string
+	DirectoryEntities     []DirectoryEntity
+	Applications          []string
+	CollectionID          string
+	Conditions            *Conditions
 }
 
 type AccessPolicy struct {
