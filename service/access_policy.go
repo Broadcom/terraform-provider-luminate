@@ -6,10 +6,12 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"log"
+
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
+	"github.com/pkg/errors"
 	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
-	"log"
 )
 
 type AccessPolicyAPI struct {
@@ -23,7 +25,12 @@ func NewAccessPolicyAPI(client *sdk.APIClient) *AccessPolicyAPI {
 }
 
 func (api *AccessPolicyAPI) CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
-	accessPolicyDto := dto.ConvertToDto(accessPolicy)
+	appAPI := NewApplicationAPI(api.cli)
+	accessPolicyDto, err := dto.ConvertToDto(accessPolicy, appAPI)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to read policy")
+	}
+
 	log.Printf("[DEBUG] - Creating Policy")
 	ctx := context.Background()
 	for i, entity := range accessPolicyDto.DirectoryEntities {
@@ -50,7 +57,11 @@ func (api *AccessPolicyAPI) CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (
 }
 
 func (api *AccessPolicyAPI) UpdateAccessPolicy(accessPolicy *dto.AccessPolicy) (*dto.AccessPolicy, error) {
-	accessPolicyDto := dto.ConvertToDto(accessPolicy)
+	appAPI := NewApplicationAPI(api.cli)
+	accessPolicyDto, err := dto.ConvertToDto(accessPolicy, appAPI)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to read policy")
+	}
 	body := sdk.AccessAndActivityPoliciesApiUpdatePolicyOpts{Body: optional.NewInterface(accessPolicyDto)}
 	updatedAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.UpdatePolicy(context.Background(), accessPolicy.Id, &body)
 	if err != nil {

@@ -164,8 +164,8 @@ github.com/zclconf/go-cty v1.16.2 h1:LAJSwc3v81IRBZyUVQDUdZ7hs3SYs9jv0eZJDWHD/70
 github.com/zclconf/go-cty v1.16.2/go.mod h1:VvMs5i0vgZdhYawQNq5kePSpLAoz8u1xvZgrPIxfnZE=
 github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940 h1:4r45xpDWB6ZMSMNJFMOjqrGHynW3DIBuR2H9j0ug+Mo=
 github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940/go.mod h1:CmBdvvj3nqzfzJ6nTCIwDTPZ56aVGvDrmztiO5g3qrM=
-github.gwd.broadcom.net/SED/ztna-api-documentation v0.0.0-20250728133333-39546878bbec h1:WKMerfYktOFoqycxxQincZsyRydugUNTXmYTjxAV/Bo=
-github.gwd.broadcom.net/SED/ztna-api-documentation v0.0.0-20250728133333-39546878bbec/go.mod h1:JQM03ZfPeTWzHhlSLg/mp9LWV/U59lpEKhBpHdxzmp4=
+github.gwd.broadcom.net/SED/ztna-api-documentation v0.0.0-20250821143032-226c1b100759 h1:NGcS9ybMYKcCyCyn9t/pUJsch0QeFYfFMtKOTOEkxZQ=
+github.gwd.broadcom.net/SED/ztna-api-documentation v0.0.0-20250821143032-226c1b100759/go.mod h1:JQM03ZfPeTWzHhlSLg/mp9LWV/U59lpEKhBpHdxzmp4=
 go.opentelemetry.io/otel v1.31.0 h1:NsJcKPIW0D0H3NgzPDHmo0WW6SptzPdqg/L1zsIm2hY=
 go.opentelemetry.io/otel v1.31.0/go.mod h1:O0C14Yl9FgkjqcCZAsE053C13OaddMYr/hz6clDkEJE=
 go.opentelemetry.io/otel/metric v1.31.0 h1:FSErL0ATQAmYHUIzSezZibnyVlft1ybhy4ozRPcF2fE=

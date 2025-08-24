@@ -1,9 +1,10 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
-	"time"
 )
 
 type Site struct {
@@ -247,8 +248,14 @@ type DirectoryEntity struct {
 	DisplayName          string
 }
 
+type PolicyWebRdpSettings struct {
+	DisableCopy  bool
+	DisablePaste bool
+}
+
 type PolicyRdpSettings struct {
 	LongTermPassword bool
+	WebRdpSettings   *PolicyWebRdpSettings
 }
 
 type PolicySshSettings struct {

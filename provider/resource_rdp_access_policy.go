@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/pkg/errors"
 
@@ -33,6 +34,27 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 		Default:      string(sdk.NATIVE_PolicyTargetProtocolSubType),
 		ValidateFunc: validateRdpTargetProtocolSubType,
 		Description:  "rdp policy target protocol sub type",
+	}
+
+	rdpSchema["web_rdp_settings"] = &schema.Schema{
+		Type:        schema.TypeList,
+		Description: "Web RDP settings.",
+		Optional:    true,
+		MaxItems:    1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"disable_copy": {
+					Type:        schema.TypeBool,
+					Description: "Indicates whether to disable copy.",
+					Optional:    true,
+				},
+				"disable_paste": {
+					Type:        schema.TypeBool,
+					Description: "Indicates whether to disable paste.",
+					Optional:    true,
+				},
+			},
+		},
 	}
 
 	return &schema.Resource{
@@ -157,7 +179,20 @@ func resourceUpdateRdpAccessPolicy(ctx context.Context, d *schema.ResourceData, 
 
 func setRdpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPolicy) error {
 	setAccessPolicyBaseFields(d, accessPolicy)
-	return d.Set("allow_long_term_password", accessPolicy.RdpSettings.LongTermPassword)
+	if err := d.Set("allow_long_term_password", accessPolicy.RdpSettings.LongTermPassword); err != nil {
+		return err
+	}
+	if accessPolicy.RdpSettings.WebRdpSettings != nil {
+		webSettings := map[string]interface{}{
+			"disable_copy":  accessPolicy.RdpSettings.WebRdpSettings.DisableCopy,
+			"disable_paste": accessPolicy.RdpSettings.WebRdpSettings.DisablePaste,
+		}
+		if err := d.Set("web_rdp_settings", []interface{}{webSettings}); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
@@ -166,10 +201,23 @@ func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
 	longTermPassword := d.Get("allow_long_term_password").(bool)
 	targetProtocolSubtype := d.Get("target_protocol_subtype").(string)
 
+	webRdpSettings := &dto.PolicyWebRdpSettings{
+		DisablePaste: true,
+	}
+	if v, ok := d.GetOk("web_rdp_settings"); ok {
+		settingsList := v.([]interface{})
+		if len(settingsList) > 0 && settingsList[0] != nil {
+			settingsMap := settingsList[0].(map[string]interface{})
+			webRdpSettings.DisableCopy = settingsMap["disable_copy"].(bool)
+			webRdpSettings.DisablePaste = settingsMap["disable_paste"].(bool)
+		}
+	}
+
 	accessPolicy.TargetProtocol = "RDP"
 	accessPolicy.TargetProtocolSubtype = targetProtocolSubtype
 	accessPolicy.RdpSettings = &dto.PolicyRdpSettings{
 		LongTermPassword: longTermPassword,
+		WebRdpSettings:   webRdpSettings,
 	}
 
 	return accessPolicy
