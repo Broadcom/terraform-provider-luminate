@@ -201,24 +201,26 @@ func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
 	longTermPassword := d.Get("allow_long_term_password").(bool)
 	targetProtocolSubtype := d.Get("target_protocol_subtype").(string)
 
-	// default WebRDP settings
-	webRdpSettings := &dto.PolicyWebRdpSettings{
-		DisablePaste: true,
-	}
-	if v, ok := d.GetOk("web_rdp_settings"); ok {
-		settingsList := v.([]interface{})
-		if len(settingsList) > 0 && settingsList[0] != nil {
-			settingsMap := settingsList[0].(map[string]interface{})
-			webRdpSettings.DisableCopy = settingsMap["disable_copy"].(bool)
-			webRdpSettings.DisablePaste = settingsMap["disable_paste"].(bool)
-		}
-	}
-
 	accessPolicy.TargetProtocol = "RDP"
 	accessPolicy.TargetProtocolSubtype = targetProtocolSubtype
 	accessPolicy.RdpSettings = &dto.PolicyRdpSettings{
 		LongTermPassword: longTermPassword,
-		WebRdpSettings:   webRdpSettings,
+	}
+
+	if targetProtocolSubtype == string(sdk.BROWSER_PolicyTargetProtocolSubType) {
+		// default WebRDP settings
+		webRdpSettings := &dto.PolicyWebRdpSettings{
+			DisablePaste: true,
+		}
+		if v, ok := d.GetOk("web_rdp_settings"); ok {
+			settingsList := v.([]interface{})
+			if len(settingsList) > 0 && settingsList[0] != nil {
+				settingsMap := settingsList[0].(map[string]interface{})
+				webRdpSettings.DisableCopy = settingsMap["disable_copy"].(bool)
+				webRdpSettings.DisablePaste = settingsMap["disable_paste"].(bool)
+			}
+		}
+		accessPolicy.RdpSettings.WebRdpSettings = webRdpSettings
 	}
 
 	return accessPolicy
