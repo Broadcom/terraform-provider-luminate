@@ -53,7 +53,7 @@ const resourceRdpAccessPolicy_WebRdp_default_settings = `
 		internal_address = "tcp://127.0.0.2"
 	}
 	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
-  		name =  "resourceRdpAccessPolicyWebRDPDefaultSettings<RANDOM_PLACEHOLDER>"
+  		name =  "resourceRdpAccessPolicy_WebRdp_default_settings"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
@@ -73,7 +73,7 @@ const resourceRdpAccessPolicy_WebRdp_custom_settings = `
 		internal_address = "tcp://127.0.0.2"
 	}
 	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
-  		name =  "resourceRdpAccessPolicyWebRDPCustomSettings<RANDOM_PLACEHOLDER>"
+  		name =  "resourceRdpAccessPolicy_WebRdp_custom_settings"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
