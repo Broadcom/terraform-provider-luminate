@@ -201,6 +201,7 @@ func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
 	longTermPassword := d.Get("allow_long_term_password").(bool)
 	targetProtocolSubtype := d.Get("target_protocol_subtype").(string)
 
+	// default WebRDP settings
 	webRdpSettings := &dto.PolicyWebRdpSettings{
 		DisablePaste: true,
 	}

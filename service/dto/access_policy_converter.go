@@ -191,10 +191,12 @@ func ConvertToDto(accessPolicy *AccessPolicy, appFetcher ApplicationFetcher) (*s
 	if accessPolicy.RdpSettings != nil {
 		rdpSettingsDto = &sdk.PolicyRdpSettings{
 			LongTermPassword: accessPolicy.RdpSettings.LongTermPassword,
-			WebRdpSettings: &sdk.WebRdpSettings{
+		}
+		if accessPolicy.RdpSettings.WebRdpSettings != nil {
+			rdpSettingsDto.WebRdpSettings = &sdk.WebRdpSettings{
 				DisableCopy:  accessPolicy.RdpSettings.WebRdpSettings.DisableCopy,
 				DisablePaste: accessPolicy.RdpSettings.WebRdpSettings.DisablePaste,
-			},
+			}
 		}
 	}
 
@@ -340,6 +342,12 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 	if accessPolicyDto.RdpSettings != nil {
 		rdpSetting = &PolicyRdpSettings{
 			LongTermPassword: accessPolicyDto.RdpSettings.LongTermPassword,
+		}
+		if accessPolicyDto.RdpSettings.WebRdpSettings != nil {
+			rdpSetting.WebRdpSettings = &PolicyWebRdpSettings{
+				DisableCopy:  accessPolicyDto.RdpSettings.WebRdpSettings.DisableCopy,
+				DisablePaste: accessPolicyDto.RdpSettings.WebRdpSettings.DisablePaste,
+			}
 		}
 	}
 

@@ -43,6 +43,50 @@ const resourceRdpAccessPolicy_disabled = `
 	}
 `
 
+const resourceRdpAccessPolicy_WebRdp_default_settings = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSite<RANDOM_PLACEHOLDER>"
+	}
+	resource "luminate_rdp_application" "new-rdp-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccRDP<RANDOM_PLACEHOLDER>"
+		internal_address = "tcp://127.0.0.2"
+	}
+	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
+  		name =  "resourceRdpAccessPolicy_WebRdp_default_settings"
+		identity_provider_id = "local"
+
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["${luminate_rdp_application.new-rdp-application.id}"]
+
+  		target_protocol_subtype = "RDP_BROWSER"
+	}
+`
+
+const resourceRdpAccessPolicy_WebRdp_custom_settings = `
+	resource "luminate_site" "new-site" {
+		name = "tfAccSite<RANDOM_PLACEHOLDER>"
+	}
+	resource "luminate_rdp_application" "new-rdp-application" {
+		site_id = "${luminate_site.new-site.id}"
+		name = "tfAccRDP<RANDOM_PLACEHOLDER>"
+		internal_address = "tcp://127.0.0.2"
+	}
+	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
+  		name =  "resourceRdpAccessPolicy_WebRdp_custom_settings"
+		identity_provider_id = "local"
+
+  		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
+  		applications = ["${luminate_rdp_application.new-rdp-application.id}"]
+
+  		target_protocol_subtype = "RDP_BROWSER"
+		web_rdp_settings {
+			disable_copy  = true
+			disable_paste = true
+		}
+	}
+`
+
 const resourceRdpAccessPolicy_enabled_not_specified = `
 	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
   		name =  "resourceRdpAccessPolicy_enabled_not_specified"
@@ -150,6 +194,26 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "allow_long_term_password", "true"),
+				),
+			},
+			{
+				Config: strings.ReplaceAll(resourceRdpAccessPolicy_WebRdp_default_settings, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_WebRdp_default_settings"),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "target_protocol_subtype", "RDP_BROWSER"),
+					resource.TestCheckResourceAttr(resourceName, "web_rdp_settings.0.disable_copy", "false"),
+					resource.TestCheckResourceAttr(resourceName, "web_rdp_settings.0.disable_paste", "true"),
+				),
+			},
+			{
+				Config: strings.ReplaceAll(resourceRdpAccessPolicy_WebRdp_custom_settings, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "resourceRdpAccessPolicy_WebRdp_custom_settings"),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "target_protocol_subtype", "RDP_BROWSER"),
+					resource.TestCheckResourceAttr(resourceName, "web_rdp_settings.0.disable_copy", "true"),
+					resource.TestCheckResourceAttr(resourceName, "web_rdp_settings.0.disable_paste", "true"),
 				),
 			},
 			{
