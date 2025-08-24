@@ -40,17 +40,20 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 		Type:        schema.TypeList,
 		Description: "Web RDP settings.",
 		Optional:    true,
+		Computed:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"disable_copy": {
 					Type:        schema.TypeBool,
 					Description: "Indicates whether to disable copy.",
+					Default:     false,
 					Optional:    true,
 				},
 				"disable_paste": {
 					Type:        schema.TypeBool,
 					Description: "Indicates whether to disable paste.",
+					Default:     true,
 					Optional:    true,
 				},
 			},
@@ -210,6 +213,7 @@ func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
 	if targetProtocolSubtype == string(sdk.BROWSER_PolicyTargetProtocolSubType) {
 		// default WebRDP settings
 		webRdpSettings := &dto.PolicyWebRdpSettings{
+			DisableCopy:  false,
 			DisablePaste: true,
 		}
 		if v, ok := d.GetOk("web_rdp_settings"); ok {

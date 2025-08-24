@@ -849,8 +849,8 @@ The following arguments are supported:
     - RDP_BROWSER
 
 - **web_rdp_settings -** (Optional) Web RDP settings when using RDP_BROWSER as the target_protocol_subtype.
-    - disable_copy  = true | false
-    - disable_paste = true | false
+    - disable_copy  = false (Default) | true
+    - disable_paste = true (Default)  | false
 
 #### Attribute Reference
 
