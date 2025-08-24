@@ -51,6 +51,7 @@ const resourceRdpAccessPolicy_WebRdp_default_settings = `
 		site_id = "${luminate_site.new-site.id}"
 		name = "tfAccWebRDPDefaultSettings<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.2"
+		sub_type = "RDP_BROWSER_SINGLE_MACHINE"
 	}
 	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
   		name =  "resourceRdpAccessPolicy_WebRdp_default_settings"
@@ -71,6 +72,7 @@ const resourceRdpAccessPolicy_WebRdp_custom_settings = `
 		site_id = "${luminate_site.new-site.id}"
 		name = "tfAccWebRDPCustomSettings<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.2"
+		sub_type = "RDP_BROWSER_SINGLE_MACHINE"
 	}
 	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
   		name =  "resourceRdpAccessPolicy_WebRdp_custom_settings"
