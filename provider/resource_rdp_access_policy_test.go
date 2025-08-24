@@ -45,15 +45,15 @@ const resourceRdpAccessPolicy_disabled = `
 
 const resourceRdpAccessPolicy_WebRdp_default_settings = `
 	resource "luminate_site" "new-site" {
-		name = "tfAccSite<RANDOM_PLACEHOLDER>"
+		name = "tfAccSiteWebRDPDefaultSettings<RANDOM_PLACEHOLDER>"
 	}
 	resource "luminate_rdp_application" "new-rdp-application" {
 		site_id = "${luminate_site.new-site.id}"
-		name = "tfAccRDP<RANDOM_PLACEHOLDER>"
+		name = "tfAccWebRDPDefaultSettings<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.2"
 	}
 	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
-  		name =  "resourceRdpAccessPolicy_WebRdp_default_settings"
+  		name =  "resourceRdpAccessPolicyWebRDPDefaultSettings<RANDOM_PLACEHOLDER>"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
@@ -65,15 +65,15 @@ const resourceRdpAccessPolicy_WebRdp_default_settings = `
 
 const resourceRdpAccessPolicy_WebRdp_custom_settings = `
 	resource "luminate_site" "new-site" {
-		name = "tfAccSite<RANDOM_PLACEHOLDER>"
+		name = "tfAccSiteWebRDPCustomSettings<RANDOM_PLACEHOLDER>"
 	}
 	resource "luminate_rdp_application" "new-rdp-application" {
 		site_id = "${luminate_site.new-site.id}"
-		name = "tfAccRDP<RANDOM_PLACEHOLDER>"
+		name = "tfAccWebRDPCustomSettings<RANDOM_PLACEHOLDER>"
 		internal_address = "tcp://127.0.0.2"
 	}
 	resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
-  		name =  "resourceRdpAccessPolicy_WebRdp_custom_settings"
+  		name =  "resourceRdpAccessPolicyWebRDPCustomSettings<RANDOM_PLACEHOLDER>"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
