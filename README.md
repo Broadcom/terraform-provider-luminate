@@ -794,7 +794,6 @@ resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
   
   web_rdp_settings {
     disable_copy  = false
-    disable_paste = true
   }
 
   validators = {
@@ -850,7 +849,6 @@ The following arguments are supported:
 
 - **web_rdp_settings -** (Optional) Web RDP settings when using RDP_BROWSER as the target_protocol_subtype.
     - disable_copy  = false (Default) | true
-    - disable_paste = true (Default)  | false
 
 #### Attribute Reference
 

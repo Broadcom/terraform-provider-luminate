@@ -92,7 +92,6 @@ const resourceRdpAccessPolicy_WebRdp_custom_settings = `
   		target_protocol_subtype = "RDP_BROWSER"
 		web_rdp_settings {
 			disable_copy  = true
-			disable_paste = true
 		}
 	}
 `
@@ -244,7 +243,6 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "target_protocol_subtype", "RDP_BROWSER"),
 					resource.TestCheckResourceAttr(resourceName, "web_rdp_settings.0.disable_copy", "false"),
-					resource.TestCheckResourceAttr(resourceName, "web_rdp_settings.0.disable_paste", "true"),
 				),
 			},
 			{
@@ -254,7 +252,6 @@ func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "target_protocol_subtype", "RDP_BROWSER"),
 					resource.TestCheckResourceAttr(resourceName, "web_rdp_settings.0.disable_copy", "true"),
-					resource.TestCheckResourceAttr(resourceName, "web_rdp_settings.0.disable_paste", "true"),
 				),
 			},
 			{

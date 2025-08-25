@@ -195,7 +195,7 @@ func ConvertToDto(accessPolicy *AccessPolicy, appFetcher ApplicationFetcher) (*s
 		if accessPolicy.RdpSettings.WebRdpSettings != nil {
 			rdpSettingsDto.WebRdpSettings = &sdk.WebRdpSettings{
 				DisableCopy:  accessPolicy.RdpSettings.WebRdpSettings.DisableCopy,
-				DisablePaste: accessPolicy.RdpSettings.WebRdpSettings.DisablePaste,
+				DisablePaste: true,
 			}
 		}
 	}
