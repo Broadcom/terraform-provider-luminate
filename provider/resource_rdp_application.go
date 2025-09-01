@@ -32,7 +32,7 @@ func LuminateRDPApplication() *schema.Resource {
 		Type:         schema.TypeString,
 		Optional:     true,
 		Default:      string(sdk.SINGLE_MACHINE_ApplicationSubType),
-		ValidateFunc: validateSubType,
+		ValidateFunc: validateRdpSubType,
 		Description:  "rdp application sub type",
 	}
 
@@ -46,6 +46,28 @@ func LuminateRDPApplication() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
+}
+
+func validateRdpSubType(v interface{}, k string) (ws []string, es []error) {
+	var errs []error
+	var warns []string
+	cType, ok := v.(string)
+	if !ok {
+		errs = append(errs, fmt.Errorf("expected type to be string"))
+		return warns, errs
+	}
+
+	validTypes := []string{
+		string(sdk.SINGLE_MACHINE_ApplicationSubType),
+		string(sdk.MULTIPLE_MACHINES_ApplicationSubType),
+		string(sdk.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType),
+		string(sdk.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType),
+	}
+
+	if !utils.StringInSlice(validTypes, cType) {
+		errs = append(errs, fmt.Errorf("sub_type must be one of %v", validTypes))
+	}
+	return warns, errs
 }
 
 func resourceCreateRDPApplication(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

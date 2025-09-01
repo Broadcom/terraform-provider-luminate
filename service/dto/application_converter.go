@@ -1,8 +1,9 @@
 package dto
 
 import (
-	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 	"log"
+
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 func ConvertToApplicationDTO(applicationSDKDTO sdk.Application) Application {
@@ -120,6 +121,10 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 			WildcardPrivateKey:   applicationServiceDTO.WildcardPrivateKey,
 		},
 	}
+	if applicationSDKDTO.ConnectionSettings.Subdomain == "" {
+		applicationSDKDTO.ConnectionSettings.Subdomain = applicationSDKDTO.Name
+	}
+
 	if applicationServiceDTO.SubType != "" {
 		saType := GetApplicationSubType(applicationServiceDTO.SubType)
 		applicationSDKDTO.SubType = &saType
@@ -287,6 +292,10 @@ func GetApplicationSubType(appSubType string) sdk.ApplicationSubType {
 		return sdk.SEGMENT_RANGE_ApplicationSubType
 	case string(sdk.SEGMENT_SPECIFIC_IPS_ApplicationSubType):
 		return sdk.SEGMENT_SPECIFIC_IPS_ApplicationSubType
+	case string(sdk.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType):
+		return sdk.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType
+	case string(sdk.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType):
+		return sdk.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType
 	}
 	return ""
 }
