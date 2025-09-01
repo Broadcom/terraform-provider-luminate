@@ -1,11 +1,14 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package service
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 type SharedObjectAPI struct {

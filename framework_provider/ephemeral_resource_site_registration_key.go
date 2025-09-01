@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package framework_provider
 
 import (
@@ -41,11 +44,11 @@ func (r *SiteRegistrationKeyEphemeralResource) Schema(ctx context.Context, reque
 			},
 			"version": schema.Int64Attribute{
 				Required:    true,
-				Description: "The version number of the site registration key used by external secrets",
+				Description: "The version number of the site registration key used by external secrets - This should always be an unknown value during `plan` phase (We use `luminate_site_registration_key_version` to achieve this)",
 			},
 			"revoke_existing_key_immediately": schema.BoolAttribute{
 				Required:    true,
-				Description: "A field to state if the existing registration key should be revoked immediately or be given a 72 hours expiration time",
+				Description: "A field to state if the existing registration key should be revoked immediately or be given a 72 hours expiration time (true: → All existing keys are deleted.)",
 			},
 			"token": schema.StringAttribute{
 				Computed:    true,

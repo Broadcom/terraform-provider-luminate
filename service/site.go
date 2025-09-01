@@ -1,12 +1,15 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package service
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"errors"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 type SiteAPI struct {
@@ -69,14 +72,6 @@ func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 		CountCollections:   s.CountCollections,
 	}
 
-	if s.KerberosConfiguration != nil {
-		site.Kerberos = &dto.SiteKerberosConfig{
-			Domain:     s.KerberosConfiguration.Domain,
-			KDCAddress: s.KerberosConfiguration.KdcAddress,
-			KeytabPair: s.KerberosConfiguration.KeytabPath,
-		}
-	}
-
 	for _, v := range s.ConnectorObjects {
 		c := dto.Connector{
 			Name:    v.Name,
@@ -99,14 +94,6 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 		KubernetesPersistentVolumeName: site.K8SVolume,
 		CountCollections:               site.CountCollections,
 		AuthenticationMode:             &authenticationMode,
-	}
-
-	if site.Kerberos != nil {
-		newSite.KerberosConfiguration = &sdk.KerberosConfiguration{
-			Domain:     site.Kerberos.Domain,
-			KdcAddress: site.Kerberos.KDCAddress,
-			KeytabPath: site.Kerberos.KeytabPair,
-		}
 	}
 
 	siteOpt := sdk.SitesApiCreateSiteOpts{
@@ -139,14 +126,6 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 		MuteHealthNotification:         site.MuteHealth,
 		KubernetesPersistentVolumeName: site.K8SVolume,
 		AuthenticationMode:             &authenticationMode, //This can't be changed, but we should let the server return the error in case it's a new value
-	}
-
-	if site.Kerberos != nil {
-		updateSite.KerberosConfiguration = &sdk.KerberosConfiguration{
-			Domain:     site.Kerberos.Domain,
-			KdcAddress: site.Kerberos.KDCAddress,
-			KeytabPath: site.Kerberos.KeytabPair,
-		}
 	}
 
 	siteOpt := sdk.SitesApiUpdateSiteOpts{

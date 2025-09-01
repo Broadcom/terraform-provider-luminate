@@ -1,7 +1,12 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
 	"context"
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/pkg/errors"
 
@@ -9,6 +14,7 @@ import (
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 func LuminateRdpAccessPolicy() *schema.Resource {
@@ -22,6 +28,32 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 		ValidateFunc: utils.ValidateBool,
 	}
 
+	rdpSchema["target_protocol_subtype"] = &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		Default:      string(sdk.NATIVE_PolicyTargetProtocolSubType),
+		ValidateFunc: validateRdpTargetProtocolSubType,
+		Description:  "rdp policy target protocol sub type",
+	}
+
+	rdpSchema["web_rdp_settings"] = &schema.Schema{
+		Type:        schema.TypeList,
+		Description: "Web RDP settings.",
+		Optional:    true,
+		Computed:    true,
+		MaxItems:    1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"disable_copy": {
+					Type:        schema.TypeBool,
+					Description: "Indicates whether to disable copy.",
+					Default:     false,
+					Optional:    true,
+				},
+			},
+		},
+	}
+
 	return &schema.Resource{
 		Schema:        rdpSchema,
 		CreateContext: resourceCreateRdpAccessPolicy,
@@ -32,6 +64,26 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 	}
+}
+
+func validateRdpTargetProtocolSubType(v interface{}, k string) (ws []string, es []error) {
+	var errs []error
+	var warns []string
+	cType, ok := v.(string)
+	if !ok {
+		errs = append(errs, fmt.Errorf("expected type to be string"))
+		return warns, errs
+	}
+
+	validTypes := []string{
+		string(sdk.NATIVE_PolicyTargetProtocolSubType),
+		string(sdk.BROWSER_PolicyTargetProtocolSubType),
+	}
+
+	if !utils.StringInSlice(validTypes, cType) {
+		errs = append(errs, fmt.Errorf("target_protocol_subtype must be one of %v", validTypes))
+	}
+	return warns, errs
 }
 
 func resourceCreateRdpAccessPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -124,17 +176,47 @@ func resourceUpdateRdpAccessPolicy(ctx context.Context, d *schema.ResourceData, 
 
 func setRdpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPolicy) error {
 	setAccessPolicyBaseFields(d, accessPolicy)
-	return d.Set("allow_long_term_password", accessPolicy.RdpSettings.LongTermPassword)
+	if err := d.Set("allow_long_term_password", accessPolicy.RdpSettings.LongTermPassword); err != nil {
+		return err
+	}
+	if accessPolicy.RdpSettings.WebRdpSettings != nil {
+		webSettings := map[string]interface{}{
+			"disable_copy": accessPolicy.RdpSettings.WebRdpSettings.DisableCopy,
+		}
+		if err := d.Set("web_rdp_settings", []interface{}{webSettings}); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
 	accessPolicy := extractAccessPolicyBaseFields(d)
 
 	longTermPassword := d.Get("allow_long_term_password").(bool)
+	targetProtocolSubtype := d.Get("target_protocol_subtype").(string)
 
 	accessPolicy.TargetProtocol = "RDP"
+	accessPolicy.TargetProtocolSubtype = targetProtocolSubtype
 	accessPolicy.RdpSettings = &dto.PolicyRdpSettings{
 		LongTermPassword: longTermPassword,
+	}
+
+	if targetProtocolSubtype == string(sdk.BROWSER_PolicyTargetProtocolSubType) {
+		// Paste is set to true by default and is not configurable
+		webRdpSettings := &dto.PolicyWebRdpSettings{
+			DisableCopy:  false,
+			DisablePaste: true,
+		}
+		if v, ok := d.GetOk("web_rdp_settings"); ok {
+			settingsList := v.([]interface{})
+			if len(settingsList) > 0 && settingsList[0] != nil {
+				settingsMap := settingsList[0].(map[string]interface{})
+				webRdpSettings.DisableCopy = settingsMap["disable_copy"].(bool)
+			}
+		}
+		accessPolicy.RdpSettings.WebRdpSettings = webRdpSettings
 	}
 
 	return accessPolicy

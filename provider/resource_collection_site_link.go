@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -20,8 +23,9 @@ func LuminateCollectionSiteLink() *schema.Resource {
 				Description: "Site ID",
 			},
 			"collection_ids": {
-				Type:     schema.TypeList,
-				Required: true,
+				Type:        schema.TypeList,
+				Required:    true,
+				Description: "Collection IDs",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},

@@ -1,3 +1,6 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
@@ -17,7 +20,7 @@ func LuminateAWSIntegration() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"integration_name": {
 				Type:         schema.TypeString,
-				Description:  "The aws integration name as configured in Luminate portal",
+				Description:  "The aws integration name as configured in Symantec ZTNA portal",
 				Required:     true,
 				ValidateFunc: utils.ValidateString,
 			},
@@ -28,7 +31,7 @@ func LuminateAWSIntegration() *schema.Resource {
 			},
 			"luminate_aws_account_id": {
 				Type:        schema.TypeString,
-				Description: "The Luminate aws account id",
+				Description: "The Symantec ZTNA aws account id",
 				Computed:    true,
 			},
 			"aws_external_id": {

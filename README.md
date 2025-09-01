@@ -259,20 +259,6 @@ The following arguments are supported:
 - **kubernetes_persistent_volume_name** (Optional) Kubernetes
     persistent volume name - only relevant if running on top kubernetes
 
-- **kerberos** - (Optional)
-
-    -   **domain** (Required) - Active Directory domain name you want
-        to SSO with.
-
-    -   **kdc_address** - (Required) - The hostname of the primary
-        domain controller.
-
-    -   **keytab_pair** - (Required) - The absolute path of the keytab
-        file
-
-  
-  **NOTE:** kerberos block is optional, but if specified all nested fields are required
-
 #### Attribute Reference
 
 In addition to arguments above, the following attributes are exported:
@@ -491,13 +477,22 @@ Re­­­source: luminate_rdp_application
 Provides Secure access cloud RDP application
 
 ­­
-#### Example Usage
+#### Usage Examples
 
 ```
 resource "luminate_rdp_application" "new-rdp-application" {
   site_id = "site_id"
   name = "rdp-application"
   internal_address = "tcp://127.0.0.1"
+}
+```
+
+```
+resource "luminate_rdp_application" "new-rdp-application" {
+  site_id = "site_id"
+  name = "rdp-application"
+  internal_address = "tcp://127.0.0.1"
+  sub_type = "RDP_BROWSER_SINGLE_MACHINE"
 }
 ```
 
@@ -527,6 +522,12 @@ The following arguments are supported:
     application, accessible by connector
 
 - **collection_id -** (Optional) Collection id to be linked to app, if empty will be assigned to default collection
+
+- **sub_type -** (Optional) The protocol subtype.
+    - SINGLE_MACHINE (Default)
+    - MULTIPLE_MACHINES
+    - RDP_BROWSER_SINGLE_MACHINE
+    - RDP_BROWSER_MULTIPLE_MACHINES
 
 #### Attribute Reference
 
@@ -779,6 +780,33 @@ resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
 }
 ```
 
+```
+resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
+  name =  "my-rdp-access-policy"
+
+  identity_provider_id = "identity_provider_id"
+  user_ids = ["user1_id", "user2_id"]
+  group_ids = ["group1_id", "group2_id"]
+
+  applications = ["application1_id","application2_id"]
+  
+  target_protocol_subtype = "RDP_BROWSER"
+  
+  web_rdp_settings {
+    disable_copy  = false
+  }
+
+  validators = {
+    web_verification = true
+  }
+
+  conditions = {
+    source_ip = ["127.0.0.1/24", "1.1.1.1/16"]
+    location = ["Wallis and Futuna"]
+  }
+}
+```
+
 #### Argument Reference
 
 The following arguments are supported:
@@ -814,6 +842,13 @@ The following arguments are supported:
 
 -   **allow_long_term_password** - (Optional) Indicates whether to
     allow long term password.
+
+- **target_protocol_subtype -** (Optional) The protocol subtype.
+    - RDP_NATIVE (Default)
+    - RDP_BROWSER
+
+- **web_rdp_settings -** (Optional) Web RDP settings when using RDP_BROWSER as the target_protocol_subtype.
+    - disable_copy  = false (Default) | true
 
 #### Attribute Reference
 

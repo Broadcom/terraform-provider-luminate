@@ -1,7 +1,9 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package service
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"fmt"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
@@ -9,6 +11,7 @@ import (
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/antihax/optional"
 	"github.com/pkg/errors"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 	"log"
 )
 

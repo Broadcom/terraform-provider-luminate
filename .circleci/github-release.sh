@@ -35,12 +35,15 @@ fi
 
 echo "Upload URL: $UPLOAD_URL"
 
-for FILE in $(ls release); do
+# Define the release directory based on the VERSION
+RELEASE_DIR="dist/${VERSION}"
+
+for FILE in $(ls "${RELEASE_DIR}"); do
   echo "Uploading $FILE"
   curl -f -X POST \
     -H "Content-Type: application/octet-stream" \
     -H "Authorization: token ${AUTH}" \
-    --data-binary @"release/${FILE}" \
+    --data-binary @"${RELEASE_DIR}/${FILE}" \
     "${UPLOAD_URL}?name=${FILE}"
   RETVAL=$?
   echo ""

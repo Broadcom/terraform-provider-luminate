@@ -1,9 +1,10 @@
 package dto
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 func TestGetApplicationTypeWeb(t *testing.T) {
@@ -12,17 +13,14 @@ func TestGetApplicationTypeWeb(t *testing.T) {
 
 func TestGetApplicationTypeSSH(t *testing.T) {
 	assert.Equal(t, sdk.HTTP_ApplicationType, GetApplicationType("web"))
-
 }
 
 func TestGetApplicationTypeRDP(t *testing.T) {
 	assert.Equal(t, sdk.RDP_ApplicationType, GetApplicationType("rdp"))
-
 }
 
 func TestGetApplicationTypeSSHGW(t *testing.T) {
 	assert.Equal(t, sdk.DYNAMIC_SSH_ApplicationType, GetApplicationType("sshgw"))
-
 }
 
 func TestGetApplicationTypeTCP(t *testing.T) {
@@ -132,4 +130,40 @@ func TestConvertApplicationDTO_TCP(t *testing.T) {
 	sdkDTO := ConvertFromApplicationDTO(expected)
 	providerDTO := ConvertToApplicationDTO(sdkDTO)
 	assert.Equal(t, expected, providerDTO)
+}
+
+func TestConvertApplicationDTO_RDP(t *testing.T) {
+	expected := Application{
+		Name:                 "dummy name",
+		Visible:              true,
+		Type:                 "rdp",
+		SubType:              "RDP_BROWSER_MULTIPLE_MACHINES",
+		NotificationsEnabled: true,
+		Subdomain:            "subdomain",
+		InternalAddress:      "internal",
+		ExternalAddress:      "external",
+		LuminateAddress:      "lumaddr",
+	}
+
+	sdkDTO := ConvertFromApplicationDTO(expected)
+	providerDTO := ConvertToApplicationDTO(sdkDTO)
+	assert.Equal(t, expected, providerDTO)
+}
+
+func TestConvertApplicationDTO_RDP_DefaultSubdomain(t *testing.T) {
+	expected := Application{
+		Name:                 "dummy name",
+		Visible:              true,
+		Type:                 "rdp",
+		NotificationsEnabled: true,
+		InternalAddress:      "internal",
+		ExternalAddress:      "external",
+		LuminateAddress:      "lumaddr",
+	}
+
+	sdkDTO := ConvertFromApplicationDTO(expected)
+	providerDTO := ConvertToApplicationDTO(sdkDTO)
+
+	assert.Equal(t, sdkDTO.ConnectionSettings.Subdomain, sdkDTO.Name)
+	assert.Equal(t, providerDTO.Subdomain, providerDTO.Name)
 }

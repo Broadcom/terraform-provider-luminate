@@ -1,9 +1,9 @@
 package dto
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"errors"
 	"github.com/Broadcom/terraform-provider-luminate/service/utils"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
 
 func convertTenantRole(role string) *sdk.TenantRoleType {

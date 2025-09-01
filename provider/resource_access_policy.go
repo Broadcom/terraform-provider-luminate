@@ -1,10 +1,13 @@
+// Copyright (c) Broadcom Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package provider
 
 import (
-	swagger "bitbucket.org/accezz-io/api-documentation/go/sdk"
 	"context"
 	"errors"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	swagger "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"

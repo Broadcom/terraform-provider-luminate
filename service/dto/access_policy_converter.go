@@ -1,10 +1,15 @@
 package dto
 
 import (
-	sdk "bitbucket.org/accezz-io/api-documentation/go/sdk"
-	"errors"
 	"fmt"
+
+	"github.com/pkg/errors"
+	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
+
+type ApplicationFetcher interface {
+	GetApplicationById(applicationID string) (*Application, error)
+}
 
 func FromTargetProtocol(targetProtocol sdk.PolicyTargetProtocol) string {
 	switch targetProtocol {
@@ -38,6 +43,19 @@ func ToTargetProtocol(targetProtocol string) *sdk.PolicyTargetProtocol {
 	return &policyTargetProtocol
 }
 
+func ToTargetProtocolSubType(targetProtocolSubType string) *sdk.PolicyTargetProtocolSubType {
+	var policyTargetProtocolSubType sdk.PolicyTargetProtocolSubType
+
+	switch targetProtocolSubType {
+	case "RDP_NATIVE":
+		policyTargetProtocolSubType = sdk.NATIVE_PolicyTargetProtocolSubType
+	case "RDP_BROWSER":
+		policyTargetProtocolSubType = sdk.BROWSER_PolicyTargetProtocolSubType
+	}
+
+	return &policyTargetProtocolSubType
+}
+
 func ToApplicationType(targetProtocol string) *sdk.ApplicationType {
 	var applicationType sdk.ApplicationType
 
@@ -53,6 +71,33 @@ func ToApplicationType(targetProtocol string) *sdk.ApplicationType {
 	}
 
 	return &applicationType
+}
+
+func ToApplicationSubType(subType string) *sdk.ApplicationSubType {
+	var applicationSubType sdk.ApplicationSubType
+
+	switch subType {
+	case "HTTP_LUMINATE_DOMAIN":
+		applicationSubType = sdk.HTTP_LUMINATE_DOMAIN_ApplicationSubType
+	case "HTTP_CUSTOM_DOMAIN":
+		applicationSubType = sdk.HTTP_CUSTOM_DOMAIN_ApplicationSubType
+	case "HTTP_WILDCARD_DOMAIN":
+		applicationSubType = sdk.HTTP_WILDCARD_DOMAIN_ApplicationSubType
+	case "SINGLE_MACHINE":
+		applicationSubType = sdk.SINGLE_MACHINE_ApplicationSubType
+	case "MULTIPLE_MACHINES":
+		applicationSubType = sdk.MULTIPLE_MACHINES_ApplicationSubType
+	case "RDP_BROWSER_SINGLE_MACHINE":
+		applicationSubType = sdk.RDP_BROWSER_SINGLE_MACHINE_ApplicationSubType
+	case "RDP_BROWSER_MULTIPLE_MACHINES":
+		applicationSubType = sdk.RDP_BROWSER_MULTIPLE_MACHINES_ApplicationSubType
+	case "SEGMENT_SPECIFIC_IPS":
+		applicationSubType = sdk.SEGMENT_SPECIFIC_IPS_ApplicationSubType
+	case "SEGMENT_RANGE":
+		applicationSubType = sdk.SEGMENT_RANGE_ApplicationSubType
+	}
+
+	return &applicationSubType
 }
 
 func FromModelType(modelType sdk.EntityType) string {
@@ -112,7 +157,7 @@ func ConvertIdentityProviderTypeToEnum(idpType string) (sdk.IdentityProviderType
 	return "", errors.New("Failed to locate matching provider type")
 }
 
-func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
+func ConvertToDto(accessPolicy *AccessPolicy, appFetcher ApplicationFetcher) (*sdk.PolicyAccess, error) {
 	accessPolicyType := sdk.ACCESS_PolicyType
 
 	var rdpSettingsDto *sdk.PolicyRdpSettings
@@ -126,9 +171,18 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	directoryEntities = EntityDTOToEntityModel(accessPolicy.DirectoryEntities)
 
 	for _, applicationId := range accessPolicy.Applications {
+		// Fetch each application to get its specific subtype
+		app, err := appFetcher.GetApplicationById(applicationId)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to fetch application details for id %s", applicationId)
+		}
+		if app == nil {
+			return nil, fmt.Errorf("application with id '%s' not found", applicationId)
+		}
 		applications = append(applications, sdk.ApplicationBase{
-			Id:    applicationId,
-			Type_: ToApplicationType(accessPolicy.TargetProtocol),
+			Id:      applicationId,
+			Type_:   ToApplicationType(accessPolicy.TargetProtocol),
+			SubType: ToApplicationSubType(app.SubType),
 		})
 	}
 
@@ -137,6 +191,12 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	if accessPolicy.RdpSettings != nil {
 		rdpSettingsDto = &sdk.PolicyRdpSettings{
 			LongTermPassword: accessPolicy.RdpSettings.LongTermPassword,
+		}
+		if accessPolicy.RdpSettings.WebRdpSettings != nil {
+			rdpSettingsDto.WebRdpSettings = &sdk.WebRdpSettings{
+				DisableCopy:  accessPolicy.RdpSettings.WebRdpSettings.DisableCopy,
+				DisablePaste: true,
+			}
 		}
 	}
 
@@ -170,23 +230,24 @@ func ConvertToDto(accessPolicy *AccessPolicy) sdk.PolicyAccess {
 	}
 
 	accessPolicyDto := sdk.PolicyAccess{
-		Type_:             &accessPolicyType,
-		TargetProtocol:    ToTargetProtocol(accessPolicy.TargetProtocol),
-		Id:                accessPolicy.Id,
-		CollectionId:      accessPolicy.CollectionID,
-		Enabled:           accessPolicy.Enabled,
-		CreatedAt:         accessPolicy.CreatedAt,
-		Name:              accessPolicy.Name,
-		DirectoryEntities: directoryEntities,
-		Applications:      applications,
-		FilterConditions:  conditionsDto,
-		Validators:        validatorsDto,
-		RdpSettings:       rdpSettingsDto,
-		SshSettings:       sshSettingsDto,
-		TcpSettings:       tcpSettingsDto,
+		Type_:                 &accessPolicyType,
+		TargetProtocol:        ToTargetProtocol(accessPolicy.TargetProtocol),
+		TargetProtocolSubType: ToTargetProtocolSubType(accessPolicy.TargetProtocolSubtype),
+		Id:                    accessPolicy.Id,
+		CollectionId:          accessPolicy.CollectionID,
+		Enabled:               accessPolicy.Enabled,
+		CreatedAt:             accessPolicy.CreatedAt,
+		Name:                  accessPolicy.Name,
+		DirectoryEntities:     directoryEntities,
+		Applications:          applications,
+		FilterConditions:      conditionsDto,
+		Validators:            validatorsDto,
+		RdpSettings:           rdpSettingsDto,
+		SshSettings:           sshSettingsDto,
+		TcpSettings:           tcpSettingsDto,
 	}
 
-	return accessPolicyDto
+	return &accessPolicyDto, nil
 }
 
 func ToFilterConditions(conditions *Conditions) []sdk.PolicyCondition {
@@ -281,6 +342,12 @@ func ConvertFromDto(accessPolicyDto sdk.PolicyAccess) *AccessPolicy {
 	if accessPolicyDto.RdpSettings != nil {
 		rdpSetting = &PolicyRdpSettings{
 			LongTermPassword: accessPolicyDto.RdpSettings.LongTermPassword,
+		}
+		if accessPolicyDto.RdpSettings.WebRdpSettings != nil {
+			rdpSetting.WebRdpSettings = &PolicyWebRdpSettings{
+				DisableCopy:  accessPolicyDto.RdpSettings.WebRdpSettings.DisableCopy,
+				DisablePaste: accessPolicyDto.RdpSettings.WebRdpSettings.DisablePaste,
+			}
 		}
 	}
 
