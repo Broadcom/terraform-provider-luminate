@@ -52,7 +52,7 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 				},
 				"disable_paste": {
 					Type:        schema.TypeBool,
-					Description: "Indicates whether to disable copy.",
+					Description: "Indicates whether to disable paste.",
 					Default:     false,
 					Optional:    true,
 				},
