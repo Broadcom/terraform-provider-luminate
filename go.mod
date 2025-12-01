@@ -1,5 +1,5 @@
 module github.com/Broadcom/terraform-provider-luminate
-
+//test
 require (
 	github.com/antihax/optional v1.0.0
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
