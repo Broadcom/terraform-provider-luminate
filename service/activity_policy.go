@@ -99,7 +99,7 @@ func (api *ActivityPolicyAPI) GetActivityPolicy(policyId string) (*dto.ActivityP
 }
 
 func (api *ActivityPolicyAPI) DeleteActivityPolicy(policyId string) error {
-	_, err := api.cli.AccessAndActivityPoliciesApi.DeletePolicy(context.Background(), policyId)
+	_, err := api.cli.AccessAndActivityPoliciesApi.DeleteAPolicy(context.Background(), policyId)
 	if err != nil {
 		var genErr sdk.GenericSwaggerError
 		if errors.As(err, &genErr) {
