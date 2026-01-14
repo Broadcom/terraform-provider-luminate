@@ -109,7 +109,7 @@ func (d *DNSResiliencyAPI) UpdateDNServer(DNSServerInput *dto.DNSServerInputDTO,
 		SiteId:          DNSServerInput.SiteID,
 		GroupId:         DNSServerInput.GroupID,
 	}
-	res, _, err := d.cli.DNSResiliencyApi.UpdateDNSServer(context.Background(), body, DNSGroupID, DNSServerID)
+	res, _, err := d.cli.DNSResiliencyApi.UpdateADNSServer(context.Background(), body, DNSGroupID, DNSServerID)
 	if err != nil {
 		return nil, err
 	}

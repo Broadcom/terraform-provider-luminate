@@ -69,7 +69,7 @@ func (c *CollectionAPI) CreateCollection(name string) (*dto.Collection, error) {
 
 // GetCollection get collection by id
 func (c *CollectionAPI) GetCollection(collectionID string) (*dto.Collection, error) {
-	collection, _, err := c.cli.CollectionsApi.GetCollection(context.Background(), collectionID)
+	collection, _, err := c.cli.CollectionsApi.GetACollection(context.Background(), collectionID)
 	if err != nil {
 		return nil, err
 	}
