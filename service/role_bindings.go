@@ -26,7 +26,7 @@ func (r *RoleBindingsAPI) CreateTenantRoleBindings(tenantRole *dto.CreateRoleDTO
 	if err != nil {
 		return nil, err
 	}
-	roles, _, err := r.cli.CollectionsApi.CreateTenantRoleBinding(context.Background(), *body)
+	roles, _, err := r.cli.CollectionsApi.CreateATenantRoleBinding(context.Background(), *body)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (r *RoleBindingsAPI) CreateCollectionRoleBindings(roleDTO *dto.CreateCollec
 		return nil, err
 	}
 
-	roles, _, err := r.cli.CollectionsApi.CreateCollectionRoleBinding(context.Background(), *body)
+	roles, _, err := r.cli.CollectionsApi.CreateACollectionRoleBinding(context.Background(), *body)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (r *RoleBindingsAPI) CreateSiteRoleBindings(roleDTO *dto.CreateSiteRoleDTO)
 		return nil, err
 	}
 
-	roles, _, err := r.cli.CollectionsApi.CreateSiteRoleBinding(context.Background(), *body)
+	roles, _, err := r.cli.CollectionsApi.CreateASiteRoleBinding(context.Background(), *body)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (r *RoleBindingsAPI) ReadRoleBindings(
 func (r *RoleBindingsAPI) DeleteRoleBindings(roleID string) error {
 	body := sdk.RolebindingsDeleteBody{RoleBindingIds: []string{roleID}}
 
-	_, err := r.cli.CollectionsApi.DeleteRoleBinding(context.Background(), body)
+	_, err := r.cli.CollectionsApi.DeleteARoleBinding(context.Background(), body)
 	if err != nil {
 		return errors.Wrap(err, "failed to delete role bindings")
 	}

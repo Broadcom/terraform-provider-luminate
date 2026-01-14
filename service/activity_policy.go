@@ -29,7 +29,7 @@ func (api *ActivityPolicyAPI) CreateActivityPolicy(activityPolicy *dto.ActivityP
 	ctx := context.Background()
 	for i, entity := range activityPolicyDto.DirectoryEntities {
 		if *entity.Type_ == sdk.GROUP_EntityType {
-			group, _, err := api.cli.GroupsApi.GetGroup(ctx, entity.IdentityProviderId, entity.IdentifierInProvider)
+			group, _, err := api.cli.GroupsApi.GetAGroup(ctx, entity.IdentityProviderId, entity.IdentifierInProvider)
 			if err != nil {
 				var genErr sdk.GenericSwaggerError
 				if errors.As(err, &genErr) {
@@ -40,8 +40,8 @@ func (api *ActivityPolicyAPI) CreateActivityPolicy(activityPolicy *dto.ActivityP
 			activityPolicyDto.DirectoryEntities[i].DisplayName = group.Name
 		}
 	}
-	body := sdk.AccessAndActivityPoliciesApiCreatePolicyOpts{Body: optional.NewInterface(activityPolicyDto)}
-	createdActivityPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.CreatePolicy(ctx, &body)
+	body := sdk.AccessAndActivityPoliciesApiCreateAnAccessOrActivityPolicyOpts{Body: optional.NewInterface(activityPolicyDto)}
+	createdActivityPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.CreateAnAccessOrActivityPolicy(ctx, &body)
 	if err != nil {
 		var genErr sdk.GenericSwaggerError
 		if errors.As(err, &genErr) {
@@ -61,8 +61,8 @@ func (api *ActivityPolicyAPI) CreateActivityPolicy(activityPolicy *dto.ActivityP
 
 func (api *ActivityPolicyAPI) UpdateActivityPolicy(activityPolicy *dto.ActivityPolicy) (*dto.ActivityPolicy, error) {
 	activityPolicyDto := dto.ToActivityPolicyDto(activityPolicy)
-	body := sdk.AccessAndActivityPoliciesApiUpdatePolicyOpts{Body: optional.NewInterface(activityPolicyDto)}
-	updatedActivityPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.UpdatePolicy(context.Background(), activityPolicy.Id, &body)
+	body := sdk.AccessAndActivityPoliciesApiUpdateAPolicyOpts{Body: optional.NewInterface(activityPolicyDto)}
+	updatedActivityPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.UpdateAPolicy(context.Background(), activityPolicy.Id, &body)
 	if err != nil {
 		var genErr sdk.GenericSwaggerError
 		if errors.As(err, &genErr) {
@@ -81,7 +81,7 @@ func (api *ActivityPolicyAPI) UpdateActivityPolicy(activityPolicy *dto.ActivityP
 }
 
 func (api *ActivityPolicyAPI) GetActivityPolicy(policyId string) (*dto.ActivityPolicy, error) {
-	retrievedActivityPolicyDtoAsMap, resp, err := api.cli.AccessAndActivityPoliciesApi.GetPolicy(context.Background(), policyId)
+	retrievedActivityPolicyDtoAsMap, resp, err := api.cli.AccessAndActivityPoliciesApi.GetAPolicy(context.Background(), policyId)
 	if err != nil {
 		if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 403 || resp.StatusCode == 500) {
 			return nil, nil
