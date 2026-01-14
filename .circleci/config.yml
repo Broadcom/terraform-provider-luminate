@@ -84,7 +84,7 @@ jobs:
       - attach-env
       - checkout
       - setup-ssh-key
-      - run: go mod tidy
+      - run: go mod vendor
       - run:
           name: Configure Git for private Go modules
           command: make get_api_from_github
