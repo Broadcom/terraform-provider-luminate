@@ -66,7 +66,7 @@ ssh -T github.gwd.broadcom.net
 
 # 7. Clone the repository using the specified key.
 echo "--> Cloning ztna-api-documentation repository..."
-git clone github.gwd.broadcom.net:SED/ztna-api-documentation.git
+git clone -b AC-42803-apidoc-ec github.gwd.broadcom.net:SED/ztna-api-documentation.git
 
 LUM_API_DOC_REPO=ztna-api-documentation
 cd ${LUM_API_DOC_REPO} || return 1
