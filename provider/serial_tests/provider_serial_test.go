@@ -1,11 +1,12 @@
 package serial_tests
 
 import (
+	"os"
+	"testing"
+
 	"github.com/Broadcom/terraform-provider-luminate/framework_provider"
 	"github.com/Broadcom/terraform-provider-luminate/provider"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"os"
-	"testing"
 )
 
 var testAccProtocol6Providers map[string]func() (tfprotov6.ProviderServer, error)
