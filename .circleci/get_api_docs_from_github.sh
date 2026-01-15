@@ -65,8 +65,23 @@ echo "INFO: Checking connection to github.gwd.broadcom.net"
 ssh -T github.gwd.broadcom.net
 
 # 7. Clone the repository using the specified key.
-echo "--> Cloning ztna-api-documentation repository..."
-git clone github.gwd.broadcom.net:SED/ztna-api-documentation.git
+echo "--> Determining which branch to clone from ztna-api-documentation..."
+
+# Get the current branch name of terraform-provider-luminate
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+echo "INFO: Current branch: ${CURRENT_BRANCH}"
+
+# Check if ztna-api-documentation has a branch with the same name
+REPO_URL="github.gwd.broadcom.net:SED/ztna-api-documentation.git"
+BRANCH_EXISTS=$(git ls-remote --heads "${REPO_URL}" "${CURRENT_BRANCH}" | wc -l)
+
+if [ "${BRANCH_EXISTS}" -gt 0 ]; then
+	echo "INFO: Found branch '${CURRENT_BRANCH}' in ztna-api-documentation, cloning that branch..."
+	git clone -b "${CURRENT_BRANCH}" "${REPO_URL}"
+else
+	echo "INFO: Branch '${CURRENT_BRANCH}' not found in ztna-api-documentation, cloning master branch..."
+	git clone "${REPO_URL}"
+fi
 
 LUM_API_DOC_REPO=ztna-api-documentation
 cd ${LUM_API_DOC_REPO} || return 1

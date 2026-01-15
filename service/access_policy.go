@@ -35,15 +35,15 @@ func (api *AccessPolicyAPI) CreateAccessPolicy(accessPolicy *dto.AccessPolicy) (
 	ctx := context.Background()
 	for i, entity := range accessPolicyDto.DirectoryEntities {
 		if *entity.Type_ == sdk.GROUP_EntityType {
-			group, _, err := api.cli.GroupsApi.GetGroup(ctx, entity.IdentityProviderId, entity.IdentifierInProvider)
+			group, _, err := api.cli.GroupsApi.GetAGroup(ctx, entity.IdentityProviderId, entity.IdentifierInProvider)
 			if err != nil {
 				return nil, err
 			}
 			accessPolicyDto.DirectoryEntities[i].DisplayName = group.Name
 		}
 	}
-	body := sdk.AccessAndActivityPoliciesApiCreatePolicyOpts{Body: optional.NewInterface(accessPolicyDto)}
-	createdAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.CreatePolicy(ctx, &body)
+	body := sdk.AccessAndActivityPoliciesApiCreateAnAccessOrActivityPolicyOpts{Body: optional.NewInterface(accessPolicyDto)}
+	createdAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.CreateAnAccessOrActivityPolicy(ctx, &body)
 	if err != nil {
 		return nil, err
 	}
@@ -62,8 +62,8 @@ func (api *AccessPolicyAPI) UpdateAccessPolicy(accessPolicy *dto.AccessPolicy) (
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to read policy")
 	}
-	body := sdk.AccessAndActivityPoliciesApiUpdatePolicyOpts{Body: optional.NewInterface(accessPolicyDto)}
-	updatedAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.UpdatePolicy(context.Background(), accessPolicy.Id, &body)
+	body := sdk.AccessAndActivityPoliciesApiUpdateAPolicyOpts{Body: optional.NewInterface(accessPolicyDto)}
+	updatedAccessPolicyDtoAsMap, _, err := api.cli.AccessAndActivityPoliciesApi.UpdateAPolicy(context.Background(), accessPolicy.Id, &body)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (api *AccessPolicyAPI) UpdateAccessPolicy(accessPolicy *dto.AccessPolicy) (
 }
 
 func (api *AccessPolicyAPI) GetAccessPolicy(policyId string) (*dto.AccessPolicy, error) {
-	retrievedAccessPolicyDtoAsMap, resp, err := api.cli.AccessAndActivityPoliciesApi.GetPolicy(context.Background(), policyId)
+	retrievedAccessPolicyDtoAsMap, resp, err := api.cli.AccessAndActivityPoliciesApi.GetAPolicy(context.Background(), policyId)
 	if err != nil {
 		if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 403 || resp.StatusCode == 500) {
 			return nil, nil
@@ -95,7 +95,7 @@ func (api *AccessPolicyAPI) GetAccessPolicy(policyId string) (*dto.AccessPolicy,
 }
 
 func (api *AccessPolicyAPI) DeleteAccessPolicy(policyId string) error {
-	_, err := api.cli.AccessAndActivityPoliciesApi.DeletePolicy(context.Background(), policyId)
+	_, err := api.cli.AccessAndActivityPoliciesApi.DeleteAPolicy(context.Background(), policyId)
 	if err != nil {
 		return err
 	}

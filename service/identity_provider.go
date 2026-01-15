@@ -61,7 +61,7 @@ func (u *IdentityProviderAPI) GetUserDisplayNameTypeById(identityProviderId stri
 }
 
 func (u *IdentityProviderAPI) GetGroupDisplayNameTypeById(identityProviderId string, IdentifierInProvider string) (string, error) {
-	group, _, err := u.cli.GroupsApi.GetGroup(context.Background(), identityProviderId, IdentifierInProvider)
+	group, _, err := u.cli.GroupsApi.GetAGroup(context.Background(), identityProviderId, IdentifierInProvider)
 	if err != nil {
 		return "", err
 	}

@@ -26,7 +26,7 @@ func NewCollectionAPI(client *sdk.APIClient) *CollectionAPI {
 func (c *CollectionAPI) LinkSiteToCollection(links []dto.CollectionSiteLink) (*[]dto.CollectionSiteLink, error) {
 	modelLinks := dto.ConvertCollectionSiteLinkToModel(&links)
 	body := sdk.CollectionSitelinksBody{Links: modelLinks}
-	createdLinks, _, err := c.cli.CollectionsApi.CreateCollectionSiteLink(context.Background(), body)
+	createdLinks, _, err := c.cli.CollectionsApi.LinkASiteToACollection(context.Background(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (c *CollectionAPI) LinkSiteToCollection(links []dto.CollectionSiteLink) (*[
 
 // UnlinkSiteFromCollection unlink site from collection
 func (c *CollectionAPI) UnlinkSiteFromCollection(link dto.CollectionSiteLink) error {
-	_, err := c.cli.CollectionsApi.DeleteCollectionSiteLink(context.Background(), link.CollectionID, link.SiteID, nil)
+	_, err := c.cli.CollectionsApi.UnlinkASiteFromACollection(context.Background(), link.CollectionID, link.SiteID, nil)
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func (c *CollectionAPI) UnlinkSiteFromCollection(link dto.CollectionSiteLink) er
 
 // GetCollectionSiteLinks get collection site links
 func (c *CollectionAPI) GetCollectionSiteLinks(collectionID string) (*[]dto.CollectionSiteLink, error) {
-	links, _, err := c.cli.CollectionsApi.GetCollectionSiteLinks(context.Background(), collectionID)
+	links, _, err := c.cli.CollectionsApi.GetSitesLinkedToTheCollection(context.Background(), collectionID)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *CollectionAPI) GetCollectionSiteLinks(collectionID string) (*[]dto.Coll
 // CreateCollection create collection
 func (c *CollectionAPI) CreateCollection(name string) (*dto.Collection, error) {
 	body := sdk.CollectionBody{Name: name}
-	collection, _, err := c.cli.CollectionsApi.CreateCollection(context.Background(), body)
+	collection, _, err := c.cli.CollectionsApi.CreateACollection(context.Background(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (c *CollectionAPI) CreateCollection(name string) (*dto.Collection, error) {
 
 // GetCollection get collection by id
 func (c *CollectionAPI) GetCollection(collectionID string) (*dto.Collection, error) {
-	collection, _, err := c.cli.CollectionsApi.GetCollection(context.Background(), collectionID)
+	collection, _, err := c.cli.CollectionsApi.GetACollection(context.Background(), collectionID)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func (c *CollectionAPI) GetCollectionByName(name string) (*dto.Collection, error
 // UpdateCollection update collection
 func (c *CollectionAPI) UpdateCollection(name string, collectionID string) (*dto.Collection, error) {
 	body := sdk.CollectionCollectionidBody{Name: name}
-	collection, _, err := c.cli.CollectionsApi.UpdateCollection(context.Background(), body, collectionID)
+	collection, _, err := c.cli.CollectionsApi.UpdateACollection(context.Background(), body, collectionID)
 	if err != nil {
 		return nil, err
 	}
@@ -119,8 +119,8 @@ func (c *CollectionAPI) UpdateCollection(name string, collectionID string) (*dto
 
 // DeleteCollection delete collection
 func (c *CollectionAPI) DeleteCollection(collectionID string) error {
-	body := sdk.CollectionsApiDeleteCollectionOpts{}
-	_, err := c.cli.CollectionsApi.DeleteCollection(context.Background(), collectionID, &body)
+	body := sdk.CollectionsApiDeleteACollectionOpts{}
+	_, err := c.cli.CollectionsApi.DeleteACollection(context.Background(), collectionID, &body)
 	if err != nil {
 		return err
 	}
