@@ -34,7 +34,6 @@ func LuminateWebAccessPolicy() *schema.Resource {
 			},
 		},
 	}
-
 	return &schema.Resource{
 		Schema:        webSchema,
 		CreateContext: resourceCreateWebAccessPolicy,
