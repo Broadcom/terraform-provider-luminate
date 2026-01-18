@@ -24,11 +24,11 @@ func NewSitesRegistrationKeysAPI(client *sdk.APIClient) *SitesRegistrationKeysAP
 }
 
 func (api *SitesRegistrationKeysAPI) RotateRegistrationKey(ctx context.Context, rotateRequest dto.SiteRegistrationKeyRotateRequest) (*dto.GeneratedSiteRegistrationKey, error) {
-	rotateOptions := sdk.SiteRegistrationKeysApiRotateSiteRegistrationKeyOpts{
+	rotateOptions := sdk.SiteRegistrationKeysApiRotateSiteRegistrationKeysOpts{
 		Body: optional.NewInterface(sdk.RotateKeyRequestPostBody{RevokeImmediately: rotateRequest.RevokeImmediately}),
 	}
 
-	rotationResponse, httpResponse, err := api.cli.SiteRegistrationKeysApi.RotateSiteRegistrationKey(ctx, rotateRequest.SiteID, &rotateOptions)
+	rotationResponse, httpResponse, err := api.cli.SiteRegistrationKeysApi.RotateSiteRegistrationKeys(ctx, rotateRequest.SiteID, &rotateOptions)
 	if err != nil {
 		var genErr sdk.GenericSwaggerError
 		if errors.As(err, &genErr) {

@@ -23,7 +23,7 @@ func NewConnectorsAPI(client *sdk.APIClient) *ConnectorsAPI {
 }
 
 func (api *ConnectorsAPI) GetConnectorByID(connectorID string) (*dto.Connector, error) {
-	con, resp, err := api.cli.ConnectorsApi.GetConnector(context.Background(), connectorID)
+	con, resp, err := api.cli.ConnectorsApi.GetAConnector(context.Background(), connectorID)
 
 	if resp != nil && (resp.StatusCode == 404 || resp.StatusCode == 403) {
 		return nil, nil
@@ -57,11 +57,11 @@ func (api *ConnectorsAPI) CreateConnector(connector *dto.Connector, siteID strin
 		KubernetesPersistentVolumeName: connector.K8SVolume,
 	}
 
-	conOpt := sdk.ConnectorsApiCreateConnectorOpts{
+	conOpt := sdk.ConnectorsApiCreateAConnectorOpts{
 		Body: optional.NewInterface(conOptBody),
 	}
 
-	nCon, resp, err := api.cli.ConnectorsApi.CreateConnector(context.Background(), siteID, &conOpt)
+	nCon, resp, err := api.cli.ConnectorsApi.CreateAConnector(context.Background(), siteID, &conOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (api *ConnectorsAPI) CreateConnector(connector *dto.Connector, siteID strin
 }
 
 func (api *ConnectorsAPI) DeleteConnector(connectorID string) error {
-	resp, err := api.cli.ConnectorsApi.DeleteConnector(context.Background(), connectorID)
+	resp, err := api.cli.ConnectorsApi.DeleteAConnector(context.Background(), connectorID)
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func (api *ConnectorsAPI) DeleteConnector(connectorID string) error {
 }
 
 func (api *ConnectorsAPI) GetConnectorCommand(connectorID string) (string, error) {
-	cmd, resp, err := api.cli.ConnectorsApi.GetConnectorCommand(context.Background(), connectorID)
+	cmd, resp, err := api.cli.ConnectorsApi.GetTheConnectorDeploymentCommand(context.Background(), connectorID)
 	if err != nil {
 		return "", err
 	}

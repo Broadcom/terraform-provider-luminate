@@ -25,7 +25,7 @@ func NewGroupAPI(client *sdk.APIClient) *GroupAPI {
 }
 
 func (g *GroupAPI) GetGroupId(identityProviderId string, groupName string) (string, error) {
-	groupPage, _, err := g.cli.GroupsApi.SearchGroupsbyIdp(context.Background(), identityProviderId, &sdk.GroupsApiSearchGroupsbyIdpOpts{Filter: optional.NewString(groupName)})
+	groupPage, _, err := g.cli.GroupsApi.SearchGroupsByTheIdP(context.Background(), identityProviderId, &sdk.GroupsApiSearchGroupsByTheIdPOpts{Filter: optional.NewString(groupName)})
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +44,7 @@ func (g *GroupAPI) GetGroupId(identityProviderId string, groupName string) (stri
 }
 
 func (g *GroupAPI) AssignUser(groupId string, userId string) error {
-	_, err := g.cli.GroupsApi.AssignUserToGroup(context.Background(), groupId, userId)
+	_, err := g.cli.GroupsApi.AssignAUserToAGroup(context.Background(), groupId, userId)
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (g *GroupAPI) AssignUser(groupId string, userId string) error {
 }
 
 func (g *GroupAPI) RemoveUser(groupId string, userId string) error {
-	_, err := g.cli.GroupsApi.RemoveUserFromGroup(context.Background(), groupId, userId)
+	_, err := g.cli.GroupsApi.RemoveAUserFromAGroup(context.Background(), groupId, userId)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func (g *GroupAPI) CheckAssignedUser(groupId string, userId string) (bool, error
 	offset := int32(0)
 
 	for {
-		userPage, _, err := g.cli.GroupsApi.ListAssignedUsers(context.Background(), utils.LocalIdpId, groupId, &sdk.GroupsApiListAssignedUsersOpts{
+		userPage, _, err := g.cli.GroupsApi.ListAGroupsAssignedUsers(context.Background(), utils.LocalIdpId, groupId, &sdk.GroupsApiListAGroupsAssignedUsersOpts{
 			PerPage:    optional.NewFloat64(float64(perPage)),
 			PageOffset: optional.NewInterface(offset),
 		})
@@ -94,7 +94,7 @@ func (g *GroupAPI) CheckAssignedUser(groupId string, userId string) (bool, error
 }
 
 func (g *GroupAPI) GetGroup(groupID string, IDPID string) (*dto.Group, error) {
-	group, _, err := g.cli.GroupsApi.GetGroup(context.Background(), IDPID, groupID)
+	group, _, err := g.cli.GroupsApi.GetAGroup(context.Background(), IDPID, groupID)
 	if err != nil {
 		return nil, utils.ParseSwaggerError(err)
 	}
@@ -105,8 +105,8 @@ func (g *GroupAPI) GetGroup(groupID string, IDPID string) (*dto.Group, error) {
 // CreateGroup create Group
 func (g *GroupAPI) CreateGroup(idpid string, groupName string) (*dto.Group, error) {
 	groupsDto := &sdk.Group{Name: groupName}
-	body := sdk.GroupsApiCreateGroupOpts{Body: optional.NewInterface(groupsDto)}
-	group, _, err := g.cli.GroupsApi.CreateGroup(context.Background(), idpid, &body)
+	body := sdk.GroupsApiCreateAGroupOpts{Body: optional.NewInterface(groupsDto)}
+	group, _, err := g.cli.GroupsApi.CreateAGroup(context.Background(), idpid, &body)
 	if err != nil {
 		return nil, utils.ParseSwaggerError(err)
 	}
@@ -116,7 +116,7 @@ func (g *GroupAPI) CreateGroup(idpid string, groupName string) (*dto.Group, erro
 }
 
 func (g *GroupAPI) DeleteGroup(idpid string, groupID string) error {
-	_, err := g.cli.GroupsApi.DeleteGroup(context.Background(), idpid, groupID)
+	_, err := g.cli.GroupsApi.DeleteAGroup(context.Background(), idpid, groupID)
 	if err != nil {
 		return utils.ParseSwaggerError(err)
 	}

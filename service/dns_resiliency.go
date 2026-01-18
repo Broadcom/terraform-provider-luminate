@@ -28,7 +28,7 @@ func (d *DNSResiliencyAPI) CreateDNSGroup(DNSGroupInput *dto.DNSGroupInputDTO) (
 		DomainSuffixes:    domainSuffix,
 		SendNotifications: DNSGroupInput.SendNotification,
 	}
-	res, _, err := d.cli.DNSResiliencyApi.CreateDnsGroup(context.Background(), body)
+	res, _, err := d.cli.DNSResiliencyApi.CreateADNSGroup(context.Background(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (d *DNSResiliencyAPI) UpdateDNSGroup(DNSGroupInput *dto.DNSGroupInputDTO, D
 		DomainSuffixes:    domainSuffix,
 		SendNotifications: DNSGroupInput.SendNotification,
 	}
-	res, _, err := d.cli.DNSResiliencyApi.UpdateDNSGroup(context.Background(), body, DNSGroupID)
+	res, _, err := d.cli.DNSResiliencyApi.UpdateADNSGroup(context.Background(), body, DNSGroupID)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (d *DNSResiliencyAPI) UpdateDNSGroup(DNSGroupInput *dto.DNSGroupInputDTO, D
 }
 
 func (d *DNSResiliencyAPI) DeleteDNSGroup(DNSGroupID string) error {
-	_, err := d.cli.DNSResiliencyApi.DeleteDNSGroup(context.Background(), DNSGroupID)
+	_, err := d.cli.DNSResiliencyApi.DeleteADNSGroup(context.Background(), DNSGroupID)
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (d *DNSResiliencyAPI) DeleteDNSGroup(DNSGroupID string) error {
 }
 
 func (d *DNSResiliencyAPI) GetDNSGroup(DNSGroupID string) (*dto.DNSGroupOutputDTO, error) {
-	res, _, err := d.cli.DNSResiliencyApi.GetDNSGroup(context.Background(), DNSGroupID)
+	res, _, err := d.cli.DNSResiliencyApi.GetADNSGroup(context.Background(), DNSGroupID)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (d *DNSResiliencyAPI) GetDNSGroup(DNSGroupID string) (*dto.DNSGroupOutputDT
 }
 
 func (d *DNSResiliencyAPI) GetDNServer(DNSServerID, DNSGroupID string) (*dto.DNSServerOutputDTO, error) {
-	res, _, err := d.cli.DNSResiliencyApi.GetDNSServer(context.Background(), DNSGroupID, DNSServerID)
+	res, _, err := d.cli.DNSResiliencyApi.GetADNSServer(context.Background(), DNSGroupID, DNSServerID)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (d *DNSResiliencyAPI) GetDNServer(DNSServerID, DNSGroupID string) (*dto.DNS
 }
 
 func (d *DNSResiliencyAPI) ListDNServer(DNSGroupID string) ([]*dto.DNSServerOutputDTO, error) {
-	res, _, err := d.cli.DNSResiliencyApi.GetDNSServersOfGroup(context.Background(), DNSGroupID)
+	res, _, err := d.cli.DNSResiliencyApi.GetAllServersOfADNSGroup(context.Background(), DNSGroupID)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (d *DNSResiliencyAPI) CreateDNServer(DNSServerInput *dto.DNSServerInputDTO,
 		SiteId:          DNSServerInput.SiteID,
 		GroupId:         DNSServerInput.GroupID,
 	}
-	res, _, err := d.cli.DNSResiliencyApi.CreateDnsServer(context.Background(), body, DNSGroupID)
+	res, _, err := d.cli.DNSResiliencyApi.CreateADNSServer(context.Background(), body, DNSGroupID)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func (d *DNSResiliencyAPI) UpdateDNServer(DNSServerInput *dto.DNSServerInputDTO,
 		SiteId:          DNSServerInput.SiteID,
 		GroupId:         DNSServerInput.GroupID,
 	}
-	res, _, err := d.cli.DNSResiliencyApi.UpdateDNSServer(context.Background(), body, DNSGroupID, DNSServerID)
+	res, _, err := d.cli.DNSResiliencyApi.UpdateADNSServer(context.Background(), body, DNSGroupID, DNSServerID)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func (d *DNSResiliencyAPI) UpdateDNSServersOrder(DNSServerIDs []string, DNSGroup
 	ids := sdk.DnsGroupIdServerorderBody{
 		DnsServerIds: DNSServerIDs,
 	}
-	_, err := d.cli.DNSResiliencyApi.UpdateDNSServersOrder(context.Background(), ids, DNSGroupID)
+	_, err := d.cli.DNSResiliencyApi.UpdateDNSServerResiliencyOrder(context.Background(), ids, DNSGroupID)
 	if err != nil {
 		return err
 	}
@@ -143,7 +143,7 @@ func (d *DNSResiliencyAPI) EnableDisableDNSGroups(dto *dto.EnableDisableDNSGroup
 		Enable:   dto.Enable,
 		GroupIds: dto.GroupIDs,
 	}
-	_, err := d.cli.DNSResiliencyApi.EnableDisableDNSGroups(context.Background(), body)
+	_, err := d.cli.DNSResiliencyApi.EnableOrDisableDNSGroups(context.Background(), body)
 	if err != nil {
 		return err
 	}

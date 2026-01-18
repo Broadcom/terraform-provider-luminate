@@ -49,7 +49,7 @@ func (api *SiteAPI) GetSiteByID(SiteID string) (*dto.Site, error) {
 		return nil, nil
 	}
 
-	s, resp, err := api.cli.SitesApi.GetSite(context.Background(), SiteID)
+	s, resp, err := api.cli.SitesApi.GetASite(context.Background(), SiteID)
 	if resp != nil && (resp.StatusCode == 403 || resp.StatusCode == 404) {
 		return nil, nil
 	}
@@ -96,11 +96,11 @@ func (api *SiteAPI) CreateSite(site *dto.Site) (*dto.Site, error) {
 		AuthenticationMode:             &authenticationMode,
 	}
 
-	siteOpt := sdk.SitesApiCreateSiteOpts{
+	siteOpt := sdk.SitesApiCreateASiteOpts{
 		Body: optional.NewInterface(newSite),
 	}
 
-	newSite, resp, err := api.cli.SitesApi.CreateSite(context.Background(), &siteOpt)
+	newSite, resp, err := api.cli.SitesApi.CreateASite(context.Background(), &siteOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -128,11 +128,11 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 		AuthenticationMode:             &authenticationMode, //This can't be changed, but we should let the server return the error in case it's a new value
 	}
 
-	siteOpt := sdk.SitesApiUpdateSiteOpts{
+	siteOpt := sdk.SitesApiUpdateASiteOpts{
 		Body: optional.NewInterface(updateSite),
 	}
 
-	_, resp, err := api.cli.SitesApi.UpdateSite(context.Background(), siteID, &siteOpt)
+	_, resp, err := api.cli.SitesApi.UpdateASite(context.Background(), siteID, &siteOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +150,7 @@ func (api *SiteAPI) UpdateSite(site *dto.Site, siteID string) (*dto.Site, error)
 }
 
 func (api *SiteAPI) DeleteSite(siteID string) error {
-	resp, err := api.cli.SitesApi.DeleteSite(context.Background(), siteID)
+	resp, err := api.cli.SitesApi.DeleteASite(context.Background(), siteID)
 	if err != nil {
 		return err
 	}

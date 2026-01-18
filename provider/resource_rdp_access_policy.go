@@ -50,6 +50,12 @@ func LuminateRdpAccessPolicy() *schema.Resource {
 					Default:     false,
 					Optional:    true,
 				},
+				"disable_paste": {
+					Type:        schema.TypeBool,
+					Description: "Indicates whether to disable paste.",
+					Default:     false,
+					Optional:    true,
+				},
 			},
 		},
 	}
@@ -181,7 +187,8 @@ func setRdpAccessPolicyFields(d *schema.ResourceData, accessPolicy *dto.AccessPo
 	}
 	if accessPolicy.RdpSettings.WebRdpSettings != nil {
 		webSettings := map[string]interface{}{
-			"disable_copy": accessPolicy.RdpSettings.WebRdpSettings.DisableCopy,
+			"disable_copy":  accessPolicy.RdpSettings.WebRdpSettings.DisableCopy,
+			"disable_paste": accessPolicy.RdpSettings.WebRdpSettings.DisablePaste,
 		}
 		if err := d.Set("web_rdp_settings", []interface{}{webSettings}); err != nil {
 			return err
@@ -204,16 +211,13 @@ func extractRdpAccessPolicy(d *schema.ResourceData) *dto.AccessPolicy {
 	}
 
 	if targetProtocolSubtype == string(sdk.BROWSER_PolicyTargetProtocolSubType) {
-		// Paste is set to true by default and is not configurable
-		webRdpSettings := &dto.PolicyWebRdpSettings{
-			DisableCopy:  false,
-			DisablePaste: true,
-		}
+		webRdpSettings := &dto.PolicyWebRdpSettings{}
 		if v, ok := d.GetOk("web_rdp_settings"); ok {
 			settingsList := v.([]interface{})
 			if len(settingsList) > 0 && settingsList[0] != nil {
 				settingsMap := settingsList[0].(map[string]interface{})
 				webRdpSettings.DisableCopy = settingsMap["disable_copy"].(bool)
+				webRdpSettings.DisablePaste = settingsMap["disable_paste"].(bool)
 			}
 		}
 		accessPolicy.RdpSettings.WebRdpSettings = webRdpSettings
