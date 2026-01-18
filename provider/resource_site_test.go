@@ -2,13 +2,14 @@ package provider
 
 import (
 	"fmt"
-	"github.com/Broadcom/terraform-provider-luminate/service/dto"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 const testAccResourceSite_minimal = `
@@ -51,8 +52,8 @@ func TestAccLuminateSite(t *testing.T) {
 	}
 	randNum := 100 + rand.Intn(100)
 
-	configWithConnectorMode, checkWithConnectorMode := getTestSiteResourceConfigAndCheckFunc(region, dto.SiteAuthenticationModeConnector)
-	configWithSiteMode, checkWithSiteMode := getTestSiteResourceConfigAndCheckFunc(region, dto.SiteAuthenticationModeSite)
+	configWithConnectorMode, checkWithConnectorMode := getTestSiteResourceConfigAndCheckFunc(region, dto.SiteAuthenticationModeManual)
+	configWithSiteMode, checkWithSiteMode := getTestSiteResourceConfigAndCheckFunc(region, dto.SiteAuthenticationModeOrchestrator)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -64,7 +65,7 @@ func TestAccLuminateSite(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tfAccSite%d", randNum)),
 					resource.TestCheckResourceAttr(resourceName, "mute_health_notification", "false"),
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_persistent_volume_name", ""),
-					resource.TestCheckResourceAttr(resourceName, "authentication_mode", dto.SiteAuthenticationModeConnector),
+					resource.TestCheckResourceAttr(resourceName, "authentication_mode", dto.SiteAuthenticationModeManual),
 				),
 			},
 			{

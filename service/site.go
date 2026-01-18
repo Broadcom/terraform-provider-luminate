@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/antihax/optional"
 	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
@@ -24,10 +25,10 @@ func NewSiteAPI(client *sdk.APIClient) *SiteAPI {
 
 func AuthenticationModeFromSDK(authenticationMode sdk.SiteAuthenticationMode) dto.SiteAuthenticationMode {
 	switch authenticationMode {
-	case sdk.CONNECTOR_SiteAuthenticationMode:
-		return dto.SiteAuthenticationModeConnector
-	case sdk.SITE_SiteAuthenticationMode:
-		return dto.SiteAuthenticationModeSite
+	case sdk.MANUAL_SiteAuthenticationMode:
+		return dto.SiteAuthenticationModeManual
+	case sdk.ORCHESTRATOR_SiteAuthenticationMode:
+		return dto.SiteAuthenticationModeOrchestrator
 	}
 
 	return ""
@@ -35,10 +36,10 @@ func AuthenticationModeFromSDK(authenticationMode sdk.SiteAuthenticationMode) dt
 
 func AuthenticationModeFromDto(ct dto.SiteAuthenticationMode) sdk.SiteAuthenticationMode {
 	switch ct {
-	case dto.SiteAuthenticationModeConnector:
-		return sdk.CONNECTOR_SiteAuthenticationMode
-	case dto.SiteAuthenticationModeSite:
-		return sdk.SITE_SiteAuthenticationMode
+	case dto.SiteAuthenticationModeManual:
+		return sdk.MANUAL_SiteAuthenticationMode
+	case dto.SiteAuthenticationModeOrchestrator:
+		return sdk.ORCHESTRATOR_SiteAuthenticationMode
 	}
 
 	return ""

@@ -21,11 +21,11 @@ type Site struct {
 type SiteAuthenticationMode string
 
 const (
-	SiteAuthenticationModeConnector = "connector"
-	SiteAuthenticationModeSite      = "site"
+	SiteAuthenticationModeManual       = "manual"
+	SiteAuthenticationModeOrchestrator = "orchestrator"
 )
 
-var ValidAuthenticationModes = []string{SiteAuthenticationModeConnector, SiteAuthenticationModeSite}
+var ValidAuthenticationModes = []string{SiteAuthenticationModeManual, SiteAuthenticationModeOrchestrator}
 
 type SiteRegistrationKeyRotateRequest struct {
 	SiteID            string
