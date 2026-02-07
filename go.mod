@@ -13,7 +13,7 @@ require (
 	github.com/hashicorp/terraform-plugin-testing v1.12.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.3
-	github.gwd.broadcom.net/SED/ztna-api-documentation v0.0.0-20260205095758-c2209b822578
+	github.gwd.broadcom.net/SED/ztna-api-documentation v0.0.0-20260207141734-2f7d6448b7ac
 	golang.org/x/oauth2 v0.23.0
 	golang.org/x/time v0.3.0
 )
