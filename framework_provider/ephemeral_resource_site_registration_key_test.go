@@ -11,7 +11,7 @@ import (
 const testAccEphemeralResourceSiteRegistrationKeyTemplate = `
 resource "luminate_site" "new_site_<RANDOM_PLACEHOLDER>" {
 	name = "tfAccSite<RANDOM_PLACEHOLDER>"
-  	authentication_mode = "site"
+  	authentication_mode = "orchestrator"
 }
 
 resource "luminate_site_registration_key_version" "site_registration_key_version" {
