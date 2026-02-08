@@ -7,12 +7,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"log"
 )
 
 const (
@@ -38,7 +39,7 @@ func LuminateSite() *schema.Resource {
 			FieldAuthenticationMode: {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Default:      dto.SiteAuthenticationModeConnector,
+				Default:      dto.SiteAuthenticationModeManual,
 				Description:  "Site authentication mode",
 				ValidateFunc: validateAuthenticationMode,
 			},
