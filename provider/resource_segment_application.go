@@ -19,6 +19,9 @@ import (
 
 func LuminateSegmentApplication() *schema.Resource {
 	segmentAppSchema := CommonApplicationSchema()
+
+	segmentAppSchema["visible"].Default = false
+
 	segmentAppSchema["sub_type"] = &schema.Schema{
 		Type:         schema.TypeString,
 		Optional:     true,
