@@ -45,8 +45,8 @@ func CommonApplicationSchema() map[string]*schema.Schema {
 		"visible": {
 			Type:         schema.TypeBool,
 			Optional:     true,
-			Default:      true,
 			ValidateFunc: utils.ValidateBool,
+			Default:      true,
 			Description:  "Indicates whether to show this application in the applications portal.",
 		},
 		"notification_enabled": {

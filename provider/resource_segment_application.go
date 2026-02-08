@@ -6,11 +6,12 @@ package provider
 import (
 	"context"
 	"errors"
+	"log"
+
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
-	"log"
 
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
@@ -18,12 +19,25 @@ import (
 
 func LuminateSegmentApplication() *schema.Resource {
 	segmentAppSchema := CommonApplicationSchema()
+
+	segmentAppSchema["visible"].Default = false
+
 	segmentAppSchema["sub_type"] = &schema.Schema{
 		Type:         schema.TypeString,
 		Optional:     true,
 		ValidateFunc: utils.ValidateString,
 		Default:      string(sdk.SEGMENT_RANGE_ApplicationSubType),
-		Description:  "The segment application sub type",
+		Description:  "The segment application sub type. Note: SEGMENT_SPECIFIC_IPS is automatically converted to SEGMENT_RANGE by the backend.",
+		DiffSuppressFunc: func(k, stateValue, configValue string, d *schema.ResourceData) bool {
+			// Suppress diff if state has SEGMENT_RANGE and config has SEGMENT_SPECIFIC_IPS
+			// because the backend automatically converts SEGMENT_SPECIFIC_IPS to SEGMENT_RANGE
+			if stateValue == string(sdk.SEGMENT_RANGE_ApplicationSubType) &&
+				configValue == string(sdk.SEGMENT_SPECIFIC_IPS_ApplicationSubType) {
+				return true
+			}
+			// Also suppress if they're already equal
+			return stateValue == configValue
+		},
 	}
 
 	segmentAppSchema["segment_settings"] = &schema.Schema{
@@ -51,9 +65,9 @@ func LuminateSegmentApplication() *schema.Resource {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"original_ip": {
-					Type:        schema.TypeList,
+					Type:        schema.TypeSet,
 					Optional:    true,
-					Description: "List of target IPs",
+					Description: "Set of target IPs (order-insensitive)",
 					Elem: &schema.Schema{
 						Type:         schema.TypeString,
 						ValidateFunc: utils.ValidateString,
@@ -211,9 +225,9 @@ func flattenSegmentSettings(settings *dto.SegmentSettings) []interface{} {
 }
 
 func flattenMultipleSegmentSettings(settings []*dto.SegmentSettings) []interface{} {
-	var originalIPs []interface{}
+	originalIPs := schema.NewSet(schema.HashString, []interface{}{})
 	for _, setting := range settings {
-		originalIPs = append(originalIPs, setting.OriginalIP)
+		originalIPs.Add(setting.OriginalIP)
 	}
 	k := map[string]interface{}{
 		"original_ip": originalIPs,
@@ -248,11 +262,12 @@ func extractMultipleSegmentSettings(d *schema.ResourceData) []*dto.SegmentSettin
 		for _, element := range v.([]interface{}) {
 			elem := element.(map[string]interface{})
 
-			ipsList := elem["original_ip"].([]interface{})
-
-			for _, ip := range ipsList {
-				multipleSegmentSettings = append(multipleSegmentSettings, &dto.SegmentSettings{
-					OriginalIP: ip.(string)})
+			if ipsSet, ok := elem["original_ip"].(*schema.Set); ok {
+				ipsList := ipsSet.List()
+				for _, ip := range ipsList {
+					multipleSegmentSettings = append(multipleSegmentSettings, &dto.SegmentSettings{
+						OriginalIP: ip.(string)})
+				}
 			}
 		}
 	}
