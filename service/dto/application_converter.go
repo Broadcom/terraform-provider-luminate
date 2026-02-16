@@ -216,6 +216,10 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 }
 
 func HeaderMapToStrings(headers map[string]interface{}) map[string]string {
+	if headers == nil {
+		return nil
+	}
+
 	result := make(map[string]string)
 
 	for k, v := range headers {
@@ -226,6 +230,10 @@ func HeaderMapToStrings(headers map[string]interface{}) map[string]string {
 }
 
 func HeaderStringsToMap(headers map[string]string) map[string]interface{} {
+	if headers == nil {
+		return nil
+	}
+
 	result := make(map[string]interface{})
 	for k, v := range headers {
 		result[k] = v
