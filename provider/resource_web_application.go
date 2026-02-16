@@ -121,6 +121,7 @@ func LuminateWebApplication() *schema.Resource {
 	webAppSchema["header_customization"] = &schema.Schema{
 		Type:        schema.TypeMap,
 		Optional:    true,
+		Computed:    true,
 		Description: "Custom headers key:value pairs to be added to all requests.",
 	}
 
@@ -251,6 +252,13 @@ func validateHealthMethod(v interface{}, k string) (ws []string, es []error) {
 	return warns, errs
 }
 
+func getHeaderCustomization(d *schema.ResourceData) map[string]interface{} {
+	if v, ok := d.GetOk("header_customization"); ok && v != nil {
+		return v.(map[string]interface{})
+	}
+	return nil
+}
+
 func validateSubType(v interface{}, k string) (ws []string, es []error) {
 	var errs []error
 	var warns []string
@@ -295,7 +303,7 @@ func extractWebApplication(d *schema.ResourceData) *dto.Application {
 		DefaultHeaderRewriteRulesEnabled:  d.Get("default_header_rewrite_rules_enabled").(bool),
 		UseExternalAddressForHostAndSni:   d.Get("use_external_address_for_host_and_sni").(bool),
 		LinkedApplications:                expandStringList(d.Get("linked_applications").(*schema.Set)),
-		HeaderCustomization:               d.Get("header_customization").(map[string]interface{}),
+		HeaderCustomization:               getHeaderCustomization(d),
 		WildcardCertificate:               d.Get("wildcard_certificate").(string),
 		WildcardPrivateKey:                d.Get("wildcard_private_key").(string),
 	}
