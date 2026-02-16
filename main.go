@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	withDebug := flag.Bool("debug", false, "runs the provider with debug to allows debuggers such as delve to attach to it")
+	withDebug := flag.Bool("debug", true, "runs the provider with debug to allows debuggers such as delve to attach to it")
 	flag.Parse()
 
 	var opts []tf6server.ServeOpt
