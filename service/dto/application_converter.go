@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"fmt"
 	"log"
 
 	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
@@ -214,27 +215,28 @@ func ConvertFromApplicationDTO(applicationServiceDTO Application) sdk.Applicatio
 	return applicationSDKDTO
 }
 
-func HeaderMapToStrings(headers map[string]interface{}) []map[string]string {
-	var result []map[string]string
+func HeaderMapToStrings(headers map[string]interface{}) map[string]string {
+	if headers == nil {
+		return nil
+	}
+
+	result := make(map[string]string)
 
 	for k, v := range headers {
-		result = append(result, map[string]string{k: v.(string)})
+		result[k] = fmt.Sprintf("%v", v)
 	}
 
 	return result
 }
 
-func HeaderStringsToMap(headers []map[string]string) map[string]interface{} {
-	var result map[string]interface{}
+func HeaderStringsToMap(headers map[string]string) map[string]interface{} {
+	if headers == nil {
+		return nil
+	}
 
-	for i, header := range headers {
-		if i == 0 {
-			result = make(map[string]interface{})
-		}
-		for k, v := range header {
-			result[k] = v
-		}
-
+	result := make(map[string]interface{})
+	for k, v := range headers {
+		result[k] = v
 	}
 
 	return result

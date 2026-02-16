@@ -387,8 +387,8 @@ The following arguments are supported:
     reference additional web applications by their internal domain name.
 
 -   **header_customization** - (Optional) Custom headers key:value
-    pairs to be added to all requests.
-- 
+    pairs to be added to all requests. <br />
+    (default value is computed by backend, to enforce empty list use:   `header_customization = {}`)
 -   **collection_id -** (Optional) Collection id to be linked to app, if empty will be assigned to default collection
 
 
