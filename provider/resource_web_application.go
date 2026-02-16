@@ -122,7 +122,7 @@ func LuminateWebApplication() *schema.Resource {
 		Type:        schema.TypeMap,
 		Optional:    true,
 		Computed:    true,
-		Description: "Custom headers key:value pairs to be added to all requests.",
+		Description: "Custom headers key:value pairs to be added to all requests.\n default value is computed by backend, to enforce empty list use:   `header_customization = {}`",
 	}
 
 	return &schema.Resource{
