@@ -6,3 +6,4 @@ terraform-provider-luminate
 .env
 local_test.go
 dist/
+build-common

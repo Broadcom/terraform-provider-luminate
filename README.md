@@ -1,18 +1,5 @@
 # **Terraform provider luminate**
 
-
-#### Latest Binaries  
-
-| Platform    |                                                                                                                                                                               |
-|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Linux       | [terraform-provider-luminate-linux.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-linux.zip)               |
-| MacOS Intel | [terraform-provider-luminate-darwin.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-darwin.zip)             |
-| MacOS M1    | [terraform-provider-luminate-darwin_arm64.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-darwin_arm64.zip) |
-| Windows     | [terraform-provider-luminate-windows.zip](https://github.com/Broadcom/terraform-provider-luminate/releases/latest/download/terraform-provider-luminate-windows.zip) <br/>     |
-
-[![CircleCI](https://circleci.com/gh/Broadcom/terraform-provider-luminate/tree/master.svg?style=shield)](https://circleci.com/gh/Broadcom/terraform-provider-luminate)  
----
-
 #### Documentation
 
 [Basic configuration and usage](#basic-configuration-and-usage)

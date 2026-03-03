@@ -1,5 +1,7 @@
 module github.com/Broadcom/terraform-provider-luminate
 
+go 1.24.1
+
 require (
 	github.com/antihax/optional v1.0.0
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
@@ -71,5 +73,3 @@ require (
 	google.golang.org/protobuf v1.36.3 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-go 1.24.1
