@@ -1,6 +1,6 @@
 module github.com/Broadcom/terraform-provider-luminate
 
-go 1.24.1
+go 1.26
 
 require (
 	github.com/antihax/optional v1.0.0

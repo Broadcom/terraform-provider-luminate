@@ -12,8 +12,9 @@ description: |-
 
 **NOTE:**
 
-    The `version` field should reference `version` field from a `luminate_site_registration_key_version` resource.
-    This is required in order to prevent token generation during "Plan" phase.
+    Set `is_applying` to `terraform.applying` and set `should_rotate` to a boolean indicating if you want to perform a rotation (e.g. from a `luminate_site_registration_key_version` resource's `version_changed`) so the key is only rotated during apply when the version was bumped.
+
+    It is recommended to use `luminate_site_registration_key_version` and its fields (including the `version` field in secret resources), in order to prevent a situation where you set `should_rotate` to true and forget to increase the version in the secret resource, which would cause you to lose the new rotated token.
 
 #### Attribute Reference
 
@@ -37,14 +38,14 @@ In addition to arguments above, the following attributes are exported:
 [Documentation](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1#data_wo-2)
 
 ```
-resource "kubernetes_secret" "example" {
+resource "kubernetes_secret_v1" "example" {
   metadata {
     name = "my-secret"
   }
 
   data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
 
-  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+  data_wo_revision = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
 }
 ```
 

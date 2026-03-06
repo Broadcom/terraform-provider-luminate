@@ -12,8 +12,9 @@ description: |-
 
 **NOTE:**
 
-    The `version` field should reference `version` field from a `luminate_site_registration_key_version` resource.
-    This is required in order to prevent token generation during "Plan" phase.
+    Set `is_applying` to `terraform.applying` and set `should_rotate` to a boolean indicating if you want to perform a rotation (e.g. from a `luminate_site_registration_key_version` resource's `version_changed`) so the key is only rotated during apply when the version was bumped.
+
+    It is recommended to use `luminate_site_registration_key_version` and its fields (including the `version` field in secret resources), in order to prevent a situation where you set `should_rotate` to true and forget to increase the version in the secret resource, which would cause you to lose the new rotated token.
 
 #### Attribute Reference
 
@@ -30,12 +31,14 @@ In addition to arguments above, the following attributes are exported:
 # SPDX-License-Identifier: MPL-2.0
 
 resource "luminate_site_registration_key_version" "new_site_registration_key_version" {
+  version = 1
 }
 
 ephemeral "luminate_site_registration_key" "new_site_registration_key" {
+  is_applying                     = terraform.applying
   site_id                         = luminate_site.new-site.id
-  version                         = luminate_site_registration_key_version.new_site_registration_key_version.version
   revoke_existing_key_immediately = true
+  should_rotate                   = luminate_site_registration_key_version.new_site_registration_key_version.version_changed
 }
 ```
 
@@ -49,14 +52,14 @@ ephemeral "luminate_site_registration_key" "new_site_registration_key" {
 [Documentation](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1#data_wo-2)
 
 ```
-resource "kubernetes_secret" "example" {
+resource "kubernetes_secret_v1" "example" {
   metadata {
     name = "my-secret"
   }
 
   data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
 
-  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+  data_wo_revision = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
 }
 ```
 
@@ -108,9 +111,10 @@ resource "google_secret_manager_secret_version" "secret-version-basic-write-only
 
 ### Required
 
+- `is_applying` (Boolean) Set to terraform.applying so the key is only rotated during apply, not during plan. This avoids rotating the key on plan-only runs.
 - `revoke_existing_key_immediately` (Boolean) A field to state if the existing registration key should be revoked immediately or be given a 72 hours expiration time (true: → All existing keys are deleted.)
+- `should_rotate` (Boolean) Set to true when the key should be rotated (e.g. reference version_changed from a luminate_site_registration_key_version resource). The key is only rotated when this is true (and is_applying is true).
 - `site_id` (String) The site ID we want to associate with this registration key
-- `version` (Number) The version number of the site registration key used by external secrets - This should always be an unknown value during `plan` phase (We use `luminate_site_registration_key_version` to achieve this)
 
 ### Read-Only
 

@@ -52,8 +52,10 @@ resource "luminate_rdp_access_policy" "new-rdp-access-policy" {
 - `enabled` (Boolean) Indicates whether this policy is enabled.
 - `group_ids` (List of String) The group entities to which this policy applies.
 - `identity_provider_id` (String) The identity provider id
+- `target_protocol_subtype` (String) rdp policy target protocol sub type
 - `user_ids` (List of String) The user entities to which this policy applies.
 - `validators` (Block List, Max: 1) (see [below for nested schema](#nestedblock--validators))
+- `web_rdp_settings` (Block List, Max: 1) Web RDP settings. (see [below for nested schema](#nestedblock--web_rdp_settings))
 
 ### Read-Only
 
@@ -96,3 +98,12 @@ Optional:
 Optional:
 
 - `web_verification` (Boolean) Indicate whatever to perform web verification validation. not compatible for HTTP applications
+
+
+<a id="nestedblock--web_rdp_settings"></a>
+### Nested Schema for `web_rdp_settings`
+
+Optional:
+
+- `disable_copy` (Boolean) Indicates whether to disable copy.
+- `disable_paste` (Boolean) Indicates whether to disable paste.

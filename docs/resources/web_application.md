@@ -42,6 +42,7 @@ resource "luminate_web_application" "new-web-application" {
 - `default_content_rewrite_rules_enabled` (Boolean) Indicates whether to enable automatic translation of all occurrences of the application internal address to its external address on most prominent content types and relevant headers.
 - `default_header_rewrite_rules_enabled` (Boolean) Indicates whether to enable automatic translation of all occurrences of the application internal address to its external address on relevant headers.
 - `header_customization` (Map of String) Custom headers key:value pairs to be added to all requests.
+ default value is computed by backend, to enforce empty list use:   `header_customization = {}`
 - `health_method` (String) HTTP method to validate application health.
 - `health_url` (String) Health check path. The URI is relative to the external address.
 - `icon` (String) Base64 representation of 128x128 icon

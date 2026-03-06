@@ -1820,9 +1820,13 @@ Read more [here](https://api.luminate.io/#tag/Site-Registration-Keys)
 
 **NOTE:**
 
-    The `version` field should reference `version` field from a `luminate_site_registration_key_version` resource.
-    This is required in order to prevent token generation during "Plan" phase.
+    Set `is_applying` to `terraform.applying`
+    and set `should_rotate` to a boolean indicating if you want to perform a rotation
+    (e.g. from a `luminate_site_registration_key_version` resource's `version_changed`) so the key is only rotated during apply when the version was bumped.
 
+    It is recommended to use `luminate_site_registration_key_version` and its fields, in order to prevent a situation where you set
+    `should_rotate` to true and forget to increase the version in the secret resource.
+    
 
 #### Argument Reference
 
@@ -1830,7 +1834,9 @@ The following arguments are supported:
 
 - **site_id** (String) (Required) The ID of the site
 
-- **version** (Int64) (Required) This should always be a value unknown during "Plan" phase (We use `luminate_site_registration_key_version` to achieve this)
+- **is_applying** (Boolean) (Required) Set to `terraform.applying` so the key is only rotated during apply, not during plan.
+
+- **should_rotate** (Boolean) (Required) Set to true when the key should be rotated (e.g. It is recommended to reference version_changed from a luminate_site_registration_key_version resource). The key is only rotated when this is true (and is_applying is true).
 
 - **revoke_existing_key_immediately** (boolean) (Required)
 
@@ -1855,14 +1861,25 @@ In addition to arguments above, the following attributes are exported:
 #### Example Usage
 
 ```
+# Option 1 - use luminate_site_registration_key_version (recommended: keeps rotation and secret version in sync)
 resource "luminate_site_registration_key_version" "new_site_registration_key_version" {
+  version = 1
 }
 
 ephemeral "luminate_site_registration_key" "new_site_registration_key" {
-  site_id = luminate_site.new-site.id
-  version = luminate_site_registration_key_version.new_site_registration_key_version.version
+  is_applying                     = terraform.applying
+  site_id                         = luminate_site.new-site.id
   revoke_existing_key_immediately = true
+  should_rotate                   = luminate_site_registration_key_version.new_site_registration_key_version.version_changed
 }
+
+# Option 2 - manage rotation explicitly (remember to bump secret version when you rotate)
+# ephemeral "luminate_site_registration_key" "new_site_registration_key" {
+#   is_applying                     = terraform.applying
+#   site_id                         = luminate_site.new-site.id
+#   revoke_existing_key_immediately = true
+#   should_rotate                   = true
+# }
 ```
 
 #### Various Examples of token usage
@@ -1874,14 +1891,20 @@ ephemeral "luminate_site_registration_key" "new_site_registration_key" {
 [Documentation](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1#data_wo-2)
 
 ```
-resource "kubernetes_secret" "example" {  
+resource "kubernetes_secret_v1" "example" {  
   metadata {
     name = "my-secret"
   }
 
   data_wo =  { token = ephemeral.luminate_site_registration_key.new_site_registration_key.token }
 
-  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+  # The token is overwritten only if `data_wo_revision` has a new value
+  
+  # Option 1 - Use `luminate_site_registration_key_version` version field
+  data_wo_revision = luminate_site_registration_key_version.new_site_registration_key_version.version
+  
+  # Option 2 - Manage version from here
+  data_wo_revision = 1
 }
 ```
 
@@ -1901,7 +1924,14 @@ resource "aws_secretsmanager_secret" "example_secret" {
 resource "aws_secretsmanager_secret_version" "example_version" {
   secret_id     = aws_secretsmanager_secret.example_secret.id
   secret_string_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
-  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+  
+  # The token is overwritten only if `secret_string_wo_version` has a new value
+  
+  # Option 1 - Use `luminate_site_registration_key_version` version field
+  secret_string_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version
+ 
+  # Option 2 - Manage version from here
+  secret_string_wo_version = 1
 }
 ```
 
@@ -1922,7 +1952,14 @@ resource "google_secret_manager_secret" "example_secret" {
 resource "google_secret_manager_secret_version" "secret-version-basic-write-only" {
   secret = google_secret_manager_secret.example_secret.id
   secret_data_wo = ephemeral.luminate_site_registration_key.new_site_registration_key.token
-  secret_data_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version # This should always be a new value for the token to be saved
+  
+  # The token is overwritten only if `secret_data_wo_version` has a new value
+  
+  # Option 1 - Use `luminate_site_registration_key_version` version field
+  secret_data_wo_version = luminate_site_registration_key_version.new_site_registration_key_version.version
+  
+  # Option 2 - Manage version from here
+  secret_data_wo_version = 1
 }
 ```
 

@@ -9,6 +9,8 @@ project {
   header_ignore = [
     "**/*_test.go",
     ".circleci/**/*",
+    ".github/**/*",
+    "build-common/**/*",
     "utils/**/*",
     "build-scripts/**/*",
     ".goreleaser.yml",

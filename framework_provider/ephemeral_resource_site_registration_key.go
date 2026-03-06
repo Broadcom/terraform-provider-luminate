@@ -18,8 +18,9 @@ type SiteRegistrationKeyEphemeralResource struct {
 type SiteRegistrationKeyEphemeralResourceModel struct {
 	ID                           types.String `tfsdk:"id"`
 	SiteID                       types.String `tfsdk:"site_id"`
-	Version                      types.Int64  `tfsdk:"version"`
 	RevokeExistingKeyImmediately types.Bool   `tfsdk:"revoke_existing_key_immediately"`
+	IsApplying                   types.Bool   `tfsdk:"is_applying"`
+	ShouldRotate                 types.Bool   `tfsdk:"should_rotate"`
 	Token                        types.String `tfsdk:"token"`
 }
 
@@ -42,13 +43,17 @@ func (r *SiteRegistrationKeyEphemeralResource) Schema(ctx context.Context, reque
 				Required:    true,
 				Description: "The site ID we want to associate with this registration key",
 			},
-			"version": schema.Int64Attribute{
-				Required:    true,
-				Description: "The version number of the site registration key used by external secrets - This should always be an unknown value during `plan` phase (We use `luminate_site_registration_key_version` to achieve this)",
-			},
 			"revoke_existing_key_immediately": schema.BoolAttribute{
 				Required:    true,
 				Description: "A field to state if the existing registration key should be revoked immediately or be given a 72 hours expiration time (true: → All existing keys are deleted.)",
+			},
+			"is_applying": schema.BoolAttribute{
+				Required:    true,
+				Description: "Set to terraform.applying so the key is only rotated during apply, not during plan. This avoids rotating the key on plan-only runs.",
+			},
+			"should_rotate": schema.BoolAttribute{
+				Required:    true,
+				Description: "Set to true when the key should be rotated (e.g. reference version_changed from a luminate_site_registration_key_version resource). The key is only rotated when this is true (and is_applying is true).",
 			},
 			"token": schema.StringAttribute{
 				Computed:    true,
@@ -64,6 +69,15 @@ func (r *SiteRegistrationKeyEphemeralResource) Open(ctx context.Context, request
 
 	response.Diagnostics.Append(request.Config.Get(ctx, &data)...)
 	if response.Diagnostics.HasError() {
+		return
+	}
+
+	// Only rotate when both are known and true (avoid ValueBool on unknown at plan)
+	shouldRotate := data.IsApplying.ValueBool() && data.ShouldRotate.ValueBool()
+	if !shouldRotate {
+		data.ID = types.StringNull()
+		data.Token = types.StringValue("")
+		response.Diagnostics.Append(response.Result.Set(ctx, &data)...)
 		return
 	}
 

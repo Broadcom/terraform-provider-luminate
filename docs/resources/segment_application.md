@@ -51,7 +51,7 @@ resource "luminate_segment_application" "new-segment-application" {
 - `multiple_segment_settings` (Block List) (see [below for nested schema](#nestedblock--multiple_segment_settings))
 - `notification_enabled` (Boolean) Indicates whether notifications are enabled for this application.
 - `segment_settings` (Block List, Max: 1) (see [below for nested schema](#nestedblock--segment_settings))
-- `sub_type` (String) The segment application sub type
+- `sub_type` (String) The segment application sub type. Note: SEGMENT_SPECIFIC_IPS is automatically converted to SEGMENT_RANGE by the backend.
 - `subdomain` (String) The application DNS subdomain.
 - `type` (String) app type
 - `visible` (Boolean) Indicates whether to show this application in the applications portal.
@@ -67,7 +67,7 @@ resource "luminate_segment_application" "new-segment-application" {
 
 Optional:
 
-- `original_ip` (List of String) List of target IPs
+- `original_ip` (Set of String) Set of target IPs (order-insensitive)
 
 
 <a id="nestedblock--segment_settings"></a>
