@@ -2,13 +2,13 @@ package provider
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -19,7 +19,7 @@ resource "luminate_site" "new-site" {
 `
 
 func getTestSiteResourceConfigAndCheckFunc(region string, authenticationMode dto.SiteAuthenticationMode) (string, resource.TestCheckFunc) {
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 	resourceName, config := testAccResourceSite_options(region, randNum, authenticationMode)
 	check := resource.ComposeTestCheckFunc(
 		resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("tfAccSiteOpt%d", randNum)),
@@ -50,7 +50,7 @@ func TestAccLuminateSite(t *testing.T) {
 	if region = os.Getenv("TEST_SITE_REGION"); region == "" {
 		t.Error("stopping TestAccLuminateSite no  site provided")
 	}
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	configWithConnectorMode, checkWithConnectorMode := getTestSiteResourceConfigAndCheckFunc(region, dto.SiteAuthenticationModeManual)
 	configWithSiteMode, checkWithSiteMode := getTestSiteResourceConfigAndCheckFunc(region, dto.SiteAuthenticationModeOrchestrator)

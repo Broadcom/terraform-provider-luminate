@@ -2,12 +2,12 @@ package wss_tests
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -25,7 +25,7 @@ func TestAccLuminateDNSGroupResiliency(t *testing.T) {
 		t.Skip("no wss tests needed")
 	}
 	resourceName := "luminate_dns_group_resiliency.new-dns-group"
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

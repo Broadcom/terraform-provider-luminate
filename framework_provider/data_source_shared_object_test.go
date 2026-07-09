@@ -1,12 +1,12 @@
 package framework_provider
 
 import (
-	"math/rand"
 	"regexp"
 	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -18,7 +18,7 @@ data "luminate_shared_object" "shared_object_<RANDOM_PLACEHOLDER>" {
 `
 
 func TestAccLuminateDataSourceSharedObject(t *testing.T) {
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

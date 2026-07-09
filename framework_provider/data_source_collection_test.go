@@ -2,11 +2,11 @@ package framework_provider
 
 import (
 	"fmt"
-	"math/rand"
 	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -21,7 +21,7 @@ data "luminate_collection" "collection_<RANDOM_PLACEHOLDER>" {
 `
 
 func TestAccLuminateDataSourceCollection(t *testing.T) {
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 	resourceName := fmt.Sprintf("luminate_collection.new_collection_%s", strconv.Itoa(randNum))
 	dataResourceName := fmt.Sprintf("data.luminate_collection.collection_%s", strconv.Itoa(randNum))
 

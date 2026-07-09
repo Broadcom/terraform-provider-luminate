@@ -2,9 +2,9 @@ package provider
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -67,7 +67,7 @@ func TestAccLuminateSSHApplication(t *testing.T) {
 	resourceName := "luminate_ssh_application.new-ssh-application"
 	resourceNameCollection := "luminate_ssh_application.new-ssh-application-collection"
 
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtocol6Providers,

@@ -7,3 +7,4 @@ terraform-provider-luminate
 local_test.go
 dist/
 build-common
+vendor/

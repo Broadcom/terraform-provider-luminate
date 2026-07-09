@@ -1,11 +1,11 @@
 package provider
 
 import (
-	"math/rand"
 	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -215,7 +215,7 @@ const resourceRdpAccessPolicy_collection = `
 func TestAccLuminateRdpAccessPolicy(t *testing.T) {
 	resourceName := "luminate_rdp_access_policy.new-rdp-access-policy"
 	resourceNameCollection := "luminate_rdp_access_policy.new-rdp-access-policy-collection"
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

@@ -2,11 +2,11 @@ package provider
 
 import (
 	"fmt"
-	"math/rand"
 	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
 )
@@ -102,7 +102,7 @@ resource "luminate_rdp_application" "new-rdp-application-collection" {
 func TestAccLuminateRDPApplication(t *testing.T) {
 	resourceName := "luminate_rdp_application.new-rdp-application"
 	resourceNameCollection := "luminate_rdp_application.new-rdp-application-collection"
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

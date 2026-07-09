@@ -1,12 +1,12 @@
 package framework_provider
 
 import (
-	"math/rand"
 	"regexp"
 	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/echoprovider"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -70,7 +70,7 @@ func testAccEphemeralSiteRegistrationKeyProviders() map[string]func() (tfprotov6
 }
 
 func TestAccLuminateSiteRegistrationKeyWithKeyVersion(t *testing.T) {
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 	replacePlaceholders := func(config string, version string, echoName string) string {
 		out := strings.ReplaceAll(config, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum))
 		out = strings.ReplaceAll(out, "<VERSION_PLACEHOLDER>", version)
@@ -172,7 +172,7 @@ func TestAccLuminateSiteRegistrationKeyWithKeyVersion(t *testing.T) {
 }
 
 func TestAccLuminateSiteRegistrationKeyWithoutKeyVersion(t *testing.T) {
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 	replacePlaceholders := func(config string, shouldRotate string, echoName string) string {
 		out := strings.ReplaceAll(config, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum))
 		out = strings.ReplaceAll(out, "<SHOULD_ROTATE_PLACEHOLDER>", shouldRotate)

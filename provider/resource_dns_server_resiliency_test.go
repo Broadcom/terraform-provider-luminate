@@ -2,11 +2,11 @@ package provider
 
 import (
 	"fmt"
-	"math/rand"
 	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -31,7 +31,7 @@ resource "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
 	name = "testDNSServerResiliency<RANDOM_PLACEHOLDER>"
 	site_id = "${luminate_site.new-site.id}"
 	group_id = "${luminate_dns_group_resiliency.new-dns-group.id}"
-	internal_address = "<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>"
+	internal_address = "<RANDOM_ADDR_PLACEHOLDER>.<RANDOM_ADDR_PLACEHOLDER>.<RANDOM_ADDR_PLACEHOLDER>.<RANDOM_ADDR_PLACEHOLDER>"
     depends_on = [luminate_collection_site_link.new-collection-site-link]
 }
 
@@ -39,17 +39,21 @@ resource "luminate_dns_server_resiliency" "new-dns-server-resiliency" {
 
 func TestAccLuminateDNSServerResiliency(t *testing.T) {
 	resourceName := "luminate_dns_server_resiliency.new-dns-server-resiliency"
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
+	randAddrNum := test_utils.GetRandomNumberWithBase(100)
+
+	config := strings.ReplaceAll(testDNSServerResiliency, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum))
+	config = strings.ReplaceAll(config, "<RANDOM_ADDR_PLACEHOLDER>", strconv.Itoa(randAddrNum))
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
-				Config: strings.ReplaceAll(testDNSServerResiliency, "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum)),
+				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testDNSServerResiliency%d", randNum)),
-					resource.TestCheckResourceAttr(resourceName, "internal_address", strings.ReplaceAll("<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>", "<RANDOM_PLACEHOLDER>", strconv.Itoa(randNum))),
+					resource.TestCheckResourceAttr(resourceName, "internal_address", strings.ReplaceAll("<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>.<RANDOM_PLACEHOLDER>", "<RANDOM_PLACEHOLDER>", strconv.Itoa(randAddrNum))),
 				),
 			},
 		},

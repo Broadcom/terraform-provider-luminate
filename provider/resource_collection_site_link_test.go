@@ -2,17 +2,16 @@ package provider
 
 import (
 	"fmt"
+	"testing"
+
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/stretchr/testify/assert"
-	"math/rand"
-	"testing"
-	"time"
 )
 
 func TestAccLuminateCollectionSiteLink(t *testing.T) {
 	resourceName := "luminate_collection_site_link.new-collection-site-link"
-	rand.Seed(time.Now().UnixNano())
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtocol6Providers,

@@ -2,13 +2,14 @@ package framework_provider
 
 import (
 	"fmt"
+	"os"
+	"testing"
+
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
-	"math/rand"
-	"os"
-	"testing"
 )
 
 func resourceWebActivityPolicy_minimal(rand int) string {
@@ -300,7 +301,7 @@ func resourceWebActivityPolicy_conditions_specified_update(userID1 string, rand 
 func TestAccLuminateResourceWebActivityPolicyConditionsSpecifiedWithUpdate(t *testing.T) {
 	resourceName := "luminate_web_activity_policy.new-web-activity-policy"
 	userID1, userID2, groupName := getUsersAndGroupsFromEnvVars(t)
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -579,7 +580,7 @@ func TestAccLuminateResourceWebActivityPolicyConditionsSpecifiedWithUpdate(t *te
 func TestAccLuminateResourceWebActivityPolicyWithCollection(t *testing.T) {
 	resourceName := "luminate_web_activity_policy.new-web-activity-policy-collection"
 	userID1, _, _ := getUsersAndGroupsFromEnvVars(t)
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

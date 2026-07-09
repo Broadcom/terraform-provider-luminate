@@ -139,7 +139,7 @@ func ConvertIdentityProviderTypeToString(idpType interface{}) string {
 
 func ConvertIdentityProviderTypeToEnum(idpType string) (sdk.IdentityProviderType, error) {
 	switch idpType {
-	case "local", "keycloak":
+	case "local", "keycloak", "ztna-idp":
 		return sdk.LOCAL_IdentityProviderType, nil
 	case "ad", "azuread": //PLT-117 - ad and azuread are synonyms - referring to Azure AD.
 		return sdk.AD_IdentityProviderType, nil

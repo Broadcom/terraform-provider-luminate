@@ -2,9 +2,9 @@ package provider
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -54,7 +54,7 @@ resource "luminate_tcp_application" "new-tcp-application-collection" {
 func TestAccLuminateTCPApplication(t *testing.T) {
 	resourceName := "luminate_tcp_application.new-tcp-application"
 	resourceNameCollection := "luminate_tcp_application.new-tcp-application-collection"
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

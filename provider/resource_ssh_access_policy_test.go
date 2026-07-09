@@ -2,11 +2,11 @@ package provider
 
 import (
 	"fmt"
-	"math/rand"
 	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -196,7 +196,7 @@ const resourceSshAccessPolicy_Collection = `
 func TestAccLuminateSshAccessPolicy(t *testing.T) {
 	resourceName := "luminate_ssh_access_policy.new-ssh-access-policy"
 	resourceNameCollection := "luminate_ssh_access_policy.new-ssh-access-policy-collection"
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

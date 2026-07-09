@@ -2,11 +2,12 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"math/rand"
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/Broadcom/terraform-provider-luminate/test_utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 const testAccResourceCollection = `
@@ -23,7 +24,7 @@ resource "luminate_collection" "new-collection" {
 
 func TestAccLuminateCollection(t *testing.T) {
 	resourceName := "luminate_collection.new-collection"
-	randNum := 100 + rand.Intn(100)
+	randNum := test_utils.GetRandomNumber()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
