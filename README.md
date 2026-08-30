@@ -1188,7 +1188,7 @@ The following arguments are supported:
 
         -   **action** (Required) - The action to apply, allowed values: 
             "ALLOW", "BLOCK", "BLOCK_USER", "DISCONNECT_USER", 
-            "WEB_ISOLATION", "CDS"
+            "WEB_ISOLATION", "CDS", "TIS", "TIS_AND_CDS"
 
         -   **isolation_profile_id** (Optional) - The web isolation profile 
             ID to apply, required with "WEB_ISOLATION" action if selected.
@@ -1196,7 +1196,8 @@ The following arguments are supported:
             luminate_shared_object data source with type "ISOLATION_PROFILE"
 
         -   **dlp_filter_id** (Optional) - The DLP application detection ID.
-            Required for using "CDS" action ID (DLP Cloud Detector)
+            Required for using "CDS" action ID (DLP Cloud Detector) or 
+            "TIS_AND_CDS" action ID (DLP Cloud Detector & TIS)
 
         -   **conditions** (Required) - The conditions to apply the action
 

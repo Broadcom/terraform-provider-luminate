@@ -86,12 +86,12 @@ resource "luminate_web_activity_policy" "new-web-activity-policy" {
 
 Required:
 
-- `action` (String) The action to apply, allowed values: 'ALLOW', 'BLOCK', 'BLOCK_USER', 'DISCONNECT_USER', 'WEB_ISOLATION', 'CDS'
+- `action` (String) The action to apply, allowed values: 'ALLOW', 'BLOCK', 'BLOCK_USER', 'DISCONNECT_USER', 'WEB_ISOLATION', 'CDS', 'TIS', 'TIS_AND_CDS'
 
 Optional:
 
 - `conditions` (Attributes) the rule conditions arguments if required per enabled condition (see [below for nested schema](#nestedatt--rules--conditions))
-- `dlp_filter_id` (String) the DLP application detection ID, must be provided with a selected CDS action (DLP Cloud Detector).
+- `dlp_filter_id` (String) the DLP application detection ID, must be provided with a selected CDS action (DLP Cloud Detector) or TIS_AND_CDS action (DLP Cloud Detector & TIS).
 - `isolation_profile_id` (String) the web isolation profile to apply for this rule if WEB_ISOLATION action is selected.
 
 <a id="nestedatt--rules--conditions"></a>

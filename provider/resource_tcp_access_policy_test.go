@@ -216,13 +216,14 @@ func resourceTCPAccessPolicy_collection(rand int) string {
 func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 	resourceName := "luminate_tcp_access_policy.new-tcp-access-policy"
 	resourceNameCollection := "luminate_tcp_access_policy.new-tcp-access-policy-collection"
+	rnd := 100 + rand.Intn(100)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtocol6Providers,
 		Steps: []resource.TestStep{
 			{
-				Config: resourceTcpAccessPolicy_enabled(100 + rand.Intn(100)),
+				Config: resourceTcpAccessPolicy_enabled(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -231,21 +232,21 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_disabled(100 + rand.Intn(100)),
+				Config: resourceTcpAccessPolicy_disabled(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_enabled_not_specified(100 + rand.Intn(100)),
+				Config: resourceTcpAccessPolicy_enabled_not_specified(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_enabled_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_optional_not_specified(100 + rand.Intn(100)),
+				Config: resourceTcpAccessPolicy_optional_not_specified(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_optional_not_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -254,7 +255,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_conditions_specified(100 + rand.Intn(100)),
+				Config: resourceTcpAccessPolicy_conditions_specified(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_conditions_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -264,7 +265,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceTcpAccessPolicy_validators_specified(100 + rand.Intn(100)),
+				Config: resourceTcpAccessPolicy_validators_specified(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_validators_specified"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
@@ -272,7 +273,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 				),
 			},
 			{
-				Config: resourceTCPAccessPolicy_collection(100 + rand.Intn(100)),
+				Config: resourceTCPAccessPolicy_collection(rnd),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceTcpAccessPolicy_collection"),
 				),

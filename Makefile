@@ -1,0 +1,1 @@
+%: ; @echo "DEPRECATION: 'make' commands have been deprecated by DevOps (https://bsg-jira.broadcom.net/browse/PLT-9810), please remove it or use an alternative (e.g. a GitHub action from the shared workflows repo, a local script etc.), command called was: '$@'" | tee -a $$GITHUB_STEP_SUMMARY ; exit 4

@@ -214,6 +214,54 @@ func TestFromPolicyRulesContainers(t *testing.T) {
 			},
 		},
 		{
+			name: "TIS action condition",
+			policyRules: []sdk.PolicyRule{
+				{
+					ActionId: TISAction,
+					Conditions: []sdk.PolicyCondition{
+						{
+							ConditionDefinitionId: FileDownloadedCondition,
+							Arguments:             map[string][]string{},
+						},
+					},
+				},
+			},
+			expectedRules: []ActivityRule{
+				{
+					Action: TISAction,
+					Conditions: &RuleConditions{
+						FileDownloaded: true,
+						Arguments:      &RuleConditionArguments{},
+					},
+				},
+			},
+		},
+		{
+			name: "DLP and TIS combined action condition",
+			policyRules: []sdk.PolicyRule{
+				{
+					ActionId: DLPAndTISAction,
+					Conditions: []sdk.PolicyCondition{
+						{
+							ConditionDefinitionId: FileDownloadedCondition,
+							Arguments:             map[string][]string{},
+						},
+					},
+					DlpFilterId: "6fd0a892-8b70-471a-9dd7-bf374b07451f",
+				},
+			},
+			expectedRules: []ActivityRule{
+				{
+					Action: DLPAndTISAction,
+					Conditions: &RuleConditions{
+						FileDownloaded: true,
+						Arguments:      &RuleConditionArguments{},
+					},
+					DLPFilterID: "6fd0a892-8b70-471a-9dd7-bf374b07451f",
+				},
+			},
+		},
+		{
 			name: "Rule with no conditions",
 			policyRules: []sdk.PolicyRule{
 				{
@@ -434,6 +482,54 @@ func TestToPolicyRulesContainers(t *testing.T) {
 						},
 					},
 					IsolationProfileId: "571136d7-7bb7-45bc-b039-6e9eea0cc430",
+				},
+			},
+		},
+		{
+			name: "TIS action condition",
+			activityRules: []ActivityRule{
+				{
+					Action: TISAction,
+					Conditions: &RuleConditions{
+						FileDownloaded: true,
+						Arguments:      &RuleConditionArguments{},
+					},
+				},
+			},
+			expectedRules: []sdk.PolicyRule{
+				{
+					ActionId: TISAction,
+					Conditions: []sdk.PolicyCondition{
+						{
+							ConditionDefinitionId: FileDownloadedCondition,
+							Arguments:             map[string][]string{},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "DLP and TIS combined action condition",
+			activityRules: []ActivityRule{
+				{
+					Action: DLPAndTISAction,
+					Conditions: &RuleConditions{
+						FileDownloaded: true,
+						Arguments:      &RuleConditionArguments{},
+					},
+					DLPFilterID: "6fd0a892-8b70-471a-9dd7-bf374b07451f",
+				},
+			},
+			expectedRules: []sdk.PolicyRule{
+				{
+					ActionId: DLPAndTISAction,
+					Conditions: []sdk.PolicyCondition{
+						{
+							ConditionDefinitionId: FileDownloadedCondition,
+							Arguments:             map[string][]string{},
+						},
+					},
+					DlpFilterId: "6fd0a892-8b70-471a-9dd7-bf374b07451f",
 				},
 			},
 		},

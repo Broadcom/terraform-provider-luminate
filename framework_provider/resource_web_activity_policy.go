@@ -72,10 +72,13 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 			listvalidator.SizeAtLeast(1),
 		},
 		NestedObject: schema.NestedAttributeObject{
+			Validators: []validator.Object{
+				dlpFilterIDRequiredValidator{},
+			},
 			Attributes: map[string]schema.Attribute{
 				"action": schema.StringAttribute{
 					Required:    true,
-					Description: "The action to apply, allowed values: 'ALLOW', 'BLOCK', 'BLOCK_USER', 'DISCONNECT_USER', 'WEB_ISOLATION', 'CDS'",
+					Description: "The action to apply, allowed values: 'ALLOW', 'BLOCK', 'BLOCK_USER', 'DISCONNECT_USER', 'WEB_ISOLATION', 'CDS', 'TIS', 'TIS_AND_CDS'",
 					Validators: []validator.String{
 						stringvalidator.OneOf(
 							dto.AllowAction,
@@ -84,6 +87,8 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 							dto.DisconnectUserAction,
 							dto.WebIsolationAction,
 							dto.DLPCloudDetectionAction,
+							dto.TISAction,
+							dto.DLPAndTISAction,
 						),
 					},
 				},
@@ -144,7 +149,7 @@ func (w *WebActivityPolicyResource) Schema(ctx context.Context, request resource
 				"dlp_filter_id": schema.StringAttribute{
 					Optional:    true,
 					Computed:    true,
-					Description: "the DLP application detection ID, must be provided with a selected CDS action (DLP Cloud Detector).",
+					Description: "the DLP application detection ID, must be provided with a selected CDS action (DLP Cloud Detector) or TIS_AND_CDS action (DLP Cloud Detector & TIS).",
 				},
 			},
 		},

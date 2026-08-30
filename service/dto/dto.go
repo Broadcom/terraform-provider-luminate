@@ -208,6 +208,8 @@ const (
 	DisconnectUserAction    = "DISCONNECT_USER"
 	WebIsolationAction      = "WEB_ISOLATION"
 	DLPCloudDetectionAction = "CDS"
+	TISAction               = "TIS"
+	DLPAndTISAction         = "TIS_AND_CDS"
 )
 
 type Policy struct {

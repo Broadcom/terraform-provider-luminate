@@ -3,8 +3,10 @@ package framework_provider
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
+	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/test_utils"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
@@ -610,6 +612,93 @@ func TestAccLuminateResourceWebActivityPolicyWithCollection(t *testing.T) {
 						knownvalue.Bool(true),
 					),
 				},
+			},
+		},
+	})
+}
+
+func resourceWebActivityPolicy_missingDlpFilterID(action string, rand int) string {
+	return fmt.Sprintf(`
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteActivityPolicy%d"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationActivityPolicy%d"
+	 internal_address = "http://127.0.0.1:8080"
+	}
+	resource "luminate_web_activity_policy" "new-web-activity-policy" {
+		name =  "tfAccWebActivityPolicy_missingDlpFilterID%d"
+		applications = ["${luminate_web_application.new-application.id}"]
+
+		rules = [
+			{
+				action = "%s"
+				conditions = {
+					file_downloaded = true
+				}
+			}
+		]
+	}`, rand, rand, rand, action)
+}
+
+func TestAccLuminateResourceWebActivityPolicyMissingDlpFilterID(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
+		Steps: []resource.TestStep{
+			{
+				Config:      resourceWebActivityPolicy_missingDlpFilterID(dto.DLPCloudDetectionAction, test_utils.GetRandomNumber()),
+				ExpectError: regexp.MustCompile("dlp_filter_id must be set"),
+			},
+			{
+				Config:      resourceWebActivityPolicy_missingDlpFilterID(dto.DLPAndTISAction, test_utils.GetRandomNumber()),
+				ExpectError: regexp.MustCompile("dlp_filter_id must be set"),
+			},
+		},
+	})
+}
+
+func resourceWebActivityPolicy_withDlpFilterID(action string, rand int) string {
+	return fmt.Sprintf(`
+	resource "luminate_site" "new-site" {
+	   name = "tfAccSiteActivityPolicy%d"
+	}
+	resource "luminate_web_application" "new-application" {
+	 site_id = "${luminate_site.new-site.id}"
+	 name = "tfAccApplicationActivityPolicy%d"
+	 internal_address = "http://127.0.0.1:8080"
+	}
+	resource "luminate_web_activity_policy" "new-web-activity-policy" {
+		name =  "tfAccWebActivityPolicy_withDlpFilterID%d"
+		applications = ["${luminate_web_application.new-application.id}"]
+
+		rules = [
+			{
+				action = "%s"
+				conditions = {
+					file_downloaded = true
+				}
+				dlp_filter_id = "6fd0a892-8b70-471a-9dd7-bf374b07451f"
+			}
+		]
+	}`, rand, rand, rand, action)
+}
+
+func TestAccLuminateResourceWebActivityPolicyDlpFilterIDProvided(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtocol6Providers,
+		Steps: []resource.TestStep{
+			{
+				Config:             resourceWebActivityPolicy_withDlpFilterID(dto.DLPCloudDetectionAction, test_utils.GetRandomNumber()),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config:             resourceWebActivityPolicy_withDlpFilterID(dto.DLPAndTISAction, test_utils.GetRandomNumber()),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
