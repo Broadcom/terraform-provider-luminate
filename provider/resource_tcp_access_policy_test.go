@@ -23,7 +23,7 @@ func resourceTcpAccessPolicy_enabled(rand int) string {
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
 		enabled = "true"
-		name =  "resourceTcpAccessPolicy_enabled"
+		name =  "resourceTcpAccessPolicy_enabled%d"
 		identity_provider_id = "local"
 
 		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
@@ -32,7 +32,7 @@ func resourceTcpAccessPolicy_enabled(rand int) string {
 		allow_temporary_token = "true"
 		allow_public_key = "true"
 	}
-`, rand, rand)
+`, rand, rand, rand)
 }
 
 func resourceTcpAccessPolicy_disabled(rand int) string {
@@ -52,12 +52,12 @@ func resourceTcpAccessPolicy_disabled(rand int) string {
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
 		enabled = "false"
-  		name =  "resourceTcpAccessPolicy_disabled"
+  		name =  "resourceTcpAccessPolicy_disabled%d"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
-	} `, rand, rand)
+	} `, rand, rand, rand)
 }
 
 func resourceTcpAccessPolicy_enabled_not_specified(rand int) string {
@@ -76,13 +76,13 @@ func resourceTcpAccessPolicy_enabled_not_specified(rand int) string {
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
-  		name =  "resourceTcpAccessPolicy_enabled_not_specified"
+  		name =  "resourceTcpAccessPolicy_enabled_not_specified%d"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 	}
-`, rand, rand)
+`, rand, rand, rand)
 }
 
 func resourceTcpAccessPolicy_optional_not_specified(rand int) string {
@@ -102,13 +102,13 @@ func resourceTcpAccessPolicy_optional_not_specified(rand int) string {
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
 		enabled = "true"
-  		name =  "resourceTcpAccessPolicy_optional_not_specified"
+  		name =  "resourceTcpAccessPolicy_optional_not_specified%d"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
   		applications = ["${luminate_tcp_application.new-tcp-application.id}"]
 	}
-`, rand, rand)
+`, rand, rand, rand)
 }
 
 func resourceTcpAccessPolicy_conditions_specified(rand int) string {
@@ -127,7 +127,7 @@ func resourceTcpAccessPolicy_conditions_specified(rand int) string {
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
-  		name =  "resourceTcpAccessPolicy_conditions_specified"
+  		name =  "resourceTcpAccessPolicy_conditions_specified%d"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
@@ -138,7 +138,7 @@ func resourceTcpAccessPolicy_conditions_specified(rand int) string {
     		location = ["Wallis and Futuna"]
   		}
 
-	}`, rand, rand)
+	}`, rand, rand, rand)
 }
 
 func resourceTcpAccessPolicy_validators_specified(rand int) string {
@@ -157,7 +157,7 @@ func resourceTcpAccessPolicy_validators_specified(rand int) string {
 	  }
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy" {
-  		name =  "resourceTcpAccessPolicy_validators_specified"
+  		name =  "resourceTcpAccessPolicy_validators_specified%d"
 		identity_provider_id = "local"
 
   		user_ids = ["f75f45b8-d10d-4aa6-9200-5c6d60110430"]
@@ -167,7 +167,7 @@ func resourceTcpAccessPolicy_validators_specified(rand int) string {
 			web_verification = true
 		}
 	}
-`, rand, rand)
+`, rand, rand, rand)
 }
 
 func resourceTCPAccessPolicy_collection(rand int) string {
@@ -197,7 +197,7 @@ func resourceTCPAccessPolicy_collection(rand int) string {
 	}
 	resource "luminate_tcp_access_policy" "new-tcp-access-policy-collection" {
 		enabled = "true"
-		name =  "resourceTcpAccessPolicy_collection"
+		name =  "resourceTcpAccessPolicy_collection%d"
       	collection_id = "${luminate_collection.new-collection.id}"
 		identity_provider_id = "local"
 
@@ -210,7 +210,7 @@ func resourceTCPAccessPolicy_collection(rand int) string {
 
 		depends_on = [luminate_collection_site_link.new-collection-site-link]
 	}
-`, rand, rand, rand)
+`, rand, rand, rand, rand)
 }
 
 func TestAccLuminateTcpAccessPolicy(t *testing.T) {
@@ -225,7 +225,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 			{
 				Config: resourceTcpAccessPolicy_enabled(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_enabled"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("resourceTcpAccessPolicy_enabled%d", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "allow_temporary_token", "true"),
 					resource.TestCheckResourceAttr(resourceName, "allow_public_key", "true"),
@@ -234,21 +234,21 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 			{
 				Config: resourceTcpAccessPolicy_disabled(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_disabled"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("resourceTcpAccessPolicy_disabled%d", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 				),
 			},
 			{
 				Config: resourceTcpAccessPolicy_enabled_not_specified(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_enabled_not_specified"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("resourceTcpAccessPolicy_enabled_not_specified%d", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
 				Config: resourceTcpAccessPolicy_optional_not_specified(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_optional_not_specified"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("resourceTcpAccessPolicy_optional_not_specified%d", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "allow_temporary_token", "true"),
 					resource.TestCheckResourceAttr(resourceName, "allow_public_key", "false"),
@@ -257,7 +257,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 			{
 				Config: resourceTcpAccessPolicy_conditions_specified(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_conditions_specified"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("resourceTcpAccessPolicy_conditions_specified%d", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.0", "127.0.0.1/24"),
 					resource.TestCheckResourceAttr(resourceName, "conditions.0.source_ip.1", "1.1.1.1/16"),
@@ -267,7 +267,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 			{
 				Config: resourceTcpAccessPolicy_validators_specified(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "resourceTcpAccessPolicy_validators_specified"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("resourceTcpAccessPolicy_validators_specified%d", rnd)),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "validators.0.web_verification", "true"),
 				),
@@ -275,7 +275,7 @@ func TestAccLuminateTcpAccessPolicy(t *testing.T) {
 			{
 				Config: resourceTCPAccessPolicy_collection(rnd),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceNameCollection, "name", "resourceTcpAccessPolicy_collection"),
+					resource.TestCheckResourceAttr(resourceNameCollection, "name", fmt.Sprintf("resourceTcpAccessPolicy_collection%d", rnd)),
 				),
 			},
 		},
