@@ -22,6 +22,7 @@ const (
 	DefaultCollection      = "7cef2ccc-ed3e-4812-9ef2-b986c5dac2a5"
 	RootCollection         = "6b21619f-f505-41ec-af1b-09350be40000"
 	DefaultRDPPort         = "3389"
+	DefaultSSHPort         = "22"
 	CharSet                = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
 

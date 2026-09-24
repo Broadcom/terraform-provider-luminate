@@ -7,14 +7,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"regexp"
+
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	sdk "github.gwd.broadcom.net/SED/ztna-api-documentation/go/sdk"
-	"log"
-	"regexp"
 )
 
 func LuminateRDPApplication() *schema.Resource {
@@ -25,7 +26,7 @@ func LuminateRDPApplication() *schema.Resource {
 		Required:         true,
 		ValidateFunc:     utils.ValidateString,
 		Description:      "Internal address of the application, accessible by connector",
-		DiffSuppressFunc: suppressExternalAddressUpdate,
+		DiffSuppressFunc: suppressDefaultPortDiff(utils.DefaultRDPPort),
 	}
 
 	rdpSchema["sub_type"] = &schema.Schema{
@@ -198,24 +199,4 @@ func extractRDPApplicationFields(d *schema.ResourceData) *dto.Application {
 		ExternalAddress:      d.Get("external_address").(string),
 		Subdomain:            d.Get("subdomain").(string),
 	}
-}
-
-// suppressExternalAddressUpdate will determine if needed another action (CRUD) from terraform, in will run after terraform plan is running
-// if it returns false terraform will run another action when state != require value
-func suppressExternalAddressUpdate(k, oldValue, newValue string, d *schema.ResourceData) bool {
-	if oldValue == "" {
-		return false
-	}
-	if oldValue == newValue {
-		return true
-	}
-	newAddress, newPort := utils.ExtractIPAndPort(newValue)
-	oldAddress, oldPort := utils.ExtractIPAndPort(oldValue)
-	if ((oldPort == "" && newPort == utils.DefaultRDPPort) || (oldPort == utils.DefaultRDPPort && newPort == "")) && (newAddress == oldAddress) {
-		return true
-	}
-	if (newAddress != oldAddress) || (newPort != oldPort) {
-		return false
-	}
-	return true
 }

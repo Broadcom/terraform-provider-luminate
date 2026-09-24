@@ -4,6 +4,8 @@
 package provider
 
 import (
+	"strings"
+
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -84,4 +86,40 @@ func SetBaseApplicationFields(d *schema.ResourceData, application *dto.Applicati
 	d.Set("external_address", application.ExternalAddress)
 	d.Set("subdomain", application.Subdomain)
 	d.Set("type", application.Type)
+}
+
+// The management server appends the application type's default port to an internal address
+// submitted without one, so a configured "tcp://1.1.1.1" is returned as "tcp://1.1.1.1:22".
+// Removing it again keeps state equal to the configured value whether or not the server
+// applies that defaulting.
+func stripDefaultPort(address string, defaultPort string) string {
+	if _, port := utils.ExtractIPAndPort(address); port != defaultPort {
+		return address
+	}
+
+	return strings.TrimSuffix(address, ":"+defaultPort)
+}
+
+// suppressDefaultPortDiff equates an address carrying the type's default port with the same
+// address omitting it, so neither form is reported as a change.
+func suppressDefaultPortDiff(defaultPort string) schema.SchemaDiffSuppressFunc {
+	return func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+		if oldValue == "" {
+			return false
+		}
+		if oldValue == newValue {
+			return true
+		}
+
+		oldAddress, oldPort := utils.ExtractIPAndPort(oldValue)
+		newAddress, newPort := utils.ExtractIPAndPort(newValue)
+		if oldAddress != newAddress {
+			return false
+		}
+		if (oldPort == "" && newPort == defaultPort) || (oldPort == defaultPort && newPort == "") {
+			return true
+		}
+
+		return oldPort == newPort
+	}
 }

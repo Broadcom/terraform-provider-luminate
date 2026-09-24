@@ -19,10 +19,11 @@ func LuminateSSHApplication() *schema.Resource {
 	sshSchema := CommonApplicationSchema()
 
 	sshSchema["internal_address"] = &schema.Schema{
-		Type:         schema.TypeString,
-		Required:     true,
-		ValidateFunc: utils.ValidateString,
-		Description:  "Internal address of the application, accessible by connector",
+		Type:             schema.TypeString,
+		Required:         true,
+		ValidateFunc:     utils.ValidateString,
+		Description:      "Internal address of the application, accessible by connector",
+		DiffSuppressFunc: suppressDefaultPortDiff(utils.DefaultSSHPort),
 	}
 
 	return &schema.Resource{
@@ -137,7 +138,7 @@ func setSSHApplicationFields(d *schema.ResourceData, application *dto.Applicatio
 	SetBaseApplicationFields(d, application)
 	d.Set("collection_id", application.CollectionID)
 	d.Set("site_id", application.SiteID)
-	d.Set("internal_address", application.InternalAddress)
+	d.Set("internal_address", stripDefaultPort(application.InternalAddress, utils.DefaultSSHPort))
 	d.Set("luminate_address", application.LuminateAddress)
 }
 
