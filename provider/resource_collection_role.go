@@ -5,13 +5,14 @@ package provider
 
 import (
 	"context"
+	"log"
+
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
-	"log"
 )
 
 func LuminateCollectionRole() *schema.Resource {
@@ -86,7 +87,8 @@ func resourceReadCollectionRole(ctx context.Context, d *schema.ResourceData, m i
 	}
 	entityID := d.Get("entity_id").(string)
 	collectionID := d.Get("collection_id").(string)
-	role, err := client.RoleBindingsAPI.ReadRoleBindings(roleBindingsID, roleType, entityID, collectionID, "")
+	IDPID := d.Get("identity_provider_id").(string)
+	role, err := client.RoleBindingsAPI.ReadRoleBindings(roleBindingsID, roleType, entityID, IDPID, collectionID, "")
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "read collection role failure"))
 	}

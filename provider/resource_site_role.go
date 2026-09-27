@@ -5,13 +5,14 @@ package provider
 
 import (
 	"context"
+	"log"
+
 	"github.com/Broadcom/terraform-provider-luminate/service"
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
-	"log"
 )
 
 func LuminateSiteRole() *schema.Resource {
@@ -86,7 +87,8 @@ func resourceReadSiteRole(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 	entityID := d.Get("entity_id").(string)
 	siteID := d.Get("site_id").(string)
-	role, err := client.RoleBindingsAPI.ReadRoleBindings(roleBindingsID, roleType, entityID, "", siteID)
+	IDPID := d.Get("identity_provider_id").(string)
+	role, err := client.RoleBindingsAPI.ReadRoleBindings(roleBindingsID, roleType, entityID, IDPID, "", siteID)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "read site role failure"))
 	}

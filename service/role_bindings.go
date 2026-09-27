@@ -5,6 +5,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/Broadcom/terraform-provider-luminate/service/dto"
 	"github.com/Broadcom/terraform-provider-luminate/utils"
 	"github.com/antihax/optional"
@@ -66,15 +67,17 @@ func (r *RoleBindingsAPI) ReadRoleBindings(
 	roleID string,
 	roleType string,
 	entityId string,
+	entityIdpId string,
 	collectionID string,
 	siteID string,
 ) (*dto.RoleBinding, error) {
 	params := sdk.CollectionsApiListRoleBindingsOpts{
-		EntityIdInIdp: optional.NewString(entityId),
-		RoleType:      optional.NewInterface(roleType),
-		SubjectType:   optional.NewInterface("Collection"),
-		SubjectId:     optional.NewInterface(collectionID),
-		Size:          optional.NewFloat64(100),
+		EntityId:    optional.NewString(entityId),
+		EntityIdpId: optional.NewString(entityIdpId),
+		RoleType:    optional.NewInterface(roleType),
+		SubjectType: optional.NewInterface("Collection"),
+		SubjectId:   optional.NewInterface(collectionID),
+		Size:        optional.NewFloat64(100),
 	}
 	if collectionID == "" {
 		params.SubjectId = optional.NewInterface(utils.RootCollection)
