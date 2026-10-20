@@ -2,6 +2,8 @@
 
 #### Documentation
 
+[Installation](#installation)
+
 [Basic configuration and usage](#basic-configuration-and-usage)
 - [Terraform Requirements](#terraform-requirements)
 - [Provider configuration](#provider-configuration)
@@ -57,6 +59,42 @@
 
 [Emphemeral Resources](#emphemeral-resources)
 - [Emphemeral Resource: luminate_site_registration_key](#emphemeral-resource-luminate_site_registration_key)
+
+Installation
+==========
+
+Provider binaries are published on the [GitHub releases page](https://github.com/Broadcom/terraform-provider-luminate/releases).
+
+To install a binary into the local Terraform plugins directory
+(`~/.terraform.d/plugins/broadcom.com/broadcom/luminate/<version>/<os>_<arch>`, or
+`%APPDATA%\terraform.d\plugins\...` on Windows), use the installation script.
+It supports macOS (arm64/amd64), Linux (amd64) and Windows (amd64, via Git Bash), and verifies the SHA256 checksum of the download
+against the checksum file published with the release.
+
+Install the **latest** release, without downloading the script first:
+```
+curl -fsSL https://raw.githubusercontent.com/Broadcom/terraform-provider-luminate/master/installation/install-luminate-provider.sh | bash
+```
+
+Install a **specific** version by passing it as an argument:
+```
+curl -fsSL https://raw.githubusercontent.com/Broadcom/terraform-provider-luminate/master/installation/install-luminate-provider.sh | bash -s -- 1.2.18
+```
+
+If the version is not specified, the latest release is installed. You can also download the script and run it locally:
+`./install-luminate-provider.sh [version]`.
+
+Then reference the provider from the plugins directory in your Terraform configuration:
+```
+terraform {
+  required_providers {
+    luminate = {
+      source  = "broadcom.com/broadcom/luminate"
+      version = "1.2.18"
+    }
+  }
+}
+```
 
 Basic configuration and usage
 ==========
